@@ -1,0 +1,1 @@
+dotnet ef -p .\Libraries\C8S.Database.EFCore -s .\Utilities\C8S.EFCoreSetup $args

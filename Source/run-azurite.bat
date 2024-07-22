@@ -1,0 +1,1 @@
+"c:\Program Files\Microsoft Visual Studio\2022\Professional\Common7\IDE\Extensions\Microsoft\Azure Storage Emulator\azurite.exe" --skipApiVersionCheck
