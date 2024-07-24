@@ -4,4 +4,6 @@ public interface IBaseDb
 {
     int Id { get; }
     string Display { get; }
+
+    DateTimeOffset CreatedOn { get; }
 }

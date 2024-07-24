@@ -1,13 +1,12 @@
-﻿using Azure.Identity;
-using C8S.Common;
+﻿using C8S.Common;
 using C8S.Common.Helpers.Extensions;
 using C8S.Database.EFCore.Extensions;
 using C8S.Database.Repository.Extensions;
+using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Tasks;
 using CommandLine;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -37,6 +36,7 @@ try
     // add some of the configuration so that we can use it below
     var parserResult = Parser.Default
         .ParseArguments<
+            LoadC8SDataOptions,
             LoadSampleDataOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
@@ -48,6 +48,7 @@ try
         .AddEnvironmentVariables();
 
     var host = Host.CreateDefaultBuilder(args)
+#if false
         .ConfigureAppConfiguration((bldr) =>
         {
             // add our json file configuration to the context
@@ -63,7 +64,8 @@ try
                     .Select(KeyFilter.Any, LabelFilter.Null)
                     .Select(KeyFilter.Any, platform);
             });
-        })
+        }) 
+#endif
         .ConfigureServices((context, services) =>
         {
             // Parsing the arguments
@@ -72,8 +74,12 @@ try
                 {
                     services.AddSingleton(options);
                     services.AddSingleton<IActionLauncher, LoadSampleData>();
+                })
+                .WithParsed<LoadC8SDataOptions>(options =>
+                {
+                    services.AddSingleton(options);
+                    services.AddSingleton<IActionLauncher, LoadC8SData>();
                 });
-            
             
             /*****************************************
              * AZURE CLIENTS SETUP
@@ -92,7 +98,8 @@ try
             services.AddCommonHelpers();
             services.AddC8SRepository();
 
-            //services.AddScoped<ISelfService, SelfServiceDummy>();
+            var oldSystemCnnString = builder.Configuration.GetConnectionString(C8SConstants.Connections.OldSystem);
+            services.AddOldSystemServices(oldSystemCnnString);
         })
         .UseSerilog((context, services, config) => config
             .MinimumLevel.Is(LogEventLevel.Verbose)

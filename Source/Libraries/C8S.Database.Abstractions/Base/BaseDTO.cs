@@ -2,12 +2,13 @@
 
 public abstract class BaseDTO: IBaseDTO
 {
-    #region Abstract Properties
+    #region Public Properties
     public abstract int Id { get; }
     public abstract string Display { get; }
+    public DateTimeOffset CreatedOn { get; set; } = default(DateTimeOffset);
     #endregion
 
-    #region Abstract Methods
+    #region Public Methods
     public abstract IEnumerable<string> GetValidationErrors();
     #endregion
 

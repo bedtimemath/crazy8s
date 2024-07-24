@@ -130,6 +130,10 @@ public static class SharedConstants
         public const int Url = Long;
 
         public const int XLong = 1024;
+
+        public const int XXLong = 2048;
+
+        public const int XXXLong = 4096;
     }
 
     public static class MimeTypes

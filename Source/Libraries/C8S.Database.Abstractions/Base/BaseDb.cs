@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace C8S.Database.Abstractions.Base;
 
@@ -15,6 +16,9 @@ public abstract class BaseDb: IBaseDb
     public abstract int Id { get; }
     [NotMapped]
     public abstract string Display { get; }
+
+    [Required]
+    public DateTimeOffset CreatedOn { get; set; }
     #endregion
 
     #region Public Overrides
