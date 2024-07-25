@@ -1,0 +1,43 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>Crazy 8s Admin</PageTitle>
+
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     class="h-100">
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenBody>
+        @Body
+    </RadzenBody>
+    <RadzenFooter>
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween">
+
+            <RadzenText TagName="TagName.Span"
+                        TextStyle="TextStyle.Body2"
+                        TextAlign="TextAlign.Start">
+                &copy; 2024, Crazy 8s Club
+            </RadzenText>
+
+            <RadzenText TagName="TagName.Span"
+                        TextStyle="TextStyle.Body2"
+                        TextAlign="TextAlign.End">
+                <RadzenLink Path="mailto:joy@crazy8sclub.org"
+                            Text="joy@crazy8sclub.org" />
+            </RadzenText>
+
+        </RadzenStack>
+    </RadzenFooter>
+</RadzenLayout>
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />
+
+   

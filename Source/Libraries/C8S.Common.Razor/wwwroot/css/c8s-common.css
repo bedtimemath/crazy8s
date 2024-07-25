@@ -1,0 +1,25 @@
+﻿html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/*
+    RADZEN
+*/
+i.rzi.rz-button-icon-left {
+    margin-right: 0.5rem;
+}
+.rz-dialog.no-close .rz-dialog-titlebar-close {
+    display: none;
+}
+
+/*
+    NO REGRETS
+*/
+.nr24-min-button-width {
+    min-width: 12rem;
+}
+
+.nr24-logo {
+    width: 80%;
+    max-width: 800px;
+}

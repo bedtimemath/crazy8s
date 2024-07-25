@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\favicon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.21.1" />
+    <PackageReference Include="Microsoft.Azure.AppConfiguration.AspNetCore" Version="7.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.7.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="7.3.0" />
+    <PackageReference Include="Radzen.Blazor" Version="5.0.2" />
+    <PackageReference Include="Serilog" Version="4.0.1" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\C8S.Common.Helpers\C8S.Common.Helpers.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.Common.Razor\C8S.Common.Razor.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.Common\C8S.Common.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
