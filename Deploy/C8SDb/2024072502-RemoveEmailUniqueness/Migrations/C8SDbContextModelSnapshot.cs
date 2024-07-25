@@ -64,9 +64,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Phone")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -85,8 +82,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.HasIndex("OldSystemCoachId")
                         .IsUnique()
                         .HasFilter("[OldSystemCoachId] IS NOT NULL");
-
-                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Coaches");
                 });
@@ -147,20 +142,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasFilter("[OldSystemOrganizationId] IS NOT NULL");
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
-                {
-                    b.HasOne("C8S.Database.EFCore.Models.OrganizationDb", "Organization")
-                        .WithMany("Coaches")
-                        .HasForeignKey("OrganizationId");
-
-                    b.Navigation("Organization");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
-                {
-                    b.Navigation("Coaches");
                 });
 #pragma warning restore 612, 618
         }

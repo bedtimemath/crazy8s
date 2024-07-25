@@ -15,7 +15,8 @@ public class CoachDb : BaseDb
     [NotMapped] 
     public override int Id => CoachId;
     [NotMapped] 
-    public override string Display => Name + (!String.IsNullOrEmpty(Email) ? $" <{Email}>" : null);
+    public override string Display =>  String.Join(" ", new [] { FirstName, LastName }) 
+                                       ?? SharedConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -24,35 +25,40 @@ public class CoachDb : BaseDb
     #endregion
 
     #region Database Properties
-    [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
-    public string Name { get; set; } = default!;
+    public Guid? OldSystemCoachId { get; set; } = null;
+
+    public Guid? OldSystemOrganizationId { get; set; } = null;
+
+    public Guid? OldSystemUserId { get; set; } = null;
+
+    public Guid? OldSystemCompanyId { get; set; } = null;
+
+    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
+    public string FirstName { get; set; } = default!;
+
+    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
+    public string LastName { get; set; } = default!;
 
     [Required, MaxLength(SharedConstants.MaxLengths.Email)]
     public string Email { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Phone)]
-    public string Phone { get; set; } = default!;
+    [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+    public string TimeZone { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public CoachStatus Status { get; set; } = CoachStatus.Pending;
+    [MaxLength(SharedConstants.MaxLengths.Short)]
+    public string? Phone { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Url)]
-    public string Image { get; set; } = default!;
+    [MaxLength(SharedConstants.MaxLengths.Short)]
+    public string? PhoneExt { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Long)]
-    public string? TagLine { get; set; } = null;
-
-    public string? Bio { get; set; } = null;
-
-    [MaxLength(SharedConstants.MaxLengths.Standard)]
-    public string? AuthId { get; set; } = null;
+    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    public string? OldSystemNotes { get; set; } = null;
     #endregion
 
     #region Reference Properties
-    //[ForeignKey(nameof(Group))]
-    //public int? GroupId { get; set; } = default!;
-    //public GroupDb? Group { get; set; } = default!;
+    [ForeignKey(nameof(Organization))]
+    public int? OrganizationId { get; set; } = default!;
+    public OrganizationDb? Organization { get; set; } = default!;
     #endregion
 
     #region Reference Collections

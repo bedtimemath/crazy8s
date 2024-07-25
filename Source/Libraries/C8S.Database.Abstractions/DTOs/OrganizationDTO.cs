@@ -46,4 +46,8 @@ public class OrganizationDTO: BaseDTO
 
     public string? OldSystemNotes { get; set; } = null;
     #endregion
+
+    #region Child Properties
+    public ICollection<CoachDTO> Coaches { get; set; } = default!;
+    #endregion
 }

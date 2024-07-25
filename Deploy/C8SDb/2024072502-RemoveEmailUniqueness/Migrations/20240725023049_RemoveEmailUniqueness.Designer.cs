@@ -4,6 +4,7 @@ using C8S.Database.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240725023049_RemoveEmailUniqueness")]
+    partial class RemoveEmailUniqueness
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,9 +67,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Phone")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -85,8 +85,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.HasIndex("OldSystemCoachId")
                         .IsUnique()
                         .HasFilter("[OldSystemCoachId] IS NOT NULL");
-
-                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Coaches");
                 });
@@ -147,20 +145,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasFilter("[OldSystemOrganizationId] IS NOT NULL");
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
-                {
-                    b.HasOne("C8S.Database.EFCore.Models.OrganizationDb", "Organization")
-                        .WithMany("Coaches")
-                        .HasForeignKey("OrganizationId");
-
-                    b.Navigation("Organization");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
-                {
-                    b.Navigation("Coaches");
                 });
 #pragma warning restore 612, 618
         }

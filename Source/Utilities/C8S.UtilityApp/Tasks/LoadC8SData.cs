@@ -2,6 +2,7 @@
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.EFCore.Contexts;
 using C8S.Database.Repository.Repositories;
+using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
 using C8S.UtilityApp.Services;
 using Microsoft.EntityFrameworkCore;
@@ -42,15 +43,67 @@ internal class LoadC8SData(
 
         var firstChar = Char.ToLower(checkContinue.KeyChar);
         if (firstChar != 'y') return 0;
+        Console.WriteLine();
 
-        var organizations = (await oldSystemService.GetOrganizations())
+        /*** ORGANIZATIONS ***/
+        var orgDTOs = (await oldSystemService.GetOrganizations())
             .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} organizations", organizations.Count);
+        logger.LogInformation("Found {Count:#,##0} organizations", orgDTOs.Count);
 
-        var addeds = await repository.AddOrganizations(organizations);
-        logger.LogInformation("Added {Count:#,##0} organizations", addeds.Count());
+        var existingOrgIds = (await repository.GetOrganizations()).Select(o => o.OldSystemOrganizationId).ToList();
+        orgDTOs.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
+
+        var addedOrgs = await repository.AddOrganizations(orgDTOs);
+        logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count());
+
+        /*** COACHES ***/
+        var coachDTOs = (await oldSystemService.GetCoaches())
+            .Select(mapper.Map<CoachSql, CoachDTO>)
+            .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} coaches", coachDTOs.Count);
+
+        var hasOrgIds = coachDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
+        logger.LogInformation("Found {Count:#,##0} coaches with org ids", hasOrgIds.Count);
+
+        var existingCoachIds = (await repository.GetCoaches()).Select(o => o.OldSystemCoachId).ToList();
+        coachDTOs.RemoveAll(m => existingCoachIds.Contains(m.OldSystemCoachId));
+
+        var addedCoaches = await repository.AddCoaches(coachDTOs);
+        logger.LogInformation("Added {Count:#,##0} coaches", addedCoaches.Count());
+        
+        /*** JOINING ***/
+        var allOrganizations = (await repository.GetOrganizations()).ToList();
+        var allCoaches = (await repository.GetCoaches()).ToList();
+        var totalCoaches = allCoaches.Count;
+
+        var coachesWithOrganization = 0;
+
+        ConsoleEx.StartProgress("Joining coaches with organizations: ");
+        for (int index = 0; index < totalCoaches; index++)
+        {
+            var coach = allCoaches[index];
+            if (coach.OldSystemOrganizationId.HasValue)
+            {
+                var organization = allOrganizations.FirstOrDefault(
+                                       o => o.OldSystemOrganizationId == coach.OldSystemOrganizationId.Value) ??
+                                   throw new Exception($"Could not find organization: {coach.OldSystemOrganizationId.Value}");
+                if (coach.OrganizationId == null)
+                {
+                    coach.OrganizationId = organization.OrganizationId;
+
+                    await repository.UpdateCoach(coach);
+                    coachesWithOrganization++;
+                }
+            }
+
+            ConsoleEx.ShowProgress((float)index / (float)totalCoaches);
+        }
+        ConsoleEx.EndProgress();
+
+        logger.LogInformation("{Count:#,##0} coaches updated.", coachesWithOrganization);
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;

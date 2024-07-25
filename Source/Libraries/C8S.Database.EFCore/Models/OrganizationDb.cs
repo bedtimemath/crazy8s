@@ -23,9 +23,9 @@ public class OrganizationDb: BaseDb
     #endregion
 
     #region Database Properties
-    public Guid? OldSystemCompanyId { get; set; } = default!;
+    public Guid? OldSystemCompanyId { get; set; } = null;
     
-    public Guid? OldSystemOrganizationId { get; set; } = default!;
+    public Guid? OldSystemOrganizationId { get; set; } = null;
 
     [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
     public string Name { get; set; } = default!;
@@ -48,5 +48,10 @@ public class OrganizationDb: BaseDb
 
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
     public string? OldSystemNotes { get; set; } = null;
+    #endregion
+
+    #region Child Properties
+    // one-to-many
+    public ICollection<CoachDb> Coaches { get; set; } = default!;
     #endregion
 }

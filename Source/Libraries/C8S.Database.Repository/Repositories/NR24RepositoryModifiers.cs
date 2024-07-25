@@ -1,12 +1,59 @@
 ﻿using C8S.Database.Abstractions.DTOs;
 using C8S.Database.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace C8S.Database.Repository.Repositories;
 
 public partial class C8SRepository
 {
-    #region Organization
 
+    #region Coach
+    public async Task<CoachDTO> AddCoach(CoachDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<CoachDb>(dto);
+
+        var entry = await dbContext.Coaches.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<CoachDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<CoachDTO>> AddCoaches(IEnumerable<CoachDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<CoachDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<CoachDb>(dto);
+            var entry = await dbContext.Coaches.AddAsync(db);
+            dtosAdded.Add(mapper.Map<CoachDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    
+    public async Task<CoachDTO> UpdateCoach(CoachDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<CoachDb>(dto);
+
+        var entry = dbContext.Coaches.Attach(db);
+        entry.State = EntityState.Modified;
+        await dbContext.SaveChangesAsync();
+
+        var dtoModified = mapper.Map<CoachDTO>(entry.Entity);
+
+        return dtoModified;
+    }
+
+    #endregion
+
+    #region Organization
     public async Task<OrganizationDTO> AddOrganization(OrganizationDTO dto)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();

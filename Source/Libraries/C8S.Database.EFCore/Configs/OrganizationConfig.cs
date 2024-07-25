@@ -16,17 +16,17 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
         #endregion
 
         #region Database Properties
-        //public Guid? OldSystemCompanyId { get; set; } = default!;
+        //public Guid? OldSystemCompanyId { get; set; } = null;
         entity.Property(m => m.OldSystemCompanyId)
             .IsRequired(false);
     
-        //public Guid? OldSystemOrganizationId { get; set; } = default!;
+        //public Guid? OldSystemOrganizationId { get; set; } = null;
         entity.Property(m => m.OldSystemOrganizationId)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string Name { get; set; } = default!;
-        entity.Property(m => m.OldSystemOrganizationId)
+        entity.Property(m => m.Name)
             .HasMaxLength(SharedConstants.MaxLengths.FullName)
             .IsRequired(true);
 
@@ -69,9 +69,14 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
             .IsRequired(false);
         #endregion
 
+        #region Navigation Configuration
+        //public ICollection<LeadDb> Leads { get; set; } = default!;
+        entity.HasMany(m => m.Coaches)
+            .WithOne(m => m.Organization)
+            .HasForeignKey(m => m.OrganizationId);
+        #endregion
+
         #region Indices
-        entity.HasIndex(m => m.OldSystemCompanyId)
-            .IsUnique(true);
         entity.HasIndex(m => m.OldSystemOrganizationId)
             .IsUnique(true);
         #endregion

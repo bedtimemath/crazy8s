@@ -16,79 +16,82 @@ public class CoachConfig : IEntityTypeConfiguration<CoachDb>
         #endregion
 
         #region Database Properties
-        // [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
-        // public string Name { get; set; } = default!;
-        entity.Property(m => m.Name)
+        //public Guid? OldSystemCoachId { get; set; } = null;
+        entity.Property(m => m.OldSystemCoachId)
+            .IsRequired(false);
+
+        //public Guid? OldSystemOrganizationId { get; set; } = null;
+        entity.Property(m => m.OldSystemOrganizationId)
+            .IsRequired(false);
+
+        //public Guid? OldSystemUserId { get; set; } = null;
+        entity.Property(m => m.OldSystemUserId)
+            .IsRequired(false);
+
+        //public Guid? OldSystemCompanyId { get; set; } = null;
+        entity.Property(m => m.OldSystemCompanyId)
+            .IsRequired(false);
+
+        //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
+        //public string FirstName { get; set; } = default!;
+        entity.Property(m => m.FirstName)
+            .HasMaxLength(SharedConstants.MaxLengths.Name)
             .IsRequired(true);
 
-        // [Required, MaxLength(SharedConstants.MaxLengths.Email)]
-        // public string? Email { get; set; } = default!;
+        //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
+        //public string LastName { get; set; } = default!;
+        entity.Property(m => m.LastName)
+            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .IsRequired(true);
+
+        //[Required, MaxLength(SharedConstants.MaxLengths.Email)]
+        //public string Email { get; set; } = default!;
         entity.Property(m => m.Email)
+            .HasMaxLength(SharedConstants.MaxLengths.Name)
             .IsRequired(true);
 
-        // [Required, MaxLength(SharedConstants.MaxLengths.Phone)]
-        // public string Phone { get; set; } = default!;
+        //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+        //public string TimeZone { get; set; } = default!;
+        entity.Property(m => m.TimeZone)
+            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .IsRequired(true);
+
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //public string? Phone { get; set; } = null;
         entity.Property(m => m.Phone)
-            .IsRequired(true);
-
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
-        //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public CoachStatus Status { get; set; } = CoachStatus.Pending;
-        entity.Property(m => m.Status)
-            .HasConversion<string>()
             .HasMaxLength(SharedConstants.MaxLengths.Short)
-            .IsRequired(true);
-
-        //[Required, MaxLength(SharedConstants.MaxLengths.Url)]
-        //public string Image { get; set; } = null;
-        entity.Property(m => m.Image)
-            .HasMaxLength(SharedConstants.MaxLengths.Url)
-            .IsRequired(true);
-
-        //[MaxLength(SharedConstants.MaxLengths.Long)]
-        //public string? TagLine { get; set; } = null;
-        entity.Property(m => m.TagLine)
-            .HasMaxLength(SharedConstants.MaxLengths.Long)
             .IsRequired(false);
 
-        //public string? Bio { get; set; } = null;
-        entity.Property(m => m.Bio)
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //public string? PhoneExt { get; set; } = null;
+        entity.Property(m => m.PhoneExt)
+            .HasMaxLength(SharedConstants.MaxLengths.Short)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.Standard)]
-        //public string? AuthId { get; set; } = null;
-        entity.Property(m => m.AuthId)
-            .HasMaxLength(SharedConstants.MaxLengths.Standard)
+        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
+        //public string? OldSystemNotes { get; set; } = null;
+        entity.Property(m => m.OldSystemNotes)
+            .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(Group))]
-        //public int? GroupId { get; set; } = default!;
-        //entity.Property(m => m.GroupId)
-        //    .IsRequired(false);
+        //[ForeignKey(nameof(Organization))]
+        //public int? OrganizationId { get; set; } = default!;
+        entity.Property(m => m.OrganizationId)
+            .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
-        //public GroupDb? Group { get; set; } = default!;
-        //entity.HasOne(m => m.Group)
-        //    .WithMany(m => m.Coachs)
-        //    .HasForeignKey(m => m.GroupId)
-        //    .IsRequired(false);
-
-        //public ICollection<LeadDb> Leads { get; set; } = default!;
-        //entity.HasMany(m => m.Leads)
-        //    .WithOne(m => m.Coach)
-        //    .HasForeignKey(m => m.CoachId);
-
-        //public ICollection<ActionDb> Actions { get; set; } = default!;
-        //entity.HasMany(m => m.Actions)
-        //    .WithOne(m => m.Coach)
-        //    .HasForeignKey(m => m.CoachId);
+        //public OrganizationDb? Organization { get; set; } = default!;
+        entity.HasOne(m => m.Organization)
+            .WithMany(m => m.Coaches)
+            .HasForeignKey(m => m.OrganizationId)
+            .IsRequired(false);
         #endregion
 
         #region Indices
-        entity.HasIndex(m => m.Email)
+        entity.HasIndex(m => m.OldSystemCoachId)
             .IsUnique(true);
         #endregion
     }
