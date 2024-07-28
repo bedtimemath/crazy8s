@@ -1,10 +1,17 @@
 ﻿using C8S.Database.Abstractions.Enumerations;
 using System.ComponentModel.DataAnnotations.Schema;
+using AppType = C8S.Database.Abstractions.Enumerations.ApplicantType;
+using OrgType = C8S.Database.Abstractions.Enumerations.OrganizationType;
 
 namespace C8S.UtilityApp.Models;
 
 public class ApplicationSql
 {
+    #region Constants & ReadOnlys
+    public const string SqlGet =
+        "SELECT a.[Id] AS [OldSystemApplicationId], aps.[Name] AS [StatusString], ct.[Name] AS [ApplicantTypeString], a.[CoachFirstName] AS [ApplicantFirstName], a.[CoachLastName] AS [ApplicantLastName], a.[CoachEmail] AS [ApplicantEmail], a.[CoachPhone] AS [ApplicantPhoneString], a.[CoachPhoneExt] AS [ApplicantPhoneExt], a.[CoachTimeZoneId] AS [ApplicantTimeZone], a.[NewOrganizationName] AS [OrganizationName], ot.[Name] AS [OrganizationTypeString], a.[NewOrganizationOrganizationTypeOther] AS [OrganizationTypeOther], a.[NewOrganizationTaxId] AS [OrganizationTaxIdentifier], a.[WorkshopCode], a.[Comments], a.[Submitted] AS [SubmittedOn], a.[Notes] AS [OldSystemNotes] FROM [Crazy8s].[Application] a  LEFT JOIN [Crazy8s].[ApplicationStatus] aps ON aps.[Id] = a.[ApplicationStatusId] LEFT JOIN [Crazy8s].[CoachType] ct ON ct.[Id] = a.[CoachTypeId] LEFT JOIN [Crazy8s].[OrganizationType] ot ON ot.[Id] = a.[NewOrganizationOrganizationTypeId] WHERE a.[DeletedBy] IS NULL";
+    #endregion
+
     #region Id Property
     public int? ApplicationId { get; set; }
     #endregion
@@ -12,9 +19,11 @@ public class ApplicationSql
     #region Public Properties    
     public Guid? OldSystemApplicationId { get; set; } = null;
 
-    public ApplicationStatus? Status { get; set; } = null;
+    [NotMapped]
+    public string? StatusString { get; set; } = null;
 
-    public ApplicantType? ApplicantType { get; set; } = null;
+    [NotMapped]
+    public string? ApplicantTypeString { get; set; } = null;
 
     public string? ApplicantFirstName { get; set; } = null;
 
@@ -22,7 +31,8 @@ public class ApplicationSql
 
     public string? ApplicantEmail { get; set; } = null;
 
-    public string? ApplicantPhone { get; set; } = null;
+    [NotMapped]
+    public string? ApplicantPhoneString { get; set; } = null;
 
     public string? ApplicantPhoneExt { get; set; } = null;
 
@@ -30,7 +40,8 @@ public class ApplicationSql
 
     public string? OrganizationName { get; set; } = null;
 
-    public OrganizationType? OrganizationType { get; set; } = null;
+    [NotMapped]
+    public string? OrganizationTypeString { get; set; } = null;
 
     public string? OrganizationTypeOther { get; set; } = null;
 
@@ -46,19 +57,45 @@ public class ApplicationSql
     #endregion
 
     #region Derived Properties
-#if false
-    public ApplicationType Type =>
-    OldSystemType switch
+    public string? ApplicantPhone => (ApplicantPhoneString?.Length ?? 0) < 10 ? ApplicantPhoneString :
+        ApplicantPhoneString switch
+        {
+            "0000000000" or null => null,
+            _ => $"({ApplicantPhoneString.Substring(0,3)}) {ApplicantPhoneString.Substring(3,3)}-{ApplicantPhoneString.Substring(6,4)}"
+        };
+
+    public ApplicationStatus? Status => StatusString switch
     {
-        "Boys & Girls Club" => ApplicationType.BoysGirlsClub,
-        "Home School Co-Op" => ApplicationType.HomeSchool,
-        "Library" => ApplicationType.Library,
-        "Other" => ApplicationType.Other,
-        "School" => ApplicationType.School,
-        "YMCA" => ApplicationType.YMCA,
-        _ => throw new Exception("Unrecognized")
-    }; 
-#endif
+        "Approved" => ApplicationStatus.Approved,
+        "Deleted" => ApplicationStatus.Deleted,
+        "Denied" => ApplicationStatus.Denied,
+        "Future" => ApplicationStatus.Future,
+        "Pending" => ApplicationStatus.Pending,
+        "Received" => ApplicationStatus.Received,
+        null => null,
+        _ => throw new Exception($"Unrecognized: {StatusString}")
+    };
+
+    public ApplicantType? ApplicantType => ApplicantTypeString switch
+    {
+        "Coach" => AppType.Coach,
+        "Mentor" => AppType.Mentor,
+        "Student" => AppType.Student,
+        "Supervisor" => AppType.Supervisor,
+        null => null,
+        _ => throw new Exception($"Unrecognized: {ApplicantTypeString}")
+    };
+
+    public OrganizationType? OrganizationType => OrganizationTypeString switch
+    {
+        "Boys & Girls Club" => OrgType.BoysGirlsClub,
+        "Home School Co-Op" => OrgType.HomeSchool,
+        "Library" => OrgType.Library,
+        "Other" => OrgType.Other,
+        "School" => OrgType.School,
+        "YMCA" => OrgType.YMCA,
+        _ => throw new Exception($"Unrecognized: {OrganizationTypeString}")
+    };
 
     #endregion
 }

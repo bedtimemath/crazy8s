@@ -12,22 +12,23 @@ public class OldSystemService(
     private readonly ILogger<OldSystemService> _logger = logger;
 
     public string ConnectionString => connectionString;
+    
 
-    public async Task<List<OrganizationSql>> GetOrganizations()
+    public async Task<List<ApplicationSql>> GetApplications()
     {
-        var organizations = new List<OrganizationSql>();
+        var applications = new List<ApplicationSql>();
 
         await using var connection = new SqlConnection(connectionString);
         try
         {
             await connection.OpenAsync();
-            await using var command = new SqlCommand(OrganizationSql.SqlGet, connection);
+            await using var command = new SqlCommand(ApplicationSql.SqlGet, connection);
             await using var reader = await command.ExecuteReaderAsync();
 
             while (reader.Read())
             {
-                var organization = reader.ConvertToObject<OrganizationSql>();
-                organizations.Add(organization);
+                var application = reader.ConvertToObject<ApplicationSql>();
+                applications.Add(application);
             }
         }
         catch (Exception exception)
@@ -39,7 +40,7 @@ public class OldSystemService(
             await connection.CloseAsync();
         }
 
-        return organizations;
+        return applications;
     }
 
     public async Task<List<CoachSql>> GetCoaches()
@@ -69,5 +70,34 @@ public class OldSystemService(
         }
 
         return coaches;
+    }
+
+    public async Task<List<OrganizationSql>> GetOrganizations()
+    {
+        var organizations = new List<OrganizationSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(OrganizationSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var organization = reader.ConvertToObject<OrganizationSql>();
+                organizations.Add(organization);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return organizations;
     }
 }

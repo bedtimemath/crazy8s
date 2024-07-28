@@ -72,19 +72,19 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
             .HasMaxLength(SharedConstants.MaxLengths.Medium)
             .IsRequired(true);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]
-        //public string OrganizationName { get; set; } = default!;
+        //[MaxLength(SharedConstants.MaxLengths.FullName)]
+        //public string? OrganizationName { get; set; } = null;
         entity.Property(m => m.OrganizationName)
             .HasMaxLength(SharedConstants.MaxLengths.FullName)
-            .IsRequired(true);
+            .IsRequired(false);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public OrganizationType OrganizationType { get; set; } = OrganizationType.Other;
+        //public OrganizationType? OrganizationType { get; set; } = null;
         entity.Property(m => m.OrganizationType)
             .HasMaxLength(SharedConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(true);
+            .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string? OrganizationTypeOther { get; set; } = null;

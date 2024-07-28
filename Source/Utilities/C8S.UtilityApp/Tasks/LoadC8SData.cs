@@ -45,7 +45,7 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
-#if true
+#if false
         /*** ORGANIZATIONS ***/
         var orgDTOs = (await oldSystemService.GetOrganizations())
             .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
@@ -109,13 +109,13 @@ internal class LoadC8SData(
 #endif
 
         /*** ORGANIZATIONS ***/
-#if false
         var applicationDTOs = (await oldSystemService.GetApplications())
            .Select(mapper.Map<ApplicationSql, ApplicationDTO>)
            .ToList();
 
         logger.LogInformation("Found {Count:#,##0} applications", applicationDTOs.Count);
 
+#if false
         var hasOrgIds = applicationDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
         logger.LogInformation("Found {Count:#,##0} applications with org ids", hasOrgIds.Count);
 

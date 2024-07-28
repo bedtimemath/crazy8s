@@ -52,12 +52,12 @@ public class ApplicationDb : BaseDb
     [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
     public string ApplicantTimeZone { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
-    public string OrganizationName { get; set; } = default!;
+    [MaxLength(SharedConstants.MaxLengths.FullName)]
+    public string? OrganizationName { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SharedConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public OrganizationType OrganizationType { get; set; } = OrganizationType.Other;
+    public OrganizationType? OrganizationType { get; set; } = null;
 
     [MaxLength(SharedConstants.MaxLengths.Medium)]
     public string? OrganizationTypeOther { get; set; } = null;
