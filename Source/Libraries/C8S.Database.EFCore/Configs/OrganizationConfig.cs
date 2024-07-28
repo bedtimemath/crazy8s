@@ -70,10 +70,16 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
         #endregion
 
         #region Navigation Configuration
-        //public ICollection<LeadDb> Leads { get; set; } = default!;
+        //public ICollection<CoachDb> Coaches { get; set; } = default!;
         entity.HasMany(m => m.Coaches)
             .WithOne(m => m.Organization)
             .HasForeignKey(m => m.OrganizationId);
+
+        //public ICollection<ApplicationDb> Applications { get; set; } = default!;
+        entity.HasMany(m => m.Applications)
+            .WithOne(m => m.LinkedOrganization)
+            .HasForeignKey(m => m.LinkedOrganizationId)
+            .IsRequired(false);
         #endregion
 
         #region Indices

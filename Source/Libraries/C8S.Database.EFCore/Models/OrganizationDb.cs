@@ -53,5 +53,6 @@ public class OrganizationDb: BaseDb
     #region Child Properties
     // one-to-many
     public ICollection<CoachDb> Coaches { get; set; } = default!;
+    public ICollection<ApplicationDb> Applications { get; set; } = default!;
     #endregion
 }

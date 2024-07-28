@@ -88,6 +88,12 @@ public class CoachConfig : IEntityTypeConfiguration<CoachDb>
             .WithMany(m => m.Coaches)
             .HasForeignKey(m => m.OrganizationId)
             .IsRequired(false);
+
+        //public ICollection<ApplicationDb> Applications { get; set; } = default!;
+        entity.HasMany(m => m.Applications)
+            .WithOne(m => m.LinkedCoach)
+            .HasForeignKey(m => m.LinkedCoachId)
+            .IsRequired(false);
         #endregion
 
         #region Indices

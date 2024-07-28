@@ -1,10 +1,7 @@
-﻿#nullable enable
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using C8S.Common;
 using C8S.Database.Abstractions.Base;
-using C8S.Database.Abstractions.Enumerations;
 
 namespace C8S.Database.EFCore.Models;
 
@@ -64,8 +61,7 @@ public class CoachDb : BaseDb
     #region Reference Collections
     // one-to-one
     // one-to-many
-    //public ICollection<LeadDb> Leads { get; set; } = default!;
-    //public ICollection<ActionDb> Actions { get; set; } = default!;
+    public ICollection<ApplicationDb> Applications { get; set; } = default!;
 
     // many-to-many
     #endregion
