@@ -45,6 +45,7 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
+#if true
         /*** ORGANIZATIONS ***/
         var orgDTOs = (await oldSystemService.GetOrganizations())
             .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
@@ -73,8 +74,8 @@ internal class LoadC8SData(
 
         var addedCoaches = await repository.AddCoaches(coachDTOs);
         logger.LogInformation("Added {Count:#,##0} coaches", addedCoaches.Count());
-        
-        /*** JOINING ***/
+
+        /*** JOINING COACHES & ORGANIZATIONS ***/
         var allOrganizations = (await repository.GetOrganizations()).ToList();
         var allCoaches = (await repository.GetCoaches()).ToList();
         var totalCoaches = allCoaches.Count;
@@ -104,6 +105,26 @@ internal class LoadC8SData(
         ConsoleEx.EndProgress();
 
         logger.LogInformation("{Count:#,##0} coaches updated.", coachesWithOrganization);
+
+#endif
+
+        /*** ORGANIZATIONS ***/
+#if false
+        var applicationDTOs = (await oldSystemService.GetApplications())
+           .Select(mapper.Map<ApplicationSql, ApplicationDTO>)
+           .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} applications", applicationDTOs.Count);
+
+        var hasOrgIds = applicationDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
+        logger.LogInformation("Found {Count:#,##0} applications with org ids", hasOrgIds.Count);
+
+        var existingApplicationIds = (await repository.GetApplications()).Select(o => o.OldSystemApplicationId).ToList();
+        applicationDTOs.RemoveAll(m => existingApplicationIds.Contains(m.OldSystemApplicationId));
+
+        var addedApplications = await repository.AddApplications(applicationDTOs);
+        logger.LogInformation("Added {Count:#,##0} applications", addedApplications.Count()); 
+#endif
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;

@@ -18,8 +18,4 @@
     <ProjectReference Include="..\C8S.Database.EFCore\C8S.Database.EFCore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
 </Project>
