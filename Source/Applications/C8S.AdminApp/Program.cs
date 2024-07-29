@@ -1,8 +1,10 @@
 using Azure.Identity;
 using C8S.AdminApp;
+using C8S.AdminApp.Services;
 using C8S.Common;
 using C8S.Common.Helpers.Extensions;
 using C8S.Database.Repository.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Radzen;
@@ -32,6 +34,9 @@ try
     //	and whether to set our GA to debug (below)
     var logLevel = builder.Environment.IsProduction() ? LogEventLevel.Information : LogEventLevel.Debug;
 
+    var appInsightsConnection = !builder.Environment.IsProduction() ? null :
+        "InstrumentationKey=5e247dc2-1787-4a48-a65b-27195490fa48;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=ea002bd8-896a-4f82-a734-aa71b9826bf8";
+
     /*****************************************
      * LOGGING
      */
@@ -58,19 +63,34 @@ try
     }
 
     // set up the serilog logger
-    builder.Host.UseSerilog((context, services, configuration) => configuration
-        .MinimumLevel.Is(logLevel)
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
-        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-        .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
-        .Enrich.FromLogContext()
-        .WriteTo.Console(
-            outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
-            theme: AnsiConsoleTheme.Code)
-    );
+    builder.Host.UseSerilog((context, services, configuration) =>
+    {
+        configuration
+            .MinimumLevel.Is(logLevel)
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console(
+                outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
+                theme: AnsiConsoleTheme.Code);
+
+        if (!String.IsNullOrEmpty(appInsightsConnection))
+        {
+            configuration
+                .WriteTo.ApplicationInsights(
+                    new TelemetryConfiguration() { ConnectionString = appInsightsConnection }, TelemetryConverter.Traces);
+        }
+    });
     SelfLog.Enable(m => Console.Error.WriteLine(m));
+
+    /*****************************************
+     * APPLICATION INSIGHTS
+     */
+    if (!String.IsNullOrEmpty(appInsightsConnection))
+        builder.Services.AddApplicationInsightsTelemetry();
 
     /*****************************************
      * AZURE CLIENTS SETUP
@@ -86,6 +106,7 @@ try
      */
     builder.Services.AddCommonHelpers();
     builder.Services.AddC8SRepository();
+    builder.Services.AddSingleton<SelfService>();
     
     /*****************************************
      * RADZEN SERVICES
@@ -102,7 +123,7 @@ try
         .AddInteractiveServerComponents();
 
     builder.Services.AddHttpClient();
-
+    builder.Services.AddHttpContextAccessor();
 
     /*****************************************
      * APP
@@ -124,6 +145,20 @@ try
 
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode();
+    
+    // Use middleware to check the Easy Auth header.
+    app.Use(async (context, next) =>
+    {
+        var selfService = context.RequestServices.GetRequiredService<SelfService>();
+        var username = (context?.Request.Headers
+                .FirstOrDefault(kvp => kvp.Key == "X-MS-CLIENT-PRINCIPAL-NAME").Value)?
+                .ToString();
+
+        if (!String.IsNullOrEmpty(username))
+            selfService.SetUsername(username!);
+
+        await next(context!);
+    }); 
 
     app.Run();
 

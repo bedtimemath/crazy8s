@@ -6,6 +6,10 @@
     "Load C8s Data": {
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data"
+    },
+    "Load C8s Data (PROD)": {
+      "commandName": "Project",
+      "commandLineArgs": "load-crazy8s-data -p Production"
     }
   }
 }
