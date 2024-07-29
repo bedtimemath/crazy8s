@@ -13,7 +13,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Organizations] (
@@ -35,7 +35,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Coaches] (
@@ -61,7 +61,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Applications] (
@@ -70,12 +70,12 @@ BEGIN
         [OldSystemLinkedCoachId] uniqueidentifier NULL,
         [OldSystemLinkedOrganizationId] uniqueidentifier NULL,
         [Status] nvarchar(25) NOT NULL,
-        [ApplicantType] nvarchar(25) NOT NULL,
-        [ApplicantFirstName] nvarchar(255) NOT NULL,
+        [ApplicantType] nvarchar(25) NULL,
+        [ApplicantFirstName] nvarchar(255) NULL,
         [ApplicantLastName] nvarchar(255) NOT NULL,
         [ApplicantEmail] nvarchar(255) NOT NULL,
-        [ApplicantPhone] nvarchar(25) NOT NULL,
-        [ApplicantPhoneExt] nvarchar(25) NOT NULL,
+        [ApplicantPhone] nvarchar(25) NULL,
+        [ApplicantPhoneExt] nvarchar(25) NULL,
         [ApplicantTimeZone] nvarchar(50) NOT NULL,
         [OrganizationName] nvarchar(512) NULL,
         [OrganizationType] nvarchar(25) NULL,
@@ -97,13 +97,14 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE TABLE [ApplicationClubs] (
         [ApplicationClubId] int NOT NULL IDENTITY,
         [OldSystemApplicationClubId] uniqueidentifier NULL,
         [OldSystemApplicationId] uniqueidentifier NULL,
+        [OldSystemLinkedClubId] uniqueidentifier NULL,
         [AgeLevel] nvarchar(25) NOT NULL,
         [ClubSize] nvarchar(25) NOT NULL,
         [Season] int NOT NULL,
@@ -118,7 +119,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_ApplicationClubs_ApplicationId] ON [ApplicationClubs] ([ApplicationId]);
@@ -127,7 +128,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_ApplicationClubs_OldSystemApplicationClubId] ON [ApplicationClubs] ([OldSystemApplicationClubId]) WHERE [OldSystemApplicationClubId] IS NOT NULL');
@@ -136,7 +137,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Applications_LinkedCoachId] ON [Applications] ([LinkedCoachId]);
@@ -145,7 +146,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Applications_LinkedOrganizationId] ON [Applications] ([LinkedOrganizationId]);
@@ -154,7 +155,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_Applications_OldSystemApplicationId] ON [Applications] ([OldSystemApplicationId]) WHERE [OldSystemApplicationId] IS NOT NULL');
@@ -163,7 +164,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_Coaches_OldSystemCoachId] ON [Coaches] ([OldSystemCoachId]) WHERE [OldSystemCoachId] IS NOT NULL');
@@ -172,7 +173,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Coaches_OrganizationId] ON [Coaches] ([OrganizationId]);
@@ -181,7 +182,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_Organizations_OldSystemOrganizationId] ON [Organizations] ([OldSystemOrganizationId]) WHERE [OldSystemOrganizationId] IS NOT NULL');
@@ -190,11 +191,45 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20240729134718_InitialSetup'
+    WHERE [MigrationId] = N'20240729144658_InitialSetup'
 )
 BEGIN
     INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-    VALUES (N'20240729134718_InitialSetup', N'8.0.7');
+    VALUES (N'20240729144658_InitialSetup', N'8.0.7');
+END;
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240729154448_AppsWithRemovals'
+)
+BEGIN
+    ALTER TABLE [Applications] ADD [IsCoachRemoved] bit NOT NULL DEFAULT CAST(0 AS bit);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240729154448_AppsWithRemovals'
+)
+BEGIN
+    ALTER TABLE [Applications] ADD [IsOrganizationRemoved] bit NOT NULL DEFAULT CAST(0 AS bit);
+END;
+GO
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20240729154448_AppsWithRemovals'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20240729154448_AppsWithRemovals', N'8.0.7');
 END;
 GO
 

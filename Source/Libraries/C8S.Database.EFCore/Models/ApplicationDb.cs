@@ -34,12 +34,12 @@ public class ApplicationDb : BaseDb
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ApplicationStatus Status { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SharedConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ApplicantType ApplicantType { get; set; } = default!;
+    public ApplicantType? ApplicantType { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
-    public string ApplicantFirstName { get; set; } = default!;
+    [MaxLength(SharedConstants.MaxLengths.Name)]
+    public string? ApplicantFirstName { get; set; } = null;
 
     [Required, MaxLength(SharedConstants.MaxLengths.Name)]
     public string ApplicantLastName { get; set; } = default!;
@@ -47,11 +47,11 @@ public class ApplicationDb : BaseDb
     [Required, MaxLength(SharedConstants.MaxLengths.Email)]
     public string ApplicantEmail { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
-    public string ApplicantPhone { get; set; } = default!;
+    [MaxLength(SharedConstants.MaxLengths.Short)]
+    public string? ApplicantPhone { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
-    public string ApplicantPhoneExt { get; set; } = default!;
+    [MaxLength(SharedConstants.MaxLengths.Short)]
+    public string? ApplicantPhoneExt { get; set; } = null;
 
     [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
     public string ApplicantTimeZone { get; set; } = default!;
@@ -77,6 +77,12 @@ public class ApplicationDb : BaseDb
 
     [Required]
     public DateTimeOffset SubmittedOn { get; set; }
+
+    [Required]
+    public bool IsCoachRemoved { get; set; } = false;
+
+    [Required]
+    public bool IsOrganizationRemoved { get; set; } = false;
 
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
     public string? OldSystemNotes { get; set; } = null;

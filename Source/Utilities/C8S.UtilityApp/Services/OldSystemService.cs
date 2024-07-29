@@ -9,8 +9,6 @@ public class OldSystemService(
     ILogger<OldSystemService> logger,
     string connectionString)
 {
-    private readonly ILogger<OldSystemService> _logger = logger;
-
     public string ConnectionString => connectionString;
     
     public async Task<List<ApplicationSql>> GetApplications()

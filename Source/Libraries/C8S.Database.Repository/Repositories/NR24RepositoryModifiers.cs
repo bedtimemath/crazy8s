@@ -6,6 +6,50 @@ namespace C8S.Database.Repository.Repositories;
 
 public partial class C8SRepository
 {
+    #region Application
+    public async Task<ApplicationDTO> AddApplication(ApplicationDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<ApplicationDb>(dto);
+
+        var entry = await dbContext.Applications.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<ApplicationDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<ApplicationDTO>> AddApplications(IEnumerable<ApplicationDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<ApplicationDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<ApplicationDb>(dto);
+            var entry = await dbContext.Applications.AddAsync(db);
+            dtosAdded.Add(mapper.Map<ApplicationDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    
+    public async Task<ApplicationDTO> UpdateApplication(ApplicationDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<ApplicationDb>(dto);
+
+        var entry = dbContext.Applications.Attach(db);
+        entry.State = EntityState.Modified;
+        await dbContext.SaveChangesAsync();
+
+        var dtoModified = mapper.Map<ApplicationDTO>(entry.Entity);
+
+        return dtoModified;
+    }
+    #endregion
 
     #region Coach
     public async Task<CoachDTO> AddCoach(CoachDTO dto)
@@ -50,7 +94,6 @@ public partial class C8SRepository
 
         return dtoModified;
     }
-
     #endregion
 
     #region Organization

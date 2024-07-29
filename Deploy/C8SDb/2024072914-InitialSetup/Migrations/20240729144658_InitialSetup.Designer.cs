@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20240729134718_InitialSetup")]
+    [Migration("20240729144658_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />
@@ -55,6 +55,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemApplicationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OldSystemLinkedClubId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Season")
                         .HasColumnType("int");
 
@@ -86,7 +89,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ApplicantFirstName")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -96,12 +98,10 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("ApplicantPhone")
-                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("ApplicantPhoneExt")
-                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -111,7 +111,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ApplicantType")
-                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 

@@ -36,19 +36,19 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
             .HasConversion<string>()
             .IsRequired(true);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ApplicantType ApplicantType { get; set; } = default!;
+        //public ApplicantType? ApplicantType { get; set; } = default!;
         entity.Property(m => m.ApplicantType)
             .HasMaxLength(SharedConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(true);
+            .IsRequired(false);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string ApplicantFirstName { get; set; } = default!;
+        //[MaxLength(SharedConstants.MaxLengths.Name)]
+        //public string? ApplicantFirstName { get; set; } = default!;
         entity.Property(m => m.ApplicantFirstName)
             .HasMaxLength(SharedConstants.MaxLengths.Name)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
         //public string ApplicantLastName { get; set; } = default!;
@@ -62,17 +62,17 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
             .HasMaxLength(SharedConstants.MaxLengths.Email)
             .IsRequired(true);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string ApplicantPhone { get; set; } = default!;
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //public string? ApplicantPhone { get; set; } = default!;
         entity.Property(m => m.ApplicantPhone)
             .HasMaxLength(SharedConstants.MaxLengths.Short)
-            .IsRequired(true);
+            .IsRequired(false);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string ApplicantPhoneExt { get; set; } = default!;
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //public string? ApplicantPhoneExt { get; set; } = default!;
         entity.Property(m => m.ApplicantPhoneExt)
             .HasMaxLength(SharedConstants.MaxLengths.Short)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string ApplicantTimeZone { get; set; } = default!;
@@ -122,6 +122,18 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
         //public DateTimeOffset SubmittedOn { get; set; }
         entity.Property(m => m.SubmittedOn)
             .IsRequired(true);
+        
+    //[Required]
+    //public bool IsCoachRemoved { get; set; } = false;
+    entity.Property(m => m.IsCoachRemoved)
+        .HasDefaultValue(false)
+        .IsRequired(true);
+
+    //[Required]
+    //public bool IsOrganizationRemoved { get; set; } = false;
+    entity.Property(m => m.IsOrganizationRemoved)
+        .HasDefaultValue(false)
+        .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? OldSystemNotes { get; set; } = null;
