@@ -29,6 +29,8 @@ public class ApplicationClubDb : BaseDb
 
     public Guid? OldSystemApplicationId { get; set; } = null;
 
+    public Guid? OldSystemLinkedClubId { get; set; } = null;
+
     [Required, MaxLength(SharedConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AgeLevel AgeLevel { get; set; } = default!;

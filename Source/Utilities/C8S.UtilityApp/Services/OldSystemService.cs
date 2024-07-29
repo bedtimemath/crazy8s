@@ -13,7 +13,6 @@ public class OldSystemService(
 
     public string ConnectionString => connectionString;
     
-
     public async Task<List<ApplicationSql>> GetApplications()
     {
         var applications = new List<ApplicationSql>();
@@ -41,6 +40,35 @@ public class OldSystemService(
         }
 
         return applications;
+    }
+    
+    public async Task<List<ApplicationClubSql>> GetApplicationClubs()
+    {
+        var applicationClubs = new List<ApplicationClubSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(ApplicationClubSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var applicationClub = reader.ConvertToObject<ApplicationClubSql>();
+                applicationClubs.Add(applicationClub);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return applicationClubs;
     }
 
     public async Task<List<CoachSql>> GetCoaches()

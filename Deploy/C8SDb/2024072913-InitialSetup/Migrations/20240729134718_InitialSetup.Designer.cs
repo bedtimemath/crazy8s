@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20240728220103_AddApplications")]
-    partial class AddApplications
+    [Migration("20240729134718_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,53 @@ namespace C8S.Database.EFCore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
+                {
+                    b.Property<int>("ApplicationClubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationClubId"));
+
+                    b.Property<string>("AgeLevel")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ClubSize")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("OldSystemApplicationClubId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Season")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("StartsOn")
+                        .HasColumnType("date");
+
+                    b.HasKey("ApplicationClubId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("OldSystemApplicationClubId")
+                        .IsUnique()
+                        .HasFilter("[OldSystemApplicationClubId] IS NOT NULL");
+
+                    b.ToTable("ApplicationClubs");
+                });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
                 {
@@ -84,12 +131,17 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemApplicationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OldSystemLinkedCoachId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemLinkedOrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("OldSystemNotes")
                         .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrganizationName")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
@@ -98,7 +150,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("OrganizationType")
-                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -258,6 +309,17 @@ namespace C8S.Database.EFCore.Migrations
                     b.ToTable("Organizations");
                 });
 
+            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
+                {
+                    b.HasOne("C8S.Database.EFCore.Models.ApplicationDb", "Application")
+                        .WithMany("ApplicationClubs")
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+                });
+
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
                 {
                     b.HasOne("C8S.Database.EFCore.Models.CoachDb", "LinkedCoach")
@@ -280,6 +342,11 @@ namespace C8S.Database.EFCore.Migrations
                         .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
+                {
+                    b.Navigation("ApplicationClubs");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>

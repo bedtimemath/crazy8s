@@ -24,6 +24,10 @@ public class ApplicationClubConfig : IEntityTypeConfiguration<ApplicationClubDb>
         entity.Property(m => m.OldSystemApplicationId)
             .IsRequired(false);
 
+        //public Guid? OldSystemLinkedClubId { get; set; } = null;
+        entity.Property(m => m.OldSystemLinkedClubId)
+            .IsRequired(false);
+
         //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public AgeLevel AgeLevel { get; set; } = default!;

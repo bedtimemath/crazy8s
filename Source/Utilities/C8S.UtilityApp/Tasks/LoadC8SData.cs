@@ -108,12 +108,19 @@ internal class LoadC8SData(
 
 #endif
 
-        /*** ORGANIZATIONS ***/
+        /*** APPLICATIONS ***/
         var applicationDTOs = (await oldSystemService.GetApplications())
            .Select(mapper.Map<ApplicationSql, ApplicationDTO>)
            .ToList();
 
         logger.LogInformation("Found {Count:#,##0} applications", applicationDTOs.Count);
+
+        /*** APPLICATION CLUBS ***/
+        var applicationClubDTOs = (await oldSystemService.GetApplicationClubs())
+           .Select(mapper.Map<ApplicationClubSql, ApplicationClubDTO>)
+           .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} application clubs", applicationClubDTOs.Count);
 
 #if false
         var hasOrgIds = applicationDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();

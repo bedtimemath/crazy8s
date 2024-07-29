@@ -25,6 +25,10 @@ public class ApplicationDb : BaseDb
 
     #region Database Properties
     public Guid? OldSystemApplicationId { get; set; } = null;
+    
+    public Guid? OldSystemLinkedCoachId { get; set; } = null;
+    
+    public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
 
     [Required, MaxLength(SharedConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]

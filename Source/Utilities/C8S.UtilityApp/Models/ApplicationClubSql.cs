@@ -9,7 +9,7 @@ public class ApplicationClubSql
 {
     #region Constants & ReadOnlys
     public const string SqlGet =
-        "";
+        "SELECT ac.[Id] AS [OldSystemApplicationClubId], ac.[ApplicationId] AS [OldSystemApplicationId], ac.[LinkedClubId] AS [OldSystemLinkedClubId], al.[Name] AS [AgeLevelString], cs.[Name] AS [ClubSizeString], s.[Ordinal] AS [Season], CAST(ac.[Starts] AS DATE) AS [StartsOnDateTime] FROM [Crazy8s].[ApplicationClub] ac  LEFT JOIN [Crazy8s].[AgeLevel] al ON al.[Id] = ac.[AgeLevelId] LEFT JOIN [Crazy8s].[ClubSize] cs ON cs.[Id] = ac.[ClubSizeId] LEFT JOIN [Crazy8s].[Season] s ON s.[Id] = ac.[SeasonId] WHERE ac.[DeletedBy] IS NULL";
     #endregion
 
     #region Id Property
@@ -21,6 +21,8 @@ public class ApplicationClubSql
 
     public Guid? OldSystemApplicationId { get; set; } = null;
 
+    public Guid? OldLinkedClubId { get; set; } = null;
+
     [NotMapped]
     public string? AgeLevelString { get; set; } = null;
 
@@ -29,7 +31,8 @@ public class ApplicationClubSql
 
     public int? Season { get; set; } = null;
 
-    public DateOnly? StartsOn { get; set; } = null;
+    [NotMapped]
+    public DateTime? StartsOnDateTime { get; set; } = null;
     #endregion
 
     #region Derived Properties
@@ -38,7 +41,7 @@ public class ApplicationClubSql
     {
         "3rd - 5th Grade" => ALevel.GradesK2,
         "K - 2nd Grade" => ALevel.Grades35,
-        null => null,
+        "Unknown" or null => null,
         _ => throw new Exception($"Unrecognized: {AgeLevelString}")
     };
 
@@ -51,8 +54,12 @@ public class ApplicationClubSql
         "Size 12" => CSize.Size12,
         "Size 16" => CSize.Size16,
         "Size 20" => CSize.Size20,
-        null => null,
+        "Unknown" or null => null,
         _ => throw new Exception($"Unrecognized: {ClubSizeString}")
     };
+
+    public DateOnly? StartsOn =>
+        StartsOnDateTime.HasValue ? DateOnly.FromDateTime(StartsOnDateTime.Value) : null;
+
     #endregion
 }

@@ -19,6 +19,14 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
         //public Guid? OldSystemApplicationId { get; set; } = null;
         entity.Property(m => m.OldSystemApplicationId)
             .IsRequired(false);
+        
+        //public Guid? OldSystemLinkedCoachId { get; set; } = null;
+        entity.Property(m => m.OldSystemLinkedCoachId)
+            .IsRequired(false);
+        
+        //public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
+        entity.Property(m => m.OldSystemLinkedOrganizationId)
+            .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -151,6 +159,11 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
         #region Indices
         entity.HasIndex(m => m.OldSystemApplicationId)
             .IsUnique(true);
+        #endregion
+
+        #region Auto-Includes
+        entity.Navigation(m => m.ApplicationClubs)
+            .AutoInclude();
         #endregion
     }
 }

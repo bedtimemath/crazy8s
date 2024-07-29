@@ -36,6 +36,10 @@ public class ApplicationDTO: BaseDTO
     #region Public Properties    
     public Guid? OldSystemApplicationId { get; set; } = null;
 
+    public Guid? OldSystemLinkedCoachId { get; set; } = null;
+
+    public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
+
     public ApplicationStatus? Status { get; set; } = null;
 
     public ApplicantType? ApplicantType { get; set; } = null;

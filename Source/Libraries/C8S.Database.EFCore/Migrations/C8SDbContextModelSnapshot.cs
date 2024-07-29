@@ -128,12 +128,17 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemApplicationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OldSystemLinkedCoachId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemLinkedOrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("OldSystemNotes")
                         .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrganizationName")
-                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
@@ -142,7 +147,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("OrganizationType")
-                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 

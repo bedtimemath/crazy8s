@@ -34,6 +34,8 @@ public class ApplicationClubDTO: BaseDTO
     public Guid? OldSystemApplicationClubId { get; set; } = null;
     
     public Guid? OldSystemApplicationId { get; set; } = null;
+    
+    public Guid? OldSystemLinkedClubId { get; set; } = null;
 
     public AgeLevel? AgeLevel { get; set; } = null;
 
