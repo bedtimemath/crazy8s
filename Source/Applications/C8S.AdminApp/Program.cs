@@ -143,7 +143,7 @@ try
     app.UseStaticFiles();
     app.UseAntiforgery();
 
-    app.MapRazorComponents<App>()
+    app.MapRazorComponents<AppRoot>()
         .AddInteractiveServerRenderMode();
     
     // Use middleware to check the Easy Auth header.

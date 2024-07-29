@@ -1,0 +1,17 @@
+﻿@inherits BaseRazorComponent
+
+<div id="@ComponentId" class="c8s-sidebar-menu-item @CssClass @(_isSelected ? SelectedClass : null)"
+     @onclick="@(async () => await HandleComponentClicked())">
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 Gap="0.5rem">
+        <IconDisplay Icon="@Icon"
+                     CssClass="flex-shrink-0"/>
+        <RadzenText TagName="TagName.Div"
+                    TextAlign="TextAlign.Start"
+                    TextStyle="TextStyle.Body1"
+                    Text="@Text" 
+                    class="flex-grow-1"/>
+    </RadzenStack>
+</div>

@@ -8,13 +8,13 @@
                      AlignItems="AlignItems.Center"
                      JustifyContent="JustifyContent.SpaceBetween"
                      class="h-100">
-            <div/>
-            
-            <div>
-                @SelfService.Username
-            </div>
+            <HeaderLogo />
+            <HeaderProfile />
         </RadzenStack>
     </RadzenHeader>
+    <RadzenSidebar>
+        <SidebarMenu />
+    </RadzenSidebar>
     <RadzenBody>
         @Body
     </RadzenBody>

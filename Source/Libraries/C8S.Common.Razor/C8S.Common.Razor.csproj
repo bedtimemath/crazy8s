@@ -16,4 +16,8 @@
     <PackageReference Include="Radzen.Blazor" Version="5.0.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\C8S.Common\C8S.Common.csproj" />
+  </ItemGroup>
+
 </Project>

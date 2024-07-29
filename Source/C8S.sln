@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastMember", "..\3rdParty\F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{3B8105D0-8711-4400-B24C-6C9F7F0CA889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.AdminApp", "Applications\C8S.AdminApp\C8S.AdminApp.csproj", "{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.AdminApp", "Applications\C8S.AdminApp\C8S.AdminApp.csproj", "{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

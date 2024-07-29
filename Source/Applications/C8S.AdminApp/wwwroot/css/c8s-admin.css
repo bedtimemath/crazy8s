@@ -1,45 +1,85 @@
-﻿:root {
-    --rz-sidebar-width: 10rem;
+﻿@font-face {
+    font-family: 'GrilledCheese BTN';
+    src: url('/fonts/GrilledCheeseBTN.woff2') format('woff2'), url('/fonts/GrilledCheeseBTN.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+:root {
+    --rz-sidebar-width: 15rem;
     --rz-card-border-radius: 6px;
-    --nr24-primary-color: #0057b7;
-    --nr24-primary-color-light: #74a9d8;
-    --nr24-primary-color-dark: #003c71;
-    --nr24-highlight-color-red: #d72638;
-    --nr24-highlight-color-yellow: #ffd100;
-    --nr24-header-background-color: #003c71;
-    --nr24-header-text-color: #ffffff;
+    --rz-header-background-color: #253071;
+    --c8s-primary-color: #697fbf;
+    --c8s-primary-color-light: #00b2f3;
+    --c8s-primary-color-dark: #253071;
+    --c8s-highlight-color-orange: #f47527;
+    --c8s-highlight-color-yellow: #fff200;
+    --c8s-header-background-color: #2e4179;
+    --c8s-header-text-color: #ffffff;
 }
 
 /*
     HEADERS
 */
-.nr24-team-header h1 {
-    color: var(--nr24-header-text-color);
-    font-size: x-large;
-    margin-bottom: 0;
+.c8s-header-logo h1 {
+    font-size: 2.5rem;
+    font-weight: normal;
+    font-family: "GrilledCheese BTN";
+    color: var(--c8s-header-text-color);
+    margin: 0.25rem;
+    text-shadow: #333 3px 3px 8px;
 }
 
-ul.rz-profile-menu .rz-navigation-menu {
-    right: initial;
+.c8s-header-profile div {
+    color: var(--c8s-header-text-color);
+    margin: 0.5rem;
 }
+
+/*
+    SIDEBAR
+*/
+.c8s-sidebar-menu {
+    font-size: xx-large;
+}
+
+    .c8s-sidebar-menu .c8s-sidebar-menu-item {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background-color: transparent;
+    }
+
+        .c8s-sidebar-menu .c8s-sidebar-menu-item.selected {
+            background-color: var(--c8s-header-background-color);
+        }
+
+        .c8s-sidebar-menu .c8s-sidebar-menu-item .rz-text-body1 {
+            color: inherit;
+            margin-bottom: 0;
+            font-size: x-large;
+        }
+
+        .c8s-sidebar-menu .c8s-sidebar-menu-item.selected .rz-text-body1 {
+            color: var(--c8s-header-text-color);
+        }
+
+        .c8s-sidebar-menu .c8s-sidebar-menu-item.selected .c8s-icon-display i {
+            color: var(--c8s-header-text-color);
+        }
 
 /*
     ICONS
 */
-.nr24-profile-icon-large {
-    width: 120px;
-    clip-path: circle(60px);
+.c8s-icon-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.nr24-profile-icon-medium {
-    width: 60px;
-    clip-path: circle(30px);
-}
-
-.nr24-profile-icon-small {
-    width: 30px;
-    clip-path: circle(15px);
-}
+    .c8s-icon-display i {
+        margin: 0.25rem;
+    }
 
 /*
     FORMS
@@ -48,155 +88,3 @@ ul.rz-profile-menu .rz-navigation-menu {
 /*
     CARDS
 */
-.nr24-action-card .rz-card .rz-text-body1,
-.nr24-action-card .rz-card .rz-text-body2 {
-    margin-bottom: 0;
-}
-
-.nr24-action-card .rz-card .rz-text-body2 {
-    font-size: small;
-}
-
-.nr24-action-card .rz-card .nr24-action-card-left {
-    min-width: 6rem;
-    padding: 1rem;
-    background-color: var(--nr24-primary-color-light);
-    border-top-left-radius: var(--rz-card-border-radius);
-    border-bottom-left-radius: var(--rz-card-border-radius);
-}
-
-    .nr24-action-card .rz-card .nr24-action-card-left i {
-        color: white;
-        font-size: xx-large;
-    }
-
-    .nr24-action-card .rz-card .nr24-action-card-left .rz-text-body1 {
-        font-weight: bold;
-    }
-
-    .nr24-action-card .rz-card .nr24-action-card-left .rz-text-body1,
-    .nr24-action-card .rz-card .nr24-action-card-left .rz-text-body2 {
-        color: white;
-    }
-
-.nr24-action-card .rz-card .nr24-action-card-right {
-    padding: 1rem;
-    border-top-right-radius: var(--rz-card-border-radius);
-    border-bottom-right-radius: var(--rz-card-border-radius);
-}
-
-    .nr24-action-card .rz-card .nr24-action-card-right .rz-text-body1 {
-        font-weight: bold;
-        font-size: large;
-    }
-
-.nr24-action-card-empty .rz-card .nr24-empty-spacer {
-    min-height: 12rem;
-}
-
-.nr24-action-card .rz-card .nr24-action-target {
-    color: var(--nr24-primary-color-dark);
-    font-weight: bold;
-}
-
-/*
-    CONTROLS - ACTION PICKER
-*/
-.nr24-action-type-picker .rz-button-text:not(:first-child) {
-    margin-left: 0.5rem;
-    display: none;
-}
-
-@media screen and (min-width: 768px) {
-    .nr24-action-type-picker .rz-button-text:not(:first-child) {
-        display: block;
-    }
-}
-
-/*
-    CONTROLS - ACTIVIST PICKER
-*/
-.nr24-activist-picker {
-    min-width: initial;
-}
-
-@media screen and (min-width: 768px) {
-    .nr24-activist-picker {
-        min-width: 20rem;
-    }
-}
-
-.nr24-activist-picker .rz-dropdown-label .rz-text-body1 {
-    margin-bottom: 0;
-}
-
-/*
-    RANKINGS - TEAM RANKINGS
-*/
-
-.nr24-team-rankings {
-    min-width: 100%;
-}
-
-@media screen and (min-width: 768px) {
-    .nr24-team-rankings {
-        min-width: 600px;
-    }
-}
-
-/*
-    SUMMARIES
-*/
-
-
-.nr24-summary-card .rz-card {
-    min-height: 6rem;
-}
-
-.nr24-summary-card .nr24-summary-card-left {
-    padding: 1rem 0.5rem;
-}
-
-.nr24-summary-card .nr24-summary-card-rank h1 {
-    font-size: x-large;
-    font-weight: bold;
-}
-
-@media screen and (min-width: 768px) {
-    .nr24-summary-card .nr24-summary-card-rank h1 {
-        font-size: xx-large;
-        font-weight: bold;
-    }
-}
-
-.nr24-summary-card .nr24-summary-card-right {
-    padding-left: 0.75rem;
-}
-
-    .nr24-summary-card .nr24-summary-card-right .nr24-summary-name {
-        color: var(--nr24-primary-color-dark);
-        margin-bottom: 0;
-    }
-    .nr24-summary-card .nr24-summary-card-right .nr24-summary-tagline {
-        color: var(--nr24-primary-color-dark);
-        margin-bottom: 0;
-        font-style: italic;
-    }
-
-.nr24-summary-card .nr24-summary-counts {
-    padding-top: 8px;
-    background-color: var(--nr24-primary-color-light);
-}
-
-    .nr24-summary-card .nr24-summary-counts i,
-    .nr24-summary-card .nr24-summary-counts .rz-text-body2 {
-        margin-bottom: 4px;
-        color: var(--nr24-header-text-color);
-    }
-
-    .nr24-summary-card .nr24-summary-counts .nr24-summary-total i,
-    .nr24-summary-card .nr24-summary-counts .nr24-summary-total .rz-text-body2 {
-        font-size: large;
-        font-weight: bold;
-        color: var(--nr24-highlight-color-red);
-    }
