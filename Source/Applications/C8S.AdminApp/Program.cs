@@ -3,6 +3,7 @@ using C8S.AdminApp;
 using C8S.AdminApp.Services;
 using C8S.Common;
 using C8S.Common.Helpers.Extensions;
+using C8S.Common.Models;
 using C8S.Database.Repository.Extensions;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Azure;
@@ -26,43 +27,43 @@ try
      * BUILDER
      */
     var builder = WebApplication.CreateBuilder(args);
+    var logLevel = builder.Environment.IsProduction() ? LogEventLevel.Information : LogEventLevel.Debug;
 
     /*****************************************
      * CONFIGURATION
      */
-    // We use this simple distinguishing variable to determine the log level
-    //	and whether to set our GA to debug (below)
-    var logLevel = builder.Environment.IsProduction() ? LogEventLevel.Information : LogEventLevel.Debug;
 
-    var appInsightsConnection = !builder.Environment.IsProduction() ? null :
-        "InstrumentationKey=5e247dc2-1787-4a48-a65b-27195490fa48;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=ea002bd8-896a-4f82-a734-aa71b9826bf8";
+    // check for the two variables we need immediately
+    var appConfigCnnString = builder.Configuration["C8S_Admin_AppConfig"];
+    var sensitiveFolderPath = builder.Configuration["C8S_Admin_SensitiveFolder"];
+    
+    if (String.IsNullOrEmpty(sensitiveFolderPath))
+    {
+        // configure with the azure configuration
+        builder.Configuration
+            .AddAzureAppConfiguration(config =>
+            {
+                config.Connect(appConfigCnnString)
+                    .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
+                    .Select(KeyFilter.Any, LabelFilter.Null)
+                    .Select(KeyFilter.Any, builder.Environment.EnvironmentName);
+            });
+    }
+    else
+    {
+        // configure with a file (much faster)
+        builder.Configuration
+            .SetBasePath(sensitiveFolderPath)
+            .AddJsonFile($"c8s-admin.appsettings.{builder.Environment.EnvironmentName.ToLowerInvariant()}.json", optional: false);
+    }
+
+    // load the connections that we need
+    var connections = builder.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                      throw new Exception($"Missing configuration section: {Connections.SectionName}");
 
     /*****************************************
      * LOGGING
      */
-    // add some of the configuration so that we can use it below
-    builder.Configuration
-        .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile($"appsettings.json", optional: true)
-        .AddEnvironmentVariables();
-
-    // using the app settings json file during development is much faster
-    if (!builder.Environment.IsDevelopment() || !File.Exists($"appsettings.json"))
-    {
-        builder.Configuration
-            .AddAzureAppConfiguration(config =>
-            {
-                var cnnString = builder.Configuration.GetConnectionString(C8SConstants.Connections.AppConfig);
-                var environmentName = builder.Environment.EnvironmentName;
-
-                config.Connect(cnnString)
-                    .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
-                    .Select(KeyFilter.Any, LabelFilter.Null)
-                    .Select(KeyFilter.Any, environmentName);
-            });
-    }
-
-    // set up the serilog logger
     builder.Host.UseSerilog((context, services, configuration) =>
     {
         configuration
@@ -77,11 +78,11 @@ try
                 outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
                 theme: AnsiConsoleTheme.Code);
 
-        if (!String.IsNullOrEmpty(appInsightsConnection))
+        if (!String.IsNullOrEmpty(connections.ApplicationInsights))
         {
             configuration
                 .WriteTo.ApplicationInsights(
-                    new TelemetryConfiguration() { ConnectionString = appInsightsConnection }, TelemetryConverter.Traces);
+                    new TelemetryConfiguration() { ConnectionString = connections.ApplicationInsights }, TelemetryConverter.Traces);
         }
     });
     SelfLog.Enable(m => Console.Error.WriteLine(m));
@@ -89,23 +90,22 @@ try
     /*****************************************
      * APPLICATION INSIGHTS
      */
-    if (!String.IsNullOrEmpty(appInsightsConnection))
+    if (!String.IsNullOrEmpty(connections.ApplicationInsights))
         builder.Services.AddApplicationInsightsTelemetry();
 
     /*****************************************
      * AZURE CLIENTS SETUP
      */
-    var azureStorageCnnString = builder.Configuration.GetConnectionString(C8SConstants.Connections.AzureStorage);
     builder.Services.AddAzureClients(clientBuilder =>
     {
-        clientBuilder.AddBlobServiceClient(azureStorageCnnString);
+        clientBuilder.AddBlobServiceClient(connections.AzureStorage);
     });
 
     /*****************************************
      * CRAZY 8s SERVICES
      */
     builder.Services.AddCommonHelpers();
-    builder.Services.AddC8SRepository();
+    builder.Services.AddC8SRepository(connections.Database);
     builder.Services.AddSingleton<SelfService>();
     
     /*****************************************

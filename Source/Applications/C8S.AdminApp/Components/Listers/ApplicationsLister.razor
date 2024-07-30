@@ -1,0 +1,24 @@
+﻿@using C8S.Database.Abstractions.DTOs
+@inherits BaseRazorComponent
+
+<div id="@ComponentId" class="c8s-applications-lister c8s-lister @CssClass">
+    <div>
+        <strong>Query</strong>: @_filter?.Query
+    </div>
+
+    <Virtualize @ref="_applicationsList"
+                TItem="ApplicationDTO"
+                ItemsProvider="@LoadApplications"
+                Context="application">
+        <ItemContent>
+            <ApplicationCard Application="application"/>
+        </ItemContent>
+        <EmptyContent>
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body1"
+                        TextAlign="TextAlign.Center"
+                        Text="No applications found."/>
+        </EmptyContent>
+    </Virtualize>
+
+</div>

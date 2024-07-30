@@ -83,4 +83,14 @@ public class ApplicationDTO : BaseDTO
     public int? LinkedOrganizationId { get; set; } = default!;
     public OrganizationDTO? LinkedOrganization { get; set; } = default!;
     #endregion
+
+    #region Derived Properties
+    public string? FullName => 
+        String.IsNullOrEmpty(ApplicantFirstName) && String.IsNullOrEmpty(ApplicantLastName) ? null : 
+            String.Join(" ", new List<string?>() { ApplicantFirstName, ApplicantLastName });
+
+    public string? StartDates => ApplicationClubs?.Count >= 1 ? 
+        String.Join(", ", ApplicationClubs.Select(ac => ac.StartsOn?.ToString("d")).Where(s => s != null)) : null;
+
+    #endregion
 }

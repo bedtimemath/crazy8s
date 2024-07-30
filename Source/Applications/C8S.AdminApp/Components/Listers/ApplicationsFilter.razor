@@ -1,0 +1,15 @@
+﻿@inherits BaseRazorComponent
+
+<div id="@ComponentId" class="c8s-applications-filter @CssClass">
+    
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 class="w-100 h-100">
+        
+        <RadzenTextBox @bind-Value="@Filter.Query"
+                       Change="@(async () => await FilterChanged.InvokeAsync(Filter))" />
+
+    </RadzenStack>
+
+</div>

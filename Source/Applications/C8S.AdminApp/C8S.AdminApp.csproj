@@ -31,4 +31,10 @@
     <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\Config.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

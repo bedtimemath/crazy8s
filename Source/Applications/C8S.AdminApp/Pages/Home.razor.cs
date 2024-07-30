@@ -1,6 +1,5 @@
-﻿using C8S.AdminApp.Services;
-using C8S.Common;
-using C8S.Common.Razor.Base;
+﻿using C8S.Common.Razor.Base;
+using C8S.Database.Repository.Repositories;
 using Microsoft.AspNetCore.Components;
 
 namespace C8S.AdminApp.Pages;
@@ -11,14 +10,23 @@ public partial class Home : BaseRazorPage
     public ILogger<Home> Logger { get; set; } = default!;
 
     [Inject]
-    public SelfService SelfService { get; set; } = default!;
+    public C8SRepository Repository { get; set; } = default!;
 
-    private string _username = SharedConstants.Display.NotSet;
+    private int? _totalApplications = null;
 
-    protected override void OnInitialized()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnInitialized();
+        await base.OnAfterRenderAsync(firstRender);
+        if (!firstRender) return;
 
-        _username = SelfService.Username;
+        try
+        {
+            _totalApplications = await Repository.GetApplicationsCount();
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            await HandleExceptionRaisedAsync(ex).ConfigureAwait(false);
+        }
     }
 }

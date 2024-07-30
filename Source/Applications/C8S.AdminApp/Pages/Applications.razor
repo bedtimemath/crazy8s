@@ -1,6 +1,20 @@
 ﻿@page "/applications"
 @inherits C8S.Common.Razor.Base.BaseRazorPage
 
+
 <PageTitle>Applications</PageTitle>
 
-<h1>Applications</h1>
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.SpaceBetween"
+             Gap="0.5rem"
+             class="h-100 w-100">
+
+    <ApplicationsFilter FilterChanged="@(async (f) => await HandleFilterChanged(f))"
+                        CssClass="flex-shrink-0"/>
+    
+    <ApplicationsLister @ref="@_applicationsLister"
+                        CssClass="flex-grow-1"/>
+
+</RadzenStack>
+

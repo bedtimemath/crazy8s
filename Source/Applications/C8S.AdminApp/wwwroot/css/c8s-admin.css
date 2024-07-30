@@ -42,6 +42,7 @@
 */
 .c8s-sidebar-menu {
     font-size: xx-large;
+    padding: 0.5rem;
 }
 
     .c8s-sidebar-menu .c8s-sidebar-menu-item {
@@ -82,9 +83,27 @@
     }
 
 /*
-    FORMS
+    FILTERS
 */
+.c8s-applications-filter {
+    background: var(--c8s-primary-color-dark);
+    width: 100%;
+    height: 5rem;
+    border-radius: 1rem;
+}
+
+/*
+    LISTERS
+*/
+.c8s-applications-lister {
+    background: transparent;
+    width: 100%;
+    height: 100%;
+}
 
 /*
     CARDS
 */
+.c8s-application-card {
+    margin: 0.25rem 0;
+}

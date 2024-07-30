@@ -1,5 +1,7 @@
-﻿using C8S.Common;
+﻿using Azure.Identity;
+using C8S.Common;
 using C8S.Common.Helpers.Extensions;
+using C8S.Common.Models;
 using C8S.Database.EFCore.Extensions;
 using C8S.Database.Repository.Extensions;
 using C8S.UtilityApp.Extensions;
@@ -7,6 +9,7 @@ using C8S.UtilityApp.Tasks;
 using CommandLine;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -31,9 +34,8 @@ try
     var builder = Host.CreateApplicationBuilder(args);
 
     /*****************************************
-     * LOGGING
+     * PARSER
      */
-    // add some of the configuration so that we can use it below
     var parserResult = Parser.Default
         .ParseArguments<
             LoadC8SDataOptions,
@@ -42,30 +44,45 @@ try
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
     Log.Logger.Warning(platform);
     
+    /*****************************************
+     * CONFIGURATION
+     */
     builder.Configuration
-        .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile($"appsettings.{platform}.json", optional: false)
         .AddEnvironmentVariables();
 
-    var host = Host.CreateDefaultBuilder(args)
-#if false
-        .ConfigureAppConfiguration((bldr) =>
-        {
-            // add our json file configuration to the context
-            //var jsonSource = builder.Configuration.Sources.FirstOrDefault(s => s is JsonConfigurationSource);
-            //if (jsonSource != null) bldr.Sources.Add(jsonSource);
+    // check for the two variables we need immediately
+    var appConfigCnnString = builder.Configuration["C8S_Admin_AppConfig"];
+    var sensitiveFolderPath = builder.Configuration["C8S_Admin_SensitiveFolder"];
 
-            // then add from the app config in Azure
-            var cnnString = builder.Configuration.GetConnectionString(C8SConstants.Connections.AppConfig);
-            bldr.AddAzureAppConfiguration(config =>
+    if (String.IsNullOrEmpty(sensitiveFolderPath))
+    {
+        // configure with the azure configuration
+        builder.Configuration
+            .AddAzureAppConfiguration(config =>
             {
-                config.Connect(cnnString)
+                config.Connect(appConfigCnnString)
                     .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
                     .Select(KeyFilter.Any, LabelFilter.Null)
                     .Select(KeyFilter.Any, platform);
             });
-        }) 
-#endif
+    }
+    else
+    {
+        // configure with a file (much faster)
+        builder.Configuration
+            .SetBasePath(sensitiveFolderPath)
+            .AddJsonFile($"c8s-admin.appsettings.{platform.ToLowerInvariant()}.json", optional: false);
+    }
+
+    // load the connections that we need
+    var connections = builder.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                      throw new Exception($"Missing configuration section: {Connections.SectionName}");
+    
+    
+    /*****************************************
+     * HOST SETUP
+     */
+    var host = Host.CreateDefaultBuilder(args)
         .ConfigureServices((context, services) =>
         {
             // Parsing the arguments
@@ -84,22 +101,18 @@ try
             /*****************************************
              * AZURE CLIENTS SETUP
              */
-            var azureStorageCnnString = builder.Configuration.GetConnectionString(C8SConstants.Connections.AzureStorage);
             services.AddAzureClients(clientBuilder =>
             {
-                clientBuilder.AddBlobServiceClient(azureStorageCnnString);
+                clientBuilder.AddBlobServiceClient(connections.AzureStorage);
             });
 
             // Setting up the database (new)
-            var connectionString = builder.Configuration.GetConnectionString(C8SConstants.Connections.Database);
-            services.AddC8SDbContext(connectionString);
+            services.AddC8SDbContext(connections.Database);
 
             // Set up other services
             services.AddCommonHelpers();
-            services.AddC8SRepository();
-
-            var oldSystemCnnString = builder.Configuration.GetConnectionString(C8SConstants.Connections.OldSystem);
-            services.AddOldSystemServices(oldSystemCnnString);
+            services.AddC8SRepository(connections.Database);
+            services.AddOldSystemServices(connections.OldSystem);
         })
         .UseSerilog((context, services, config) => config
             .MinimumLevel.Is(LogEventLevel.Verbose)

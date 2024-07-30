@@ -1,4 +1,5 @@
 ﻿using C8S.Database.Abstractions.DTOs;
+using C8S.Database.Abstractions.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -8,58 +9,82 @@ public partial class C8SRepository
 {
     #region Applications
     public async Task<IList<ApplicationDTO>> GetApplications(
-        bool? whereLinkedCoach = null,
-        bool? whereLinkedOrganization = null)
+        ApplicationFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Applications // clubs included automatically
+                .OrderByDescending(a => a.SubmittedOn)
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        logger.LogDebug("Created queryable for Applications");
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.ApplicantFirstName != null && a.ApplicantFirstName.Contains(filter.Query)) ||
+                                (a.ApplicantLastName.Contains(filter.Query)) ||
+                                (a.ApplicantEmail.Contains(filter.Query)) );
+            }
+
+            if (filter.Status != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Status == filter.Status);
+            }
+        }
+
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
+        return (await queryable.ToListAsync())
+            .Select(mapper.Map<ApplicationDTO>).ToList();
+    }
+    
+    public async Task<int> GetApplicationsCount(
+        ApplicationFilter? filter = null)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
             dbContext.Applications // clubs included automatically
                 .AsNoTracking()
+                .AsSingleQuery()
                 .AsQueryable();
 
         logger.LogDebug("Created queryable for Applications");
 
-        /* LINKED COACH */
-        if (whereLinkedCoach.HasValue)
+        /* FILTER */
+        if (filter != null)
         {
-            if (whereLinkedCoach.Value)
+            if (!String.IsNullOrEmpty(filter.Query))
             {
                 queryable = queryable
-                    .Where(a => a.LinkedCoachId != null);
-
-                logger.LogDebug("Including only linked to coach");
+                    .Where(a => (a.ApplicantFirstName != null && a.ApplicantFirstName.Contains(filter.Query)) ||
+                                (a.ApplicantLastName.Contains(filter.Query)) ||
+                                (a.ApplicantEmail.Contains(filter.Query)) );
             }
-            else
+
+            if (filter.Status != null)
             {
                 queryable = queryable
-                    .Where(a => a.LinkedCoachId == null);
-
-                logger.LogDebug("Including only unlinked to coach");
+                    .Where(a => a.Status == filter.Status);
             }
         }
 
-        /* LINKED ORGANIZATION */
-        if (whereLinkedOrganization.HasValue)
-        {
-            if (whereLinkedOrganization.Value)
-            {
-                queryable = queryable
-                    .Where(a => a.LinkedOrganizationId != null);
 
-                logger.LogDebug("Including only linked to organization");
-            }
-            else
-            {
-                queryable = queryable
-                    .Where(a => a.LinkedOrganizationId == null);
-
-                logger.LogDebug("Including only unlinked to organization");
-            }
-        }
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<ApplicationDTO>).ToList();
+        return await queryable.CountAsync();
     }
     #endregion
 

@@ -8,14 +8,6 @@ public static class C8SConstants
         public const string Labels = "labels";
         public const string QRCodes = "qrcodes";
     }
-    
-    public static class Connections
-    {
-        public const string AzureStorage = "AzureStorage";
-        public const string AppConfig = "AppConfig";
-        public const string Database = "Database";
-        public const string OldSystem = "OldSystem";
-    }
 
     public static class Defaults
     {

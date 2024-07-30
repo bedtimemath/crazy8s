@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.EFCore.Contexts;
-using C8S.Database.EFCore.Models;
 using C8S.Database.Repository.Repositories;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
@@ -157,8 +156,8 @@ internal class LoadC8SData(
         /*** JOIN APPLICATIONS TO COACHES ***/
         var allCoaches = (await repository.GetCoaches()).ToList();
 
-        var unlinkedCoachApps = (await repository.GetApplications(whereLinkedCoach: false))
-            .Where(a => a is { OldSystemLinkedCoachId: not null, IsCoachRemoved: false })
+        var unlinkedCoachApps = (await repository.GetApplications())
+            .Where(a => a is { LinkedCoachId: null, OldSystemLinkedCoachId: not null, IsCoachRemoved: false })
             .ToList();
         logger.LogInformation("Found {Count:#,##0} applications missing linked coaches", unlinkedCoachApps.Count);
 
@@ -195,8 +194,8 @@ internal class LoadC8SData(
         logger.LogInformation("{Count:#,##0} applications updated with coach link; {Missing:#,##0} missing.", appsLinkedToCoach, appsMissingCoach);
         
         /*** JOIN APPLICATIONS TO ORGANIZATIONS ***/
-        var unlinkedOrganizationApps = (await repository.GetApplications(whereLinkedOrganization: false))
-            .Where(a => a is { OldSystemLinkedOrganizationId: not null, IsOrganizationRemoved: false })
+        var unlinkedOrganizationApps = (await repository.GetApplications())
+            .Where(a => a is { LinkedOrganizationId: null, OldSystemLinkedOrganizationId: not null, IsOrganizationRemoved: false })
             .ToList();
         logger.LogInformation("Found {Count:#,##0} applications missing linked organizations", unlinkedOrganizationApps.Count);
 

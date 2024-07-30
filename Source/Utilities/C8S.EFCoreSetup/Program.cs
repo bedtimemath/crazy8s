@@ -56,7 +56,7 @@ SelfLog.Enable(msg => Debug.WriteLine(msg));
 builder.ConfigureServices((context, services) =>
 {
     // LIBRARY
-    var libraryConnection = context.Configuration.GetConnectionString(C8SConstants.Connections.Database);
+    var libraryConnection = context.Configuration.GetConnectionString("Database");
     services.AddDbContext<C8SDbContext>(config => 
         config.UseSqlServer(libraryConnection));
 });

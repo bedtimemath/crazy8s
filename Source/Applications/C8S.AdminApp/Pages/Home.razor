@@ -4,6 +4,13 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app, @_username!
+<div>
+    @if (_totalApplications.HasValue)
+    {
+        @: Found @_totalApplications.Value.ToString("#,##0") applications.
+    }
+    else
+    {
+        @: loading...
+    }
+</div>
