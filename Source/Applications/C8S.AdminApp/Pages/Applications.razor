@@ -10,11 +10,17 @@
              Gap="0.5rem"
              class="h-100 w-100">
 
-    <ApplicationsFilter FilterChanged="@(async (f) => await HandleFilterChanged(f))"
-                        CssClass="flex-shrink-0"/>
+    <ApplicationsFilter Filter="@_filter"
+                        FilterChanged="@(async (f) => await HandleFilterChanged(f))"
+                        CssClass="w-100"/>
     
+    <ApplicationsFilterDescription Filter="@_filter"
+                                   Total="@_total"
+                                   CssClass="w-100" />
+
     <ApplicationsLister @ref="@_applicationsLister"
-                        CssClass="flex-grow-1"/>
+                        TotalChanged="@HandleTotalChanged"
+                        CssClass="w-100" />
 
 </RadzenStack>
 

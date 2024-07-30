@@ -4,14 +4,11 @@ using Microsoft.AspNetCore.Components;
 
 namespace C8S.AdminApp.Components.Listers;
 
-public partial class ApplicationsFilter : BaseRazorComponent
+public partial class ApplicationsFilterDescription: BaseRazorComponent
 {
-    [Inject]
-    public ILogger<ApplicationsFilter> Logger { get; set; } = default!;
-
     [Parameter]
     public ApplicationFilter Filter { get; set; } = default!;
 
     [Parameter]
-    public EventCallback<ApplicationFilter> FilterChanged { get; set; }
+    public int Total { get; set; } = default(int);
 }

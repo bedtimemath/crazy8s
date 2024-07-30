@@ -2,10 +2,6 @@
 @inherits BaseRazorComponent
 
 <div id="@ComponentId" class="c8s-applications-lister c8s-lister @CssClass">
-    <div>
-        <strong>Query</strong>: @_filter?.Query
-    </div>
-
     <Virtualize @ref="_applicationsList"
                 TItem="ApplicationDTO"
                 ItemsProvider="@LoadApplications"

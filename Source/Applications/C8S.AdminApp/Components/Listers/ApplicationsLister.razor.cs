@@ -15,6 +15,9 @@ public partial class ApplicationsLister : BaseRazorComponent
     [Inject]
     public C8SRepository Repository { get; set; } = default!;
 
+    [Parameter]
+    public EventCallback<int> TotalChanged { get; set; } = default!;
+
     private ApplicationFilter? _filter = null;
 
     private Virtualize<ApplicationDTO> _applicationsList = default!;
@@ -35,11 +38,14 @@ public partial class ApplicationsLister : BaseRazorComponent
 
         try
         {
-            var total = await Repository.GetApplicationsCount();
-            var toTake = Math.Min(request.Count, total - request.StartIndex);
+            var total = await Repository.GetApplicationsCount(
+                filter: _filter);
             var applications = await Repository.GetApplications(
                 filter: _filter,
-                startIndex: request.StartIndex, takeCount: toTake);
+                startIndex: request.StartIndex, 
+                takeCount: Math.Min(request.Count, total - request.StartIndex));
+
+            await TotalChanged.InvokeAsync(total);
 
             return new ItemsProviderResult<ApplicationDTO>(applications, total);
         }

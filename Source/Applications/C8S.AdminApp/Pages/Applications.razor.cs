@@ -12,9 +12,22 @@ public partial class Applications : BaseRazorPage
 
     private ApplicationsLister _applicationsLister = default!;
 
+    private ApplicationFilter _filter = new();
+    private int _total = default(int);
+
     private async Task HandleFilterChanged(ApplicationFilter filter)
     {
         Logger.LogInformation("HandleFilterChanged: {@Filter}", filter);
+
+        _filter = filter;
         await _applicationsLister.SetFilter(filter);
+    }
+
+    private void HandleTotalChanged(int count)
+    {
+        Logger.LogInformation("HandleCountChanged: {@Count}", count);
+
+        _total = count;
+        StateHasChanged();
     }
 }

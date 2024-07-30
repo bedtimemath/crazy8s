@@ -32,8 +32,10 @@
 
                     @* EMAIL | ORGANIZATION *@
                     <RadzenStack Orientation="Orientation.Vertical"
-                                 AlignItems="AlignItems.Stretch"
-                                 JustifyContent="JustifyContent.Start">
+                                 AlignItems="AlignItems.Start"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0"
+                                 class="c8s-application-card-column">
 
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"
@@ -41,10 +43,12 @@
                                     Text="@Application.ApplicantEmail"/>
                     </RadzenStack>
 
-                    @* STATUS | SUBMITTED *@
+                    @* STATUS | SUBMITTED | START DATES *@
                     <RadzenStack Orientation="Orientation.Vertical"
-                                 AlignItems="AlignItems.Stretch"
-                                 JustifyContent="JustifyContent.Start">
+                                 AlignItems="AlignItems.Start"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0"
+                                 class="c8s-application-card-column">
 
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"
@@ -57,13 +61,6 @@
                                     TextStyle="TextStyle.Body1">
                             Submitted: @(Application.SubmittedOn?.ToString("G") ?? SharedConstants.Display.NotSet)
                         </RadzenText>
-                    </RadzenStack>
-
-                    @* START DATES *@
-                    <RadzenStack Orientation="Orientation.Vertical"
-                                 AlignItems="AlignItems.Stretch"
-                                 JustifyContent="JustifyContent.Start">
-
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"
                                     TextStyle="TextStyle.Body1">
