@@ -1,0 +1,19 @@
+﻿@inherits BaseRazorComponent
+
+<div id="@ComponentId" class="c8s-filter c8s-coaches-filter @CssClass">
+    
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 Gap="1rem;"
+                 class="w-100 h-100">
+        
+        <RadzenTextBox @bind-Value="@Filter.Query"
+                       type="search"
+                       Change="@(async () => await FilterChanged.InvokeAsync(Filter))"
+                       Placeholder="Search for name, email, etc."
+                       class="flex-grow-1"/>
+
+    </RadzenStack>
+
+</div>

@@ -85,7 +85,7 @@
 /*
     FILTERS
 */
-.c8s-applications-filter {
+.c8s-filter {
     background: var(--c8s-primary-color-dark);
     padding: 1.25rem 1.75rem;
     border-radius: 1rem;
@@ -94,7 +94,7 @@
 /*
     LISTERS
 */
-.c8s-applications-lister {
+.c8s-lister {
     background: transparent;
     width: 100%;
     height: 100%;
@@ -103,17 +103,9 @@
 /*
     CARDS
 */
-.c8s-application-card {
+.c8s-card {
     margin: 0.25rem 0;
 }
-.c8s-application-card .c8s-application-card-column {
-    min-width: 20rem;
-}
-
-.c8s-organization-card {
-    margin: 0.25rem 0;
-}
-
-.c8s-organization-card .c8s-organization-card-column {
+.c8s-card .c8s-card-column {
     min-width: 20rem;
 }

@@ -1,8 +1,8 @@
-﻿@using C8S.Common
+﻿@inherits BaseRazorComponent
+@using C8S.Common
 @using C8S.Common.Extensions
-@inherits BaseRazorComponent
 
-<div id="@ComponentId" class="c8s-organization-card @CssClass">
+<div id="@ComponentId" class="c8s-card c8s-organization-card @CssClass">
 
     <RadzenCard class="w-100">
 
@@ -35,7 +35,7 @@
                                  AlignItems="AlignItems.Start"
                                  JustifyContent="JustifyContent.Start"
                                  Gap="0"
-                                 class="c8s-organization-card-column">
+                                 class="c8s-card-column c8s-organization-card-column">
 
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"
@@ -48,7 +48,7 @@
                                  AlignItems="AlignItems.Start"
                                  JustifyContent="JustifyContent.Start"
                                  Gap="0"
-                                 class="c8s-organization-card-column">
+                                 class="c8s-card-column c8s-organization-card-column">
 
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"

@@ -56,4 +56,15 @@ public class CoachDTO: BaseDTO
     #region Child Properties
     //public ICollection<LeadDTO> Leads { get; set; } = default!;
     #endregion
+
+    #region Derived Properties
+    public string? FullName => 
+        String.IsNullOrEmpty(FirstName) && String.IsNullOrEmpty(LastName) ? null : 
+            String.Join(" ", new List<string?>() { FirstName, LastName });
+    
+    public string? FullPhone => 
+        String.IsNullOrEmpty(Phone) && String.IsNullOrEmpty(PhoneExt) ? null : 
+            String.Join(" x", new List<string?>() { Phone, PhoneExt });
+
+    #endregion
 }

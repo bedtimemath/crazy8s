@@ -1,7 +1,7 @@
 ﻿@using C8S.Database.Abstractions.DTOs
 @inherits BaseRazorComponent
 
-<div id="@ComponentId" class="c8s-applications-lister c8s-lister @CssClass">
+<div id="@ComponentId" class="c8s-lister c8s-applications-lister @CssClass">
     <Virtualize @ref="_applicationsList"
                 TItem="ApplicationDTO"
                 ItemsProvider="@LoadApplications"

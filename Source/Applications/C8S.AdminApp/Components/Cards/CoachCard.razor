@@ -1,8 +1,6 @@
-﻿@using C8S.Common
-@using C8S.Common.Extensions
-@inherits BaseRazorComponent
+﻿@inherits BaseRazorComponent
 
-<div id="@ComponentId" class="c8s-card c8s-application-card @CssClass">
+<div id="@ComponentId" class="c8s-card c8s-coach-card @CssClass">
 
     <RadzenCard class="w-100">
 
@@ -11,7 +9,7 @@
                      JustifyContent="JustifyContent.SpaceBetween"
                      class="w-100">
 
-            @* APPLICATION INFO *@
+            @* COACH INFO *@
             <RadzenStack Orientation="Orientation.Vertical"
                          AlignItems="AlignItems.Stretch"
                          JustifyContent="JustifyContent.SpaceBetween"
@@ -21,7 +19,7 @@
                 <RadzenText TagName="TagName.H5"
                             TextAlign="TextAlign.Left"
                             TextStyle="TextStyle.DisplayH5"
-                            Text="@Application.FullName"
+                            Text="@Coach.FullName"
                             class="flex-grow-1"/>
 
                 @* COLUMNS *@
@@ -30,41 +28,22 @@
                              JustifyContent="JustifyContent.Start"
                              Gap="2rem">
 
-                    @* EMAIL | ORGANIZATION *@
+                    @* EMAIL | PHONE *@
                     <RadzenStack Orientation="Orientation.Vertical"
                                  AlignItems="AlignItems.Start"
                                  JustifyContent="JustifyContent.Start"
                                  Gap="0"
-                                 class="c8s-card-column c8s-application-card-column">
+                                 class="c8s-card-column c8s-coach-card-column">
 
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"
                                     TextStyle="TextStyle.Body1"
-                                    Text="@Application.ApplicantEmail"/>
-                    </RadzenStack>
-
-                    @* STATUS | SUBMITTED | START DATES *@
-                    <RadzenStack Orientation="Orientation.Vertical"
-                                 AlignItems="AlignItems.Start"
-                                 JustifyContent="JustifyContent.Start"
-                                 Gap="0"
-                                 class="c8s-card-column c8s-application-card-column">
+                                    Text="@Coach.Email"/>
 
                         <RadzenText TagName="TagName.Div"
                                     TextAlign="TextAlign.Left"
                                     TextStyle="TextStyle.Body1">
-                            Status: @(Application.Status?.GetLabel() ?? SharedConstants.Display.NotSet)
-                        </RadzenText>
-
-                        <RadzenText TagName="TagName.Div"
-                                    TextAlign="TextAlign.Left"
-                                    TextStyle="TextStyle.Body1">
-                            Submitted: @(Application.SubmittedOn?.ToString("G") ?? SharedConstants.Display.NotSet)
-                        </RadzenText>
-                        <RadzenText TagName="TagName.Div"
-                                    TextAlign="TextAlign.Left"
-                                    TextStyle="TextStyle.Body1">
-                            Start Dates: @(Application.StartDates ?? SharedConstants.Display.NotSet)
+                            Phone: @(Coach.FullPhone)
                         </RadzenText>
                     </RadzenStack>
 

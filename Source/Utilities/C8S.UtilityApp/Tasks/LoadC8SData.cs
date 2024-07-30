@@ -77,8 +77,8 @@ internal class LoadC8SData(
         /*** JOINING COACHES & ORGANIZATIONS ***/
         var allOrganizations = (await repository.GetOrganizations()).ToList();
 
-        var coachesWithoutOrg = (await repository.GetCoaches(whereLinkedOrganization: false))
-            .Where(c => c.OldSystemOrganizationId != null)
+        var coachesWithoutOrg = (await repository.GetCoaches())
+            .Where(c => c.OrganizationId == null && c.OldSystemOrganizationId != null)
             .ToList();
 
         var totalCoachesWithoutOrg = coachesWithoutOrg.Count;

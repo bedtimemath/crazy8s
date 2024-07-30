@@ -104,41 +104,72 @@ public partial class C8SRepository
             .Select(mapper.Map<ApplicationClubDTO>).ToList();
     }
     #endregion
-
+    
     #region Coaches
     public async Task<IList<CoachDTO>> GetCoaches(
-        bool? whereLinkedOrganization = null)
+        CoachFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
-            dbContext.Coaches
+            dbContext.Coaches // clubs included automatically
+                .OrderBy(a => a.LastName)
                 .AsNoTracking()
+                .AsSingleQuery()
                 .AsQueryable();
 
         logger.LogDebug("Created queryable for Coaches");
 
-        /* LINKED ORGANIZATION */
-        if (whereLinkedOrganization.HasValue)
+        /* FILTER */
+        if (filter != null)
         {
-            if (whereLinkedOrganization.Value)
+            if (!String.IsNullOrEmpty(filter.Query))
             {
                 queryable = queryable
-                    .Where(c => c.OrganizationId != null);
-
-                logger.LogDebug("Including only linked to organization");
-            }
-            else
-            {
-                queryable = queryable
-                    .Where(c => c.OrganizationId == null);
-
-                logger.LogDebug("Including only unlinked to organization");
+                    .Where(a => (a.FirstName.Contains(filter.Query)) ||
+                                (a.LastName.Contains(filter.Query)) ||
+                                (a.Email.Contains(filter.Query)) );
             }
         }
 
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
         return (await queryable.ToListAsync())
             .Select(mapper.Map<CoachDTO>).ToList();
+    }
+    
+    public async Task<int> GetCoachesCount(
+        CoachFilter? filter = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Coaches // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        logger.LogDebug("Created queryable for Coaches");
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.FirstName.Contains(filter.Query)) ||
+                                (a.LastName.Contains(filter.Query)) ||
+                                (a.Email.Contains(filter.Query)) );
+            }
+        }
+
+        return await queryable.CountAsync();
     }
     #endregion
     
