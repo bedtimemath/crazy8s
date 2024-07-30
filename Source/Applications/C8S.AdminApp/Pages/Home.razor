@@ -5,9 +5,11 @@
 <PageTitle>Home</PageTitle>
 
 <div>
-    @if (_totalApplications.HasValue)
+    @if (_totalApplications.HasValue && _totalCoaches.HasValue && _totalOrganizations.HasValue)
     {
-        @: Found @_totalApplications.Value.ToString("#,##0") applications.
+        <div>Found @_totalApplications.Value.ToString("#,##0") applications.</div>
+        <div>Found @_totalCoaches.Value.ToString("#,##0") coaches.</div>
+        <div>Found @_totalOrganizations.Value.ToString("#,##0") organizations.</div>
     }
     else
     {

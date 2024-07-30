@@ -13,6 +13,8 @@ public partial class Home : BaseRazorPage
     public C8SRepository Repository { get; set; } = default!;
 
     private int? _totalApplications = null;
+    private int? _totalCoaches = null;
+    private int? _totalOrganizations = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -22,6 +24,8 @@ public partial class Home : BaseRazorPage
         try
         {
             _totalApplications = await Repository.GetApplicationsCount();
+            _totalCoaches = await Repository.GetCoachesCount();
+            _totalOrganizations = await Repository.GetOrganizationsCount();
             StateHasChanged();
         }
         catch (Exception ex)
