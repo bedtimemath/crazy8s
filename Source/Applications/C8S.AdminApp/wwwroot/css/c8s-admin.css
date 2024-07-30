@@ -109,3 +109,11 @@
 .c8s-application-card .c8s-application-card-column {
     min-width: 20rem;
 }
+
+.c8s-organization-card {
+    margin: 0.25rem 0;
+}
+
+.c8s-organization-card .c8s-organization-card-column {
+    min-width: 20rem;
+}

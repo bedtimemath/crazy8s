@@ -1,0 +1,32 @@
+﻿@inherits BaseRazorComponent
+@using C8S.Common
+@using C8S.Common.Models
+@using C8S.Database.Abstractions.Enumerations
+
+<div id="@ComponentId" class="c8s-organizations-filter @CssClass">
+    
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 Gap="1rem;"
+                 class="w-100 h-100">
+        
+        <RadzenTextBox @bind-Value="@Filter.Query"
+                       type="search"
+                       Change="@(async () => await FilterChanged.InvokeAsync(Filter))"
+                       Placeholder="Search for name, email, etc."
+                       
+                       class="flex-grow-1"/>
+        
+        <RadzenDropDown @bind-Value="@Filter.Type"
+                        Change="@(async () => await FilterChanged.InvokeAsync(Filter))"
+                        TValue="OrganizationType?"
+                        Data="@(EnumLabel<OrganizationType>.GetAllEnumLabels())"
+                        TextProperty="@nameof(EnumLabel<OrganizationType>.Display)"
+                        ValueProperty="@nameof(EnumLabel<OrganizationType>.Value)"
+                        AllowClear="true"
+                        class="flex-shrink-0"/>
+
+    </RadzenStack>
+
+</div>

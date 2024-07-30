@@ -1,0 +1,20 @@
+﻿@inherits BaseRazorComponent
+@using C8S.Database.Abstractions.DTOs
+
+<div id="@ComponentId" class="c8s-organizations-lister c8s-lister @CssClass">
+    <Virtualize @ref="_organizationsList"
+                TItem="OrganizationDTO"
+                ItemsProvider="@LoadOrganizations"
+                Context="organization">
+        <ItemContent>
+            <OrganizationCard Organization="organization"/>
+        </ItemContent>
+        <EmptyContent>
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body1"
+                        TextAlign="TextAlign.Center"
+                        Text="No organizations found."/>
+        </EmptyContent>
+    </Virtualize>
+
+</div>

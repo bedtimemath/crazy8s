@@ -141,21 +141,82 @@ public partial class C8SRepository
             .Select(mapper.Map<CoachDTO>).ToList();
     }
     #endregion
-
+    
     #region Organizations
-    public async Task<IList<OrganizationDTO>> GetOrganizations()
+    public async Task<IList<OrganizationDTO>> GetOrganizations(
+        OrganizationFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
-            dbContext.Organizations
+            dbContext.Organizations 
+                .OrderBy(a => a.Name)
                 .AsNoTracking()
+                .AsSingleQuery()
                 .AsQueryable();
 
         logger.LogDebug("Created queryable for Organizations");
 
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.Name.Contains(filter.Query)) );
+            }
+
+            if (filter.Type != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Type == filter.Type);
+            }
+        }
+
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
         return (await queryable.ToListAsync())
             .Select(mapper.Map<OrganizationDTO>).ToList();
     }
+    
+    public async Task<int> GetOrganizationsCount(
+        OrganizationFilter? filter = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Organizations // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        logger.LogDebug("Created queryable for Organizations");
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.Name.Contains(filter.Query)) );
+            }
+
+            if (filter.Type != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Type == filter.Type);
+            }
+        }
+
+
+        return await queryable.CountAsync();
+    }
     #endregion
+
 }

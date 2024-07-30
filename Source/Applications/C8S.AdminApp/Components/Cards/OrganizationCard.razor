@@ -1,0 +1,84 @@
+﻿@using C8S.Common
+@using C8S.Common.Extensions
+@inherits BaseRazorComponent
+
+<div id="@ComponentId" class="c8s-organization-card @CssClass">
+
+    <RadzenCard class="w-100">
+
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     class="w-100">
+
+            @* ORGANIZATION INFO *@
+            <RadzenStack Orientation="Orientation.Vertical"
+                         AlignItems="AlignItems.Stretch"
+                         JustifyContent="JustifyContent.SpaceBetween"
+                         class="flex-grow-1">
+
+                @* FULL NAME *@
+                <RadzenText TagName="TagName.H5"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.DisplayH5"
+                            Text="@Organization.Name"
+                            class="flex-grow-1"/>
+
+                @* COLUMNS *@
+                <RadzenStack Orientation="Orientation.Horizontal"
+                             AlignItems="AlignItems.Start"
+                             JustifyContent="JustifyContent.Start"
+                             Gap="2rem">
+
+                    @* EMAIL | ORGANIZATION 
+                    <RadzenStack Orientation="Orientation.Vertical"
+                                 AlignItems="AlignItems.Start"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0"
+                                 class="c8s-organization-card-column">
+
+                        <RadzenText TagName="TagName.Div"
+                                    TextAlign="TextAlign.Left"
+                                    TextStyle="TextStyle.Body1"
+                                    Text="@Organization.ApplicantEmail"/>
+                    </RadzenStack> *@
+
+                    @* TYPE | CREATED *@
+                    <RadzenStack Orientation="Orientation.Vertical"
+                                 AlignItems="AlignItems.Start"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0"
+                                 class="c8s-organization-card-column">
+
+                        <RadzenText TagName="TagName.Div"
+                                    TextAlign="TextAlign.Left"
+                                    TextStyle="TextStyle.Body1">
+                            Type: @(Organization.Type?.GetLabel() ?? SharedConstants.Display.NotSet)
+                        </RadzenText>
+                        
+                        @*
+                        <RadzenText TagName="TagName.Div"
+                                    TextAlign="TextAlign.Left"
+                                    TextStyle="TextStyle.Body1">
+                            Created: @(Organization.CreatedOn.ToString("G"))
+                        </RadzenText>
+                        *@
+
+                    </RadzenStack>
+
+                </RadzenStack>
+
+            </RadzenStack>
+
+            @* VIEW BUTTON *@
+            <RadzenButton ButtonType="ButtonType.Button"
+                          ButtonStyle="ButtonStyle.Light"
+                          Variant="Variant.Flat"
+                          Text="View"
+                          class="flex-shrink-0"/>
+
+        </RadzenStack>
+
+    </RadzenCard>
+
+</div>
