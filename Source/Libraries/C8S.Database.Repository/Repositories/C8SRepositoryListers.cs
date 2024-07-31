@@ -173,6 +173,75 @@ public partial class C8SRepository
     }
     #endregion
     
+    
+    #region Addresses
+    public async Task<IList<AddressDTO>> GetAddresses(
+        AddressFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Addresses // clubs included automatically
+                .OrderBy(a => a.StreetAddress)
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        logger.LogDebug("Created queryable for Addresses");
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.StreetAddress.Contains(filter.Query)) ||
+                                (a.City.Contains(filter.Query)) ||
+                                (a.State.Contains(filter.Query)) );
+            }
+        }
+
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
+        return (await queryable.ToListAsync())
+            .Select(mapper.Map<AddressDTO>).ToList();
+    }
+    
+    public async Task<int> GetAddressesCount(
+        AddressFilter? filter = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Addresses // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        logger.LogDebug("Created queryable for Addresses");
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.StreetAddress.Contains(filter.Query)) ||
+                                (a.City.Contains(filter.Query)) ||
+                                (a.State.Contains(filter.Query)) );
+            }
+        }
+
+        return await queryable.CountAsync();
+    }
+    #endregion
+    
     #region Organizations
     public async Task<IList<OrganizationDTO>> GetOrganizations(
         OrganizationFilter? filter = null,

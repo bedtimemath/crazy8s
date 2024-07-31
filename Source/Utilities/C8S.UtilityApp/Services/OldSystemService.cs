@@ -10,6 +10,35 @@ public class OldSystemService(
     string connectionString)
 {
     public string ConnectionString => connectionString;
+
+    public async Task<List<AddressSql>> GetAddresses()
+    {
+        var addresses = new List<AddressSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(AddressSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var address = reader.ConvertToObject<AddressSql>();
+                addresses.Add(address);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return addresses;
+    }
     
     public async Task<List<ApplicationSql>> GetApplications()
     {

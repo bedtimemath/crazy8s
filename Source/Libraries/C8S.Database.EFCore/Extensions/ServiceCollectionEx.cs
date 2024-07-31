@@ -1,5 +1,4 @@
-﻿using C8S.Common;
-using C8S.Database.EFCore.Contexts;
+﻿using C8S.Database.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

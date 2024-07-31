@@ -6,6 +6,51 @@ namespace C8S.Database.Repository.Repositories;
 
 public partial class C8SRepository
 {
+    #region Address
+    public async Task<AddressDTO> AddAddress(AddressDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<AddressDb>(dto);
+
+        var entry = await dbContext.Addresses.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<AddressDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<AddressDTO>> AddAddresses(IEnumerable<AddressDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<AddressDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<AddressDb>(dto);
+            var entry = await dbContext.Addresses.AddAsync(db);
+            dtosAdded.Add(mapper.Map<AddressDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    
+    public async Task<AddressDTO> UpdateAddress(AddressDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<AddressDb>(dto);
+
+        var entry = dbContext.Addresses.Attach(db);
+        entry.State = EntityState.Modified;
+        await dbContext.SaveChangesAsync();
+
+        var dtoModified = mapper.Map<AddressDTO>(entry.Entity);
+
+        return dtoModified;
+    }
+    #endregion
+
     #region Application
     public async Task<ApplicationDTO> AddApplication(ApplicationDTO dto)
     {

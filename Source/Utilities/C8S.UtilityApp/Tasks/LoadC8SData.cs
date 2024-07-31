@@ -45,6 +45,7 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
+#if false
         /*** ORGANIZATIONS ***/
         var orgDTOs = (await oldSystemService.GetOrganizations())
             .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
@@ -192,7 +193,7 @@ internal class LoadC8SData(
         ConsoleEx.EndProgress();
 
         logger.LogInformation("{Count:#,##0} applications updated with coach link; {Missing:#,##0} missing.", appsLinkedToCoach, appsMissingCoach);
-        
+
         /*** JOIN APPLICATIONS TO ORGANIZATIONS ***/
         var unlinkedOrganizationApps = (await repository.GetApplications())
             .Where(a => a is { LinkedOrganizationId: null, OldSystemLinkedOrganizationId: not null, IsOrganizationRemoved: false })
@@ -231,6 +232,21 @@ internal class LoadC8SData(
         ConsoleEx.EndProgress();
 
         logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization);
+
+#endif
+
+        /*** ADDRESSES ***/
+        var addressDTOs = (await oldSystemService.GetAddresses())
+            .Select(mapper.Map<AddressSql, AddressDTO>)
+            .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} addresses", addressDTOs.Count);
+
+        var existingAddressIds = (await repository.GetAddresses()).Select(o => o.OldSystemUsaPostalId).ToList();
+        addressDTOs.RemoveAll(m => existingAddressIds.Contains(m.OldSystemUsaPostalId));
+
+        var addedAddresses = await repository.AddAddresses(addressDTOs);
+        logger.LogInformation("Added {Count:#,##0} addresses", addedAddresses.Count());
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
