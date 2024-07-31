@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20240729154448_AppsWithRemovals")]
-    partial class AppsWithRemovals
+    [Migration("20240731181746_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,67 @@ namespace C8S.Database.EFCore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.AddressDb", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
+
+                    b.Property<string>("BusinessName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsMilitary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid?>("OldSystemUsaPostalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("RecipientName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("StreetAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("TimeZone")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("OldSystemUsaPostalId")
+                        .IsUnique()
+                        .HasFilter("[OldSystemUsaPostalId] IS NOT NULL");
+
+                    b.ToTable("Addresses");
+                });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
                 {
@@ -268,6 +329,9 @@ namespace C8S.Database.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrganizationId"));
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
@@ -291,6 +355,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemOrganizationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OldSystemPostalAddressId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TaxIdentifier")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -310,6 +377,10 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("OrganizationId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique()
+                        .HasFilter("[AddressId] IS NOT NULL");
 
                     b.HasIndex("OldSystemOrganizationId")
                         .IsUnique()
@@ -351,6 +422,23 @@ namespace C8S.Database.EFCore.Migrations
                         .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
+                {
+                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                        .WithOne("Organization")
+                        .HasForeignKey("C8S.Database.EFCore.Models.OrganizationDb", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.AddressDb", b =>
+                {
+                    b.Navigation("Organization")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>

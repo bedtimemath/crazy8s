@@ -6,7 +6,7 @@ public class CoachSql
 {
     #region Constants & ReadOnlys
     public const string SqlGet = 
-        "SELECT c.[Id] AS [OldSystemCoachId], c.[OrganizationId] AS [OldSystemOrganizationId], u.[Id] AS [OldSystemUserId], u.[CompanyId] AS [OldSystemCompanyId], c.[FirstName], c.[LastName], c.[Email], c.[TimeZoneId] AS [TimeZone], c.[Phone] AS [PhoneString], c.[PhoneExt], c.[Notes] As [OldSystemNotes], c.[Created] AS [CreatedOn] FROM [Crazy8s].[Coach] c LEFT JOIN [Bits].[User] u ON u.[Id] = c.[UserId] WHERE c.[DeletedBy] IS NULL AND u.[DeletedBy] IS NULL";
+        "SELECT c.[Id] AS [OldSystemCoachId], c.[OrganizationId] AS [OldSystemOrganizationId], u.[Id] AS [OldSystemUserId], u.[CompanyId] AS [OldSystemCompanyId], c.[FirstName], c.[LastName], c.[Email], c.[TimeZoneId] AS [TimeZone], c.[Phone] AS [PhoneString], c.[PhoneExt], c.[Notes] As [OldSystemNotes], CAST(c.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Coach] c  LEFT JOIN [Bits].[User] u ON u.[Id] = c.[UserId]  WHERE c.[DeletedBy] IS NULL AND u.[DeletedBy] IS NULL";
     #endregion
 
     #region Id Property
@@ -36,6 +36,9 @@ public class CoachSql
     public string PhoneExt { get; set; } = default!;
 
     public string? OldSystemNotes { get; set; } = null;
+
+    [NotMapped]
+    public string? CreatedOnString { get; set; } = null;
     #endregion
 
     #region Derived Properties
@@ -45,5 +48,8 @@ public class CoachSql
             "0000000000" or null => null,
             _ => $"({PhoneString.Substring(0,3)}) {PhoneString.Substring(3,3)}-{PhoneString.Substring(6,4)}"
         };
+
+    public DateTimeOffset CreatedOn => 
+        !DateTimeOffset.TryParse(CreatedOnString ?? String.Empty, out var createdOn) ? DateTimeOffset.MinValue : createdOn;
     #endregion
 }

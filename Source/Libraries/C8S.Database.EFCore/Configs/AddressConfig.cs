@@ -69,6 +69,14 @@ public class AddressConfig : IEntityTypeConfiguration<AddressDb>
             .IsRequired(true);
         #endregion
 
+        #region Navigation Configuration
+        //public OrganizationDb Organization { get; set; } = default!;
+        entity.HasOne(m => m.Organization)
+            .WithOne(m => m.Address)
+            .HasForeignKey<OrganizationDb>(m => m.AddressId)
+            .IsRequired(true);
+        #endregion
+
         #region Indices
         entity.HasIndex(m => m.OldSystemUsaPostalId)
             .IsUnique(true);

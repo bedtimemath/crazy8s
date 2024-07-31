@@ -23,6 +23,10 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
         //public Guid? OldSystemOrganizationId { get; set; } = null;
         entity.Property(m => m.OldSystemOrganizationId)
             .IsRequired(false);
+        
+        //public Guid? OldSystemPostalAddressId { get; set; } = null;
+        entity.Property(m => m.OldSystemPostalAddressId)
+            .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string Name { get; set; } = default!;
@@ -69,7 +73,20 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
             .IsRequired(false);
         #endregion
 
+        #region Reference Properties
+        //[ForeignKey(nameof(Address))]
+        //public int? AddressId { get; set; } = null;
+        entity.Property(m => m.AddressId)
+            .IsRequired(false);
+        #endregion
+
         #region Navigation Configuration
+        //public AddressDb? Address { get; set; } = null;
+        entity.HasOne(m => m.Address)
+            .WithOne(m => m.Organization)
+            .HasForeignKey<OrganizationDb>(m => m.AddressId)
+            .IsRequired(true);
+
         //public ICollection<CoachDb> Coaches { get; set; } = default!;
         entity.HasMany(m => m.Coaches)
             .WithOne(m => m.Organization)

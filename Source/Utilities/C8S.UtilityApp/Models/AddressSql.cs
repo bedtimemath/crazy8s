@@ -6,7 +6,7 @@ public class AddressSql
 {
     #region Constants & ReadOnlys
     public const string SqlGet = 
-        "SELECT up.[Id] AS [OldSystemUsaPostalId], up.[RecipientName], up.[BusinessName], up.[StreetAddress], up.[City], us.[Abbreviation] AS [State], up.[PostalCode], us.[TimeZoneId] AS [TimeZone], us.[IsMilitary] FROM [Bits].[UsaPostal] up JOIN [Bits].[UsaState] us ON us.[Id] = up.[StateId] WHERE up.[DeletedBy] IS NOT NULL";
+        "SELECT up.[Id] AS [OldSystemUsaPostalId], up.[RecipientName], up.[BusinessName], up.[StreetAddress], up.[City], us.[Abbreviation] AS [State], up.[PostalCode], us.[TimeZoneId] AS [TimeZone], us.[IsMilitary], CAST(up.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Bits].[UsaPostal] up JOIN [Bits].[UsaState] us ON us.[Id] = up.[StateId] WHERE up.[DeletedBy] IS NULL";
     #endregion
 
     #region Id Property
@@ -31,5 +31,13 @@ public class AddressSql
     public string? TimeZone { get; set; } = default!;
 
     public bool IsMilitary { get; set; } = default!;
+
+    [NotMapped]
+    public string? CreatedOnString { get; set; } = null;
+    #endregion
+
+    #region Derived Properties
+    public DateTimeOffset CreatedOn => 
+        !DateTimeOffset.TryParse(CreatedOnString ?? String.Empty, out var createdOn) ? DateTimeOffset.MinValue : createdOn;
     #endregion
 }

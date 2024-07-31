@@ -31,6 +31,8 @@ public class OrganizationDTO: BaseDTO
     public Guid? OldSystemCompanyId { get; set; } = default!;
     
     public Guid? OldSystemOrganizationId { get; set; } = default!;
+    
+    public Guid? OldSystemPostalAddressId { get; set; } = default!;
 
     public string? Name { get; set; } = default!;
 
@@ -47,7 +49,13 @@ public class OrganizationDTO: BaseDTO
     public string? OldSystemNotes { get; set; } = null;
     #endregion
 
+    #region Reference Properties
+    public int? AddressId { get; set; } = null;
+    public AddressDTO? Address { get; set; } = null;
+    #endregion
+
     #region Child Properties
     public ICollection<CoachDTO> Coaches { get; set; } = default!;
+    public ICollection<ApplicationDTO> Applications { get; set; } = default!;
     #endregion
 }

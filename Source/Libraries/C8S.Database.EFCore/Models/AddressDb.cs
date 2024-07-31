@@ -49,4 +49,8 @@ public class AddressDb : BaseDb
     [Required]
     public bool IsMilitary { get; set; } = default!;
     #endregion
+
+    #region Parent Properties
+    public OrganizationDb Organization { get; set; } = default!;
+    #endregion
 }

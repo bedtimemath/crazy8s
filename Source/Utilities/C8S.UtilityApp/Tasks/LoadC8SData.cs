@@ -45,19 +45,43 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
-#if false
+        /*** ADDRESSES ***/
+        var addressDTOs = (await oldSystemService.GetAddresses())
+            .Select(mapper.Map<AddressSql, AddressDTO>)
+            .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} addresses", addressDTOs.Count);
+
         /*** ORGANIZATIONS ***/
-        var orgDTOs = (await oldSystemService.GetOrganizations())
+        var organizationDTOs = (await oldSystemService.GetOrganizations())
             .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} organizations", orgDTOs.Count);
+        logger.LogInformation("Found {Count:#,##0} organizations", organizationDTOs.Count);
 
         var existingOrgIds = (await repository.GetOrganizations()).Select(o => o.OldSystemOrganizationId).ToList();
-        orgDTOs.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
+        organizationDTOs.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
+        
+        /*** JOIN ADDRESSES TO ORGANIZATIONS ***/
+        var totalOrganizations = organizationDTOs.Count;
+        ConsoleEx.StartProgress("Joining addresses with organizations: ");
+        for (int index = 0; index < totalOrganizations; index++)
+        {
+            var organization = organizationDTOs[index];
+            var address = addressDTOs
+                .FirstOrDefault(a => a.OldSystemUsaPostalId == organization.OldSystemPostalAddressId);
+            if (address == null)
+                throw new Exception($"Could not find address ({organization.OldSystemPostalAddressId}) for organization ({organization.OldSystemOrganizationId})");
 
-        var addedOrgs = await repository.AddOrganizations(orgDTOs);
-        logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count());
+            organization.Address = address;
+            address.Organization = organization;
+
+            ConsoleEx.ShowProgress((float)index / (float)totalOrganizations);
+        }
+        ConsoleEx.EndProgress();
+
+        var addedOrgs = await repository.AddOrganizations(organizationDTOs);
+        logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count()); 
 
         /*** COACHES ***/
         var coachDTOs = (await oldSystemService.GetCoaches())
@@ -74,7 +98,7 @@ internal class LoadC8SData(
 
         var addedCoaches = await repository.AddCoaches(coachDTOs);
         logger.LogInformation("Added {Count:#,##0} coaches", addedCoaches.Count());
-
+        
         /*** JOINING COACHES & ORGANIZATIONS ***/
         var allOrganizations = (await repository.GetOrganizations()).ToList();
 
@@ -135,7 +159,7 @@ internal class LoadC8SData(
 
         /*** JOIN APPLICATIONS TO CLUBS ***/
         var totalClubs = applicationClubDTOs.Count;
-        ConsoleEx.StartProgress("Joining applications with clubs: ");
+        ConsoleEx.StartProgress("Joining addresses with organizations: ");
         for (int index = 0; index < totalClubs; index++)
         {
             var appClub = applicationClubDTOs[index];
@@ -232,21 +256,6 @@ internal class LoadC8SData(
         ConsoleEx.EndProgress();
 
         logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization);
-
-#endif
-
-        /*** ADDRESSES ***/
-        var addressDTOs = (await oldSystemService.GetAddresses())
-            .Select(mapper.Map<AddressSql, AddressDTO>)
-            .ToList();
-
-        logger.LogInformation("Found {Count:#,##0} addresses", addressDTOs.Count);
-
-        var existingAddressIds = (await repository.GetAddresses()).Select(o => o.OldSystemUsaPostalId).ToList();
-        addressDTOs.RemoveAll(m => existingAddressIds.Contains(m.OldSystemUsaPostalId));
-
-        var addedAddresses = await repository.AddAddresses(addressDTOs);
-        logger.LogInformation("Added {Count:#,##0} addresses", addedAddresses.Count());
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;

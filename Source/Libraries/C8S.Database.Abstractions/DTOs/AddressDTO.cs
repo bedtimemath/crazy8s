@@ -20,6 +20,7 @@ public class AddressDTO: BaseDTO
         if (String.IsNullOrEmpty(this.State)) errors.Add("State is required.");
         if (String.IsNullOrEmpty(this.PostalCode)) errors.Add("PostalCode is required.");
         if (String.IsNullOrEmpty(this.TimeZone)) errors.Add("TimeZone is required.");
+        if (Organization == null) errors.Add("Organization is required.");
         return errors;
     }
     #endregion
@@ -33,18 +34,22 @@ public class AddressDTO: BaseDTO
 
     public string? RecipientName { get; set; } = null;
 
-    public string? BusinessName { get; set; } = default!;
+    public string? BusinessName { get; set; } = null;
 
-    public string? StreetAddress { get; set; } = default!;
+    public string? StreetAddress { get; set; } = null;
 
-    public string? City { get; set; } = default!;
+    public string? City { get; set; } = null;
 
-    public string? State { get; set; } = default!;
+    public string? State { get; set; } = null;
 
-    public string? PostalCode { get; set; } = default!;
+    public string? PostalCode { get; set; } = null;
 
-    public string? TimeZone { get; set; } = default!;
+    public string? TimeZone { get; set; } = null;
 
-    public bool IsMilitary { get; set; } = default!;
+    public bool IsMilitary { get; set; } = default(bool);
+    #endregion
+
+    #region Reference Properties
+    public OrganizationDTO? Organization { get; set; } = null;
     #endregion
 }

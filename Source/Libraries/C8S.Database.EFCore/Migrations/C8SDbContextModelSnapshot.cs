@@ -326,6 +326,9 @@ namespace C8S.Database.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrganizationId"));
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
@@ -349,6 +352,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<Guid?>("OldSystemOrganizationId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("OldSystemPostalAddressId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TaxIdentifier")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
@@ -368,6 +374,10 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("OrganizationId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique()
+                        .HasFilter("[AddressId] IS NOT NULL");
 
                     b.HasIndex("OldSystemOrganizationId")
                         .IsUnique()
@@ -409,6 +419,23 @@ namespace C8S.Database.EFCore.Migrations
                         .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
+                {
+                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                        .WithOne("Organization")
+                        .HasForeignKey("C8S.Database.EFCore.Models.OrganizationDb", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.AddressDb", b =>
+                {
+                    b.Navigation("Organization")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>

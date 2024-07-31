@@ -26,6 +26,8 @@ public class OrganizationDb: BaseDb
     public Guid? OldSystemCompanyId { get; set; } = null;
     
     public Guid? OldSystemOrganizationId { get; set; } = null;
+    
+    public Guid? OldSystemPostalAddressId { get; set; } = null;
 
     [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
     public string Name { get; set; } = default!;
@@ -48,6 +50,12 @@ public class OrganizationDb: BaseDb
 
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
     public string? OldSystemNotes { get; set; } = null;
+    #endregion
+
+    #region Reference Properties
+    [ForeignKey(nameof(Address))]
+    public int? AddressId { get; set; } = null;
+    public AddressDb? Address { get; set; } = null;
     #endregion
 
     #region Child Properties
