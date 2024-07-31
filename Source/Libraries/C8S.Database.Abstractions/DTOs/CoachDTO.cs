@@ -46,7 +46,7 @@ public class CoachDTO: BaseDTO
 
     public string? PhoneExt { get; set; } = null;
 
-    public string? OldSystemNotes { get; set; } = null;
+    public string? Notes { get; set; } = null;
     #endregion
 
     #region Parent Properties

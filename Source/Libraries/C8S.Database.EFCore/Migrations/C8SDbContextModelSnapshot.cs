@@ -141,6 +141,9 @@ namespace C8S.Database.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationId"));
 
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ApplicantEmail")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -195,6 +198,13 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<int?>("LinkedOrganizationId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Notes")
+                        .HasMaxLength(4096)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OldSystemAddressId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("OldSystemApplicationId")
                         .HasColumnType("uniqueidentifier");
 
@@ -203,10 +213,6 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.Property<Guid?>("OldSystemLinkedOrganizationId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("OldSystemNotes")
-                        .HasMaxLength(4096)
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OrganizationName")
                         .HasMaxLength(512)
@@ -238,6 +244,10 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasKey("ApplicationId");
 
+                    b.HasIndex("AddressId")
+                        .IsUnique()
+                        .HasFilter("[AddressId] IS NOT NULL");
+
                     b.HasIndex("LinkedCoachId");
 
                     b.HasIndex("LinkedOrganizationId");
@@ -247,6 +257,75 @@ namespace C8S.Database.EFCore.Migrations
                         .HasFilter("[OldSystemApplicationId] IS NOT NULL");
 
                     b.ToTable("Applications");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
+                {
+                    b.Property<int>("ClubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClubId"));
+
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AgeLevel")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("ClubSize")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<int>("CoachId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(4096)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OldSystemClubId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemCoachId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemMeetingAddressId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemOrganizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Season")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("StartsOn")
+                        .HasColumnType("date");
+
+                    b.HasKey("ClubId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique()
+                        .HasFilter("[AddressId] IS NOT NULL");
+
+                    b.HasIndex("CoachId");
+
+                    b.HasIndex("OldSystemClubId")
+                        .IsUnique()
+                        .HasFilter("[OldSystemClubId] IS NOT NULL");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("Clubs");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
@@ -275,15 +354,15 @@ namespace C8S.Database.EFCore.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("Notes")
+                        .HasMaxLength(4096)
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("OldSystemCoachId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("OldSystemCompanyId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("OldSystemNotes")
-                        .HasMaxLength(4096)
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("OldSystemOrganizationId")
                         .HasColumnType("uniqueidentifier");
@@ -342,12 +421,12 @@ namespace C8S.Database.EFCore.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
-                    b.Property<Guid?>("OldSystemCompanyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("OldSystemNotes")
+                    b.Property<string>("Notes")
                         .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("OldSystemCompanyId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("OldSystemOrganizationId")
                         .HasColumnType("uniqueidentifier");
@@ -399,6 +478,10 @@ namespace C8S.Database.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
                 {
+                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                        .WithOne("Application")
+                        .HasForeignKey("C8S.Database.EFCore.Models.ApplicationDb", "AddressId");
+
                     b.HasOne("C8S.Database.EFCore.Models.CoachDb", "LinkedCoach")
                         .WithMany("Applications")
                         .HasForeignKey("LinkedCoachId");
@@ -407,9 +490,34 @@ namespace C8S.Database.EFCore.Migrations
                         .WithMany("Applications")
                         .HasForeignKey("LinkedOrganizationId");
 
+                    b.Navigation("Address");
+
                     b.Navigation("LinkedCoach");
 
                     b.Navigation("LinkedOrganization");
+                });
+
+            modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
+                {
+                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                        .WithOne("Club")
+                        .HasForeignKey("C8S.Database.EFCore.Models.ClubDb", "AddressId");
+
+                    b.HasOne("C8S.Database.EFCore.Models.CoachDb", "Coach")
+                        .WithMany("Clubs")
+                        .HasForeignKey("CoachId");
+
+                    b.HasOne("C8S.Database.EFCore.Models.OrganizationDb", "Organization")
+                        .WithMany("Clubs")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Coach");
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
@@ -425,17 +533,18 @@ namespace C8S.Database.EFCore.Migrations
                 {
                     b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
                         .WithOne("Organization")
-                        .HasForeignKey("C8S.Database.EFCore.Models.OrganizationDb", "AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("C8S.Database.EFCore.Models.OrganizationDb", "AddressId");
 
                     b.Navigation("Address");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.AddressDb", b =>
                 {
-                    b.Navigation("Organization")
-                        .IsRequired();
+                    b.Navigation("Application");
+
+                    b.Navigation("Club");
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
@@ -446,11 +555,15 @@ namespace C8S.Database.EFCore.Migrations
             modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
                 {
                     b.Navigation("Applications");
+
+                    b.Navigation("Clubs");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
                 {
                     b.Navigation("Applications");
+
+                    b.Navigation("Clubs");
 
                     b.Navigation("Coaches");
                 });

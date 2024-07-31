@@ -67,8 +67,8 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? OldSystemNotes { get; set; } = null;
-        entity.Property(m => m.OldSystemNotes)
+        //public string? Notes { get; set; } = null;
+        entity.Property(m => m.Notes)
             .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
@@ -85,7 +85,12 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
         entity.HasOne(m => m.Address)
             .WithOne(m => m.Organization)
             .HasForeignKey<OrganizationDb>(m => m.AddressId)
-            .IsRequired(true);
+            .IsRequired(false);
+
+        //public ICollection<ClubDb> Clubs { get; set; } = default!;
+        entity.HasMany(m => m.Clubs)
+            .WithOne(m => m.Organization)
+            .HasForeignKey(m => m.OrganizationId);
 
         //public ICollection<CoachDb> Coaches { get; set; } = default!;
         entity.HasMany(m => m.Coaches)
@@ -102,6 +107,11 @@ public class OrganizationConfig : IEntityTypeConfiguration<OrganizationDb>
         #region Indices
         entity.HasIndex(m => m.OldSystemOrganizationId)
             .IsUnique(true);
+        #endregion
+
+        #region Auto-Includes
+        entity.Navigation(m => m.Address)
+            .AutoInclude();
         #endregion
     }
 }

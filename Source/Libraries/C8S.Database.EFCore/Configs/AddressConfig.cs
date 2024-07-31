@@ -70,11 +70,29 @@ public class AddressConfig : IEntityTypeConfiguration<AddressDb>
         #endregion
 
         #region Navigation Configuration
-        //public OrganizationDb Organization { get; set; } = default!;
+        //public ApplicationDb? Application { get; set; } = default!;
+        entity.HasOne(m => m.Application)
+            .WithOne(m => m.Address)
+            .HasForeignKey<ApplicationDb>(m => m.AddressId)
+            .IsRequired(false);
+        
+        //public ClubDb? Club { get; set; } = default!;
+        entity.HasOne(m => m.Club)
+            .WithOne(m => m.Address)
+            .HasForeignKey<ClubDb>(m => m.AddressId)
+            .IsRequired(false);
+
+        //public OrderDb? Order { get; set; } = default!;
+        //entity.HasOne(m => m.Order)
+        //    .WithOne(m => m.Address)
+        //    .HasForeignKey<OrderDb>(m => m.AddressId)
+        //    .IsRequired(false);
+
+        //public OrganizationDb? Organization { get; set; } = default!;
         entity.HasOne(m => m.Organization)
             .WithOne(m => m.Address)
             .HasForeignKey<OrganizationDb>(m => m.AddressId)
-            .IsRequired(true);
+            .IsRequired(false);
         #endregion
 
         #region Indices

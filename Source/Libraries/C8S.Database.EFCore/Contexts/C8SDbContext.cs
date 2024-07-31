@@ -11,6 +11,7 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
     public DbSet<AddressDb> Addresses { get; set; }
     public DbSet<ApplicationDb> Applications { get; set; }
     public DbSet<ApplicationClubDb> ApplicationClubs { get; set; }
+    public DbSet<ClubDb> Clubs { get; set; }
     public DbSet<CoachDb> Coaches { get; set; }
     public DbSet<OrganizationDb> Organizations { get; set; }
     #endregion
@@ -21,6 +22,7 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
         modelBuilder.ApplyConfiguration(new AddressConfig());
         modelBuilder.ApplyConfiguration(new ApplicationConfig());
         modelBuilder.ApplyConfiguration(new ApplicationClubConfig());
+        modelBuilder.ApplyConfiguration(new ClubConfig());
         modelBuilder.ApplyConfiguration(new CoachConfig());
         modelBuilder.ApplyConfiguration(new OrganizationConfig());
     }

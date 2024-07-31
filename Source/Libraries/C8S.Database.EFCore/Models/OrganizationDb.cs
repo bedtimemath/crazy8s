@@ -49,17 +49,18 @@ public class OrganizationDb: BaseDb
     public string? TaxIdentifier { get; set; } = null;
 
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
-    public string? OldSystemNotes { get; set; } = null;
+    public string? Notes { get; set; } = null;
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Address))]
-    public int? AddressId { get; set; } = null;
-    public AddressDb? Address { get; set; } = null;
+    public int? AddressId { get; set; } = default!;
+    public AddressDb? Address { get; set; } = default!;
     #endregion
 
     #region Child Properties
     // one-to-many
+    public ICollection<ClubDb> Clubs { get; set; } = default!;
     public ICollection<CoachDb> Coaches { get; set; } = default!;
     public ICollection<ApplicationDb> Applications { get; set; } = default!;
     #endregion

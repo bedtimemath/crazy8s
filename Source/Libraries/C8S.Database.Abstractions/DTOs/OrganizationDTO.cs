@@ -46,7 +46,7 @@ public class OrganizationDTO: BaseDTO
 
     public string? TaxIdentifier { get; set; } = null;
 
-    public string? OldSystemNotes { get; set; } = null;
+    public string? Notes { get; set; } = null;
     #endregion
 
     #region Reference Properties

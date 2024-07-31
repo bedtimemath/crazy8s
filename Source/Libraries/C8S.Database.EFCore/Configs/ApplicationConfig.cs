@@ -19,11 +19,15 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
         //public Guid? OldSystemApplicationId { get; set; } = null;
         entity.Property(m => m.OldSystemApplicationId)
             .IsRequired(false);
-        
+
+        //public Guid? OldSystemAddressId { get; set; } = null;
+        entity.Property(m => m.OldSystemAddressId)
+            .IsRequired(false);
+
         //public Guid? OldSystemLinkedCoachId { get; set; } = null;
         entity.Property(m => m.OldSystemLinkedCoachId)
             .IsRequired(false);
-        
+
         //public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
         entity.Property(m => m.OldSystemLinkedOrganizationId)
             .IsRequired(false);
@@ -114,7 +118,7 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Comments { get; set; } = null;
-        entity.Property(m => m.OldSystemNotes)
+        entity.Property(m => m.Notes)
             .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
             .IsRequired(false);
 
@@ -122,27 +126,32 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
         //public DateTimeOffset SubmittedOn { get; set; }
         entity.Property(m => m.SubmittedOn)
             .IsRequired(true);
-        
-    //[Required]
-    //public bool IsCoachRemoved { get; set; } = false;
-    entity.Property(m => m.IsCoachRemoved)
-        .HasDefaultValue(false)
-        .IsRequired(true);
 
-    //[Required]
-    //public bool IsOrganizationRemoved { get; set; } = false;
-    entity.Property(m => m.IsOrganizationRemoved)
-        .HasDefaultValue(false)
-        .IsRequired(true);
+        //[Required]
+        //public bool IsCoachRemoved { get; set; } = false;
+        entity.Property(m => m.IsCoachRemoved)
+            .HasDefaultValue(false)
+            .IsRequired(true);
+
+        //[Required]
+        //public bool IsOrganizationRemoved { get; set; } = false;
+        entity.Property(m => m.IsOrganizationRemoved)
+            .HasDefaultValue(false)
+            .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? OldSystemNotes { get; set; } = null;
-        entity.Property(m => m.OldSystemNotes)
+        //public string? Notes { get; set; } = null;
+        entity.Property(m => m.Notes)
             .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
+        //[ForeignKey(nameof(Address))]
+        //public int? AddressId { get; set; } = default!;
+        entity.Property(m => m.AddressId)
+            .IsRequired(false);
+
         //[ForeignKey(nameof(LinkedCoach))]
         //public int? LinkedCoachId { get; set; } = default!;
         entity.Property(m => m.LinkedCoachId)
@@ -155,12 +164,18 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
         #endregion
 
         #region Navigation Configuration
+        //public AddressDb? Address { get; set; } = default!;
+        entity.HasOne(m => m.Address)
+            .WithOne(m => m.Application)
+            .HasForeignKey<ApplicationDb>(m => m.AddressId)
+            .IsRequired(false);
+
         //public CoachDb? LinkedCoach { get; set; } = default!;
         entity.HasOne(m => m.LinkedCoach)
             .WithMany(m => m.Applications)
             .HasForeignKey(m => m.LinkedCoachId)
             .IsRequired(false);
-        
+
         //public OrganizationDb? LinkedOrganization { get; set; } = default!;
         entity.HasOne(m => m.LinkedOrganization)
             .WithMany(m => m.Applications)
@@ -175,6 +190,8 @@ public class ApplicationConfig : IEntityTypeConfiguration<ApplicationDb>
 
         #region Auto-Includes
         entity.Navigation(m => m.ApplicationClubs)
+            .AutoInclude();
+        entity.Navigation(m => m.Address)
             .AutoInclude();
         #endregion
     }

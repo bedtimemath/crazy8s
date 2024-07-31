@@ -69,8 +69,8 @@ public class CoachConfig : IEntityTypeConfiguration<CoachDb>
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? OldSystemNotes { get; set; } = null;
-        entity.Property(m => m.OldSystemNotes)
+        //public string? Notes { get; set; } = null;
+        entity.Property(m => m.Notes)
             .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
@@ -93,6 +93,12 @@ public class CoachConfig : IEntityTypeConfiguration<CoachDb>
         entity.HasMany(m => m.Applications)
             .WithOne(m => m.LinkedCoach)
             .HasForeignKey(m => m.LinkedCoachId)
+            .IsRequired(false);
+
+        //public ICollection<ClubDb> Clubs { get; set; } = default!;
+        entity.HasMany(m => m.Clubs)
+            .WithOne(m => m.Coach)
+            .HasForeignKey(m => m.CoachId)
             .IsRequired(false);
         #endregion
 

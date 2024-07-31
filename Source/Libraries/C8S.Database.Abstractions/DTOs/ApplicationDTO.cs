@@ -30,6 +30,8 @@ public class ApplicationDTO : BaseDTO
 
     #region Public Properties    
     public Guid? OldSystemApplicationId { get; set; } = null;
+    
+    public Guid? OldSystemAddressId { get; set; } = null;
 
     public Guid? OldSystemLinkedCoachId { get; set; } = null;
 
@@ -69,7 +71,7 @@ public class ApplicationDTO : BaseDTO
 
     public bool IsOrganizationRemoved { get; set; } = false;
 
-    public string? OldSystemNotes { get; set; } = null;
+    public string? Notes { get; set; } = null;
     #endregion
 
     #region Child Properties

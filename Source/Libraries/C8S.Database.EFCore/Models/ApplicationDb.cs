@@ -26,6 +26,8 @@ public class ApplicationDb : BaseDb
     #region Database Properties
     public Guid? OldSystemApplicationId { get; set; } = null;
     
+    public Guid? OldSystemAddressId { get; set; } = null;
+    
     public Guid? OldSystemLinkedCoachId { get; set; } = null;
     
     public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
@@ -85,10 +87,14 @@ public class ApplicationDb : BaseDb
     public bool IsOrganizationRemoved { get; set; } = false;
 
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
-    public string? OldSystemNotes { get; set; } = null;
+    public string? Notes { get; set; } = null;
     #endregion
 
     #region Reference Properties
+    [ForeignKey(nameof(Address))]
+    public int? AddressId { get; set; } = default!;
+    public AddressDb? Address { get; set; } = default!;
+    
     [ForeignKey(nameof(LinkedCoach))]
     public int? LinkedCoachId { get; set; } = default!;
     public CoachDb? LinkedCoach { get; set; } = default!;

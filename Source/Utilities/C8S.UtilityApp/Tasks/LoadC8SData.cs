@@ -45,6 +45,7 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
+#if false
         /*** ADDRESSES ***/
         var addressDTOs = (await oldSystemService.GetAddresses())
             .Select(mapper.Map<AddressSql, AddressDTO>)
@@ -61,7 +62,7 @@ internal class LoadC8SData(
 
         var existingOrgIds = (await repository.GetOrganizations()).Select(o => o.OldSystemOrganizationId).ToList();
         organizationDTOs.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
-        
+
         /*** JOIN ADDRESSES TO ORGANIZATIONS ***/
         var totalOrganizations = organizationDTOs.Count;
         ConsoleEx.StartProgress("Joining addresses with organizations: ");
@@ -81,7 +82,7 @@ internal class LoadC8SData(
         ConsoleEx.EndProgress();
 
         var addedOrgs = await repository.AddOrganizations(organizationDTOs);
-        logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count()); 
+        logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count());
 
         /*** COACHES ***/
         var coachDTOs = (await oldSystemService.GetCoaches())
@@ -98,7 +99,7 @@ internal class LoadC8SData(
 
         var addedCoaches = await repository.AddCoaches(coachDTOs);
         logger.LogInformation("Added {Count:#,##0} coaches", addedCoaches.Count());
-        
+
         /*** JOINING COACHES & ORGANIZATIONS ***/
         var allOrganizations = (await repository.GetOrganizations()).ToList();
 
@@ -255,7 +256,27 @@ internal class LoadC8SData(
         }
         ConsoleEx.EndProgress();
 
-        logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization);
+        logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization); 
+#endif
+
+        /*** CLUBS ***/
+        var clubDTOs = (await oldSystemService.GetClubs())
+            .Select(mapper.Map<ClubSql, ClubDTO>)
+            .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} clubs", clubDTOs.Count);
+
+#if false
+        var hasOrgIds = clubDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
+        logger.LogInformation("Found {Count:#,##0} clubs with org ids", hasOrgIds.Count);
+
+        var existingClubIds = (await repository.GetClubs()).Select(o => o.OldSystemClubId).ToList();
+        clubDTOs.RemoveAll(m => existingClubIds.Contains(m.OldSystemClubId));
+
+        var addedClubs = await repository.AddClubs(clubDTOs);
+        logger.LogInformation("Added {Count:#,##0} clubs", addedClubs.Count()); 
+#endif
+
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;

@@ -49,7 +49,7 @@ public class CoachDb : BaseDb
     public string? PhoneExt { get; set; } = null;
 
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
-    public string? OldSystemNotes { get; set; } = null;
+    public string? Notes { get; set; } = null;
     #endregion
 
     #region Reference Properties
@@ -59,10 +59,8 @@ public class CoachDb : BaseDb
     #endregion
 
     #region Reference Collections
-    // one-to-one
     // one-to-many
     public ICollection<ApplicationDb> Applications { get; set; } = default!;
-
-    // many-to-many
+    public ICollection<ClubDb> Clubs { get; set; } = default!;
     #endregion
 }
