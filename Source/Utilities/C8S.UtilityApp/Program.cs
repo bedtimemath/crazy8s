@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -78,43 +79,53 @@ try
     var connections = builder.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
                       throw new Exception($"Missing configuration section: {Connections.SectionName}");
     
-    
     /*****************************************
      * HOST SETUP
      */
-    var host = Host.CreateDefaultBuilder(args)
-        .ConfigureServices((context, services) =>
-        {
-            // Parsing the arguments
-            parserResult
-                .WithParsed<LoadSampleDataOptions>(options =>
-                {
-                    services.AddSingleton(options);
-                    services.AddSingleton<IActionLauncher, LoadSampleData>();
-                })
-                .WithParsed<LoadC8SDataOptions>(options =>
-                {
-                    services.AddSingleton(options);
-                    services.AddSingleton<IActionLauncher, LoadC8SData>();
-                });
-            
-            /*****************************************
-             * AZURE CLIENTS SETUP
-             */
-            services.AddAzureClients(clientBuilder =>
+    var hostBuilder = Host.CreateDefaultBuilder(args);
+    
+    /*****************************************
+     * CONFIGURE SERVICES
+     */
+    hostBuilder.ConfigureServices((context, services) =>
+    {
+        // Parsing the arguments
+        parserResult
+            .WithParsed<LoadSampleDataOptions>(options =>
             {
-                clientBuilder.AddBlobServiceClient(connections.AzureStorage);
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, LoadSampleData>();
+            })
+            .WithParsed<LoadC8SDataOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, LoadC8SData>();
             });
 
-            // Setting up the database (new)
-            services.AddC8SDbContext(connections.Database);
+        /*****************************************
+         * AZURE CLIENTS SETUP
+         */
+        services.AddAzureClients(clientBuilder =>
+        {
+            clientBuilder.AddBlobServiceClient(connections.AzureStorage);
+        });
 
-            // Set up other services
-            services.AddCommonHelpers();
-            services.AddC8SRepository(connections.Database);
-            services.AddOldSystemServices(connections.OldSystem);
-        })
-        .UseSerilog((context, services, config) => config
+        /*****************************************
+         * C8S SERVICES
+         */
+        if (String.IsNullOrEmpty(connections.OldSystem))
+            throw new Exception("Missing OldSystem connection string");
+
+        services.AddCommonHelpers();
+        services.AddC8SRepository(connections.Database);//,
+            //services.BuildServiceProvider().GetRequiredService<ILoggerFactory>());
+        services.AddOldSystemServices(connections.OldSystem);
+    });
+    
+    /*****************************************
+     * LOGGING
+     */
+    hostBuilder.UseSerilog((context, services, config) => config
             .MinimumLevel.Is(LogEventLevel.Verbose)
             .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
             .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
@@ -123,11 +134,14 @@ try
             .Enrich.FromLogContext()
             .WriteTo.Console(
                 outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
-                theme: AnsiConsoleTheme.Code))
-        .Build();
+                theme: AnsiConsoleTheme.Code));
 
     SelfLog.Enable(m => Console.Error.WriteLine(m));
-
+    
+    /*****************************************
+     * RUN
+     */
+    var host = hostBuilder.Build();
     var action = host.Services.GetService<IActionLauncher>();
     return (action == null) ? -1 : await action.Launch();
 }

@@ -1,4 +1,5 @@
-﻿using C8S.UtilityApp.Extensions;
+﻿using System.Data;
+using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,31 @@ public class OldSystemService(
     string connectionString)
 {
     public string ConnectionString => connectionString;
+
+    public async Task<CoachSql?> GetDeletedCoach(Guid id)
+    {
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(CoachSql.SqlGet, connection);
+            command.Parameters.Add("@Id", SqlDbType.UniqueIdentifier);
+            command.Parameters["@Id"].Value = id;
+            await using var reader = await command.ExecuteReaderAsync();
+
+            if (reader.Read())
+                return reader.ConvertToObject<CoachSql>();
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+        return null;
+    }
 
     public async Task<List<AddressSql>> GetAddresses()
     {

@@ -45,31 +45,30 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
-#if false
         /*** ADDRESSES ***/
-        var addressDTOs = (await oldSystemService.GetAddresses())
+        var sqlAddresses = (await oldSystemService.GetAddresses())
             .Select(mapper.Map<AddressSql, AddressDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} addresses", addressDTOs.Count);
+        logger.LogInformation("Found {Count:#,##0} addresses", sqlAddresses.Count);
 
         /*** ORGANIZATIONS ***/
-        var organizationDTOs = (await oldSystemService.GetOrganizations())
+        var sqlOrganizations = (await oldSystemService.GetOrganizations())
             .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} organizations", organizationDTOs.Count);
+        logger.LogInformation("Found {Count:#,##0} organizations", sqlOrganizations.Count);
 
         var existingOrgIds = (await repository.GetOrganizations()).Select(o => o.OldSystemOrganizationId).ToList();
-        organizationDTOs.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
+        sqlOrganizations.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
 
         /*** JOIN ADDRESSES TO ORGANIZATIONS ***/
-        var totalOrganizations = organizationDTOs.Count;
+        var sqlOrganizationsCount = sqlOrganizations.Count;
         ConsoleEx.StartProgress("Joining addresses with organizations: ");
-        for (int index = 0; index < totalOrganizations; index++)
+        for (int index = 0; index < sqlOrganizationsCount; index++)
         {
-            var organization = organizationDTOs[index];
-            var address = addressDTOs
+            var organization = sqlOrganizations[index];
+            var address = sqlAddresses
                 .FirstOrDefault(a => a.OldSystemUsaPostalId == organization.OldSystemPostalAddressId);
             if (address == null)
                 throw new Exception($"Could not find address ({organization.OldSystemPostalAddressId}) for organization ({organization.OldSystemOrganizationId})");
@@ -77,27 +76,27 @@ internal class LoadC8SData(
             organization.Address = address;
             address.Organization = organization;
 
-            ConsoleEx.ShowProgress((float)index / (float)totalOrganizations);
+            ConsoleEx.ShowProgress((float)index / (float)sqlOrganizationsCount);
         }
         ConsoleEx.EndProgress();
 
-        var addedOrgs = await repository.AddOrganizations(organizationDTOs);
+        var addedOrgs = await repository.AddOrganizations(sqlOrganizations);
         logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count());
 
         /*** COACHES ***/
-        var coachDTOs = (await oldSystemService.GetCoaches())
+        var sqlCoaches = (await oldSystemService.GetCoaches())
             .Select(mapper.Map<CoachSql, CoachDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} coaches", coachDTOs.Count);
+        logger.LogInformation("Found {Count:#,##0} coaches", sqlCoaches.Count);
 
-        var hasOrgIds = coachDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
+        var hasOrgIds = sqlCoaches.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
         logger.LogInformation("Found {Count:#,##0} coaches with org ids", hasOrgIds.Count);
 
         var existingCoachIds = (await repository.GetCoaches()).Select(o => o.OldSystemCoachId).ToList();
-        coachDTOs.RemoveAll(m => existingCoachIds.Contains(m.OldSystemCoachId));
+        sqlCoaches.RemoveAll(m => existingCoachIds.Contains(m.OldSystemCoachId));
 
-        var addedCoaches = await repository.AddCoaches(coachDTOs);
+        var addedCoaches = await repository.AddCoaches(sqlCoaches);
         logger.LogInformation("Added {Count:#,##0} coaches", addedCoaches.Count());
 
         /*** JOINING COACHES & ORGANIZATIONS ***/
@@ -107,11 +106,11 @@ internal class LoadC8SData(
             .Where(c => c.OrganizationId == null && c.OldSystemOrganizationId != null)
             .ToList();
 
-        var totalCoachesWithoutOrg = coachesWithoutOrg.Count;
+        var coachesWithoutOrgCount = coachesWithoutOrg.Count;
         var coachesUpdated = 0;
 
         ConsoleEx.StartProgress("Joining coaches with organizations: ");
-        for (int index = 0; index < totalCoachesWithoutOrg; index++)
+        for (int index = 0; index < coachesWithoutOrgCount; index++)
         {
             var coach = coachesWithoutOrg[index];
             if (coach.OldSystemOrganizationId.HasValue)
@@ -128,43 +127,43 @@ internal class LoadC8SData(
                 }
             }
 
-            ConsoleEx.ShowProgress((float)index / (float)totalCoachesWithoutOrg);
+            ConsoleEx.ShowProgress((float)index / (float)coachesWithoutOrgCount);
         }
         ConsoleEx.EndProgress();
 
         logger.LogInformation("{Count:#,##0} coaches updated.", coachesUpdated);
 
         /*** APPLICATIONS ***/
-        var applicationDTOs = (await oldSystemService.GetApplications())
+        var sqlApplications = (await oldSystemService.GetApplications())
             .Select(mapper.Map<ApplicationSql, ApplicationDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} applications", applicationDTOs.Count);
+        logger.LogInformation("Found {Count:#,##0} applications", sqlApplications.Count);
 
         var existingApplicationIds = (await repository.GetApplications()).Select(o => o.OldSystemApplicationId).ToList();
         if (existingApplicationIds.Count > 0)
-            logger.LogInformation("Removing {Count:#,##0} existing applications", existingApplicationIds.Count);
-        applicationDTOs.RemoveAll(m => existingApplicationIds.Contains(m.OldSystemApplicationId));
+            logger.LogInformation("Skipping {Count:#,##0} existing applications", existingApplicationIds.Count);
+        sqlApplications.RemoveAll(m => existingApplicationIds.Contains(m.OldSystemApplicationId));
 
         /*** APPLICATION CLUBS ***/
-        var applicationClubDTOs = (await oldSystemService.GetApplicationClubs())
+        var sqlApplicationClubs = (await oldSystemService.GetApplicationClubs())
            .Select(mapper.Map<ApplicationClubSql, ApplicationClubDTO>)
            .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} application clubs", applicationClubDTOs.Count);
+        logger.LogInformation("Found {Count:#,##0} application clubs", sqlApplicationClubs.Count);
 
         var existingApplicationClubIds = (await repository.GetApplicationClubs()).Select(o => o.OldSystemApplicationClubId).ToList();
         if (existingApplicationClubIds.Count > 0)
-            logger.LogInformation("Removing {Count:#,##0} existing application clubs", existingApplicationClubIds.Count);
-        applicationClubDTOs.RemoveAll(m => existingApplicationClubIds.Contains(m.OldSystemApplicationClubId));
+            logger.LogInformation("Skipping {Count:#,##0} existing application clubs", existingApplicationClubIds.Count);
+        sqlApplicationClubs.RemoveAll(m => existingApplicationClubIds.Contains(m.OldSystemApplicationClubId));
 
         /*** JOIN APPLICATIONS TO CLUBS ***/
-        var totalClubs = applicationClubDTOs.Count;
+        var applicationClubsCount = sqlApplicationClubs.Count;
         ConsoleEx.StartProgress("Joining addresses with organizations: ");
-        for (int index = 0; index < totalClubs; index++)
+        for (int index = 0; index < applicationClubsCount; index++)
         {
-            var appClub = applicationClubDTOs[index];
-            var application = applicationDTOs
+            var appClub = sqlApplicationClubs[index];
+            var application = sqlApplications
                 .FirstOrDefault(a => a.OldSystemApplicationId == appClub.OldSystemApplicationId);
             if (application == null)
                 throw new Exception($"Could not find application ({appClub.OldSystemApplicationId}) for club ({appClub.OldSystemApplicationClubId})");
@@ -172,11 +171,11 @@ internal class LoadC8SData(
             application.ApplicationClubs ??= new List<ApplicationClubDTO>();
             application.ApplicationClubs.Add(appClub);
 
-            ConsoleEx.ShowProgress((float)index / (float)totalClubs);
+            ConsoleEx.ShowProgress((float)index / (float)applicationClubsCount);
         }
         ConsoleEx.EndProgress();
 
-        var addedApplications = await repository.AddApplications(applicationDTOs);
+        var addedApplications = await repository.AddApplications(sqlApplications);
         logger.LogInformation("Added {Count:#,##0} applications", addedApplications.Count());
 
         /*** JOIN APPLICATIONS TO COACHES ***/
@@ -187,12 +186,12 @@ internal class LoadC8SData(
             .ToList();
         logger.LogInformation("Found {Count:#,##0} applications missing linked coaches", unlinkedCoachApps.Count);
 
-        var totalUnlinkedCoachApps = unlinkedCoachApps.Count;
+        var unlinkedCoachAppsCount = unlinkedCoachApps.Count;
         var appsMissingCoach = 0;
         var appsLinkedToCoach = 0;
 
         ConsoleEx.StartProgress("Joining applications with coaches: ");
-        for (int index = 0; index < totalUnlinkedCoachApps; index++)
+        for (int index = 0; index < unlinkedCoachAppsCount; index++)
         {
             var application = unlinkedCoachApps[index];
             var oldCoachLink = application.OldSystemLinkedCoachId;
@@ -213,7 +212,7 @@ internal class LoadC8SData(
 
             await repository.UpdateApplication(application);
 
-            ConsoleEx.ShowProgress((float)index / (float)totalUnlinkedCoachApps);
+            ConsoleEx.ShowProgress((float)index / (float)unlinkedCoachAppsCount);
         }
         ConsoleEx.EndProgress();
 
@@ -225,12 +224,12 @@ internal class LoadC8SData(
             .ToList();
         logger.LogInformation("Found {Count:#,##0} applications missing linked organizations", unlinkedOrganizationApps.Count);
 
-        var totalUnlinkedOrganizationApps = unlinkedOrganizationApps.Count;
+        var unlinkedOrganizationAppsCount = unlinkedOrganizationApps.Count;
         var appsMissingOrganization = 0;
         var appsLinkedToOrganization = 0;
 
         ConsoleEx.StartProgress("Joining applications with organizations: ");
-        for (int index = 0; index < totalUnlinkedOrganizationApps; index++)
+        for (int index = 0; index < unlinkedOrganizationAppsCount; index++)
         {
             var application = unlinkedOrganizationApps[index];
             var oldOrganizationLink = application.OldSystemLinkedOrganizationId;
@@ -252,31 +251,55 @@ internal class LoadC8SData(
             await repository.UpdateApplication(application);
             appsLinkedToOrganization++;
 
-            ConsoleEx.ShowProgress((float)index / (float)totalUnlinkedOrganizationApps);
+            ConsoleEx.ShowProgress((float)index / (float)unlinkedOrganizationAppsCount);
         }
         ConsoleEx.EndProgress();
 
         logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization); 
-#endif
 
         /*** CLUBS ***/
-        var clubDTOs = (await oldSystemService.GetClubs())
+        var sqlClubs = (await oldSystemService.GetClubs())
             .Select(mapper.Map<ClubSql, ClubDTO>)
             .ToList();
 
-        logger.LogInformation("Found {Count:#,##0} clubs", clubDTOs.Count);
-
-#if false
-        var hasOrgIds = clubDTOs.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
-        logger.LogInformation("Found {Count:#,##0} clubs with org ids", hasOrgIds.Count);
+        logger.LogInformation("Found {Count:#,##0} clubs", sqlClubs.Count);
 
         var existingClubIds = (await repository.GetClubs()).Select(o => o.OldSystemClubId).ToList();
-        clubDTOs.RemoveAll(m => existingClubIds.Contains(m.OldSystemClubId));
+        sqlClubs.RemoveAll(m => existingClubIds.Contains(m.OldSystemClubId));
 
-        var addedClubs = await repository.AddClubs(clubDTOs);
+        var sqlClubsCount = sqlClubs.Count;
+        ConsoleEx.StartProgress("Adding coaches, orgs and addresses to clubs: ");
+        for (int index = 0; index < sqlClubsCount; index++)
+        {
+            var club = sqlClubs[index];
+
+            var foundCoach = allCoaches.FirstOrDefault(c => c.OldSystemCoachId == club.OldSystemCoachId);
+            if (foundCoach == null && club.OldSystemCoachId != null)
+            {
+                var deletedCoach = (await oldSystemService.GetDeletedCoach(club.OldSystemCoachId.Value));
+                if (deletedCoach != null)
+                {
+                    foundCoach = allCoaches.FirstOrDefault(c => c.Email == deletedCoach.Email);
+                }
+            }
+            club.CoachId = foundCoach?.Id ??
+                throw new Exception($"Could not find coach ({club.OldSystemCoachId}) for club ({club.OldSystemClubId})");
+
+            club.OrganizationId = allOrganizations.FirstOrDefault(c => c.OldSystemOrganizationId == club.OldSystemOrganizationId)?.Id ??
+                                throw new Exception($"Could not find organization ({club.OldSystemOrganizationId}) for club ({club.OldSystemClubId})");
+
+            var address = sqlAddresses
+                .FirstOrDefault(a => a.OldSystemUsaPostalId == club.OldSystemMeetingAddressId);
+            if (address == null)
+                throw new Exception($"Could not find address ({club.OldSystemMeetingAddressId}) for club ({club.OldSystemClubId})");
+            club.Address = address;
+
+            ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
+        }
+        ConsoleEx.EndProgress();
+
+        var addedClubs = await repository.AddClubs(sqlClubs);
         logger.LogInformation("Added {Count:#,##0} clubs", addedClubs.Count()); 
-#endif
-
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;

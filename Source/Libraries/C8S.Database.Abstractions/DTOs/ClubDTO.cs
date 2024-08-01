@@ -2,6 +2,8 @@
 using C8S.Common.Extensions;
 using C8S.Database.Abstractions.Base;
 using C8S.Database.Abstractions.Enumerations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace C8S.Database.Abstractions.DTOs;
 
@@ -21,7 +23,6 @@ public class ClubDTO: BaseDTO
         if (this.ClubSize == null) errors.Add("ClubSize is required.");
         if (this.Season == null) errors.Add("Season is required.");
         if (this.StartsOn == null) errors.Add("StartsOn is required.");
-        if (this.ApplicationId == null) errors.Add("ApplicationId is required.");
         return errors;
     }
     #endregion
@@ -33,9 +34,11 @@ public class ClubDTO: BaseDTO
     #region Public Properties    
     public Guid? OldSystemClubId { get; set; } = null;
     
-    public Guid? OldSystemApplicationId { get; set; } = null;
+    public Guid? OldSystemOrganizationId { get; set; } = null;
     
-    public Guid? OldSystemLinkedClubId { get; set; } = null;
+    public Guid? OldSystemCoachId { get; set; } = null;
+
+    public Guid? OldSystemMeetingAddressId { get; set; } = null;
 
     public AgeLevel? AgeLevel { get; set; } = null;
 
@@ -44,9 +47,19 @@ public class ClubDTO: BaseDTO
     public int? Season { get; set; } = null;
 
     public DateOnly? StartsOn { get; set; } = null;
+
+    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    public string? Notes { get; set; } = null;
     #endregion
 
-    #region Parent Properties
-    public int? ApplicationId { get; set; } = default!;
+    #region Reference Properties
+    public int CoachId { get; set; } = default!;
+    public CoachDTO Coach { get; set; } = default!;
+
+    public int OrganizationId { get; set; } = default!;
+    public OrganizationDTO Organization { get; set; } = default!;
+    
+    public int? AddressId { get; set; } = default!;
+    public AddressDTO? Address { get; set; } = default!;
     #endregion
 }

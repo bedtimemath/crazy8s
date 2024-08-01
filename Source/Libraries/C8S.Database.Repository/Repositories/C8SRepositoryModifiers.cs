@@ -96,6 +96,51 @@ public partial class C8SRepository
     }
     #endregion
 
+    #region Club
+    public async Task<ClubDTO> AddClub(ClubDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<ClubDb>(dto);
+
+        var entry = await dbContext.Clubs.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<ClubDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<ClubDTO>> AddClubs(IEnumerable<ClubDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<ClubDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<ClubDb>(dto);
+            var entry = await dbContext.Clubs.AddAsync(db);
+            dtosAdded.Add(mapper.Map<ClubDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    
+    public async Task<ClubDTO> UpdateClub(ClubDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<ClubDb>(dto);
+
+        var entry = dbContext.Clubs.Attach(db);
+        entry.State = EntityState.Modified;
+        await dbContext.SaveChangesAsync();
+
+        var dtoModified = mapper.Map<ClubDTO>(entry.Entity);
+
+        return dtoModified;
+    }
+    #endregion
+
     #region Coach
     public async Task<CoachDTO> AddCoach(CoachDTO dto)
     {
