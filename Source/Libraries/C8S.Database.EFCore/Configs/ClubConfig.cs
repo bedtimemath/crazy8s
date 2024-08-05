@@ -99,6 +99,12 @@ public class ClubConfig : IEntityTypeConfiguration<ClubDb>
             .WithOne(m => m.Club)
             .HasForeignKey<ClubDb>(m => m.AddressId)
             .IsRequired(false);
+
+        //public ICollection<OrderDb> Orders { get; set; } = default!;
+        entity.HasMany(m => m.Orders)
+            .WithOne(m => m.Club)
+            .HasForeignKey(m => m.ClubId)
+            .IsRequired(false);
         #endregion
 
         #region Indices

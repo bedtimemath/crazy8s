@@ -216,4 +216,49 @@ public partial class C8SRepository
         return dtosAdded;
     }
     #endregion
+
+    #region Sku
+    public async Task<SkuDTO> AddSku(SkuDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<SkuDb>(dto);
+
+        var entry = await dbContext.Skus.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<SkuDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<SkuDTO>> AddSkus(IEnumerable<SkuDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<SkuDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<SkuDb>(dto);
+            var entry = await dbContext.Skus.AddAsync(db);
+            dtosAdded.Add(mapper.Map<SkuDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    
+    public async Task<SkuDTO> UpdateSku(SkuDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<SkuDb>(dto);
+
+        var entry = dbContext.Skus.Attach(db);
+        entry.State = EntityState.Modified;
+        await dbContext.SaveChangesAsync();
+
+        var dtoModified = mapper.Map<SkuDTO>(entry.Entity);
+
+        return dtoModified;
+    }
+    #endregion
 }

@@ -50,6 +50,9 @@ public class AddressDTO: BaseDTO
     #endregion
 
     #region Reference Properties
+    public ApplicationDTO? Application { get; set; } = default!;
+    public ClubDTO? Club { get; set; } = default!;
+    public OrderDTO? Order { get; set; } = default!;
     public OrganizationDTO? Organization { get; set; } = null;
     #endregion
 }

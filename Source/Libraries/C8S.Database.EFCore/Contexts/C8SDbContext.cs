@@ -13,7 +13,9 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
     public DbSet<ApplicationClubDb> ApplicationClubs { get; set; }
     public DbSet<ClubDb> Clubs { get; set; }
     public DbSet<CoachDb> Coaches { get; set; }
+    public DbSet<OrderDb> Orders { get; set; }
     public DbSet<OrganizationDb> Organizations { get; set; }
+    public DbSet<SkuDb> Skus { get; set; }
     #endregion
 
     #region DbContext Overrides
@@ -24,7 +26,9 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
         modelBuilder.ApplyConfiguration(new ApplicationClubConfig());
         modelBuilder.ApplyConfiguration(new ClubConfig());
         modelBuilder.ApplyConfiguration(new CoachConfig());
+        modelBuilder.ApplyConfiguration(new OrderConfig());
         modelBuilder.ApplyConfiguration(new OrganizationConfig());
+        modelBuilder.ApplyConfiguration(new SkuConfig());
     }
     #endregion
 }

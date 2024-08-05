@@ -45,6 +45,7 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
+#if false
         /*** ADDRESSES ***/
         var sqlAddresses = (await oldSystemService.GetAddresses())
             .Select(mapper.Map<AddressSql, AddressDTO>)
@@ -255,7 +256,7 @@ internal class LoadC8SData(
         }
         ConsoleEx.EndProgress();
 
-        logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization); 
+        logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization);
 
         /*** CLUBS ***/
         var sqlClubs = (await oldSystemService.GetClubs())
@@ -300,6 +301,18 @@ internal class LoadC8SData(
 
         var addedClubs = await repository.AddClubs(sqlClubs);
         logger.LogInformation("Added {Count:#,##0} clubs", addedClubs.Count()); 
+#endif
+        
+        /*** SKUS ***/
+        var sqlSkus = (await oldSystemService.GetSkus())
+            .Select(mapper.Map<SkuSql, SkuDTO>)
+            .ToList();
+
+        logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
+
+        var addedSkus = await repository.AddSkus(sqlSkus);
+        logger.LogInformation("Added {Count:#,##0} skus", addedSkus.Count()); 
+
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;

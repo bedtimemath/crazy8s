@@ -8,12 +8,12 @@ using C8S.Database.Abstractions.Enumerations;
 
 namespace C8S.Database.EFCore.Models;
 
-[Table("Clubs")]
-public class ClubDb : BaseDb
+[Table("Skus")]
+public class SkuDb : BaseDb
 {
     #region Override Properties
     [NotMapped] 
-    public override int Id => ClubId;
+    public override int Id => SkuId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
                                        ?? SharedConstants.Display.NotSet;
@@ -21,17 +21,24 @@ public class ClubDb : BaseDb
 
     #region Id Property
     [Required] 
-    public int ClubId { get; set; }
+    public int SkuId { get; set; }
     #endregion
 
     #region Database Properties
-    public Guid? OldSystemClubId { get; set; } = null;
+    public Guid? OldSystemSkuId { get; set; } = null;
 
-    public Guid? OldSystemOrganizationId { get; set; } = null;
+    [Required, MaxLength(SharedConstants.MaxLengths.Key)]
+    public string Key { get; set; } = default!;
 
-    public Guid? OldSystemCoachId { get; set; } = null;
+    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
+    public string Name { get; set; } = default!;
 
-    public Guid? OldSystemMeetingAddressId { get; set; } = null;
+    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public SkuStatus Status { get; set; } = default!;
+
+    [Required]
+    public int Season { get; set; } = default!;
 
     [Required, MaxLength(SharedConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -41,28 +48,8 @@ public class ClubDb : BaseDb
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ClubSize ClubSize { get; set; } = default!;
 
-    [Required]
-    public int Season { get; set; } = default!;
-
-    [Required]
-    public DateOnly StartsOn { get; set; }
-
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
-    #endregion
-
-    #region Reference Properties
-    [ForeignKey(nameof(Coach))]
-    public int CoachId { get; set; } = default!;
-    public CoachDb Coach { get; set; } = default!;
-
-    [ForeignKey(nameof(Organization))]
-    public int OrganizationId { get; set; } = default!;
-    public OrganizationDb Organization { get; set; } = default!;
-    
-    [ForeignKey(nameof(Address))]
-    public int? AddressId { get; set; } = null;
-    public AddressDb? Address { get; set; } = null;
     #endregion
 
     #region Parent Properties

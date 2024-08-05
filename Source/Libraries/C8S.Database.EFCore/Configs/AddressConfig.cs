@@ -83,10 +83,10 @@ public class AddressConfig : IEntityTypeConfiguration<AddressDb>
             .IsRequired(false);
 
         //public OrderDb? Order { get; set; } = default!;
-        //entity.HasOne(m => m.Order)
-        //    .WithOne(m => m.Address)
-        //    .HasForeignKey<OrderDb>(m => m.AddressId)
-        //    .IsRequired(false);
+        entity.HasOne(m => m.Order)
+            .WithOne(m => m.Address)
+            .HasForeignKey<OrderDb>(m => m.AddressId)
+            .IsRequired(false);
 
         //public OrganizationDb? Organization { get; set; } = default!;
         entity.HasOne(m => m.Organization)

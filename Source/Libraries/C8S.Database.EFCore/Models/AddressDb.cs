@@ -53,7 +53,7 @@ public class AddressDb : BaseDb
     #region Parent Properties
     public ApplicationDb? Application { get; set; } = default!;
     public ClubDb? Club { get; set; } = default!;
-    //public OrderDb? Order { get; set; } = default!;
+    public OrderDb? Order { get; set; } = default!;
     public OrganizationDb? Organization { get; set; } = default!;
     #endregion
 }

@@ -30,3 +30,15 @@ FROM [Crazy8s].[ApplicationClub] ac
 LEFT JOIN [Crazy8s].[ClubSize] cs ON cs.[Id] = ac.[ClubSizeId]
 WHERE ac.DeletedBy IS NULL
 ORDER BY cs.[Name];
+
+SELECT DISTINCT os.[Name]
+FROM [Crazy8s].[Order] o
+LEFT JOIN [Crazy8s].[OrderStatus] os ON os.[Id] = o.[StatusId]
+WHERE o.DeletedBy IS NULL
+ORDER BY os.[Name];
+
+SELECT DISTINCT ss.[Name]
+FROM [Crazy8s].[Sku] s
+LEFT JOIN [Crazy8s].[SkuStatus] ss ON ss.[Id] = s.[StatusId]
+WHERE s.DeletedBy IS NULL
+ORDER BY ss.[Name];

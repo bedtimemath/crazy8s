@@ -2,12 +2,12 @@
 
 namespace C8S.Database.Abstractions.Enumerations;
 
-public enum CoachStatus
+public enum SkuStatus
 {
-    [Label("Pending")]
-    Pending,
+    [Label("Draft")]
+    Draft,
     [Label("Active")]
     Active,
-    [Label("Canceled")]
-    Canceled
+    [Label("Inactive")]
+    Inactive
 }

@@ -210,4 +210,33 @@ public class OldSystemService(
 
         return organizations;
     }
+    
+    public async Task<List<SkuSql>> GetSkus()
+    {
+        var skus = new List<SkuSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(SkuSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var sku = reader.ConvertToObject<SkuSql>();
+                skus.Add(sku);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return skus;
+    }
 }

@@ -53,13 +53,17 @@ public class ClubDTO: BaseDTO
     #endregion
 
     #region Reference Properties
-    public int CoachId { get; set; } = default!;
-    public CoachDTO Coach { get; set; } = default!;
+    public int? CoachId { get; set; } = default!;
+    public CoachDTO? Coach { get; set; } = default!;
 
-    public int OrganizationId { get; set; } = default!;
-    public OrganizationDTO Organization { get; set; } = default!;
+    public int? OrganizationId { get; set; } = default!;
+    public OrganizationDTO? Organization { get; set; } = default!;
     
     public int? AddressId { get; set; } = default!;
     public AddressDTO? Address { get; set; } = default!;
+    #endregion
+
+    #region Parent Properties
+    public ICollection<OrderDTO>? Orders { get; set; } = null;
     #endregion
 }
