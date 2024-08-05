@@ -502,8 +502,8 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<int>("Ordinal")
                         .HasColumnType("int");
 
-                    b.Property<short>("Quantity")
-                        .HasColumnType("smallint");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<int>("SkuId")
                         .HasColumnType("int");

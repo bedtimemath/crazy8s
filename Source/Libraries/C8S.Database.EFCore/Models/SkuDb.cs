@@ -52,7 +52,7 @@ public class SkuDb : BaseDb
     public string? Notes { get; set; } = null;
     #endregion
 
-    #region Parent Properties
-    public ICollection<OrderDb> Orders { get; set; } = default!;
+    #region Child Properties
+    public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
     #endregion
 }

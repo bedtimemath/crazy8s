@@ -18,7 +18,7 @@ public class OldSystemService(
         try
         {
             await connection.OpenAsync();
-            await using var command = new SqlCommand(CoachSql.SqlGet, connection);
+            await using var command = new SqlCommand(CoachSql.SqlGetDeleted, connection);
             command.Parameters.Add("@Id", SqlDbType.UniqueIdentifier);
             command.Parameters["@Id"].Value = id;
             await using var reader = await command.ExecuteReaderAsync();
@@ -180,6 +180,64 @@ public class OldSystemService(
         }
 
         return coaches;
+    }
+    
+    public async Task<List<OrderSql>> GetOrders()
+    {
+        var orders = new List<OrderSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(OrderSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var order = reader.ConvertToObject<OrderSql>();
+                orders.Add(order);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return orders;
+    }
+    
+    public async Task<List<OrderSkuSql>> GetOrderSkus()
+    {
+        var orderskus = new List<OrderSkuSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(OrderSkuSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var ordersku = reader.ConvertToObject<OrderSkuSql>();
+                orderskus.Add(ordersku);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return orderskus;
     }
 
     public async Task<List<OrganizationSql>> GetOrganizations()

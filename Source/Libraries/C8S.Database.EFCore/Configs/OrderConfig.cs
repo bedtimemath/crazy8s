@@ -113,10 +113,10 @@ public class OrderConfig : IEntityTypeConfiguration<OrderDb>
             .HasForeignKey(m => m.ClubId)
             .IsRequired(false);
         
-        //public ICollection<SkuDb> Skus { get; set; } = default!;
-        entity.HasMany(m => m.Skus)
-            .WithMany(m => m.Orders)
-            .UsingEntity("OrderSkus");
+        //public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
+        entity.HasMany(m => m.OrderSkus)
+            .WithOne(m => m.Order)
+            .HasForeignKey(m => m.OrderId);
         #endregion
 
         #region Indices

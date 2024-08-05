@@ -2,7 +2,6 @@
 using C8S.Common;
 using C8S.Common.Helpers.Extensions;
 using C8S.Common.Models;
-using C8S.Database.EFCore.Extensions;
 using C8S.Database.Repository.Extensions;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Tasks;
@@ -12,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;

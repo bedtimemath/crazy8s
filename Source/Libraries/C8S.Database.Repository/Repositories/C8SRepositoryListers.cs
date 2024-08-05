@@ -289,6 +289,116 @@ public partial class C8SRepository
     }
     #endregion
     
+    #region Orders
+    public async Task<IList<OrderDTO>> GetOrders(
+        OrderFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Orders 
+                .OrderBy(a => a.Number)
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (filter.Status != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Status == filter.Status);
+            }
+        }
+
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
+        return (await queryable.ToListAsync())
+            .Select(mapper.Map<OrderDTO>).ToList();
+    }
+    
+    public async Task<int> GetOrdersCount(
+        OrderFilter? filter = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Orders // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (filter.Status != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Status == filter.Status);
+            }
+        }
+
+        return await queryable.CountAsync();
+    }
+    #endregion
+    
+    #region OrderSkus
+    public async Task<IList<OrderSkuDTO>> GetOrderSkus(
+        OrderSkuFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.OrderSkus 
+                .OrderBy(a => a.Ordinal)
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        /* FILTER */
+        if (filter != null)
+        {
+        }
+
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
+        return (await queryable.ToListAsync())
+            .Select(mapper.Map<OrderSkuDTO>).ToList();
+    }
+    
+    public async Task<int> GetOrderSkusCount(
+        OrderSkuFilter? filter = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.OrderSkus // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        /* FILTER */
+        if (filter != null)
+        {
+        }
+
+        return await queryable.CountAsync();
+    }
+    #endregion
+    
     #region Organizations
     public async Task<IList<OrganizationDTO>> GetOrganizations(
         OrganizationFilter? filter = null,
@@ -360,5 +470,76 @@ public partial class C8SRepository
         return await queryable.CountAsync();
     }
     #endregion
+    
+    #region Skus
+    public async Task<IList<SkuDTO>> GetSkus(
+        SkuFilter? filter = null,
+        int? startIndex = null, int? takeCount = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
+        var queryable =
+            dbContext.Skus 
+                .OrderBy(a => a.Name)
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.Name.Contains(filter.Query)) );
+            }
+
+            if (filter.Status != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Status == filter.Status);
+            }
+        }
+
+        /* START & SKIP */
+        if (startIndex != null)
+            queryable = queryable.Skip(startIndex.Value);
+
+        if (takeCount != null)
+            queryable = queryable.Take(takeCount.Value);
+
+        return (await queryable.ToListAsync())
+            .Select(mapper.Map<SkuDTO>).ToList();
+    }
+    
+    public async Task<int> GetSkusCount(
+        SkuFilter? filter = null)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var queryable =
+            dbContext.Skus // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .AsQueryable();
+
+        /* FILTER */
+        if (filter != null)
+        {
+            if (!String.IsNullOrEmpty(filter.Query))
+            {
+                queryable = queryable
+                    .Where(a => (a.Name.Contains(filter.Query)) );
+            }
+
+            if (filter.Status != null)
+            {
+                queryable = queryable
+                    .Where(a => a.Status == filter.Status);
+            }
+        }
+
+        return await queryable.CountAsync();
+    }
+    #endregion
 }

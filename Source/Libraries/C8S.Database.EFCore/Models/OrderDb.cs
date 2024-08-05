@@ -72,6 +72,6 @@ public class OrderDb: BaseDb
     #endregion
 
     #region Child Properties
-    public ICollection<SkuDb> Skus { get; set; } = default!;
+    public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
     #endregion
 }

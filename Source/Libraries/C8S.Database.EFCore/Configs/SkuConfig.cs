@@ -68,10 +68,10 @@ public class SkuConfig : IEntityTypeConfiguration<SkuDb>
         #endregion
 
         #region Navigation Configuration
-        //public ICollection<OrderDb> Orders { get; set; } = default!;
-        entity.HasMany(m => m.Orders)
-            .WithMany(m => m.Skus)
-            .UsingEntity("OrderSkus");
+        //public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
+        entity.HasMany(m => m.OrderSkus)
+            .WithOne(m => m.Sku)
+            .HasForeignKey(m => m.SkuId);
         #endregion
 
         #region Indices

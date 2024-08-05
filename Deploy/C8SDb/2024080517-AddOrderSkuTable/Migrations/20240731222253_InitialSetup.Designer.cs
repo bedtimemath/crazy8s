@@ -4,6 +4,7 @@ using C8S.Database.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240731222253_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -397,130 +400,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.ToTable("Coaches");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
-                {
-                    b.Property<int>("OrderId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("ArriveBy")
-                        .HasColumnType("date");
-
-                    b.Property<Guid?>("BatchIdentifier")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("ClubId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ContactEmail")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("ContactPhone")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("ContactPhoneExt")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("EmailedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(4096)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("OldSystemClubId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OldSystemOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OldSystemShippingAddressId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset>("OrderedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ShippedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.HasKey("OrderId");
-
-                    b.HasIndex("AddressId")
-                        .IsUnique();
-
-                    b.HasIndex("ClubId");
-
-                    b.HasIndex("OldSystemOrderId")
-                        .IsUnique()
-                        .HasFilter("[OldSystemOrderId] IS NOT NULL");
-
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderSkuDb", b =>
-                {
-                    b.Property<int>("OrderSkuId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderSkuId"));
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("OldSystemOrderId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OldSystemOrderSkuId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OldSystemSkuId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Ordinal")
-                        .HasColumnType("int");
-
-                    b.Property<short>("Quantity")
-                        .HasColumnType("smallint");
-
-                    b.Property<int>("SkuId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrderSkuId");
-
-                    b.HasIndex("OldSystemOrderSkuId")
-                        .IsUnique()
-                        .HasFilter("[OldSystemOrderSkuId] IS NOT NULL");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("SkuId");
-
-                    b.ToTable("OrderSkus");
-                });
-
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
                 {
                     b.Property<int>("OrganizationId")
@@ -589,61 +468,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.ToTable("Organizations");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.SkuDb", b =>
-                {
-                    b.Property<int>("SkuId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkuId"));
-
-                    b.Property<string>("AgeLevel")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("ClubSize")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(4096)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("OldSystemSkuId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Season")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.HasKey("SkuId");
-
-                    b.HasIndex("OldSystemSkuId")
-                        .IsUnique()
-                        .HasFilter("[OldSystemSkuId] IS NOT NULL");
-
-                    b.ToTable("Skus");
-                });
-
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
                 {
                     b.HasOne("C8S.Database.EFCore.Models.ApplicationDb", "Application")
@@ -708,40 +532,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
-                {
-                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
-                        .WithOne("Order")
-                        .HasForeignKey("C8S.Database.EFCore.Models.OrderDb", "AddressId");
-
-                    b.HasOne("C8S.Database.EFCore.Models.ClubDb", "Club")
-                        .WithMany("Orders")
-                        .HasForeignKey("ClubId");
-
-                    b.Navigation("Address");
-
-                    b.Navigation("Club");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderSkuDb", b =>
-                {
-                    b.HasOne("C8S.Database.EFCore.Models.OrderDb", "Order")
-                        .WithMany("OrderSkus")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("C8S.Database.EFCore.Models.SkuDb", "Sku")
-                        .WithMany("OrderSkus")
-                        .HasForeignKey("SkuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Sku");
-                });
-
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
                 {
                     b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
@@ -757,19 +547,12 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.Navigation("Club");
 
-                    b.Navigation("Order");
-
                     b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
                 {
                     b.Navigation("ApplicationClubs");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
@@ -779,11 +562,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Clubs");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
-                {
-                    b.Navigation("OrderSkus");
-                });
-
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
                 {
                     b.Navigation("Applications");
@@ -791,11 +569,6 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Clubs");
 
                     b.Navigation("Coaches");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.SkuDb", b =>
-                {
-                    b.Navigation("OrderSkus");
                 });
 #pragma warning restore 612, 618
         }

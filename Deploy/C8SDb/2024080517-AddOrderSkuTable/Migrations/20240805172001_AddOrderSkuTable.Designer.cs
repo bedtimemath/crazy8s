@@ -4,6 +4,7 @@ using C8S.Database.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240805172001_AddOrderSkuTable")]
+    partial class AddOrderSkuTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -502,8 +505,8 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<int>("Ordinal")
                         .HasColumnType("int");
 
-                    b.Property<short>("Quantity")
-                        .HasColumnType("smallint");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<int>("SkuId")
                         .HasColumnType("int");

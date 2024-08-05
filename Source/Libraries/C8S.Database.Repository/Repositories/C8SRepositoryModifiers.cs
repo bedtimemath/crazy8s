@@ -186,6 +186,68 @@ public partial class C8SRepository
     }
     #endregion
 
+    #region Order
+    public async Task<OrderDTO> AddOrder(OrderDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<OrderDb>(dto);
+
+        var entry = await dbContext.Orders.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<OrderDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<OrderDTO>> AddOrders(IEnumerable<OrderDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<OrderDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<OrderDb>(dto);
+            var entry = await dbContext.Orders.AddAsync(db);
+            dtosAdded.Add(mapper.Map<OrderDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    #endregion
+
+    #region OrderSku
+    public async Task<OrderSkuDTO> AddOrderSku(OrderSkuDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<OrderSkuDb>(dto);
+
+        var entry = await dbContext.OrderSkus.AddAsync(db);
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<OrderSkuDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+
+    public async Task<IEnumerable<OrderSkuDTO>> AddOrderSkus(IEnumerable<OrderSkuDTO> dtos)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dtosAdded = new List<OrderSkuDTO>();
+        foreach (var dto in dtos)
+        {
+            var db = mapper.Map<OrderSkuDb>(dto);
+            var entry = await dbContext.OrderSkus.AddAsync(db);
+            dtosAdded.Add(mapper.Map<OrderSkuDTO>(entry.Entity));
+        }
+
+        await dbContext.SaveChangesAsync();
+        return dtosAdded;
+    }
+    #endregion
+    
     #region Organization
     public async Task<OrganizationDTO> AddOrganization(OrganizationDTO dto)
     {
