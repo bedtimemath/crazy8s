@@ -37,6 +37,19 @@
     margin: 0.5rem;
 }
 
+.c8s-application-header {
+    padding: 0.25rem 0.5rem;
+    background-color: var(--c8s-header-background-color);
+}
+
+    .c8s-application-header h4 {
+        color: var(--c8s-header-text-color);
+    }
+
+    .c8s-application-header .rz-button-text {
+        color: var(--c8s-header-text-color);
+    }
+
 /*
     SIDEBAR
 */

@@ -1,0 +1,14 @@
+﻿@page "/application/{ApplicationId:int}"
+@inherits C8S.Common.Razor.Base.BaseRazorPage
+
+<PageTitle>Application</PageTitle>
+
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.SpaceBetween"
+             Gap="0"
+             class="w-100">
+
+    <ApplicationHeader Application="_application" />
+
+</RadzenStack>

@@ -30,4 +30,8 @@ public partial class Applications : BaseRazorPage
         _total = count;
         StateHasChanged();
     }
+
+    private void HandleApplicationChosen(int applicationId) =>
+        NavigationManager.NavigateTo($"/application/{applicationId}");
+
 }

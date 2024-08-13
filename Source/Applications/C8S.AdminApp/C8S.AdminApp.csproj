@@ -32,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="Pages\Application.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
     <Content Update="Pages\Config.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

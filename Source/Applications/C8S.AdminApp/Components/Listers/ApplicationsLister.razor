@@ -1,5 +1,5 @@
-﻿@using C8S.Database.Abstractions.DTOs
-@inherits BaseRazorComponent
+﻿@inherits BaseRazorComponent
+@using C8S.Database.Abstractions.DTOs
 
 <div id="@ComponentId" class="c8s-lister c8s-applications-lister @CssClass">
     <Virtualize @ref="_applicationsList"
@@ -7,7 +7,8 @@
                 ItemsProvider="@LoadApplications"
                 Context="application">
         <ItemContent>
-            <ApplicationCard Application="application"/>
+            <ApplicationCard Application="application"
+                             ViewClicked="@(async () => await ApplicationChosen.InvokeAsync(application.ApplicationId!.Value))"/>
         </ItemContent>
         <EmptyContent>
             <RadzenText TagName="TagName.Div"

@@ -21,7 +21,7 @@
                 <RadzenText TagName="TagName.H5"
                             TextAlign="TextAlign.Left"
                             TextStyle="TextStyle.DisplayH5"
-                            Text="@Application.FullName"
+                            Text="@Application.ApplicantFullName"
                             class="flex-grow-1"/>
 
                 @* COLUMNS *@
@@ -77,6 +77,7 @@
                           ButtonStyle="ButtonStyle.Light"
                           Variant="Variant.Flat"
                           Text="View"
+                          Click="@(async () => await ViewClicked.InvokeAsync())"
                           class="flex-shrink-0"/>
 
         </RadzenStack>

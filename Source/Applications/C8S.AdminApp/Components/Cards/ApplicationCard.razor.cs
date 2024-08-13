@@ -8,4 +8,7 @@ public partial class ApplicationCard: BaseRazorComponent
 {
     [Parameter]
     public ApplicationDTO Application { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback ViewClicked { get; set; } = default!;
 }

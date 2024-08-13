@@ -18,6 +18,9 @@ public partial class ApplicationsLister : BaseRazorComponent
     [Parameter]
     public EventCallback<int> TotalChanged { get; set; } = default!;
 
+    [Parameter]
+    public EventCallback<int> ApplicationChosen { get; set; } = default!;
+
     private ApplicationFilter? _filter = null;
 
     private Virtualize<ApplicationDTO> _applicationsList = default!;

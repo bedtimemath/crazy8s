@@ -87,7 +87,7 @@ public class ApplicationDTO : BaseDTO
     #endregion
 
     #region Derived Properties
-    public string? FullName => 
+    public string? ApplicantFullName => 
         String.IsNullOrEmpty(ApplicantFirstName) && String.IsNullOrEmpty(ApplicantLastName) ? null : 
             String.Join(" ", new List<string?>() { ApplicantFirstName, ApplicantLastName });
 
