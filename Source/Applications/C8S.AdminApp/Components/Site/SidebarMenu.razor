@@ -10,6 +10,12 @@
         <SidebarMenuItem Icon="@SharedConstants.Icons.Application"
                          Text="Applications"
                          Page="/applications" />
+        @foreach (var application in HistoryService.Applications)
+        {
+            <SidebarSubmenuItem Text="@application.ApplicantFullName"
+                                Page="@($"/application/{application.ApplicationId}")"
+                                CloseButtonClicked="@(() => HandleApplicationClosed(application))"/>
+        }
         <SidebarMenuItem Icon="@SharedConstants.Icons.School"
                          Text="Organizations"
                          Page="/organizations" />

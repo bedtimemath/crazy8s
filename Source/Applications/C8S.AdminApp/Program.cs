@@ -106,7 +106,8 @@ try
      */
     builder.Services.AddCommonHelpers();
     builder.Services.AddC8SRepository(connections.Database);
-    builder.Services.AddSingleton<SelfService>();
+    builder.Services.AddScoped<SelfService>();
+    builder.Services.AddScoped<HistoryService>();
     
     /*****************************************
      * RADZEN SERVICES
