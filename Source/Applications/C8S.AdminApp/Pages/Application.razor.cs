@@ -21,6 +21,8 @@ public partial class Application : BaseRazorPage, IDisposable
     public int ApplicationId { get; set; }
 
     private ApplicationDTO? _application = null;
+    private OrganizationDTO? _organization = null;
+    private CoachDTO? _coach = null;
 
     protected override void OnInitialized()
     {
@@ -39,6 +41,9 @@ public partial class Application : BaseRazorPage, IDisposable
         _application = await Repository.GetApplication(ApplicationId) ??
                        throw new Exception($"Could not find application #:{ApplicationId}");
         HistoryService.Add(_application);
+
+        if (_application.LinkedCoachId != null) _coach = await Repository.GetCoach(_application.LinkedCoachId.Value);
+        if (_application.LinkedOrganizationId != null) _organization = await Repository.GetOrganization(_application.LinkedOrganizationId.Value);
     }
 
     private void HandleHistoryChanged(object? sender, HistoryEventArgs eventArgs)

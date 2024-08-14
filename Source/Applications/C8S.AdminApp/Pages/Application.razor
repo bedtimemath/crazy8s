@@ -1,4 +1,6 @@
 ﻿@page "/application/{ApplicationId:int}"
+@using C8S.Common
+@using C8S.Common.Extensions
 @inherits C8S.Common.Razor.Base.BaseRazorPage
 
 <PageTitle>Application</PageTitle>
@@ -10,5 +12,29 @@
              class="w-100">
 
     <ApplicationHeader Application="_application" />
-
+    
+    <div><span style="font-weight: bold;">Status</span>: @(_application?.Status?.GetLabel() ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Type</span>: @(_application?.ApplicantType?.GetLabel() ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Name</span>: @(_application?.ApplicantFullName ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Email</span>: @(_application?.ApplicantEmail ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Phone</span>: @(_application?.ApplicantFullPhone ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Time Zone</span>: @(_application?.ApplicantTimeZone ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Submitted</span>: @(_application?.SubmittedOn?.ToString("D") ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Notes</span></div>
+    <div>@_application?.Notes</div>
+    <p/>
+    <h5>Linked Coach</h5>
+    <div><span style="font-weight: bold;">Name</span>: @(_coach?.FullName ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Email</span>: @(_coach?.Email ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Phone</span>: @(_coach?.FullPhone ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Time Zone</span>: @(_coach?.TimeZone ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Notes</span></div>
+    <div>@_coach?.Notes</div>
+    <p />
+    <h5>Linked Organization</h5>
+    <div><span style="font-weight: bold;">Name</span>: @(_organization?.Name ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Type</span>: @(_organization?.Type?.GetLabel() ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Address</span>: @(_organization?.Address?.Display ?? SharedConstants.Display.NotSet)</div>
+    <div><span style="font-weight: bold;">Notes</span></div>
+    <div>@_organization?.Notes</div>
 </RadzenStack>

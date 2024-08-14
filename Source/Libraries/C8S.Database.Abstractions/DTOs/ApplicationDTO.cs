@@ -90,6 +90,10 @@ public class ApplicationDTO : BaseDTO
     public string? ApplicantFullName => 
         String.IsNullOrEmpty(ApplicantFirstName) && String.IsNullOrEmpty(ApplicantLastName) ? null : 
             String.Join(" ", new List<string?>() { ApplicantFirstName, ApplicantLastName });
+    
+    public string? ApplicantFullPhone => 
+        String.IsNullOrEmpty(ApplicantPhone) && String.IsNullOrEmpty(ApplicantPhoneExt) ? null : 
+            String.Join(" x", new List<string?>() { ApplicantPhone, ApplicantPhoneExt });
 
     public string? StartDates => ApplicationClubs?.Count >= 1 ? 
         String.Join(", ", ApplicationClubs.Select(ac => ac.StartsOn?.ToString("d")).Where(s => s != null)) : null;
