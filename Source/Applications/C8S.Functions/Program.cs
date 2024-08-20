@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -31,7 +32,7 @@ try
         })
         .ConfigureAppConfiguration((hostContext, builder) =>
         {
-            Log.Logger.Information("Configuring App Configuration");
+            //Log.Logger.Information("Configuring App Configuration");
 
             var cnnString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.AppConfig) ??
                             hostContext.Configuration[$"ConnectionStrings:{C8SConstants.Connections.AppConfig}"];
@@ -54,7 +55,8 @@ try
             /*****************************************
              * AZURE CLIENTS SETUP
              */
-            var azureStorageCnnString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.AzureStorage);
+            var azureStorageCnnString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.AzureStorage) ??
+                                        hostContext.Configuration[$"ConnectionStrings:{C8SConstants.Connections.AzureStorage}"];
             services.AddAzureClients(clientBuilder =>
             {
                 clientBuilder.AddQueueServiceClient(azureStorageCnnString);
@@ -64,13 +66,13 @@ try
             /*****************************************
              * REPOSITORY SETUP
              */
-            var connectionString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.Database);
-            services.AddC8SDbContext(connectionString);
+            //var connectionString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.Database);
+            //services.AddC8SDbContext(connectionString);
 
             /*****************************************
              * OTHER LIBRARY SETUP
              */
-            services.AddCommonHelpers();
+            //services.AddCommonHelpers();
             services.AddApplicationInsightsTelemetryWorkerService();
             services.ConfigureFunctionsApplicationInsights();
         })
@@ -88,6 +90,8 @@ try
                 .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), new TraceTelemetryConverter())
         )
         .Build();
+
+    SelfLog.Enable(m => Console.Error.WriteLine(m));
 
     host.Run();
 }

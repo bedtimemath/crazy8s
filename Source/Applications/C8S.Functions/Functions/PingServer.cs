@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using C8S.Common;
 using C8S.Common.Extensions;
 using C8S.Common.Models;
 using Microsoft.Azure.Functions.Worker;
@@ -33,8 +34,10 @@ public class PingServer(
 
             // GENERAL
             sbOutput.Append("== General ==\r\n");
-            sbOutput.AppendFormat("AppConfig: {0}\r\n", configuration.GetConnectionString("AppConfig")?.Obscure());
             sbOutput.AppendFormat("Environment: {0}\r\n", configuration["ENVIRONMENT"]);
+            sbOutput.AppendFormat("AppConfig: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.AppConfig)?.Obscure());
+            sbOutput.AppendFormat("AzureStorage: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.AzureStorage)?.Obscure());
+            sbOutput.AppendFormat("Database: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.Database)?.Obscure());
 
             // API KEYS
             //var apiKeys = new ApiKeys();
@@ -95,7 +98,6 @@ public class PingServer(
             //sbOutput.Append("== FunctionSettings ==\r\n");
             //sbOutput.AppendFormat("RemoteImagePrefix: {0}\r\n", functionSettings.RemoteImagePrefix);
             //sbOutput.AppendFormat("RemoteImageBatchSize: {0}\r\n", functionSettings.RemoteImageBatchSize);
-
 
             await response.WriteStringAsync(sbOutput.ToString());
         }
