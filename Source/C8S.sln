@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Application
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.AdminApp", "Applications\C8S.AdminApp\C8S.AdminApp.csproj", "{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Functions", "Applications\C8S.Functions\C8S.Functions.csproj", "{EF3582CD-6F53-426B-B65F-D8238637BE5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{5A3D9530-35F4-4044-8C63-4A148E58F161} = {3BDFE883-5AAD-4029-A052-CB4AC548AFA9}
 		{C730298A-B0A7-4312-860E-918AC639C601} = {D4F52BC8-A3DD-4ADE-B5E1-BB6B46C2D020}
 		{1421E520-64C0-4B26-A4BD-C3FD4CEE9260} = {3B8105D0-8711-4400-B24C-6C9F7F0CA889}
+		{EF3582CD-6F53-426B-B65F-D8238637BE5A} = {3B8105D0-8711-4400-B24C-6C9F7F0CA889}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}
