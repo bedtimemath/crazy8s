@@ -1,8 +1,10 @@
 ﻿using Azure.Identity;
+using C8S.Applications.Extensions;
 using C8S.Common;
 using C8S.Common.Helpers.Extensions;
 using C8S.Common.Models;
 using C8S.Database.Repository.Extensions;
+using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Tasks;
 using CommandLine;
@@ -38,11 +40,12 @@ try
     var parserResult = Parser.Default
         .ParseArguments<
             LoadC8SDataOptions,
-            LoadSampleDataOptions>(args);
+            LoadSampleDataOptions,
+            ProcessUnreadApplicationsOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
     Log.Logger.Warning(platform);
-    
+
     /*****************************************
      * CONFIGURATION
      */
@@ -76,12 +79,12 @@ try
     // load the connections that we need
     var connections = builder.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
                       throw new Exception($"Missing configuration section: {Connections.SectionName}");
-    
+
     /*****************************************
      * HOST SETUP
      */
     var hostBuilder = Host.CreateDefaultBuilder(args);
-    
+
     /*****************************************
      * CONFIGURE SERVICES
      */
@@ -98,6 +101,11 @@ try
             {
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, LoadC8SData>();
+            })
+            .WithParsed<ProcessUnreadApplicationsOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, ProcessUnreadApplications>();
             });
 
         /*****************************************
@@ -115,16 +123,17 @@ try
             throw new Exception("Missing OldSystem connection string");
 
         services.AddCommonHelpers();
-        services.AddC8SRepository(connections.Database);//,
-            //services.BuildServiceProvider().GetRequiredService<ILoggerFactory>());
+        services.AddC8SRepository(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
+        services.AddApplicationServices();
     });
-    
+
     /*****************************************
      * LOGGING
      */
     hostBuilder.UseSerilog((context, services, config) => config
             .MinimumLevel.Is(LogEventLevel.Verbose)
+            .MinimumLevel.Override("Azure.Core", LogEventLevel.Warning)
             .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
             .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -135,7 +144,7 @@ try
                 theme: AnsiConsoleTheme.Code));
 
     SelfLog.Enable(m => Console.Error.WriteLine(m));
-    
+
     /*****************************************
      * RUN
      */

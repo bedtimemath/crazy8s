@@ -10,6 +10,10 @@
     "Load C8s Data (PROD)": {
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data -p Production"
+    },
+    "Process Unread Applications": {
+      "commandName": "Project",
+      "commandLineArgs": "process-unread-applications"
     }
   }
 }

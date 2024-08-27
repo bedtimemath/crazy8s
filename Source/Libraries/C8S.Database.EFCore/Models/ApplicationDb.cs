@@ -74,6 +74,12 @@ public class ApplicationDb : BaseDb
     [MaxLength(SharedConstants.MaxLengths.Short)]
     public string? WorkshopCode { get; set; } = null;
 
+    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    public string? ReferenceSource { get; set; } = null;
+
+    [MaxLength(SharedConstants.MaxLengths.Long)]
+    public string? ReferenceSourceOther { get; set; } = null;
+
     [MaxLength(SharedConstants.MaxLengths.XXXLong)]
     public string? Comments { get; set; } = null;
 

@@ -4,6 +4,7 @@ using C8S.Common.Interfaces;
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.EFCore.Contexts;
 using C8S.Database.EFCore.Models;
+using C8S.UtilityApp.Base;
 using CsvHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

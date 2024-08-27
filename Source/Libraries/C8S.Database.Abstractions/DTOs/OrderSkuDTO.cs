@@ -1,6 +1,5 @@
 ﻿using C8S.Common;
 using C8S.Database.Abstractions.Base;
-using C8S.Database.Abstractions.Enumerations;
 
 namespace C8S.Database.Abstractions.DTOs;
 

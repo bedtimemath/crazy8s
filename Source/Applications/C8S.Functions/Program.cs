@@ -1,8 +1,6 @@
 using System.Reflection;
 using Azure.Identity;
 using C8S.Common;
-using C8S.Common.Helpers.Extensions;
-using C8S.Database.EFCore.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;

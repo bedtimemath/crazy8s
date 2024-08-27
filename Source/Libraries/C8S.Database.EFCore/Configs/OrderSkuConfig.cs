@@ -1,5 +1,4 @@
-﻿using C8S.Common;
-using C8S.Database.EFCore.Models;
+﻿using C8S.Database.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

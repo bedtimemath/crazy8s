@@ -31,7 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Application
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.AdminApp", "Applications\C8S.AdminApp\C8S.AdminApp.csproj", "{1421E520-64C0-4B26-A4BD-C3FD4CEE9260}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Functions", "Applications\C8S.Functions\C8S.Functions.csproj", "{EF3582CD-6F53-426B-B65F-D8238637BE5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Functions", "Applications\C8S.Functions\C8S.Functions.csproj", "{EF3582CD-6F53-426B-B65F-D8238637BE5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Applications", "Libraries\C8S.Applications\C8S.Applications.csproj", "{AADC4334-86FC-464D-A8FB-FE7BF42758E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,10 @@ Global
 		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF3582CD-6F53-426B-B65F-D8238637BE5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{C730298A-B0A7-4312-860E-918AC639C601} = {D4F52BC8-A3DD-4ADE-B5E1-BB6B46C2D020}
 		{1421E520-64C0-4B26-A4BD-C3FD4CEE9260} = {3B8105D0-8711-4400-B24C-6C9F7F0CA889}
 		{EF3582CD-6F53-426B-B65F-D8238637BE5A} = {3B8105D0-8711-4400-B24C-6C9F7F0CA889}
+		{AADC4334-86FC-464D-A8FB-FE7BF42758E3} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}

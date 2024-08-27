@@ -1,5 +1,4 @@
-﻿using C8S.Database.Abstractions.Enumerations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace C8S.UtilityApp.Models;
 

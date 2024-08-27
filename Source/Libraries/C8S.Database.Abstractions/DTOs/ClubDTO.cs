@@ -2,7 +2,6 @@
 using C8S.Common.Extensions;
 using C8S.Database.Abstractions.Base;
 using C8S.Database.Abstractions.Enumerations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace C8S.Database.Abstractions.DTOs;

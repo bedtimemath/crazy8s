@@ -63,6 +63,10 @@ public class ApplicationDTO : BaseDTO
 
     public string? WorkshopCode { get; set; } = null;
 
+    public string? ReferenceSource { get; set; } = null;
+
+    public string? ReferenceSourceOther { get; set; } = null;
+
     public string? Comments { get; set; } = null;
 
     public DateTimeOffset? SubmittedOn { get; set; } = null;
