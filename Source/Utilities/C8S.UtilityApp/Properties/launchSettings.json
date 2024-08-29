@@ -11,9 +11,21 @@
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data -p Production"
     },
-    "Process Unread Applications": {
+    "Process Applications": {
       "commandName": "Project",
-      "commandLineArgs": "process-unread-applications"
+      "commandLineArgs": "process-applications"
+    },
+    "Process Applications (PROD)": {
+      "commandName": "Project",
+      "commandLineArgs": "process-applications -p Production"
+    },
+    "Show Config": {
+      "commandName": "Project",
+      "commandLineArgs": "show-config"
+    },
+    "Show Config (PROD)": {
+      "commandName": "Project",
+      "commandLineArgs": "show-config -p Production"
     }
   }
 }

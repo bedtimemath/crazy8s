@@ -41,7 +41,8 @@ try
         .ParseArguments<
             LoadC8SDataOptions,
             LoadSampleDataOptions,
-            ProcessUnreadApplicationsOptions>(args);
+            ProcessApplicationsOptions,
+            ShowConfigOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
     Log.Logger.Warning(platform);
@@ -49,7 +50,7 @@ try
     /*****************************************
      * CONFIGURATION
      */
-    builder.Configuration
+    var configBuilder = builder.Configuration
         .AddEnvironmentVariables();
 
     // check for the two variables we need immediately
@@ -59,7 +60,7 @@ try
     if (String.IsNullOrEmpty(sensitiveFolderPath))
     {
         // configure with the azure configuration
-        builder.Configuration
+        configBuilder = configBuilder
             .AddAzureAppConfiguration(config =>
             {
                 config.Connect(appConfigCnnString)
@@ -71,13 +72,15 @@ try
     else
     {
         // configure with a file (much faster)
-        builder.Configuration
+        configBuilder = configBuilder
             .SetBasePath(sensitiveFolderPath)
             .AddJsonFile($"c8s-admin.appsettings.{platform.ToLowerInvariant()}.json", optional: false);
     }
 
+    var configuration = configBuilder.Build();
+
     // load the connections that we need
-    var connections = builder.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+    var connections = configuration.GetSection(Connections.SectionName).Get<Connections>() ??
                       throw new Exception($"Missing configuration section: {Connections.SectionName}");
 
     /*****************************************
@@ -102,11 +105,18 @@ try
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, LoadC8SData>();
             })
-            .WithParsed<ProcessUnreadApplicationsOptions>(options =>
+            .WithParsed<ProcessApplicationsOptions>(options =>
             {
                 services.AddSingleton(options);
-                services.AddSingleton<IActionLauncher, ProcessUnreadApplications>();
+                services.AddSingleton<IActionLauncher, ProcessApplications>();
+            })
+            .WithParsed<ShowConfigOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, ShowConfig>();
             });
+
+        services.AddSingleton<IConfiguration>(configuration);
 
         /*****************************************
          * AZURE CLIENTS SETUP

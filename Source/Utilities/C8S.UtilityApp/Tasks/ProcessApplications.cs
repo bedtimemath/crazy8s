@@ -14,8 +14,8 @@ using Microsoft.Extensions.Logging;
 
 namespace C8S.UtilityApp.Tasks;
 
-internal class ProcessUnreadApplications(
-    ILogger<ProcessUnreadApplications> logger,
+internal class ProcessApplications(
+    ILogger<ProcessApplications> logger,
     ApplicationService applicationService,
     IDbContextFactory<C8SDbContext> dbContextFactory,
     IMapper mapper)
@@ -23,7 +23,7 @@ internal class ProcessUnreadApplications(
 {
     public async Task<int> Launch()
     {
-        Console.WriteLine($"=== {nameof(ProcessUnreadApplications)} ===");
+        Console.WriteLine($"=== {nameof(ProcessApplications)} ===");
         
         Console.WriteLine("Continue? Y/N");
         var checkContinue = Console.ReadKey();
@@ -38,7 +38,7 @@ internal class ProcessUnreadApplications(
         foreach (var error in response.Errors)
             logger.LogInformation("ERROR: {@Error}", error);
 
-        logger.LogInformation("{Name}: complete.", nameof(ProcessUnreadApplications));
+        logger.LogInformation("{Name}: complete.", nameof(ProcessApplications));
         return 0;
     }
 

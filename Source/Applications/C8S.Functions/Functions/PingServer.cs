@@ -4,6 +4,7 @@ using System.Text.Json;
 using C8S.Common;
 using C8S.Common.Extensions;
 using C8S.Common.Models;
+using C8S.Database.Abstractions.Models;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
@@ -40,14 +41,11 @@ public class PingServer(
             sbOutput.AppendFormat("Database: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.Database)?.Obscure());
 
             // API KEYS
-            //var apiKeys = new ApiKeys();
-            //configuration.GetSection(ApiKeys.SectionName).Bind(apiKeys);
+            var apiKeys = new ApiKeys();
+            configuration.GetSection(ApiKeys.SectionName).Bind(apiKeys);
 
-            //sbOutput.Append("== ApiKeys ==\r\n");
-            //sbOutput.AppendFormat("RapidAPI: {0}\r\n", apiKeys.RapidApi?.Obscure());
-            //sbOutput.AppendFormat("Rebrickable: {0}\r\n", apiKeys.Rebrickable?.Obscure());
-            //sbOutput.AppendFormat("SendGrid: {0}\r\n", apiKeys.SendGrid?.Obscure());
-            //sbOutput.AppendFormat("Stripe: {0}\r\n", apiKeys.Stripe?.Obscure());
+            sbOutput.Append("== ApiKeys ==\r\n");
+            sbOutput.AppendFormat("FullSlate: {0}\r\n", apiKeys.FullSlate?.Obscure());
 
             // EMAIL SETTINGS
             //var emailSettings = new EmailSettings();
@@ -81,6 +79,7 @@ public class PingServer(
 
             sbOutput.Append("== Endpoints ==\r\n");
             sbOutput.AppendFormat("AzureStorage: {0}\r\n", endpoints.AzureStorage?.Obscure());
+            sbOutput.AppendFormat("FullSlateApi: {0}\r\n", endpoints.FullSlateApi?.Obscure());
 
             // FUNCTION KEYS
             //var functionKeys = new FunctionKeys();
