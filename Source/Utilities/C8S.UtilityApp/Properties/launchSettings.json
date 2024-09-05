@@ -26,6 +26,14 @@
     "Show Config (PROD)": {
       "commandName": "Project",
       "commandLineArgs": "show-config -p Production"
+    },
+    "FullSlate Appointments": {
+      "commandName": "Project",
+      "commandLineArgs": "test-fullslate -a GetAppointments -e 2024-10-01"
+    },
+    "FullSlate Openings List": {
+      "commandName": "Project",
+      "commandLineArgs": "test-fullslate -a GetOpeningsList -e 2024-10-01"
     }
   }
 }

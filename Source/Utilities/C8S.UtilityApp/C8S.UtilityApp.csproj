@@ -29,6 +29,8 @@
     <ProjectReference Include="..\..\Libraries\C8S.Common\C8S.Common.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.FullSlate\C8S.FullSlate.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,11 @@
+using System.Configuration;
+using System.Data.Entity;
 using System.Reflection;
 using Azure.Identity;
 using C8S.Common;
+using C8S.Common.Models;
+using C8S.Database.Abstractions.Models;
+using C8S.FullSlate.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -50,15 +55,20 @@ try
         {
             Log.Logger.Information("Configuring Services");
 
+            var connections = hostContext.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
+            var apiKeys = hostContext.Configuration.GetSection(ApiKeys.SectionName).Get<ApiKeys>() ??
+                          throw new Exception($"Missing configuration section: {ApiKeys.SectionName}");
+            var endpoints = hostContext.Configuration.GetSection(Endpoints.SectionName).Get<Endpoints>() ??
+                            throw new Exception($"Missing configuration section: {Endpoints.SectionName}");
+
             /*****************************************
              * AZURE CLIENTS SETUP
              */
-            var azureStorageCnnString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.AzureStorage) ??
-                                        hostContext.Configuration[$"ConnectionStrings:{C8SConstants.Connections.AzureStorage}"];
             services.AddAzureClients(clientBuilder =>
             {
-                clientBuilder.AddQueueServiceClient(azureStorageCnnString);
-                clientBuilder.AddBlobServiceClient(azureStorageCnnString);
+                clientBuilder.AddQueueServiceClient(connections.AzureStorage);
+                clientBuilder.AddBlobServiceClient(connections.AzureStorage);
             });
 
             /*****************************************
@@ -68,9 +78,16 @@ try
             //services.AddC8SDbContext(connectionString);
 
             /*****************************************
-             * OTHER LIBRARY SETUP
+             * OTHER CRAZY 8s SETUP
              */
             //services.AddCommonHelpers();
+            if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
+            if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
+            services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
+
+            /*****************************************
+             * TELEMETRY
+             */
             services.AddApplicationInsightsTelemetryWorkerService();
             services.ConfigureFunctionsApplicationInsights();
         })

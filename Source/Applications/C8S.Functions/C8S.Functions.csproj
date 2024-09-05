@@ -33,6 +33,8 @@
     <ProjectReference Include="..\..\Libraries\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.EFCore\C8S.Database.EFCore.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.FullSlate\C8S.FullSlate.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

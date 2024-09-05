@@ -3,7 +3,9 @@ using C8S.Applications.Extensions;
 using C8S.Common;
 using C8S.Common.Helpers.Extensions;
 using C8S.Common.Models;
+using C8S.Database.Abstractions.Models;
 using C8S.Database.Repository.Extensions;
+using C8S.FullSlate.Extensions;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Tasks;
@@ -42,7 +44,8 @@ try
             LoadC8SDataOptions,
             LoadSampleDataOptions,
             ProcessApplicationsOptions,
-            ShowConfigOptions>(args);
+            ShowConfigOptions,
+            TestFullSlateOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
     Log.Logger.Warning(platform);
@@ -79,9 +82,13 @@ try
 
     var configuration = configBuilder.Build();
 
-    // load the connections that we need
+    // load the configurations that we need
+    var apiKeys = configuration.GetSection(ApiKeys.SectionName).Get<ApiKeys>() ??
+                      throw new Exception($"Missing configuration section: {ApiKeys.SectionName}");
     var connections = configuration.GetSection(Connections.SectionName).Get<Connections>() ??
                       throw new Exception($"Missing configuration section: {Connections.SectionName}");
+    var endpoints = configuration.GetSection(Endpoints.SectionName).Get<Endpoints>() ??
+                      throw new Exception($"Missing configuration section: {Endpoints.SectionName}");
 
     /*****************************************
      * HOST SETUP
@@ -114,6 +121,11 @@ try
             {
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, ShowConfig>();
+            })
+            .WithParsed<TestFullSlateOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, TestFullSlate>();
             });
 
         services.AddSingleton<IConfiguration>(configuration);
@@ -136,6 +148,10 @@ try
         services.AddC8SRepository(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
         services.AddApplicationServices();
+
+        var fullSlateApi = endpoints.FullSlateApi ?? throw new Exception("Missing Endpoints:FullSlateApi");
+        var fullSlateToken = apiKeys.FullSlate ?? throw new Exception("Missing ApiKeys:FullSlate");
+        services.AddFullSlateServices(fullSlateApi, fullSlateToken);
     });
 
     /*****************************************

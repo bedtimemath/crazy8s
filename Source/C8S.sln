@@ -33,7 +33,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.AdminApp", "Application
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Functions", "Applications\C8S.Functions\C8S.Functions.csproj", "{EF3582CD-6F53-426B-B65F-D8238637BE5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Applications", "Libraries\C8S.Applications\C8S.Applications.csproj", "{AADC4334-86FC-464D-A8FB-FE7BF42758E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Applications", "Libraries\C8S.Applications\C8S.Applications.csproj", "{AADC4334-86FC-464D-A8FB-FE7BF42758E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.FullSlate", "Libraries\C8S.FullSlate\C8S.FullSlate.csproj", "{934D0A54-C75D-454E-80E7-6273BA0D1D17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.FullSlate.Abstractions", "Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj", "{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +93,14 @@ Global
 		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AADC4334-86FC-464D-A8FB-FE7BF42758E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{934D0A54-C75D-454E-80E7-6273BA0D1D17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{934D0A54-C75D-454E-80E7-6273BA0D1D17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{934D0A54-C75D-454E-80E7-6273BA0D1D17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{934D0A54-C75D-454E-80E7-6273BA0D1D17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -106,6 +118,8 @@ Global
 		{1421E520-64C0-4B26-A4BD-C3FD4CEE9260} = {3B8105D0-8711-4400-B24C-6C9F7F0CA889}
 		{EF3582CD-6F53-426B-B65F-D8238637BE5A} = {3B8105D0-8711-4400-B24C-6C9F7F0CA889}
 		{AADC4334-86FC-464D-A8FB-FE7BF42758E3} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
+		{934D0A54-C75D-454E-80E7-6273BA0D1D17} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
+		{D9C8DB93-3D6F-48E6-A6C1-B5515053194F} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}
