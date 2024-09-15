@@ -5,7 +5,6 @@ namespace C8S.Database.Repository.Repositories;
 
 public partial class C8SRepository
 {
-    
     #region Application
     public async Task<ApplicationDTO> GetApplication(int applicationId)
     {
@@ -18,7 +17,10 @@ public partial class C8SRepository
 
         return mapper.Map<ApplicationDTO>(dto);
     }
-    public async Task<CoachDTO> GetCoach(int coachId)
+    #endregion
+
+    #region Coach
+    public async Task<CoachDTO?> GetCoach(int coachId)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
@@ -27,8 +29,22 @@ public partial class C8SRepository
                 .AsSingleQuery()
                 .FirstOrDefaultAsync(a => a.CoachId == coachId);
 
-        return mapper.Map<CoachDTO>(dto);
+        return dto == null ? null : mapper.Map<CoachDTO>(dto);
     }
+    public async Task<CoachDTO?> GetCoachByEmail(string email)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dto = await dbContext.Coaches // clubs included automatically
+                .AsNoTracking()
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(c => c.Email == email);
+
+        return dto == null ? null : mapper.Map<CoachDTO>(dto);
+    }
+    #endregion
+
+    #region Organization
     public async Task<OrganizationDTO> GetOrganization(int organizationId)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();

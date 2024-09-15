@@ -1,10 +1,9 @@
-using System.Configuration;
-using System.Data.Entity;
 using System.Reflection;
 using Azure.Identity;
 using C8S.Common;
 using C8S.Common.Models;
 using C8S.Database.Abstractions.Models;
+using C8S.Database.Repository.Extensions;
 using C8S.FullSlate.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Azure;
@@ -22,93 +21,105 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
+var environmentName = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
+Log.Logger.Information("Environment: {Environment}", environmentName);
+
 try
 {
-    var host = new HostBuilder()
-        .ConfigureHostConfiguration(builder =>
+    var host = new HostBuilder();
+
+    host.ConfigureHostConfiguration(builder =>
+    {
+        Log.Logger.Information("Configuring Host Configuration");
+
+        builder.AddJsonFile("local.settings.json", true)
+            .AddEnvironmentVariables();
+
+        var sensitiveFolderPath = Environment.GetEnvironmentVariable("C8S_SensitiveFolder");
+        if (!String.IsNullOrEmpty(sensitiveFolderPath))
+            builder.SetBasePath(sensitiveFolderPath)
+                .AddJsonFile($"c8s.appsettings.{environmentName?.ToLower()}.json");
+    });
+
+    host.ConfigureAppConfiguration((hostContext, builder) =>
+    {
+        Log.Logger.Information("Configuring App Configuration");
+                    
+        // check for the two variables we need immediately
+        var sensitiveFolderPath = Environment.GetEnvironmentVariable("C8S_SensitiveFolder");
+        if (!String.IsNullOrEmpty(sensitiveFolderPath)) return;
+
+        // configure with the azure configuration
+        var appConfigCnnString = Environment.GetEnvironmentVariable("C8S_AppConfig");
+        builder.AddAzureAppConfiguration(config =>
         {
-            Log.Logger.Information("Configuring Host Configuration");
+            Log.Logger.Information("Connecting to Azure App Configuration using: {CnnString}", appConfigCnnString);
+            config.Connect(appConfigCnnString)
+                .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
+                .Select(KeyFilter.Any, LabelFilter.Null)
+                .Select(KeyFilter.Any, environmentName);
+        });
+    });
 
-            builder.AddJsonFile("local.settings.json", true)
-                .AddUserSecrets(Assembly.GetExecutingAssembly())
-                .AddEnvironmentVariables();
-        })
-        .ConfigureAppConfiguration((hostContext, builder) =>
+    host.ConfigureFunctionsWebApplication();
+
+    host.ConfigureServices((hostContext, services) =>
+    {
+        Log.Logger.Information("Configuring Services");
+
+        var connections = hostContext.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                          throw new Exception($"Missing configuration section: {Connections.SectionName}");
+        var apiKeys = hostContext.Configuration.GetSection(ApiKeys.SectionName).Get<ApiKeys>() ??
+                      throw new Exception($"Missing configuration section: {ApiKeys.SectionName}");
+        var endpoints = hostContext.Configuration.GetSection(Endpoints.SectionName).Get<Endpoints>() ??
+                        throw new Exception($"Missing configuration section: {Endpoints.SectionName}");
+
+        /*****************************************
+         * AZURE CLIENTS SETUP
+         */
+        services.AddAzureClients(clientBuilder =>
         {
-            //Log.Logger.Information("Configuring App Configuration");
+            clientBuilder.AddQueueServiceClient(connections.AzureStorage);
+            clientBuilder.AddBlobServiceClient(connections.AzureStorage);
+        });
 
-            var cnnString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.AppConfig) ??
-                            hostContext.Configuration[$"ConnectionStrings:{C8SConstants.Connections.AppConfig}"];
-            var environmentName = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
+        /*****************************************
+         * REPOSITORY SETUP
+         */
+        services.AddC8SRepository(connections.Database);
 
-            builder.AddAzureAppConfiguration(config =>
-            {
-                Log.Logger.Information("Connecting to Azure App Configuration using: {cnnString}", cnnString);
-                config.Connect(cnnString)
-                    .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
-                    .Select(KeyFilter.Any, LabelFilter.Null)
-                    .Select(KeyFilter.Any, environmentName);
-            });
-        })
-        .ConfigureFunctionsWebApplication()
-        .ConfigureServices((hostContext, services) =>
-        {
-            Log.Logger.Information("Configuring Services");
+        /*****************************************
+         * OTHER CRAZY 8s SETUP
+         */
+        //services.AddCommonHelpers();
+        if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
+        if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
+        services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
 
-            var connections = hostContext.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
-                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
-            var apiKeys = hostContext.Configuration.GetSection(ApiKeys.SectionName).Get<ApiKeys>() ??
-                          throw new Exception($"Missing configuration section: {ApiKeys.SectionName}");
-            var endpoints = hostContext.Configuration.GetSection(Endpoints.SectionName).Get<Endpoints>() ??
-                            throw new Exception($"Missing configuration section: {Endpoints.SectionName}");
+        /*****************************************
+         * TELEMETRY
+         */
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
+    });
 
-            /*****************************************
-             * AZURE CLIENTS SETUP
-             */
-            services.AddAzureClients(clientBuilder =>
-            {
-                clientBuilder.AddQueueServiceClient(connections.AzureStorage);
-                clientBuilder.AddBlobServiceClient(connections.AzureStorage);
-            });
-
-            /*****************************************
-             * REPOSITORY SETUP
-             */
-            //var connectionString = hostContext.Configuration.GetConnectionString(C8SConstants.Connections.Database);
-            //services.AddC8SDbContext(connectionString);
-
-            /*****************************************
-             * OTHER CRAZY 8s SETUP
-             */
-            //services.AddCommonHelpers();
-            if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
-            if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
-            services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
-
-            /*****************************************
-             * TELEMETRY
-             */
-            services.AddApplicationInsightsTelemetryWorkerService();
-            services.ConfigureFunctionsApplicationInsights();
-        })
-        .UseSerilog((context, services, config) => config
-            .MinimumLevel.Is(LogEventLevel.Verbose)
-            .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
-            .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-            .Enrich.FromLogContext()
-            .WriteTo.Console(
-                outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
-                theme: AnsiConsoleTheme.Code)
-            .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
-                .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), new TraceTelemetryConverter())
-        )
-        .Build();
+    host.UseSerilog((context, services, config) => config
+        .MinimumLevel.Is(LogEventLevel.Verbose)
+        .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
+        .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(
+            outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
+            theme: AnsiConsoleTheme.Code)
+        .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
+            .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), new TraceTelemetryConverter())
+    );
 
     SelfLog.Enable(m => Console.Error.WriteLine(m));
 
-    host.Run();
+    host.Build().Run();
 }
 catch (Exception ex)
 {

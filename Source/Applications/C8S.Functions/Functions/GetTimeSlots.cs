@@ -1,13 +1,9 @@
 using System.Net;
 using System.Text.Json;
 using C8S.Common.Extensions;
-using C8S.Common.Models;
-using C8S.Database.Abstractions.Models;
-using C8S.FullSlate.Abstractions.Models;
 using C8S.FullSlate.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace C8S.Functions.Functions;

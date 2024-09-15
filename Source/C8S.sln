@@ -35,9 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Functions", "Applicatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Applications", "Libraries\C8S.Applications\C8S.Applications.csproj", "{AADC4334-86FC-464D-A8FB-FE7BF42758E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.FullSlate", "Libraries\C8S.FullSlate\C8S.FullSlate.csproj", "{934D0A54-C75D-454E-80E7-6273BA0D1D17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.FullSlate", "Libraries\C8S.FullSlate\C8S.FullSlate.csproj", "{934D0A54-C75D-454E-80E7-6273BA0D1D17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.FullSlate.Abstractions", "Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj", "{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.FullSlate.Abstractions", "Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj", "{D9C8DB93-3D6F-48E6-A6C1-B5515053194F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
