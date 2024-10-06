@@ -1,13 +1,14 @@
 ﻿using C8S.Common;
+using C8S.Database.EFCore.Base;
 using C8S.Database.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Database.EFCore.Configs;
 
-public class AddressConfig : IEntityTypeConfiguration<AddressDb>
+public class AddressConfig : BaseConfig<AddressDb>
 {
-    public void Configure(EntityTypeBuilder<AddressDb> entity)
+    public override void Configure(EntityTypeBuilder<AddressDb> entity)
     {
         #region Id Property
         // [Required]

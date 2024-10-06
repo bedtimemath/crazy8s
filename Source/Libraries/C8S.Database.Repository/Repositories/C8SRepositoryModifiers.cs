@@ -323,4 +323,36 @@ public partial class C8SRepository
         return dtoModified;
     }
     #endregion
+
+    #region Unfinished
+    public async Task<UnfinishedDTO> AddUnfinished() =>
+        await AddUnfinished(new UnfinishedDTO());
+    public async Task<UnfinishedDTO> AddUnfinished(UnfinishedDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<UnfinishedDb>(dto);
+
+        var entry = await dbContext.Unfinisheds.AddAsync(db);
+        db.EndPart01On = DateTimeOffset.UtcNow;
+        await dbContext.SaveChangesAsync();
+
+        var dtoAdded = mapper.Map<UnfinishedDTO>(entry.Entity);
+
+        return dtoAdded;
+    }
+    
+    public async Task<UnfinishedDTO> UpdateUnfinished(UnfinishedDTO dto)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var db = mapper.Map<UnfinishedDb>(dto);
+
+        var entry = dbContext.Unfinisheds.Attach(db);
+        entry.State = EntityState.Modified;
+        await dbContext.SaveChangesAsync();
+
+        var dtoModified = mapper.Map<UnfinishedDTO>(entry.Entity);
+
+        return dtoModified;
+    }
+    #endregion
 }

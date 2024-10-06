@@ -1,13 +1,13 @@
 ﻿using C8S.Common;
+using C8S.Database.EFCore.Base;
 using C8S.Database.EFCore.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Database.EFCore.Configs;
 
-public class OrderConfig : IEntityTypeConfiguration<OrderDb>
+public class OrderConfig : BaseConfig<OrderDb>
 {
-    public void Configure(EntityTypeBuilder<OrderDb> entity)
+    public override void Configure(EntityTypeBuilder<OrderDb> entity)
     {
         #region Id Property
         // [Required]

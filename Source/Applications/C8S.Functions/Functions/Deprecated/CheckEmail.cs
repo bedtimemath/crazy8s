@@ -1,3 +1,4 @@
+#if false
 using System.Net;
 using System.Text.Json;
 using System.Web;
@@ -7,7 +8,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
-namespace C8S.Functions.Functions;
+namespace C8S.Functions.Functions.Deprecated;
 
 public class CheckEmail(
     ILoggerFactory loggerFactory,
@@ -28,7 +29,7 @@ public class CheckEmail(
             _logger.LogInformation("CheckEmail triggered");
 
             var email = HttpUtility.ParseQueryString(req.Url.Query)["email"];
-            if (String.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email))
                 throw new ArgumentNullException(nameof(email));
 
             httpResponseData = req.CreateResponse(HttpStatusCode.OK);
@@ -50,4 +51,5 @@ public class CheckEmail(
         await httpResponseData.WriteStringAsync(JsonSerializer.Serialize(functionResponse));
         return httpResponseData;
     }
-}
+} 
+#endif

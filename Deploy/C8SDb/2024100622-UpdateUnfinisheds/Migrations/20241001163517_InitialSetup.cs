@@ -55,6 +55,40 @@ namespace C8S.Database.EFCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Unfinisheds",
+                columns: table => new
+                {
+                    UnfinishedId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    ApplicantType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    ApplicantFirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ApplicantLastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ApplicantEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    ApplicantPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    ApplicantTimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    OrganizationName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    OrganizationAddress1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    OrganizationAddress2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    OrganizationCity = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    OrganizationState = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
+                    OrganizationPostalCode = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    OrganizationType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    OrganizationTypeOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    OrganizationTaxIdentifier = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    WorkshopCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReferenceSource = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReferenceSourceOther = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
+                    SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Unfinisheds", x => x.UnfinishedId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Organizations",
                 columns: table => new
                 {
@@ -136,6 +170,8 @@ namespace C8S.Database.EFCore.Migrations
                     OrganizationTypeOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     OrganizationTaxIdentifier = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     WorkshopCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReferenceSource = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReferenceSourceOther = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
                     SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     IsCoachRemoved = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -439,6 +475,12 @@ namespace C8S.Database.EFCore.Migrations
                 column: "OldSystemSkuId",
                 unique: true,
                 filter: "[OldSystemSkuId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unfinisheds_Code",
+                table: "Unfinisheds",
+                column: "Code",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -449,6 +491,9 @@ namespace C8S.Database.EFCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderSkus");
+
+            migrationBuilder.DropTable(
+                name: "Unfinisheds");
 
             migrationBuilder.DropTable(
                 name: "Applications");

@@ -5,7 +5,7 @@ public abstract class BaseDTO: IBaseDTO
     #region Public Properties
     public abstract int Id { get; }
     public abstract string Display { get; }
-    public DateTimeOffset CreatedOn { get; set; } = default(DateTimeOffset);
+    public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
     #endregion
 
     #region Public Methods

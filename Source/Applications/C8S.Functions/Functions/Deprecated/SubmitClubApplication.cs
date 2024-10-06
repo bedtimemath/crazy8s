@@ -1,3 +1,4 @@
+#if false
 using System.Net;
 using System.Text.Json;
 using C8S.Common.Extensions;
@@ -6,7 +7,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace C8S.Functions.Functions;
+namespace C8S.Functions.Functions.Deprecated;
 
 public class SubmitClubApplication(
     ILoggerFactory loggerFactory,
@@ -55,4 +56,5 @@ public class SubmitClubApplication(
 
         public HttpResponseData HttpResponse { get; set; } = default!;
     }
-}
+} 
+#endif

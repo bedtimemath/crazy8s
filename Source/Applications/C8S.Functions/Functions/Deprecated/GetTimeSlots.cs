@@ -1,3 +1,4 @@
+#if false
 using System.Net;
 using System.Text.Json;
 using C8S.Common.Extensions;
@@ -6,7 +7,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 
-namespace C8S.Functions.Functions;
+namespace C8S.Functions.Functions.Deprecated;
 
 public class GetOpenTimeSlots(
     ILoggerFactory loggerFactory,
@@ -43,4 +44,5 @@ public class GetOpenTimeSlots(
         }
         return response;
     }
-}
+} 
+#endif

@@ -1,13 +1,13 @@
 ﻿using C8S.Common;
+using C8S.Database.EFCore.Base;
 using C8S.Database.EFCore.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Database.EFCore.Configs;
 
-public class ClubConfig : IEntityTypeConfiguration<ClubDb>
+public class ClubConfig : BaseConfig<ClubDb>
 {
-    public void Configure(EntityTypeBuilder<ClubDb> entity)
+    public override void Configure(EntityTypeBuilder<ClubDb> entity)
     {
         #region Id Property
         // [Required]

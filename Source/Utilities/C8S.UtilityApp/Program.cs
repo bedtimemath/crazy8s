@@ -57,8 +57,8 @@ try
         .AddEnvironmentVariables();
 
     // check for the two variables we need immediately
-    var appConfigCnnString = builder.Configuration["C8S_Admin_AppConfig"];
-    var sensitiveFolderPath = builder.Configuration["C8S_Admin_SensitiveFolder"];
+    var appConfigCnnString = builder.Configuration["C8S_AppConfig"];
+    var sensitiveFolderPath = builder.Configuration["C8S_SensitiveFolder"];
 
     if (String.IsNullOrEmpty(sensitiveFolderPath))
     {

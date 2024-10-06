@@ -1,13 +1,13 @@
 ﻿using C8S.Common;
+using C8S.Database.EFCore.Base;
 using C8S.Database.EFCore.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Database.EFCore.Configs;
 
-public class CoachConfig : IEntityTypeConfiguration<CoachDb>
+public class CoachConfig : BaseConfig<CoachDb>
 {
-    public void Configure(EntityTypeBuilder<CoachDb> entity)
+    public override void Configure(EntityTypeBuilder<CoachDb> entity)
     {
         #region Id Property
         // [Required]

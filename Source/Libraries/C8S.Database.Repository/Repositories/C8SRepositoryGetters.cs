@@ -57,4 +57,30 @@ public partial class C8SRepository
         return mapper.Map<OrganizationDTO>(dto);
     }
     #endregion
+
+    #region Unfinished
+    public async Task<UnfinishedDTO> GetUnfinished(int unfinishedId)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dto = await dbContext.Unfinisheds // clubs included automatically
+            .AsNoTracking()
+            .AsSingleQuery()
+            .FirstOrDefaultAsync(a => a.UnfinishedId == unfinishedId);
+
+        return mapper.Map<UnfinishedDTO>(dto);
+    }
+
+    public async Task<UnfinishedDTO> GetUnfinishedByCode(Guid code)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dto = await dbContext.Unfinisheds // clubs included automatically
+            .AsNoTracking()
+            .AsSingleQuery()
+            .FirstOrDefaultAsync(a => a.Code == code);
+
+        return mapper.Map<UnfinishedDTO>(dto);
+    }
+    #endregion
 }

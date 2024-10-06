@@ -1,13 +1,13 @@
 ﻿using C8S.Common;
+using C8S.Database.EFCore.Base;
 using C8S.Database.EFCore.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Database.EFCore.Configs;
 
-public class SkuConfig : IEntityTypeConfiguration<SkuDb>
+public class SkuConfig : BaseConfig<SkuDb>
 {
-    public void Configure(EntityTypeBuilder<SkuDb> entity)
+    public override void Configure(EntityTypeBuilder<SkuDb> entity)
     {
         #region Id Property
         // [Required]
