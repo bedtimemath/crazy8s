@@ -1,4 +1,3 @@
-#if false
 using System.Net;
 using System.Text.Json;
 using C8S.Common.Extensions;
@@ -45,4 +44,3 @@ public class GetOpenTimeSlots(
         return response;
     }
 } 
-#endif

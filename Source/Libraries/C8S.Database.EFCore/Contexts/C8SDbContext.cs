@@ -18,6 +18,7 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
     public DbSet<OrganizationDb> Organizations { get; set; }
     public DbSet<SkuDb> Skus { get; set; }
     public DbSet<UnfinishedDb> Unfinisheds { get; set; }
+    public DbSet<WorkshopCodeDb> WorkshopCodes { get; set; }
     #endregion
 
     #region DbContext Overrides
@@ -33,6 +34,7 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
         modelBuilder.ApplyConfiguration(new OrganizationConfig());
         modelBuilder.ApplyConfiguration(new SkuConfig());
         modelBuilder.ApplyConfiguration(new UnfinishedConfig());
+        modelBuilder.ApplyConfiguration(new WorkshopCodeConfig());
     }
     #endregion
 }

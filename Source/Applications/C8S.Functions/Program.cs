@@ -1,5 +1,6 @@
 using Azure.Identity;
 using C8S.Common;
+using C8S.Common.Helpers.Extensions;
 using C8S.Common.Models;
 using C8S.Database.Abstractions.Models;
 using C8S.Database.Repository.Extensions;
@@ -90,10 +91,10 @@ try
         /*****************************************
          * OTHER CRAZY 8s SETUP
          */
-        //services.AddCommonHelpers();
         if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
         if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
         services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
+        services.AddCommonHelpers();
 
         /*****************************************
          * TELEMETRY

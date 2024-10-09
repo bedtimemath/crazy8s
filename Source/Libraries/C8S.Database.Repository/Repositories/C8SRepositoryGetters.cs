@@ -83,4 +83,18 @@ public partial class C8SRepository
         return mapper.Map<UnfinishedDTO>(dto);
     }
     #endregion
+
+    #region WorkshopCode
+    public async Task<WorkshopCodeDTO?> GetWorkshopCodeByKey(string key)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var dto = await dbContext.WorkshopCodes
+            .AsNoTracking()
+            .AsSingleQuery()
+            .FirstOrDefaultAsync(a => a.Key == key);
+
+        return mapper.Map<WorkshopCodeDTO?>(dto);
+    }
+    #endregion
 }

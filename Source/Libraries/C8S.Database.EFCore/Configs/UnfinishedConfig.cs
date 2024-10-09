@@ -60,6 +60,10 @@ public class UnfinishedConfig : BaseConfig<UnfinishedDb>
             .HasMaxLength(SharedConstants.MaxLengths.Medium)
             .IsRequired(false);
 
+        //public bool? HasHostedBefore { get; set; } = null;
+        entity.Property(m => m.HasHostedBefore)
+            .IsRequired(false);
+
         //[MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string? OrganizationName { get; set; } = null;
         entity.Property(m => m.OrganizationName)
@@ -116,10 +120,19 @@ public class UnfinishedConfig : BaseConfig<UnfinishedDb>
             .HasMaxLength(SharedConstants.MaxLengths.Medium)
             .IsRequired(false);
 
+        //public string? ClubsString { get; set; } = null;
+        entity.Property(m => m.ClubsString)
+            .HasMaxLength(SharedConstants.MaxLengths.XLong)
+            .IsRequired(false);
+
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? WorkshopCode { get; set; } = null;
         entity.Property(m => m.WorkshopCode)
             .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .IsRequired(false);
+
+        //public DateTimeOffset? ChosenTimeSlot { get; set; } = null;
+        entity.Property(m => m.ChosenTimeSlot)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]

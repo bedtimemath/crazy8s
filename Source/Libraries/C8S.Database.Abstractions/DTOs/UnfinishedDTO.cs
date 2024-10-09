@@ -43,6 +43,8 @@ public class UnfinishedDTO : BaseDTO
 
     public string? ApplicantTimeZone { get; set; } = null;
 
+    public bool? HasHostedBefore { get; set; } = null;
+
     public string? OrganizationName { get; set; } = null;
 
     public string? OrganizationAddress1 { get; set; } = null;
@@ -61,7 +63,11 @@ public class UnfinishedDTO : BaseDTO
 
     public string? OrganizationTaxIdentifier { get; set; } = null;
 
+    public string? ClubsString { get; set; } = null;
+
     public string? WorkshopCode { get; set; } = null;
+
+    public DateTimeOffset? ChosenTimeSlot { get; set; } = null;
 
     public string? ReferenceSource { get; set; } = null;
 

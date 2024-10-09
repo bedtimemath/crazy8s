@@ -46,6 +46,8 @@ public class UnfinishedDb : BaseDb
     [MaxLength(SharedConstants.MaxLengths.Medium)]
     public string? ApplicantTimeZone { get; set; } = default!;
 
+    public bool? HasHostedBefore { get; set; } = null;
+
     [MaxLength(SharedConstants.MaxLengths.FullName)]
     public string? OrganizationName { get; set; } = null;
 
@@ -74,8 +76,13 @@ public class UnfinishedDb : BaseDb
     [MaxLength(SharedConstants.MaxLengths.Short)]
     public string? OrganizationTaxIdentifier { get; set; } = null;
 
+    [MaxLength(SharedConstants.MaxLengths.XLong)]
+    public string? ClubsString { get; set; } = null;
+
     [MaxLength(SharedConstants.MaxLengths.Short)]
     public string? WorkshopCode { get; set; } = null;
+
+    public DateTimeOffset? ChosenTimeSlot { get; set; } = null;
 
     [MaxLength(SharedConstants.MaxLengths.Medium)]
     public string? ReferenceSource { get; set; } = null;

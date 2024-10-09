@@ -4,6 +4,7 @@ using C8S.Database.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Database.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241009021052_AddClubsString")]
+    partial class AddClubsString
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -684,9 +687,6 @@ namespace C8S.Database.EFCore.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<DateTimeOffset?>("ChosenTimeSlot")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<string>("ClubsString")
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
@@ -778,33 +778,6 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique();
 
                     b.ToTable("Unfinisheds");
-                });
-
-            modelBuilder.Entity("C8S.Database.EFCore.Models.WorkshopCodeDb", b =>
-                {
-                    b.Property<int>("WorkshopCodeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkshopCodeId"));
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("EndsOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTimeOffset?>("StartsOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("WorkshopCodeId");
-
-                    b.ToTable("WorkshopCodes");
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
