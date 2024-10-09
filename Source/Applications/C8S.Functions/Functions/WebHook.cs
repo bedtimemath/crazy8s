@@ -3,14 +3,12 @@ using System.Text.Json;
 using C8S.Common.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace C8S.Functions.Functions;
 
 public class WebHook(
-    ILoggerFactory loggerFactory,
-    IConfiguration configuration)
+    ILoggerFactory loggerFactory)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger _logger = loggerFactory.CreateLogger<WebHook>();

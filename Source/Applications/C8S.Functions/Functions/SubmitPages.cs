@@ -47,7 +47,10 @@ public class SubmitForm(
         { "ClubsString", "wpforms[fields][66]" },
         { "HasWorkshopCodeString", "wpforms[fields][34]" },
         { "TimeSlotString", "wpforms[fields][64]" },
-        { "WorkshopCode", "wpforms[fields][23]" }
+        { "WorkshopCode", "wpforms[fields][23]" },
+        { "ReferenceSource", "wpforms[fields][38]" },
+        { "ReferenceSourceOther", "wpforms[fields][46]" },
+        { "Comments", "wpforms[fields][39]" }
     };
     #endregion
 
@@ -124,7 +127,7 @@ public class SubmitForm(
                 unfinished.ApplicantEmail = email;
                 unfinished.ApplicantPhone = phone;
                 unfinished.ApplicantType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
-                unfinished.EndPart02On = DateTimeOffset.UtcNow;
+                unfinished.EndPart02On = dateTimeHelper.UtcNow;
                 await repository.UpdateUnfinished(unfinished);
 
                 // return our redirect with the code
@@ -200,7 +203,7 @@ public class SubmitForm(
             };
             unfinished.OrganizationTypeOther = organizationTypeOther;
             unfinished.OrganizationTaxIdentifier = taxId;
-            unfinished.EndPart03On = DateTimeOffset.UtcNow;
+            unfinished.EndPart03On = dateTimeHelper.UtcNow;
             await repository.UpdateUnfinished(unfinished);
 
             // return our redirect with the code
@@ -242,7 +245,7 @@ public class SubmitForm(
 
             // update the unfinished data
             unfinished.ClubsString = clubsString;
-            unfinished.EndPart04On = DateTimeOffset.UtcNow;
+            unfinished.EndPart04On = dateTimeHelper.UtcNow;
             await repository.UpdateUnfinished(unfinished);
 
             // return our redirect with the code
@@ -304,17 +307,71 @@ public class SubmitForm(
                 if (!DateTimeOffset.TryParse(timeSlotString, out var timeSlot))
                     throw new Exception("Could not parse time slot string.");
                 chosenTimeSlot = timeSlot;
+
+                if (timeSlot.Minute == 0)
+                {
+                    var message = "Unfortunately, that time slot has been taken. Please choose another.";
+                    httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
+                    httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-5/?code={code:N}&message={message}");
+                    return httpResponse;
+                }
             }
 
             // update the unfinished data
             unfinished.WorkshopCode = workshopCode;
             unfinished.ChosenTimeSlot = chosenTimeSlot;
-            unfinished.EndPart05On = DateTimeOffset.UtcNow;
+            unfinished.EndPart05On = dateTimeHelper.UtcNow;
             await repository.UpdateUnfinished(unfinished);
 
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
             httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-6/?code={code:N}");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Exception raised");
+            httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+        }
+
+        return httpResponse;
+    }
+
+    [Function("Submit-Page06")]
+    public async Task<HttpResponseData> RunPage06(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/6")] HttpRequestData req)
+    {
+        HttpResponseData httpResponse;
+        try
+        {
+            _logger.LogInformation("Submit-Page06 triggered");
+
+            // find the unfinished using the code in the request
+            var unfinished = await GetUnfinishedFromRequest(req);
+            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+
+            // read the form data
+            var formData = await MultipartFormDataParser.ParseAsync(req.Body);
+            var referenceSource = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ReferenceSource"])?.Data;
+            var referenceSourceOther = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ReferenceSourceOther"])?.Data;
+            var comments = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Comments"])?.Data;
+
+            // save to storage just in case
+            await SaveFormDataToBlob(formData, code, 6);
+
+            // check for errors (after saving to storage)
+            if (String.IsNullOrEmpty(referenceSource)) throw new Exception("Could not read has reference source.");
+
+            // update the unfinished data
+            unfinished.ReferenceSource = referenceSource;
+            unfinished.ReferenceSourceOther = referenceSourceOther;
+            unfinished.Comments = comments;
+            unfinished.SubmittedOn = dateTimeHelper.UtcNow;
+            await repository.UpdateUnfinished(unfinished);
+
+            // return our redirect with the code
+            httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
+            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-complete");
         }
         catch (Exception ex)
         {
