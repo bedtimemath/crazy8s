@@ -27,13 +27,17 @@
       "commandName": "Project",
       "commandLineArgs": "show-config -p Production"
     },
-    "FullSlate Appointments": {
+    "FullSlate Add Appt": {
       "commandName": "Project",
-      "commandLineArgs": "test-fullslate -a GetAppointments -e 2024-10-01"
+      "commandLineArgs": "test-fullslate -a AddAppointment -e 2024-12-31"
+    },
+    "FullSlate Get Appts": {
+      "commandName": "Project",
+      "commandLineArgs": "test-fullslate -a GetAppointments"
     },
     "FullSlate Openings List": {
       "commandName": "Project",
-      "commandLineArgs": "test-fullslate -a GetOpeningsList -e 2024-10-01"
+      "commandLineArgs": "test-fullslate -a GetOpeningsList"
     }
   }
 }

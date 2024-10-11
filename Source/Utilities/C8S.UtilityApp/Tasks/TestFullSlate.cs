@@ -1,4 +1,6 @@
-﻿using C8S.FullSlate.Services;
+﻿using C8S.FullSlate.Abstractions;
+using C8S.FullSlate.Abstractions.Models;
+using C8S.FullSlate.Services;
 using C8S.UtilityApp.Base;
 using Microsoft.Extensions.Logging;
 
@@ -30,6 +32,9 @@ internal class TestFullSlate(
             throw new Exception($"Could not parse FullSlateAction: {options.TestAction}");
         switch (testAction as FullSlateAction?)
         {
+            case FullSlateAction.AddAppointment:
+                await RunAddAppointmentTest(startDate, endDate);
+                break;
             case FullSlateAction.GetAppointments:
                 await RunGetAppointmentsTest(startDate, endDate);
                 break;
@@ -43,6 +48,33 @@ internal class TestFullSlate(
 
         logger.LogInformation("{Name}: complete.", nameof(TestFullSlate));
         return 0;
+    }
+
+    private async Task RunAddAppointmentTest(DateOnly startDate, DateOnly endDate)
+    {
+        var fullSlateResponse = await fullSlateService.GetOpeningsList(startDate, endDate) ??
+                           throw new Exception($"Could not get openings from {startDate:d} to {endDate:d}");
+
+        // Offerings
+        var offerings = fullSlateResponse.Data?.Offerings ??
+                           throw new Exception($"No offerings from {startDate:d} to {endDate:d}");
+        foreach (var offering in offerings)
+            logger.LogInformation("\t{@Offering}", offering);
+
+        // Openings
+        var openings = fullSlateResponse.Data?.Openings ??
+                       throw new Exception($"No openings from {startDate:d} to {endDate:d}");
+        logger.LogInformation("{FromDate:d}-{ToDate:d}: Found {@Count} openings", startDate, endDate, openings.Count);
+        var lastOpening = openings[^1];
+        logger.LogInformation("Last opening: {@Last}", lastOpening);
+
+        // Add Appointment
+        var appointmentCreation = new FullSlateAppointmentCreation()
+        {
+            AtDateTime = lastOpening,
+            Services = [ FullSlateConstants.Offerings.CoachCall ]
+        };
+        logger.LogInformation("Creation: {@Creation}", appointmentCreation);
     }
 
     private async Task RunGetAppointmentsTest(DateOnly startDate, DateOnly endDate)
