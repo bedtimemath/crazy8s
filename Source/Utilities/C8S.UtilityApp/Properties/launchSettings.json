@@ -31,6 +31,10 @@
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a AddAppointment -e 2024-12-31"
     },
+    "FullSlate Add Client": {
+      "commandName": "Project",
+      "commandLineArgs": "test-fullslate -a AddClient"
+    },
     "FullSlate Get Appts": {
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a GetAppointments"

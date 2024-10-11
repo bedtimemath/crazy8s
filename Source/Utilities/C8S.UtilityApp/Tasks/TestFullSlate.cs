@@ -35,6 +35,9 @@ internal class TestFullSlate(
             case FullSlateAction.AddAppointment:
                 await RunAddAppointmentTest(startDate, endDate);
                 break;
+            case FullSlateAction.AddClient:
+                await RunAddClientTest();
+                break;
             case FullSlateAction.GetAppointments:
                 await RunGetAppointmentsTest(startDate, endDate);
                 break;
@@ -52,17 +55,17 @@ internal class TestFullSlate(
 
     private async Task RunAddAppointmentTest(DateOnly startDate, DateOnly endDate)
     {
-        var fullSlateResponse = await fullSlateService.GetOpeningsList(startDate, endDate) ??
-                           throw new Exception($"Could not get openings from {startDate:d} to {endDate:d}");
+        var getOpeningsResponse = await fullSlateService.GetOpeningsList(startDate, endDate) ??
+                                  throw new Exception($"Could not get openings from {startDate:d} to {endDate:d}");
 
         // Offerings
-        var offerings = fullSlateResponse.Data?.Offerings ??
-                           throw new Exception($"No offerings from {startDate:d} to {endDate:d}");
+        var offerings = getOpeningsResponse.Data?.Offerings ??
+                        throw new Exception($"No offerings from {startDate:d} to {endDate:d}");
         foreach (var offering in offerings)
             logger.LogInformation("\t{@Offering}", offering);
 
         // Openings
-        var openings = fullSlateResponse.Data?.Openings ??
+        var openings = getOpeningsResponse.Data?.Openings ??
                        throw new Exception($"No openings from {startDate:d} to {endDate:d}");
         logger.LogInformation("{FromDate:d}-{ToDate:d}: Found {@Count} openings", startDate, endDate, openings.Count);
         var lastOpening = openings[^1];
@@ -71,10 +74,37 @@ internal class TestFullSlate(
         // Add Appointment
         var appointmentCreation = new FullSlateAppointmentCreation()
         {
-            AtDateTime = lastOpening,
-            Services = [ FullSlateConstants.Offerings.CoachCall ]
+            At = lastOpening,
+            Services = [ FullSlateConstants.Offerings.CoachCall ],
+            Client = new FullSlateAppointmentCreationClient()
+            {
+                FirstName = "Testly",
+                LastName = "Testerson",
+                Email = "dsteen+testy@gmail.com",
+                PhoneNumber = new FullSlatePhoneNumber() { Number = "9998881111" }
+            },
+            UserTypeString = FullSlateConstants.UserTypes.Client
         };
         logger.LogInformation("Creation: {@Creation}", appointmentCreation);
+
+        var addAppointmentsResponse = await fullSlateService.AddAppointment(appointmentCreation);
+        logger.LogInformation("Response: {@Response}", addAppointmentsResponse);
+    }
+
+    private async Task RunAddClientTest()
+    {
+        // Add Client
+        var clientCreation = new FullSlateClientCreation()
+        {
+            FirstName = "Testly",
+            LastName = "Testers",
+            PhoneNumbers = [ new FullSlatePhoneNumber() { Number = "9708218128" } ],
+            Emails = [ "dsteen+testly@gmail.com"]
+        };
+        logger.LogInformation("Creation: {@Creation}", clientCreation);
+
+        var addClientsResponse = await fullSlateService.AddClient(clientCreation);
+        logger.LogInformation("Response: {@Response}", addClientsResponse);
     }
 
     private async Task RunGetAppointmentsTest(DateOnly startDate, DateOnly endDate)

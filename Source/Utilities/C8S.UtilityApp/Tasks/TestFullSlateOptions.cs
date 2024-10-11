@@ -6,6 +6,7 @@ namespace C8S.UtilityApp.Tasks;
 internal enum FullSlateAction
 {
     AddAppointment,
+    AddClient,
     GetAppointments,
     GetOpeningsList
 }
@@ -15,7 +16,7 @@ internal class TestFullSlateOptions: StandardConsoleOptions
 {
     private const string DefaultInputPath = "C:\\Git\\Crazy8s\\Data"; /* Change to match your desktop */
     
-    private const FullSlateAction DefaultTestAction = FullSlateAction.AddAppointment;
+    private const FullSlateAction DefaultTestAction = FullSlateAction.GetAppointments;
 
     [Option(shortName:'a', longName:"test-action", Default = DefaultTestAction )]
     public string TestAction { get; set; } = default!;

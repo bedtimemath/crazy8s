@@ -4,57 +4,8 @@ namespace C8S.FullSlate.Abstractions.Models;
 
 // see: https://app.fullslate.com/api/v2/specification#/
 [Serializable]
-public class FullSlateClientCreation
+public class FullSlateAppointmentCreationClient
 {
-    //active	boolean
-    //example: true
-    //Boolean indicating whether the service provider considers the client to be active; Typically set to false when the
-    //  client is no longer expected to make appointments
-    [JsonPropertyName("active")]
-    public bool? Active { get; set; } = null;
-
-    //addresses	{}
-    [JsonPropertyName("addresses")]
-    public List<FullSlateAddress>? Addresses { get; set; } = null;
-
-    //birthday	string
-    //example: 1990-12-31
-    //Client's Birthday.
-    [JsonPropertyName("birthday")]
-    public string? BirthdayString { get; set; } = null;
-
-    //client_since	string
-    //example: 2016-12-31
-    //Show only clients who started on this date.
-    [JsonPropertyName("client_since")]
-    public string? ClientSinceDateTimeString { get; set; } = default!;
-
-    [JsonIgnore]
-    public DateTimeOffset? ClientSince
-    {
-        get => String.IsNullOrEmpty(ClientSinceDateTimeString) ? null : DateTimeOffset.Parse(ClientSinceDateTimeString);
-        set => ClientSinceDateTimeString = value?.ToString("O");
-    }
-
-    //company_name_ext	string
-    //example: Comp Ext
-    //Company Name Ext
-    [JsonPropertyName("company_name_ext")]
-    public string? CompanyNameExt { get; set; } = null;
-
-    //email_cc	[number]
-    //description: A list of client ID(s) that associated with this client. When an email is send to the client, will
-    //  also CC to these clients' emails.
-    //example:List [ 12, 15 ]
-    [JsonPropertyName("email_cc")]
-    public List<int>? EmailCcIds { get; set; } = null;
-
-    //emails	[string]
-    //description:List of client's emails. The first position will be the primary email.
-    //example:List [ "client1@example.com", "client2@example.com" ]
-    [JsonPropertyName("emails")]
-    public List<string>? Emails { get; set; } = null;
-
     //first_name*	string
     //example: Johnny
     //Client's first name
@@ -67,11 +18,11 @@ public class FullSlateClientCreation
     [JsonPropertyName("last_name")]
     public string LastName { get; set; } = default!;
 
-    //mass_email_opt_in	boolean
-    //example: true
-    //Client who has opted in to email communication.
-    [JsonPropertyName("mass_email_opt_in")]
-    public bool? MassEmailOptIn { get; set; } = null;
+    //birthday	string
+    //example: 1990-12-31
+    //Client's Birthday.
+    [JsonPropertyName("birthday")]
+    public string? BirthdayDateString { get; set; } = null;
 
     //no_automatic_email	boolean
     //example: true
@@ -85,21 +36,11 @@ public class FullSlateClientCreation
     [JsonPropertyName("no_sms")]
     public bool? NoSms { get; set; } = null;
 
-    //notes	string
-    //example: Prefers to book appointments in the morning
-    //Service provider notes, if any (HTML)
-    [JsonPropertyName("notes")]
-    public string? Notes { get; set; } = null;
-
-    //phone_numbers	{}
-    [JsonPropertyName("phone_numbers")]
-    public List<FullSlatePhoneNumber>? PhoneNumbers { get; set; } = null;
-
-    //referrer	string
-    //example: Referrer
-    //Referrer
-    [JsonPropertyName("referrer")]
-    public string? Referrer { get; set; } = null;
+    //mass_email_opt_in	boolean
+    //example: true
+    //Client who has opted in to email communication.
+    [JsonPropertyName("mass_email_opt_in")]
+    public bool? MassEmailOptIn { get; set; } = null;
 
     //sms_reminder_consent	boolean
     //example: true
@@ -107,23 +48,19 @@ public class FullSlateClientCreation
     [JsonPropertyName("sms_reminder_consent")]
     public bool? SmsReminderConsent { get; set; } = null;
 
-    //source	string
-    //example: Source
-    //Source
-    [JsonPropertyName("source")]
-    public string? Source { get; set; } = null;
+    //phone_number	{}
+    [JsonPropertyName("phone_number")]
+    public FullSlatePhoneNumber? PhoneNumber { get; set; } = null;
 
-    //suffix	string
-    //example: Jr
-    //Suffix
-    [JsonPropertyName("suffix")]
-    public string? Suffix { get; set; } = null;
+    //address	{}
+    [JsonPropertyName("address")]
+    public FullSlateAddress? Address { get; set; } = null;
 
-    //tags	[string]
-    //description:List of Tags
-    //example:List [ "car", "truck" ]
-    [JsonPropertyName("tags")]
-    public List<string>? Tags { get; set; } = null;
+    //email	string
+    //example: mr.client@example.com
+    //Client's email.
+    [JsonPropertyName("email")]
+    public string? Email { get; set; } = null;
 
     //time_zone	string
     //Enum: Array [ 151 ]

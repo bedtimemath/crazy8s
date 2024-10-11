@@ -6,6 +6,14 @@ namespace C8S.FullSlate.Abstractions.Models;
 [Serializable]
 public class FullSlateAppointmentCreation
 {
+    //api_options	{
+    //    description:
+    //    The custom options/infos this appointment has, eg. to mark appointments that come from paid search.
+    //      For example: { "paid" => true }
+    //}
+    [JsonPropertyName("api_options")]
+    public object? ApiOptions { get; set; } = null;
+
     //at*	string
     //example: 2017-08-15T11:00:00-07:00
     //The service's date and time of the opening to book. The appointment can only be created in time-slots listed in /openings endpoint.
@@ -13,24 +21,55 @@ public class FullSlateAppointmentCreation
     public string AtDateTimeString { get; set; } = default!;
 
     [JsonIgnore]
-    public DateTimeOffset AtDateTime
+    public DateTimeOffset At
     {
         get => DateTimeOffset.Parse(AtDateTimeString); 
         set => AtDateTimeString = value.ToString("O");
     }
 
-    //to	string
-    //example: 2017-08-15T12:00:00-07:00
-    //This is an optional field, an end time for an appointment. This field is NOT required for user_type = 'CLIENT'. If to value is not
-    //provided, we will set based on the service provided.
-    [JsonPropertyName("to")]
-    public string? ToDateTimeString { get; set; } = null;
+    //client	number
+    //example: 8
+    //An existing client ID, which you can get it from /api/v2/clients API endpoint. You can only choose to create an appointment
+    //  by providing client information with either client_with_creation or client parameter.
+    [JsonPropertyName("client")]
+    public int ClientId { get; set; } = default!;
 
-    //services*	[number]
-    //description:One or more service IDs dictating the set of services to book.
-    //example:List [ 2 ]
-    [JsonPropertyName("services")]
-    public List<int> Services { get; set; } = [];
+    //client_notes	string
+    //example: Hopefully will get the car repaired by tomorrow
+    //Extra details provided by the client. Required if so configured by the provider.
+    [JsonPropertyName("client_notes")]
+    public string? ClientNotes { get; set; } = null;
+
+    //client_preferred_employee	boolean
+    //example: false
+    //True if the employee has been chosen by client. If client_preferred_employee value is not provided but the employee parameter
+    //  is provided, then the value for client_preferred_employee will be true.
+    [JsonPropertyName("client_preferred_employee")]
+    public bool? ClientPreferredEmployee { get; set; } = null;
+
+    //client_with_creation	{
+    //    description:
+    //    The Client detail. You can only choose to create or update an appointment by providing client information with either
+    //      client_with_creation or client parameter. Full Slate will first find the closest matched client. If a closest matched
+    //      client is found, we will use the found client to create or update appointment. Besides, we will also update the client
+    //      detail if we found some differences in the phone_number, email and/or address based on the information you provided in
+    //      client_with_creation parameter. If such record is not found, then Full Slate will create a new client record to create
+    //      or update an appointment.
+    // }
+    [JsonPropertyName("client_with_creation")]
+    public FullSlateAppointmentCreationClient? Client { get; set; } = null;
+
+    //confirmed	boolean
+    //example: true
+    //A boolean of appointment confirmed status
+    [JsonPropertyName("confirmed")]
+    public bool? Confirmed { get; set; } = null;
+
+    //custom_fields	[]
+    //description: You can include any other custom fields configured by the provider. Custom fields are required if so configured by
+    //the provider. What other information would you like to collect from clients when they book?
+    [JsonPropertyName("custom_fields")]
+    public List<FullSlateCustom>? CustomFields { get; set; } = null;
 
     //employee	number
     //example: 11
@@ -46,38 +85,29 @@ public class FullSlateAppointmentCreation
     [JsonPropertyName("location_id")]
     public int LocationId { get; set; } = default!;
 
-    //custom_fields	[]
-    //description: You can include any other custom fields configured by the provider. Custom fields are required if so configured by
-    //the provider. What other information would you like to collect from clients when they book?
-    [JsonPropertyName("custom_fields")]
-    public List<FullSlateCustom> CustomFields { get; set; } = [];
+    //notes	string
+    //example: Prepare food for the client
+    //The appointment's notes (provided by the company's employee)
+    [JsonPropertyName("notes")]
+    public string? Notes { get; set; } = null;
 
-    //client_with_creation	{
-    //    description:
-    //    The Client detail. You can only choose to create or update an appointment by providing client information with either
-    //      client_with_creation or client parameter. Full Slate will first find the closest matched client. If a closest matched
-    //      client is found, we will use the found client to create or update appointment. Besides, we will also update the client
-    //      detail if we found some differences in the phone_number, email and/or address based on the information you provided in
-    //      client_with_creation parameter. If such record is not found, then Full Slate will create a new client record to create
-    //      or update an appointment.
-    // }
-    [JsonPropertyName("client_with_creation")]
-    public FullSlateClientCreation? ClientCreation { get; set; } = null;
+    //passphrase	string
+    //example: PASSCODE11
+    //This is the passphrase set by the company to allow appointment creation
+    [JsonPropertyName("passphrase")]
+    public string? Passphrase { get; set; } = null;
 
-    //client	number
-    //example: 8
-    //An existing client ID, which you can get it from /api/v2/clients API endpoint. You can only choose to create an appointment
-    //  by providing client information with either client_with_creation or client parameter.
-    [JsonPropertyName("client")]
-    public int Client { get; set; } = default!;
+    //promo_code	string
+    //example: HAPPYREPAIR
+    //Promotional code to the appointment. Required if so configured by the provider
+    [JsonPropertyName("promo_code")]
+    public string? PromoCode { get; set; } = null;
 
-    //recurrence_mode	string
-    //Enum: Array [ 2 ]
-    //example: RECURS_WEEKLY
-    //The appointment recurrence mode. NONE indicates no recurrence. RECURS_WEEKLY indicates the appointment recurs weekly.
-    //RECURS_ICALENDAR indicates recurrence following rules from an iCalendar integration
-    [JsonPropertyName("recurrence_mode")]
-    public string? RecurrenceModeString { get; set; } = null;
+    //recur_end_at	string
+    //example: 2017-12-31
+    //For bounded recurring appointment, the date of the last occurrence
+    [JsonPropertyName("recur_end_at")]
+    public string? RecurEndAtString { get; set; } = null;
 
     //recurrence_interval	number
     //example: 1
@@ -86,57 +116,13 @@ public class FullSlateAppointmentCreation
     [JsonPropertyName("recurrence_interval")]
     public int RecurrenceInterval { get; set; } = default!;
 
-    //recur_end_at	string
-    //example: 2017-12-31
-    //For bounded recurring appointment, the date of the last occurrence
-    [JsonPropertyName("recur_end_at")]
-    public string? RecurEndAtString { get; set; } = null;
-
-    //notes	string
-    //example: Prepare food for the client
-    //The appointment's notes (provided by the company's employee)
-    [JsonPropertyName("notes")]
-    public string? Notes { get; set; } = null;
-
-    //client_notes	string
-    //example: Hopefully will get the car repaired by tomorrow
-    //Extra details provided by the client. Required if so configured by the provider.
-    [JsonPropertyName("client_notes")]
-    public string? ClientNotes { get; set; } = null;
-
-    //promo_code	string
-    //example: HAPPYREPAIR
-    //Promotional code to the appointment. Required if so configured by the provider
-    [JsonPropertyName("promo_code")]
-    public string? PromoCode { get; set; } = null;
-
-    //status	string
-    //Enum: Array [ 4 ]
-    //example: STATUS_BOOKED
-    //Current status of the appointment. Options: STATUS_NO_SHOW | STATUS_CHECKED_IN | STATUS_COMPLETE | STATUS_BOOKED
-    [JsonPropertyName("status")]
-    public string? StatusString { get; set; } = null;
-
-    //api_options	{
-    //    description:
-    //    The custom options/infos this appointment has, eg. to mark appointments that come from paid search.
-    //      For example: { "paid" => true }
-    //}
-    [JsonPropertyName("api_options")]
-    public object? ApiOptions { get; set; } = null;
-
-    //client_preferred_employee	boolean
-    //example: false
-    //True if the employee has been chosen by client. If client_preferred_employee value is not provided but the employee parameter
-    //  is provided, then the value for client_preferred_employee will be true.
-    [JsonPropertyName("client_preferred_employee")]
-    public bool? ClientPreferredEmployee { get; set; } = null;
-
-    //confirmed	boolean
-    //example: true
-    //A boolean of appointment confirmed status
-    [JsonPropertyName("confirmed")]
-    public bool? Confirmed { get; set; } = null;
+    //recurrence_mode	string
+    //Enum: Array [ 2 ]
+    //example: RECURS_WEEKLY
+    //The appointment recurrence mode. NONE indicates no recurrence. RECURS_WEEKLY indicates the appointment recurs weekly.
+    //RECURS_ICALENDAR indicates recurrence following rules from an iCalendar integration
+    [JsonPropertyName("recurrence_mode")]
+    public string? RecurrenceModeString { get; set; } = null;
 
     //send_client_confirmation_email	boolean
     //example: true
@@ -156,6 +142,33 @@ public class FullSlateAppointmentCreation
     [JsonPropertyName("send_employee_notification_email")]
     public bool? SendClientNotificationEmail { get; set; } = null;
 
+    //services*	[number]
+    //description:One or more service IDs dictating the set of services to book.
+    //example:List [ 2 ]
+    [JsonPropertyName("services")]
+    public List<int> Services { get; set; } = [];
+
+    //status	string
+    //Enum: Array [ 4 ]
+    //example: STATUS_BOOKED
+    //Current status of the appointment. Options: STATUS_NO_SHOW | STATUS_CHECKED_IN | STATUS_COMPLETE | STATUS_BOOKED
+    [JsonPropertyName("status")]
+    public string? StatusString { get; set; } = null;
+
+    //to	string
+    //example: 2017-08-15T12:00:00-07:00
+    //This is an optional field, an end time for an appointment. This field is NOT required for user_type = 'CLIENT'. If to value is not
+    //provided, we will set based on the service provided.
+    [JsonPropertyName("to")]
+    public string? ToDateTimeString { get; set; } = null;
+
+    [JsonIgnore]
+    public DateTimeOffset? To
+    {
+        get => String.IsNullOrEmpty(ToDateTimeString) ? null : DateTimeOffset.Parse(ToDateTimeString); 
+        set => ToDateTimeString = value?.ToString("O");
+    }
+
     //user_type	string
     //Enum: Array [ 2 ]
     //example: BUSINESS_USER
@@ -165,10 +178,4 @@ public class FullSlateAppointmentCreation
     //  or cancel an appointment. Defaulted to 'CLIENT' if this parameter is omitted.
     [JsonPropertyName("user_type")]
     public string? UserTypeString { get; set; } = null;
-
-    //passphrase	string
-    //example: PASSCODE11
-    //This is the passphrase set by the company to allow appointment creation
-    [JsonPropertyName("passphrase")]
-    public string? Passphrase { get; set; } = null;
 }
