@@ -54,11 +54,11 @@ public class FullSlateClient
         set => CreatedAtDateTimeString = value?.ToString("O");
     }
 
-    //deleted	string
+    //deleted	boolean
     //example: false
     //A boolean value that indicates if the record is deleted.
     [JsonPropertyName("deleted")]
-    public string? DeletedString { get; set; } = null;
+    public bool? Deleted { get; set; } = null;
 
     //deleted_at  string
     //example: 2017-10-13T08:00:00-7:00

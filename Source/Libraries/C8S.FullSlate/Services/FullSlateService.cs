@@ -73,8 +73,7 @@ public class FullSlateService(
                 [new ServiceError()
                 {
                     ErrorMessage = ex.Message,
-                    Details = JsonSerializer.SerializeToElement(
-                        new SerializableException(ex))
+                    Details = JsonSerializer.Serialize(new SerializableException(ex))
                 }]);
         }
     }
@@ -127,8 +126,7 @@ public class FullSlateService(
                 [new ServiceError()
                 {
                     ErrorMessage = ex.Message,
-                    Details = JsonSerializer.SerializeToElement(
-                        new SerializableException(ex))
+                    Details = JsonSerializer.Serialize(new SerializableException(ex))
                 }]);
         }
     }
@@ -154,9 +152,21 @@ public class FullSlateService(
             var responseBody = await retrieved.Content.ReadAsStringAsync();
 
             // *** FAILURE (Network) ***
-            // on failure, we should have a BiginResponseResult as the response body
             if (!success)
+            {
+                if (retrieved.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    try
+                    {
+                        return CreateFullSlateBadRequestResponse<FullSlateAppointment>(responseBody);
+                    }
+                    catch
+                    {
+                        // if this fails, the fallthrough is the best choice anyway
+                    }
+                }
                 return CreateNetworkErrorResponse<FullSlateAppointment>(retrieved, responseBody);
+            }
 
             // *** FAILURE (FullSlate) ***
             var deserialized = JsonSerializer.Deserialize<JsonNode>(responseBody);
@@ -178,8 +188,7 @@ public class FullSlateService(
                 [new ServiceError()
                 {
                     ErrorMessage = ex.Message,
-                    Details = JsonSerializer.SerializeToElement(
-                        new SerializableException(ex))
+                    Details = JsonSerializer.Serialize(new SerializableException(ex))
                 }]);
         }
     }
@@ -229,8 +238,7 @@ public class FullSlateService(
                     [new ServiceError()
                     {
                         ErrorMessage = ex.Message,
-                        Details = JsonSerializer.SerializeToElement(
-                            new SerializableException(ex))
+                        Details = JsonSerializer.Serialize(new SerializableException(ex))
                     }]);
         }
     }
@@ -250,8 +258,7 @@ public class FullSlateService(
                 {
                     ErrorCode = "NETWORK_ERROR",
                     ErrorMessage = "StatusCode Failure: " + (retrieved.ReasonPhrase ?? "Unknown"),
-                    Details = JsonSerializer.SerializeToElement(
-                        new Dictionary<string, string>() { { "Body", responseBody } })
+                    Details = responseBody
                 }
             ]);
         return failureResponse;
@@ -274,11 +281,26 @@ public class FullSlateService(
                             ErrorMessage = fullSlateError.Message,
                             FieldName = fullSlateError.FieldName,
                             Example = fullSlateError.Example,
-                            Details = JsonSerializer.SerializeToElement(
-                                new Dictionary<string, string>()
-                                    { { "Body", responseBody } })
+                            Details = responseBody
                         })
                     .ToList());
+        return failureResponse;
+    }
+
+    private static ServiceResponse<TData> CreateFullSlateBadRequestResponse<TData>(
+        string responseBody)
+        where TData : class, new()
+    {
+        var badRequestResponse =
+            JsonSerializer.Deserialize<FullSlateBadRequestResponse>(responseBody) ??
+            throw new Exception($"Could not deserialize as FullSlate error: {responseBody}");
+        var failureResponse = ServiceResponse<TData>
+            .CreateFailure(HttpStatusCode.OK, [new ServiceError()
+            {
+                ErrorCode = badRequestResponse.ErrorCode,
+                ErrorMessage = badRequestResponse.ErrorMessage,
+                Details = responseBody
+            }]);
         return failureResponse;
     }
 

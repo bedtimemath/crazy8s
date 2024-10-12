@@ -42,7 +42,7 @@ public class FullSlateAppointment
     //description:	
     //The client who booked the appointment
     [JsonPropertyName("client")]
-    public FullSlateAppointmentClient Client { get; set; } = default!;
+    public FullSlateAppointmentClient? Client { get; set; } = default!;
 
     //client_notes	string
     //example: Hopefully will get the car repaired by tomorrow
@@ -90,11 +90,11 @@ public class FullSlateAppointment
     [JsonPropertyName("custom_fields")]
     public List<FullSlateCustom> CustomFields { get; set; } = [];
 
-    //deleted	string
+    //deleted	boolean
     //example: false
     //A boolean value that indicates if the record is deleted.
     [JsonPropertyName("deleted")]
-    public string? DeletedString { get; set; } = null;
+    public bool? Deleted { get; set; } = null;
 
     //deleted_at  string
     //example: 2017-10-13T08:00:00-7:00
@@ -125,7 +125,7 @@ public class FullSlateAppointment
     //description:	
     //The ID and name of the employee who provides the service
     [JsonPropertyName("employee")]
-    public FullSlateEmployee Employee { get; set; } = default!;
+    public FullSlateEmployee? Employee { get; set; } = default!;
 
     //global_id	string
     //example: imCAfJnYF8S5nWkZtH3kN19ytr@fullslate.com
@@ -156,7 +156,7 @@ public class FullSlateAppointment
     //example: 12_w33_2017
     //A unique key of an appointment.
     [JsonPropertyName("occurrence_key")]
-    public string OccurrenceKey { get; set; } = default!;
+    public string? OccurrenceKey { get; set; } = null;
 
     //pending_reschedule_appointment_id	number
     //example: 19
@@ -191,7 +191,7 @@ public class FullSlateAppointment
     //A number that indicate the appointment's recur-interval in weeks. 1 indicates recurs every 1 week,
     //  2 indicates recurs every 2 week and so on
     [JsonPropertyName("recurrence_interval")]
-    public int RecurrenceInterval { get; set; } = default!;
+    public int? RecurrenceInterval { get; set; } = default!;
 
     //recurrence_mode	string
     //Enum: Array [ 2 ]

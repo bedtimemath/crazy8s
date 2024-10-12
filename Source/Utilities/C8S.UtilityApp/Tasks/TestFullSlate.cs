@@ -87,8 +87,11 @@ internal class TestFullSlate(
         };
         logger.LogInformation("Creation: {@Creation}", appointmentCreation);
 
-        var addAppointmentsResponse = await fullSlateService.AddAppointment(appointmentCreation);
-        logger.LogInformation("Response: {@Response}", addAppointmentsResponse);
+        var successResponse = await fullSlateService.AddAppointment(appointmentCreation);
+        logger.LogInformation("Success Response: {@Response}", successResponse);
+
+        var failureResponse = await fullSlateService.AddAppointment(appointmentCreation);
+        logger.LogInformation("Failure Response: {@Response}", failureResponse);
     }
 
     private async Task RunAddClientTest()

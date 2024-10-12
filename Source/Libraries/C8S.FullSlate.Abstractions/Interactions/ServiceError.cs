@@ -19,5 +19,5 @@ public class ServiceError
     public string? Example { get; set; } = null;
 
     [JsonPropertyName("details")]
-    public JsonElement? Details { get; set; } = null;
+    public string? Details { get; set; } = null;
 }

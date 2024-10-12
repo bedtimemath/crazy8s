@@ -32,7 +32,7 @@ public class FullSlateAppointmentCreation
     //An existing client ID, which you can get it from /api/v2/clients API endpoint. You can only choose to create an appointment
     //  by providing client information with either client_with_creation or client parameter.
     [JsonPropertyName("client")]
-    public int ClientId { get; set; } = default!;
+    public int? ClientId { get; set; } = default!;
 
     //client_notes	string
     //example: Hopefully will get the car repaired by tomorrow
@@ -77,13 +77,13 @@ public class FullSlateAppointmentCreation
     //this parameter, Full Slate will select an employee automatically from those available at the selected time. For user_type =
     //"BUSINESS_USER", this field is a required field.
     [JsonPropertyName("employee")]
-    public int Employee { get; set; } = default!;
+    public int? Employee { get; set; } = default!;
 
     //location_id	number
     //example: 3
     //Location ID
     [JsonPropertyName("location_id")]
-    public int LocationId { get; set; } = default!;
+    public int? LocationId { get; set; } = default!;
 
     //notes	string
     //example: Prepare food for the client
@@ -114,7 +114,7 @@ public class FullSlateAppointmentCreation
     //A number that indicate the appointment's recur-interval in weeks. 1 indicates recurs every 1 week, 2 indicates recurs every
     //2 week and so on
     [JsonPropertyName("recurrence_interval")]
-    public int RecurrenceInterval { get; set; } = default!;
+    public int? RecurrenceInterval { get; set; } = default!;
 
     //recurrence_mode	string
     //Enum: Array [ 2 ]
