@@ -1,13 +1,18 @@
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Web;
 using Azure.Storage.Blobs;
+using C8S.Common;
 using C8S.Common.Extensions;
 using C8S.Common.Interfaces;
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.Abstractions.Enumerations;
 using C8S.Database.Repository.Repositories;
+using C8S.FullSlate.Abstractions;
+using C8S.FullSlate.Abstractions.Models;
+using C8S.FullSlate.Services;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -19,7 +24,8 @@ public class SubmitForm(
     ILoggerFactory loggerFactory,
     IDateTimeHelper dateTimeHelper,
     BlobServiceClient blobServiceClient,
-    C8SRepository repository)
+    C8SRepository repository,
+    FullSlateService fullSlateService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger _logger = loggerFactory.CreateLogger<SubmitForm>();
@@ -46,6 +52,7 @@ public class SubmitForm(
         { "TaxId", "wpforms[fields][24]" },
         { "ClubsString", "wpforms[fields][66]" },
         { "HasWorkshopCodeString", "wpforms[fields][34]" },
+        { "TimeZone", "wpforms[fields][66]" },
         { "TimeSlotString", "wpforms[fields][64]" },
         { "WorkshopCode", "wpforms[fields][23]" },
         { "ReferenceSource", "wpforms[fields][38]" },
@@ -74,7 +81,8 @@ public class SubmitForm(
         {
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
+                                                 HttpUtility.UrlEncode(ex.Message));
         }
 
         return httpResponse;
@@ -139,7 +147,8 @@ public class SubmitForm(
         {
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
+                                                 HttpUtility.UrlEncode(ex.Message));
         }
 
         return httpResponse;
@@ -177,11 +186,11 @@ public class SubmitForm(
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(hostedBeforeString)) throw new Exception("Could not read has done before.");
             if (String.IsNullOrEmpty(organizationName)) throw new Exception("Could not read organization name.");
-            if (String.IsNullOrEmpty(address1)) throw new Exception("Could not read address line 1."); 
-            if (String.IsNullOrEmpty(city)) throw new Exception("Could not read city."); 
-            if (String.IsNullOrEmpty(state)) throw new Exception("Could not read state."); 
-            if (String.IsNullOrEmpty(zipCode)) throw new Exception("Could not read ZIP code."); 
-            if (String.IsNullOrEmpty(organizationType)) throw new Exception("Could not read organization type."); 
+            if (String.IsNullOrEmpty(address1)) throw new Exception("Could not read address line 1.");
+            if (String.IsNullOrEmpty(city)) throw new Exception("Could not read city.");
+            if (String.IsNullOrEmpty(state)) throw new Exception("Could not read state.");
+            if (String.IsNullOrEmpty(zipCode)) throw new Exception("Could not read ZIP code.");
+            if (String.IsNullOrEmpty(organizationType)) throw new Exception("Could not read organization type.");
 
             // update the unfinished data
             unfinished.HasHostedBefore = hostedBeforeString == HostedBeforeResponse;
@@ -214,7 +223,8 @@ public class SubmitForm(
         {
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
+                                                 HttpUtility.UrlEncode(ex.Message));
         }
 
         return httpResponse;
@@ -256,7 +266,8 @@ public class SubmitForm(
         {
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
+                                                 HttpUtility.UrlEncode(ex.Message));
         }
 
         return httpResponse;
@@ -279,6 +290,8 @@ public class SubmitForm(
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
             var hasWorkshopCodeString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["HasWorkshopCodeString"])?.Data;
             var timeSlotString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TimeSlotString"])?.Data;
+            var timeZone = ConvertFromJavascriptTimeZone(
+                formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TimeZone"])?.Data);
             var workshopCode = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["WorkshopCode"])?.Data;
 
             // save to storage just in case
@@ -288,17 +301,16 @@ public class SubmitForm(
             if (String.IsNullOrEmpty(hasWorkshopCodeString)) throw new Exception("Could not read has workshop code.");
             var hasWorkshopCode = hasWorkshopCodeString != NoWorkshopCodeResponse;
             var chosenTimeSlot = (DateTimeOffset?)null;
-            if (hasWorkshopCode) {
+            if (hasWorkshopCode)
+            {
                 if (String.IsNullOrEmpty(workshopCode)) throw new Exception("Could not read workshop code.");
                 var found = await repository.GetWorkshopCodeByKey(workshopCode);
-                if (found == null || 
-                    (found.StartsOn != null && found.StartsOn > dateTimeHelper.UtcNow) || 
+                if (found == null ||
+                    (found.StartsOn != null && found.StartsOn > dateTimeHelper.UtcNow) ||
                     (found.EndsOn != null && found.EndsOn <= dateTimeHelper.UtcNow))
                 {
-                    var message = "Unrecognized workshop code. Please try again or choose \"No\".";
-                    httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-                    httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-5/?code={code:N}&message={message}");
-                    return httpResponse;
+                    return GetPage5ErrorMessageResponse(req, code,
+                        "Unrecognized workshop code. Please try again or choose \"No\".");
                 }
             }
             else
@@ -307,31 +319,83 @@ public class SubmitForm(
                 if (!DateTimeOffset.TryParse(timeSlotString, out var timeSlot))
                     throw new Exception("Could not parse time slot string.");
                 chosenTimeSlot = timeSlot;
+            }
 
-                if (timeSlot.Minute == 0)
+            // these should be unnecessary
+            if (chosenTimeSlot == null) throw new Exception("Could not read chosen timeslot.");
+            if (String.IsNullOrEmpty(unfinished.ApplicantLastName)) throw new Exception("Applicant missing last name.");
+            if (String.IsNullOrEmpty(unfinished.ApplicantEmail)) throw new Exception("Applicant missing email.");
+            if (String.IsNullOrEmpty(unfinished.ApplicantPhone)) throw new Exception("Applicant missing phone.");
+
+            // check on the new timeslot
+            var appointmentCreation = new FullSlateAppointmentCreation()
+            {
+                At = chosenTimeSlot!.Value,
+                Services = [FullSlateConstants.Offerings.CoachCall],
+                Client = new FullSlateAppointmentCreationClient()
                 {
-                    var message = "Unfortunately, that time slot has been taken. Please choose another.";
-                    httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-                    httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-5/?code={code:N}&message={message}");
-                    return httpResponse;
+                    FirstName = unfinished.ApplicantFirstName ?? SharedConstants.Display.None,
+                    LastName = unfinished.ApplicantLastName,
+                    Email = unfinished.ApplicantEmail,
+                    PhoneNumber = new FullSlatePhoneNumber() { Number = unfinished.ApplicantPhone }
+                },
+                UserTypeString = FullSlateConstants.UserTypes.Client
+            };
+            var appointmentResponse = await fullSlateService.AddAppointment(appointmentCreation);
+            if (!appointmentResponse.Success)
+            {
+                if (appointmentResponse.Errors?
+                        .Any(e => e.ErrorCode is
+                            FullSlateConstants.ErrorCodes.StatusBooked or
+                            FullSlateConstants.ErrorCodes.NoOpening)
+                    ?? false)
+                {
+                    return GetPage5ErrorMessageResponse(req, code,
+                        "Unfortunately, that time slot has been booked. Please try another.");
                 }
+
+                var errorMessages = appointmentResponse.Errors?
+                    .Select(e => RemoveSupportTeamMessage(e.ErrorMessage)) ?? ["Unknown error"];
+                return GetPage5ErrorMessageResponse(req, code,
+                    $"ERROR: {String.Join("; ", errorMessages)} Please try again later.");
             }
 
             // update the unfinished data
             unfinished.WorkshopCode = workshopCode;
+            unfinished.ApplicantTimeZone = timeZone;
             unfinished.ChosenTimeSlot = chosenTimeSlot;
             unfinished.EndPart05On = dateTimeHelper.UtcNow;
             await repository.UpdateUnfinished(unfinished);
 
+            // create the application
+            var application = await repository.AddApplication(
+                new ApplicationDTO()
+                {
+                    Status = ApplicationStatus.Received,
+                    ApplicantType = unfinished.ApplicantType,
+                    ApplicantFirstName = unfinished.ApplicantFirstName,
+                    ApplicantLastName = unfinished.ApplicantLastName,
+                    ApplicantEmail = unfinished.ApplicantEmail,
+                    ApplicantPhone = unfinished.ApplicantPhone,
+                    ApplicantTimeZone = unfinished.ApplicantTimeZone,
+                    OrganizationName = unfinished.OrganizationName,
+                    OrganizationType = unfinished.OrganizationType,
+                    OrganizationTypeOther = unfinished.OrganizationTypeOther,
+                    OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
+                    WorkshopCode = unfinished.WorkshopCode,
+                    SubmittedOn = dateTimeHelper.UtcNow
+                });
+
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-6/?code={code:N}");
+            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-6/?code={code:N}&appid={application.ApplicationId}");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
+                                                 HttpUtility.UrlEncode(RemoveSupportTeamMessage(ex.Message)));
         }
 
         return httpResponse;
@@ -377,7 +441,8 @@ public class SubmitForm(
         {
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" + HttpUtility.UrlEncode(ex.Message));
+            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
+                                                 HttpUtility.UrlEncode(ex.Message));
         }
 
         return httpResponse;
@@ -385,6 +450,23 @@ public class SubmitForm(
     #endregion
 
     #region Private Methods
+    // Full Slate returns error messages asking the user to send something to the support team. We don't
+    //  want our users seeing that.
+    private static string RemoveSupportTeamMessage(string? message)
+    {
+        if (String.IsNullOrEmpty(message)) return String.Empty;
+        return message.Contains(FullSlateConstants.ErrorMessages.PleaseSendRequestId)
+            ? message.Replace(FullSlateConstants.ErrorMessages.PleaseSendRequestId, String.Empty) : message;
+    }
+
+    private static HttpResponseData GetPage5ErrorMessageResponse(HttpRequestData req, Guid code, string message)
+    {
+        var httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
+        httpResponse.Headers.Add("location",
+            $"https://crazy8sclub.org/coach-application-5/?code={code:N}&message={Uri.EscapeDataString(message)}");
+        return httpResponse;
+    }
+
     protected async Task<UnfinishedDTO> GetUnfinishedFromRequest(HttpRequestData req)
     {
         var code = req.Query["code"] ??
@@ -404,5 +486,17 @@ public class SubmitForm(
         if (!azureResponse.HasValue)
             throw new Exception($"Could not create blob: {blobName}");
     }
+
+    private static string ConvertFromJavascriptTimeZone(string? jsTimeZone) =>
+        jsTimeZone switch
+        {
+            "America/New_York" => "Eastern Time",
+            "America/Chicago" => "Central Time",
+            "America/Denver" => "Mountain Time",
+            "America/Los_Angeles" => "Pacific Time",
+            "America/Anchorage" => "Alaskan Time",
+            "Pacific/Honolulu" => "Hawaiian Time",
+            _ => SharedConstants.Display.NotSet
+        };
     #endregion
 }
