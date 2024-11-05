@@ -1,0 +1,15 @@
+{
+  "ApiKeys": {
+    "FullSlate": "JDx0fzqcKhj7piBSJcq1lhLkqrjafnJUSSi5jR28URixGN6OP1"
+  },
+  "Connections": {
+    "AzureStorage": "UseDevelopmentStorage=true",
+    "Database": "Server=localhost;Database=C8S-Development;Trusted_Connection=True;TrustServerCertificate=True",
+    "OldSystem": "Server=localhost;Database=BedtimeMath-Crazy8s-Local;Trusted_Connection=True;TrustServerCertificate=True",
+    "ApplicationInsights": ""
+  },
+  "Endpoints": {
+    "AzureStorage": "http://127.0.0.1:10000/devstoreaccount1/",
+    "FullSlateApi": "https://bedtimemath.fullslate.com/api/v2/"
+  }
+}

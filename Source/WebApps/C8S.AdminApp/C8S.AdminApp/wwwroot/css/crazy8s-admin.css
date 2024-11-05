@@ -1,0 +1,132 @@
+/** MEDIA BREAKS **/
+/*   see: https://blazor.radzen.com/breakpoints 
+        xs - Extra Small >= 576px
+        sm - Small >= 768px
+        md - Medium >= 1024px
+        lg - Large >= 1280px
+        xl - Extra Large >= 1920px
+        xx - Extra Extra Large >= 2560px
+    */
+
+/** VARIABLES **/
+:root {
+    --tgpl-red: #EE473D;
+    --tgpl-green: #BABC31;
+    --tgpl-blue: #48C1E1;
+    --tgpl-white: #FFFFFF;
+    --tgpl-max-page-width: 800px;
+    --tgpl-std-width: 0.5rem;
+    --tgpl-max-image-width: 250px;
+    --tgpl-max-image-height: 400px;
+    --tgpl-small-image-width: 128px;
+    --tgpl-small-image-height: 64px;
+    --tgpl-max-description-height: 8rem;
+}
+/** BODY **/
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+h1:focus {
+    outline: none;
+}
+
+/** MARGINS **/
+.rz-header > *,
+.rz-body > *,
+.rz-footer > * {
+    max-width: var(--tgpl-max-page-width);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/** HEADER **/
+.rz-header {
+    background-color: var(--tgpl-red);
+    color: var(--tgpl-white);
+}
+
+.rz-footer {
+    background-color: var(--tgpl-blue);
+    color: var(--tgpl-white);
+}
+
+/** PROFILE **/
+ul.rz-profile-menu {
+    background-color: transparent;
+}
+
+/** FOOTER **/
+.rz-footer a {
+    color: var(--tgpl-white);
+    text-decoration: underline;
+}
+
+/** MOBILE BODY **/
+.rz-body {
+}
+
+.rz-row {
+    row-gap: 0;
+}
+
+.rzi {
+    min-width: 2rem;
+}
+.rz-radiobutton-box .rzi,
+.rz-chkbox-box .rzi {
+    min-width: 0;
+}
+
+/** DESKTOP BODY **/
+@media only screen and (min-width: 1024px) {
+    .rz-body {
+        padding: var(--tgpl-std-width);
+    }
+
+    .rz-row {
+        row-gap: revert;
+    }
+}
+
+/** MENUS **/
+.tgpl-site-menu {
+    margin-left: var(--tgpl-std-width);
+}
+
+.tgpl-profile-menu {
+    margin-right: var(--tgpl-std-width);
+}
+
+/** HELPER CLASSES **/
+.tgpl-min-button-width {
+    min-width: 15rem;
+}
+
+.tgpl-yesno-image {
+    width: 32px;
+    height: 32px;
+}
+
+/** SETUP WIZARD **/
+.rz-steps {
+    margin: var(--tgpl-std-width);
+}
+
+.rz-steps-item .rz-steps-title {
+    display: none;
+}
+
+.rz-steps .rz-state-highlight .rz-steps-number {
+    background-color: var(--tgpl-red);
+}
+
+.rz-steps .rz-state-highlight .rz-steps-title {
+    color: var(--tgpl-red);
+}
+
+@media only screen and (min-width: 1024px) {
+    .rz-steps-item .rz-steps-title {
+        display: revert;
+    }
+}
