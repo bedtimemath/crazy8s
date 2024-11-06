@@ -8,6 +8,14 @@
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Components\ProfileDisplay.razor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\ProfileDisplay.razor.cs" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.0" />
@@ -19,6 +27,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+		<ProjectReference Include="..\..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
+		<ProjectReference Include="..\..\..\Libraries\C8S.Common\C8S.Common.csproj" />
 	</ItemGroup>
 
 </Project>

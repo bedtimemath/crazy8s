@@ -1,8 +1,8 @@
-﻿using C8S.Common;
-using C8S.Database.EFCore.Base;
+﻿using C8S.Database.EFCore.Base;
 using C8S.Database.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SC.Common;
 
 namespace C8S.Database.EFCore.Configs;
 

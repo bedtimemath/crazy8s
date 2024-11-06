@@ -10,21 +10,29 @@
 
 /** VARIABLES **/
 :root {
-    --tgpl-red: #EE473D;
-    --tgpl-green: #BABC31;
-    --tgpl-blue: #48C1E1;
-    --tgpl-white: #FFFFFF;
-    --tgpl-max-page-width: 800px;
-    --tgpl-std-width: 0.5rem;
-    --tgpl-max-image-width: 250px;
-    --tgpl-max-image-height: 400px;
-    --tgpl-small-image-width: 128px;
-    --tgpl-small-image-height: 64px;
-    --tgpl-max-description-height: 8rem;
+    --c8s-primary-light: #00B9E7;
+    --c8s-primary-mid: #697FBF;
+    --c8s-primary-dark: #002078;
+    --c8s-secondary: #50B848;
+    --c8s-highlight: #FFF200;
+    --c8s-standout: #F37021;
+    --c8s-dark: #000000;
+    --c8s-light: #FFFFFF;
+    --c8s-header-font: "GrilledCheeseBTN";
+    --c8s-body-font: "Open Sans";
+    --c8s-std-width: 0.5rem;
+    --c8s-max-image-width: 250px;
+    --c8s-max-image-height: 400px;
+    --c8s-small-image-width: 128px;
+    --c8s-small-image-height: 64px;
+    --c8s-max-description-height: 8rem;
+    --rz-text-font-family: "Open Sans";
+    --rz-text-display-h1-font-family: GrilledCheeseBTN;
+    --rz-text-display-h1-font-size: xx-large;
+    --rz-text-display-h1-color: #ffffff;
 }
 /** BODY **/
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 h1:focus {
@@ -35,20 +43,19 @@ h1:focus {
 .rz-header > *,
 .rz-body > *,
 .rz-footer > * {
-    max-width: var(--tgpl-max-page-width);
     margin-left: auto;
     margin-right: auto;
 }
 
 /** HEADER **/
 .rz-header {
-    background-color: var(--tgpl-red);
-    color: var(--tgpl-white);
+    background-color: var(--c8s-primary-dark);
+    color: var(--c8s-light);
 }
 
 .rz-footer {
-    background-color: var(--tgpl-blue);
-    color: var(--tgpl-white);
+    background-color: var(--c8s-primary-mid);
+    color: var(--c8s-dark);
 }
 
 /** PROFILE **/
@@ -58,7 +65,7 @@ ul.rz-profile-menu {
 
 /** FOOTER **/
 .rz-footer a {
-    color: var(--tgpl-white);
+    color: var(--c8s-standout);
     text-decoration: underline;
 }
 
@@ -81,7 +88,7 @@ ul.rz-profile-menu {
 /** DESKTOP BODY **/
 @media only screen and (min-width: 1024px) {
     .rz-body {
-        padding: var(--tgpl-std-width);
+        padding: var(--c8s-std-width);
     }
 
     .rz-row {
@@ -89,44 +96,12 @@ ul.rz-profile-menu {
     }
 }
 
-/** MENUS **/
-.tgpl-site-menu {
-    margin-left: var(--tgpl-std-width);
+/** SIDEBAR MENU **/
+.c8s-sidebar-menu .sc-icon-display {
+    font-size: x-large;
+    padding-left: 1.25rem;
 }
-
-.tgpl-profile-menu {
-    margin-right: var(--tgpl-std-width);
-}
-
-/** HELPER CLASSES **/
-.tgpl-min-button-width {
-    min-width: 15rem;
-}
-
-.tgpl-yesno-image {
-    width: 32px;
-    height: 32px;
-}
-
-/** SETUP WIZARD **/
-.rz-steps {
-    margin: var(--tgpl-std-width);
-}
-
-.rz-steps-item .rz-steps-title {
-    display: none;
-}
-
-.rz-steps .rz-state-highlight .rz-steps-number {
-    background-color: var(--tgpl-red);
-}
-
-.rz-steps .rz-state-highlight .rz-steps-title {
-    color: var(--tgpl-red);
-}
-
-@media only screen and (min-width: 1024px) {
-    .rz-steps-item .rz-steps-title {
-        display: revert;
-    }
+.c8s-sidebar-menu .rz-text-body1 {
+    margin-block-end: 0;
+    font-size: x-large;
 }

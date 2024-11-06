@@ -1,5 +1,6 @@
 ﻿using C8S.Common.Razor.Base;
 using Microsoft.AspNetCore.Components;
+using SC.Common;
 
 namespace C8S.Common.Razor.Components;
 

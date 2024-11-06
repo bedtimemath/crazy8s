@@ -1,0 +1,13 @@
+﻿@using SC.Common
+@inherits SC.Common.Razor.Base.BaseRazorComponent
+
+<div class="c8s-profile-display @CssClass">
+    <AuthorizeView>
+        <Authorized>
+            @(context.User.Identity?.Name ?? SharedConstants.Display.NotSet)
+        </Authorized>
+        <NotAuthorized>
+            <a href="authentication/login">log in</a>
+        </NotAuthorized>
+    </AuthorizeView>
+</div>

@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using C8S.Common;
 using C8S.Database.Abstractions.Base;
 using C8S.Database.Abstractions.Enumerations;
+using SC.Common;
 
 namespace C8S.Database.EFCore.Models;
 

@@ -1,8 +1,8 @@
 ﻿#nullable enable
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using C8S.Common;
 using C8S.Database.Abstractions.Base;
+using SC.Common;
 
 namespace C8S.Database.EFCore.Models;
 

@@ -1,0 +1,21 @@
+﻿@inherits SC.Common.Razor.Base.BaseRazorComponent
+@using C8S.Common
+
+<div class="c8s-sidebar-menu @CssClass">
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenStack Orientation="Orientation.Horizontal"
+                         AlignItems="AlignItems.Center"
+                         JustifyContent="JustifyContent.Left"
+                         class="w-100">
+                <IconDisplay Icon="@C8SConstants.Icons.Application"
+                             CssClass="flex-shrink-0"/>
+                <RadzenText TagName="TagName.Div"
+                            TextStyle="TextStyle.Body1"
+                            TextAlign="TextAlign.Left"
+                            Text="Applications"
+                            class="flex-shrink-0 flex-grow-1"/>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+</div>

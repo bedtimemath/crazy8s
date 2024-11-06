@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using SC.Common;
 
 namespace C8S.Common.Models;
 

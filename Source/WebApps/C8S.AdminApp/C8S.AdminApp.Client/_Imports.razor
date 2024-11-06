@@ -1,10 +1,17 @@
 ﻿@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Blazr.RenderState
 @using C8S.AdminApp.Client
+@using C8S.AdminApp.Client.Components
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
+@using Radzen
+@using Radzen.Blazor
+@using SC.Common.Razor.Components
 @using System.Net.Http
 @using System.Net.Http.Json
+@attribute [Authorize]

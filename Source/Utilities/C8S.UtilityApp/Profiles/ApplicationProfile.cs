@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using C8S.Applications;
 using C8S.Applications.Models;
-using C8S.Common;
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.Abstractions.Enumerations;
 using C8S.UtilityApp.Models;
+using SC.Common;
 
 namespace C8S.UtilityApp.Profiles;
 
