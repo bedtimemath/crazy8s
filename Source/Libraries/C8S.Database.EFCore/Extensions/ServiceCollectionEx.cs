@@ -15,11 +15,14 @@ public static class ServiceCollectionEx
             throw new NotImplementedException();
 
         services.AddSingleton<AuditInterceptor>();
+        services.AddSingleton<CreateModifyInterceptor>();
 
         services.AddDbContextFactory<C8SDbContext>((sp, config) =>
         {
             config.UseSqlServer(connectionString);
-            config.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
+            config.AddInterceptors(
+                sp.GetRequiredService<AuditInterceptor>(),
+                sp.GetRequiredService<CreateModifyInterceptor>());
 
             if (loggerFactory != null)
             {

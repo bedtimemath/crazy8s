@@ -1,5 +1,5 @@
-﻿using System.Net.Http.Headers;
-using C8S.Database.Abstractions.Base;
+﻿using C8S.Database.Abstractions.Base;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 
@@ -14,11 +14,8 @@ internal sealed class AuditInterceptor(
         CancellationToken cancellationToken = default)
     {
         if (eventData.Context == null) return ValueTask.FromResult(result);
+        LogChanges(eventData.Context);
 
-        var entries = eventData.Context.ChangeTracker.Entries<IAuditable>();
-
-            logger.LogInformation("ASYNC: {@Context}", eventData.Context.ChangeTracker.Entries().Select(e => e.State).ToList());
-        
         return ValueTask.FromResult(result);
     }
 
@@ -27,9 +24,23 @@ internal sealed class AuditInterceptor(
         InterceptionResult<int> result)
     {
         if (eventData.Context == null) return result;
+        LogChanges(eventData.Context);
 
-            logger.LogInformation("SYNC: {@Context}", eventData.Context.ChangeTracker.Entries().Select(e => e.State).ToList());
-        
         return result;
+    }
+    
+
+    private void LogChanges(DbContext dbContext)
+    {
+        var entries = dbContext.ChangeTracker.Entries();
+        foreach (var entry in entries)
+        {
+            var state = entry.State;
+            var changesList = entry.Properties
+                .Where(p => p.IsModified)
+                .Select(p => $"{p.Metadata.Name}: {p.OriginalValue} => {p.CurrentValue}")
+                .ToList();
+            logger.LogInformation("[{State}] {Joined}", state, String.Join("; ", changesList));
+        }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using C8S.Database.EFCore.Contexts;
+using C8S.Database.EFCore.Models;
 using C8S.UtilityApp.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Common.Extensions;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -27,17 +29,23 @@ internal class TestInterceptors(
 
         Console.WriteLine();
 
+        //var coach = new CoachDb()
+        //{
+        //    FirstName = String.Empty.AppendRandomAlphaOnly(),
+        //    LastName = String.Empty.AppendRandomAlphaOnly(),
+        //    Email = String.Empty.AppendRandomAlphaOnly() + "@example.com",
+        //    TimeZone = String.Empty.AppendRandomAlphaOnly()
+        //};
+        //dbContext.Coaches.Add(coach);
+
         var application = await dbContext.Applications
             .OrderByDescending(a => a.CreatedOn)
             .FirstOrDefaultAsync() ??
                           throw new Exception("No applications found.");
+        application.ApplicantFirstName = String.Empty.AppendRandomAlphaOnly(8);
+        application.ApplicantLastName = String.Empty.AppendRandomAlphaOnly(8);
 
-        logger.LogInformation("Application: {@App}", application);
-
-        application.ModifiedOn = DateTimeOffset.UtcNow;
         await dbContext.SaveChangesAsync();
-
-        logger.LogInformation("Application: {@App}", application);
 
         logger.LogInformation("{Name}: complete.", nameof(TestInterceptors));
         return 0;
