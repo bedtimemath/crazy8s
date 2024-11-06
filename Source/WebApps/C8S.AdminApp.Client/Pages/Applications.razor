@@ -1,0 +1,20 @@
+﻿@page "/applications"
+@inherits C8S.AdminApp.Client.Base.SoftCrowComponentBase
+@rendermode InteractiveWebAssembly
+
+@using C8S.Common
+
+
+<RenderStateViewer Parent="this" />
+
+<RadzenStack Orientation="Orientation.Horizontal"
+             AlignItems="AlignItems.Center"
+             JustifyContent="JustifyContent.SpaceBetween">
+    <div>Applications</div>
+    <IconButton ButtonType="ButtonType.Button"
+                ButtonStyle="ButtonStyle.Primary"
+                IconString="@C8SConstants.Icons.Refresh"
+                Text="Refresh"
+                Click="@(async () => await _applicationsLister.Reload())" />
+</RadzenStack>
+<ApplicationsLister @ref="_applicationsLister" />

@@ -1,0 +1,16 @@
+﻿@inherits BaseRazorComponent
+@rendermode InteractiveWebAssembly
+
+<RenderStateViewer Parent="this" />
+
+<div class="c8s-page-lister c8s-applications-lister @CssClass">
+    <Virtualize @ref="@_listerComponent" 
+                ItemsProvider="@GetRows"
+                Context="application">
+        <div>
+            #@application.ApplicationId 
+            @application.ApplicantLastName &lt;@application.ApplicantEmail&gt;
+            [@application.Status.ToString()]
+        </div>
+    </Virtualize>
+</div>

@@ -27,5 +27,6 @@ public static class C8SConstants
     public static class Icons
     {
         public const string Application = "clipboard-list";
+        public const string Refresh = "arrow-rotate-right";
     }
 }

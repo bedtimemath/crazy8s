@@ -1,6 +1,5 @@
 ﻿using Azure.Identity;
 using C8S.Applications.Extensions;
-using C8S.Common.Helpers.Extensions;
 using C8S.Common.Models;
 using C8S.Database.Abstractions.Models;
 using C8S.Database.Repository.Extensions;
@@ -15,6 +14,7 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SC.Common;
+using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
