@@ -1,5 +1,4 @@
-﻿using C8S.AdminApp.Client.Base;
-using SC.Common.Razor.Base;
+﻿using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Components.Testing;
 

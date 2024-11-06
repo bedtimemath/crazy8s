@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Common", "Libraries\C8S.Common\C8S.Common.csproj", "{99260FB2-6C77-43D3-AC17-6CF0C485AD34}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Database.Abstractions", "Libraries\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj", "{8C04A426-9A03-484B-ADE9-90D5DD15935D}"
@@ -45,7 +43,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Domain", "Domains\C8S.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Domain.EFCore", "Domains\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj", "{4CB23C3B-62DB-48ED-8831-0767E30D93C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.Common.Radzen", "..\..\SoftCrow\Source\RazorLibs\SC.Common.Radzen\SC.Common.Radzen.csproj", "{33C1664B-9BD2-41A8-A01C-0C5D18113FE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SC.Common.Radzen", "..\..\SoftCrow\Source\RazorLibs\SC.Common.Radzen\SC.Common.Radzen.csproj", "{33C1664B-9BD2-41A8-A01C-0C5D18113FE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +51,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{99260FB2-6C77-43D3-AC17-6CF0C485AD34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99260FB2-6C77-43D3-AC17-6CF0C485AD34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99260FB2-6C77-43D3-AC17-6CF0C485AD34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99260FB2-6C77-43D3-AC17-6CF0C485AD34}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C04A426-9A03-484B-ADE9-90D5DD15935D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C04A426-9A03-484B-ADE9-90D5DD15935D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C04A426-9A03-484B-ADE9-90D5DD15935D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -126,7 +120,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{99260FB2-6C77-43D3-AC17-6CF0C485AD34} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 		{8C04A426-9A03-484B-ADE9-90D5DD15935D} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 		{0981F09D-BF63-4A39-A2C5-D12D553652A8} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 		{C7BA27DB-666C-41C1-BA65-FACCC3AD833E} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}

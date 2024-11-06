@@ -2,8 +2,6 @@
 using AutoMapper;
 using C8S.Applications.Models;
 using C8S.Applications.Services;
-using C8S.Common.Extensions;
-using C8S.Common.Models;
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.Abstractions.Enumerations;
 using C8S.Database.EFCore.Contexts;
@@ -11,6 +9,8 @@ using C8S.Database.EFCore.Models;
 using C8S.UtilityApp.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Common.Extensions;
+using SC.Common.Models;
 
 namespace C8S.UtilityApp.Tasks;
 

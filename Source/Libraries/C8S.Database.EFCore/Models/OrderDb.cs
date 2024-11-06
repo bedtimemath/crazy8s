@@ -32,17 +32,17 @@ public class OrderDb: BaseDb
     [Required]
     public int Number { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderStatus Status { get; set; } = OrderStatus.Ordered;
 
-    [MaxLength(SharedConstants.MaxLengths.Email)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string? ContactEmail { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? ContactPhone { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? ContactPhoneExt { get; set; } = null;
     
     [Required]
@@ -57,7 +57,7 @@ public class OrderDb: BaseDb
     
     public Guid? BatchIdentifier { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
     #endregion
 

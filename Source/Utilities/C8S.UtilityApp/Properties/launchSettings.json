@@ -42,6 +42,10 @@
     "FullSlate Openings List": {
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a GetOpeningsList"
+    },
+    "Test Interceptors": {
+      "commandName": "Project",
+      "commandLineArgs": "test-interceptors"
     }
   }
 }

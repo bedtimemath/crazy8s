@@ -2,6 +2,8 @@
 
 public class Auth0Secrets
 {
+    public static string SectionName = nameof(Auth0Secrets);
+
     /// <summary>
     /// The default or custom root domain for your Auth0 tenant. 
     /// </summary>

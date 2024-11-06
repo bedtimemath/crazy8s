@@ -13,8 +13,8 @@ internal class ApplicationProfile : Profile
     public ApplicationProfile()
     {
         CreateMap<ApplicationSql, ApplicationDTO>()
-            .ForMember(m => m.ApplicantLastName, opt => opt.NullSubstitute(SharedConstants.Display.NotSet))
-            .ForMember(m => m.ApplicantEmail, opt => opt.NullSubstitute(SharedConstants.Display.NotSet));
+            .ForMember(m => m.ApplicantLastName, opt => opt.NullSubstitute(SoftCrowConstants.Display.NotSet))
+            .ForMember(m => m.ApplicantEmail, opt => opt.NullSubstitute(SoftCrowConstants.Display.NotSet));
 
         CreateMap<SubmittedApplication, ApplicationDTO>()
             .ForMember(m => m.ApplicantType,

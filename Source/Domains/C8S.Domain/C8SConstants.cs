@@ -1,4 +1,4 @@
-﻿namespace C8S.Common;
+﻿namespace C8S.Domain;
 
 public static class C8SConstants
 {

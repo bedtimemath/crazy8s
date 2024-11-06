@@ -23,13 +23,13 @@ public class SkuConfig : BaseConfig<SkuDb>
         //[Required, MaxLength(SharedConstants.MaxLengths.Key)]
         //public string Key { get; set; } = default!;
         entity.Property(m => m.Key)
-            .HasMaxLength(SharedConstants.MaxLengths.Key)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Key)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
         //public string Name { get; set; } = default!;
         entity.Property(m => m.Name)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
         //[Required]
@@ -41,7 +41,7 @@ public class SkuConfig : BaseConfig<SkuDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public SkuStatus Status { get; set; } = default!;
         entity.Property(m => m.Status)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
@@ -49,7 +49,7 @@ public class SkuConfig : BaseConfig<SkuDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public AgeLevel AgeLevel { get; set; } = default!;
         entity.Property(m => m.AgeLevel)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
@@ -57,14 +57,14 @@ public class SkuConfig : BaseConfig<SkuDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public ClubSize ClubSize { get; set; } = default!;
         entity.Property(m => m.ClubSize)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Notes { get; set; } = null;
         entity.Property(m => m.Notes)
-            .HasMaxLength(SharedConstants.MaxLengths.XXXLong);
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong);
         #endregion
 
         #region Navigation Configuration

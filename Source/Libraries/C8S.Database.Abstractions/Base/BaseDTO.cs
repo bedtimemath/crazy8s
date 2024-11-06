@@ -6,6 +6,7 @@ public abstract class BaseDTO: IBaseDTO
     public abstract int Id { get; }
     public abstract string Display { get; }
     public DateTimeOffset CreatedOn { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? ModifiedOn { get; set; }
     #endregion
 
     #region Public Methods

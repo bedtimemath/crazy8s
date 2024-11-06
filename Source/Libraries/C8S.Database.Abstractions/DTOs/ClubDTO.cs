@@ -1,8 +1,8 @@
-﻿using C8S.Common.Extensions;
-using C8S.Database.Abstractions.Base;
+﻿using C8S.Database.Abstractions.Base;
 using C8S.Database.Abstractions.Enumerations;
 using System.ComponentModel.DataAnnotations;
 using SC.Common;
+using SC.Common.Extensions;
 
 namespace C8S.Database.Abstractions.DTOs;
 
@@ -11,7 +11,7 @@ public class ClubDTO: BaseDTO
     #region Property Overrides
     public override int Id => ClubId ?? 0;
     public override string Display => String.Join(" ", new [] { Season.ToString(), AgeLevel?.GetLabel(), ClubSize?.GetLabel() }) 
-                                      ?? SharedConstants.Display.NotSet;
+                                      ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Method Overrides
@@ -47,7 +47,7 @@ public class ClubDTO: BaseDTO
 
     public DateOnly? StartsOn { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
     #endregion
 

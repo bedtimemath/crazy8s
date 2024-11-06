@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
+		<PackageReference Include="Mediatr" Version="12.4.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.10" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
@@ -31,7 +32,6 @@
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Radzen\SC.Common.Radzen.csproj" />
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
 		<ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
-		<ProjectReference Include="..\..\Libraries\C8S.Common\C8S.Common.csproj" />
 	</ItemGroup>
 
 </Project>

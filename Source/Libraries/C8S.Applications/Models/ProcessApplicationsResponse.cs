@@ -1,4 +1,4 @@
-﻿using C8S.Common.Models;
+﻿using SC.Common.Models;
 
 namespace C8S.Applications.Models;
 

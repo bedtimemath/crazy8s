@@ -19,7 +19,7 @@ public class WorkshopCodeConfig : BaseConfig<WorkshopCodeDb>
         //[Required, MaxLength(SharedConstants.MaxLengths.Key)]
         //public string Key { get; set; } = default!;
         entity.Property(m => m.Key)
-            .HasMaxLength(SharedConstants.MaxLengths.Key)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Key)
             .IsRequired(true);
 
         //public DateTimeOffset? StartsOn { get; set; } = null;

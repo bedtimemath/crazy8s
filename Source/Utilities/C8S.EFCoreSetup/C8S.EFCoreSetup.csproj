@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\C8S.Common\C8S.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.EFCore\C8S.Database.EFCore.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />

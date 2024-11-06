@@ -1,4 +1,5 @@
 ﻿using C8S.Database.EFCore.Contexts;
+using C8S.Database.EFCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,10 +14,13 @@ public static class ServiceCollectionEx
         if (String.IsNullOrEmpty(connectionString))
             throw new NotImplementedException();
 
-        // then add the database context, with its configuration
-        services.AddDbContextFactory<C8SDbContext>(config =>
+        services.AddSingleton<AuditInterceptor>();
+
+        services.AddDbContextFactory<C8SDbContext>((sp, config) =>
         {
             config.UseSqlServer(connectionString);
+            config.AddInterceptors(sp.GetRequiredService<AuditInterceptor>());
+
             if (loggerFactory != null)
             {
                 config.UseLoggerFactory(loggerFactory)

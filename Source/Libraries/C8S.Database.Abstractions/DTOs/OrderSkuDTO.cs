@@ -7,7 +7,7 @@ public class OrderSkuDTO: BaseDTO
 {
     #region Property Overrides
     public override int Id => OrderSkuId ?? 0;
-    public override string Display => Quantity?.ToString() ?? SharedConstants.Display.NotSet;
+    public override string Display => Quantity?.ToString() ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Method Overrides

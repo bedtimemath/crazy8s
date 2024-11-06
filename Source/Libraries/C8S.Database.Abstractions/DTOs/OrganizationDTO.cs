@@ -8,7 +8,7 @@ public class OrganizationDTO: BaseDTO
 {
     #region Property Overrides
     public override int Id => OrganizationId ?? 0;
-    public override string Display => Name ?? SharedConstants.Display.NotSet;
+    public override string Display => Name ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Method Overrides

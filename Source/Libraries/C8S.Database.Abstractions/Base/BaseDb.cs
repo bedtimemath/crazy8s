@@ -19,6 +19,8 @@ public abstract class BaseDb: IBaseDb
 
     [Required]
     public DateTimeOffset CreatedOn { get; set; }
+
+    public DateTimeOffset? ModifiedOn { get; set; }
     #endregion
 
     #region Public Overrides

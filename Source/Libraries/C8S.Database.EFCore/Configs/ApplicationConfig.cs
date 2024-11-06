@@ -37,7 +37,7 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public ApplicationStatus Status { get; set; } = default!;
         entity.Property(m => m.Status)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
@@ -45,82 +45,82 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public ApplicantType? ApplicantType { get; set; } = default!;
         entity.Property(m => m.ApplicantType)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Name)]
         //public string? ApplicantFirstName { get; set; } = default!;
         entity.Property(m => m.ApplicantFirstName)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
         //public string ApplicantLastName { get; set; } = default!;
         entity.Property(m => m.ApplicantLastName)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Email)]
         //public string ApplicantEmail { get; set; } = default!;
         entity.Property(m => m.ApplicantEmail)
-            .HasMaxLength(SharedConstants.MaxLengths.Email)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? ApplicantPhone { get; set; } = default!;
         entity.Property(m => m.ApplicantPhone)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? ApplicantPhoneExt { get; set; } = default!;
         entity.Property(m => m.ApplicantPhoneExt)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string ApplicantTimeZone { get; set; } = default!;
         entity.Property(m => m.ApplicantTimeZone)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string? OrganizationName { get; set; } = null;
         entity.Property(m => m.OrganizationName)
-            .HasMaxLength(SharedConstants.MaxLengths.FullName)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public OrganizationType? OrganizationType { get; set; } = null;
         entity.Property(m => m.OrganizationType)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string? OrganizationTypeOther { get; set; } = null;
         entity.Property(m => m.OrganizationTypeOther)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? OrganizationTaxIdentifier { get; set; } = null;
         entity.Property(m => m.OrganizationTaxIdentifier)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? WorkshopCode { get; set; } = null;
         entity.Property(m => m.WorkshopCode)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Comments { get; set; } = null;
         entity.Property(m => m.Notes)
-            .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
 
         //[Required]
@@ -143,7 +143,7 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Notes { get; set; } = null;
         entity.Property(m => m.Notes)
-            .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 

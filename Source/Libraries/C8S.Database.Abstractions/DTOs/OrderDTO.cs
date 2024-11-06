@@ -8,7 +8,7 @@ public class OrderDTO: BaseDTO
 {
     #region Property Overrides
     public override int Id => OrderId ?? 0;
-    public override string Display => Number?.ToString("00000000") ?? SharedConstants.Display.NotSet;
+    public override string Display => Number?.ToString("00000000") ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Method Overrides

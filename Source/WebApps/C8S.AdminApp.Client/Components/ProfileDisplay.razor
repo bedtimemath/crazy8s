@@ -4,7 +4,7 @@
 <div class="c8s-profile-display @CssClass">
     <AuthorizeView>
         <Authorized>
-            @(context.User.Identity?.Name ?? SharedConstants.Display.NotSet)
+            @(context.User.Identity?.Name ?? SoftCrowConstants.Display.NotSet)
         </Authorized>
         <NotAuthorized>
             <a href="authentication/login">log in</a>

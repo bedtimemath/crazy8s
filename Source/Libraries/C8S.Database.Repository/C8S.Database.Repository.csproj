@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\C8S.Common\C8S.Common.csproj" />
     <ProjectReference Include="..\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
     <ProjectReference Include="..\C8S.Database.EFCore\C8S.Database.EFCore.csproj" />
   </ItemGroup>

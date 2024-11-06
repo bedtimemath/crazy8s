@@ -35,43 +35,43 @@ public class CoachConfig : BaseConfig<CoachDb>
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
         //public string FirstName { get; set; } = default!;
         entity.Property(m => m.FirstName)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
         //public string LastName { get; set; } = default!;
         entity.Property(m => m.LastName)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Email)]
         //public string Email { get; set; } = default!;
         entity.Property(m => m.Email)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string TimeZone { get; set; } = default!;
         entity.Property(m => m.TimeZone)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? Phone { get; set; } = null;
         entity.Property(m => m.Phone)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? PhoneExt { get; set; } = null;
         entity.Property(m => m.PhoneExt)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Notes { get; set; } = null;
         entity.Property(m => m.Notes)
-            .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 

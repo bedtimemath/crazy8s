@@ -15,7 +15,7 @@ public class ApplicationDb : BaseDb
     public override int Id => ApplicationId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { ApplicantFirstName, ApplicantLastName, OrganizationName }) 
-                                       ?? SharedConstants.Display.NotSet;
+                                       ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -32,55 +32,55 @@ public class ApplicationDb : BaseDb
     
     public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ApplicationStatus Status { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ApplicantType? ApplicantType { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Name)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string? ApplicantFirstName { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string ApplicantLastName { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Email)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string ApplicantEmail { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? ApplicantPhone { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? ApplicantPhoneExt { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string ApplicantTimeZone { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.FullName)]
+    [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
     public string? OrganizationName { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrganizationType? OrganizationType { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? OrganizationTypeOther { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? OrganizationTaxIdentifier { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? WorkshopCode { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? ReferenceSource { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Long)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Long)]
     public string? ReferenceSourceOther { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Comments { get; set; } = null;
 
     [Required]
@@ -92,7 +92,7 @@ public class ApplicationDb : BaseDb
     [Required]
     public bool IsOrganizationRemoved { get; set; } = false;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
     #endregion
 

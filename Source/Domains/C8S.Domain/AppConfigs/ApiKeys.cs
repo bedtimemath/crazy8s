@@ -1,4 +1,4 @@
-﻿namespace C8S.Database.Abstractions.Models;
+﻿namespace C8S.Domain.AppConfigs;
 
 public class ApiKeys
 {

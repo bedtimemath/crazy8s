@@ -1,5 +1,4 @@
-﻿using C8S.Common.Models;
-using C8S.FullSlate.Abstractions.Interactions;
+﻿using C8S.FullSlate.Abstractions.Interactions;
 using C8S.FullSlate.Abstractions.Models;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -9,6 +8,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using C8S.FullSlate.Abstractions;
 using Microsoft.AspNetCore.WebUtilities;
+using SC.Common.Models;
 
 namespace C8S.FullSlate.Services;
 

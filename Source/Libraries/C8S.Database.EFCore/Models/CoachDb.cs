@@ -13,7 +13,7 @@ public class CoachDb : BaseDb
     public override int Id => CoachId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { FirstName, LastName }) 
-                                       ?? SharedConstants.Display.NotSet;
+                                       ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -30,25 +30,25 @@ public class CoachDb : BaseDb
 
     public Guid? OldSystemCompanyId { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string FirstName { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Name)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string LastName { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Email)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string Email { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string TimeZone { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? Phone { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? PhoneExt { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
     #endregion
 

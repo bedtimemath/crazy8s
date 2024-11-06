@@ -29,26 +29,26 @@ public class OrganizationDb: BaseDb
     
     public Guid? OldSystemPostalAddressId { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.FullName)]
     public string Name { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string TimeZone { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string Culture { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrganizationType Type { get; set; } = OrganizationType.Other;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? TypeOther { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? TaxIdentifier { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
     #endregion
 

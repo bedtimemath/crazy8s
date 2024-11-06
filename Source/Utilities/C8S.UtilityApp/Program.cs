@@ -1,8 +1,7 @@
 ﻿using Azure.Identity;
 using C8S.Applications.Extensions;
-using C8S.Common.Models;
-using C8S.Database.Abstractions.Models;
 using C8S.Database.Repository.Extensions;
+using C8S.Domain.AppConfigs;
 using C8S.FullSlate.Extensions;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
@@ -45,7 +44,8 @@ try
             LoadSampleDataOptions,
             ProcessApplicationsOptions,
             ShowConfigOptions,
-            TestFullSlateOptions>(args);
+            TestFullSlateOptions,
+            TestInterceptorsOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
     Log.Logger.Warning(platform);
@@ -126,6 +126,11 @@ try
             {
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, TestFullSlate>();
+            })
+            .WithParsed<TestInterceptorsOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, TestInterceptors>();
             });
 
         services.AddSingleton<IConfiguration>(configuration);
@@ -166,7 +171,7 @@ try
             .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
             .Enrich.FromLogContext()
             .WriteTo.Console(
-                outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
+                outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
                 theme: AnsiConsoleTheme.Code));
 
     SelfLog.Enable(m => Console.Error.WriteLine(m));

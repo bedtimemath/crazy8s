@@ -1,10 +1,9 @@
 ﻿using System.Text.Json;
-using C8S.AdminApp.Client.Base;
-using C8S.Common.Extensions;
 using C8S.Domain.Enums;
 using C8S.Domain.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using SC.Common.Extensions;
 using SC.Common.Interfaces;
 using SC.Common.Razor.Base;
 

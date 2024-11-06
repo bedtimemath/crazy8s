@@ -17,7 +17,7 @@ namespace C8S.Database.EFCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -46,6 +46,9 @@ namespace C8S.Database.EFCore.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("OldSystemUsaPostalId")
                         .HasColumnType("uniqueidentifier");
@@ -80,7 +83,7 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemUsaPostalId] IS NOT NULL");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
@@ -107,6 +110,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<Guid?>("OldSystemApplicationClubId")
                         .HasColumnType("uniqueidentifier");
 
@@ -130,7 +136,7 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemApplicationClubId] IS NOT NULL");
 
-                    b.ToTable("ApplicationClubs");
+                    b.ToTable("ApplicationClubs", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
@@ -198,6 +204,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<int?>("LinkedOrganizationId")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)");
@@ -264,7 +273,7 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemApplicationId] IS NOT NULL");
 
-                    b.ToTable("Applications");
+                    b.ToTable("Applications", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
@@ -292,6 +301,9 @@ namespace C8S.Database.EFCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Notes")
@@ -333,7 +345,7 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Clubs");
+                    b.ToTable("Clubs", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
@@ -361,6 +373,9 @@ namespace C8S.Database.EFCore.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(4096)
@@ -402,7 +417,7 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Coaches");
+                    b.ToTable("Coaches", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
@@ -443,6 +458,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<DateTimeOffset?>("EmailedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(4096)
                         .HasColumnType("nvarchar(max)");
@@ -481,7 +499,7 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemOrderId] IS NOT NULL");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrderSkuDb", b =>
@@ -493,6 +511,9 @@ namespace C8S.Database.EFCore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderSkuId"));
 
                     b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("OldSystemOrderId")
@@ -526,7 +547,7 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasIndex("SkuId");
 
-                    b.ToTable("OrderSkus");
+                    b.ToTable("OrderSkus", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
@@ -547,6 +568,9 @@ namespace C8S.Database.EFCore.Migrations
                         .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -594,7 +618,7 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemOrganizationId] IS NOT NULL");
 
-                    b.ToTable("Organizations");
+                    b.ToTable("Organizations", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.SkuDb", b =>
@@ -623,6 +647,9 @@ namespace C8S.Database.EFCore.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -649,7 +676,7 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemSkuId] IS NOT NULL");
 
-                    b.ToTable("Skus");
+                    b.ToTable("Skus", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.UnfinishedDb", b =>
@@ -721,6 +748,9 @@ namespace C8S.Database.EFCore.Migrations
                     b.Property<bool?>("HasHostedBefore")
                         .HasColumnType("bit");
 
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<string>("OrganizationAddress1")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -777,7 +807,7 @@ namespace C8S.Database.EFCore.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Unfinisheds");
+                    b.ToTable("Unfinisheds", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.WorkshopCodeDb", b =>
@@ -799,12 +829,15 @@ namespace C8S.Database.EFCore.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset?>("StartsOn")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("WorkshopCodeId");
 
-                    b.ToTable("WorkshopCodes");
+                    b.ToTable("WorkshopCodes", (string)null);
                 });
 
             modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>

@@ -22,24 +22,24 @@ public class SurveyResponseDb : BaseDb
     #endregion
 
     #region Database Properties
-    [Required, MaxLength(SharedConstants.MaxLengths.FullName)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.FullName)]
     public string Name { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Email)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string Email { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Phone)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Phone)]
     public string Phone { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Url)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Url)]
     public string Image { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Long)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Long)]
     public string? TagLine { get; set; } = null;
 
     public string? Bio { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Standard)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? AuthId { get; set; } = null;
     #endregion
 

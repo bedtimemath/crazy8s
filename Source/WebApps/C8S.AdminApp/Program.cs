@@ -76,7 +76,7 @@ try
         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
         .Enrich.FromLogContext()
         .WriteTo.Console(
-            outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
+            outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
             theme: AnsiConsoleTheme.Code)
     );
     SelfLog.Enable(m => Console.Error.WriteLine(m));
@@ -141,6 +141,7 @@ try
 
             //oidcOptions.Scope.Add(OpenIdConnectScope.OpenIdProfile);
             // ........................................................................
+            oidcOptions.Scope.Add(OpenIdConnectScope.OfflineAccess);
 
             // ........................................................................
             // The following paths must match the redirect and post logout redirect 

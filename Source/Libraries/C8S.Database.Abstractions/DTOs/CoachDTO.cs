@@ -8,7 +8,7 @@ public class CoachDTO: BaseDTO
     #region Property Overrides
     public override int Id => CoachId ?? 0;
     public override string Display => String.Join(" ", new [] { FirstName, LastName }) 
-                                      ?? SharedConstants.Display.NotSet;
+                                      ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Method Overrides

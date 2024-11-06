@@ -6,7 +6,6 @@
 // ************************
 
 using System.Diagnostics;
-using C8S.Common;
 using C8S.Database.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +47,7 @@ builder.UseSerilog((context, services, configuration) => configuration
     .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
     .Enrich.FromLogContext()
     .WriteTo.Console(
-        outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
+        outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
         theme: AnsiConsoleTheme.Code)
 );
 SelfLog.Enable(msg => Debug.WriteLine(msg));

@@ -36,7 +36,7 @@ public class ClubConfig : BaseConfig<ClubDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public AgeLevel AgeLevel { get; set; } = default!;
         entity.Property(m => m.AgeLevel)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
@@ -44,7 +44,7 @@ public class ClubConfig : BaseConfig<ClubDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public ClubSize ClubSize { get; set; } = default!;
         entity.Property(m => m.ClubSize)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
@@ -61,7 +61,7 @@ public class ClubConfig : BaseConfig<ClubDb>
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Notes { get; set; } = null;
         entity.Property(m => m.Notes)
-            .HasMaxLength(SharedConstants.MaxLengths.XXXLong);
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong);
         #endregion
 
         #region Reference Properties

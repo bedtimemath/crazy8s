@@ -9,7 +9,7 @@ public class ApplicationDTO : BaseDTO
     #region Property Overrides
     public override int Id => ApplicationId ?? 0;
     public override string Display => String.Join(" ", new[] { ApplicantFirstName, ApplicantLastName, OrganizationName })
-                                      ?? SharedConstants.Display.NotSet;
+                                      ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Method Overrides

@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using AutoMapper;
-using C8S.Common.Interfaces;
 using C8S.Database.Abstractions.DTOs;
 using C8S.Database.EFCore.Contexts;
 using C8S.Database.EFCore.Models;
@@ -8,6 +7,7 @@ using C8S.UtilityApp.Base;
 using CsvHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Common.Interfaces;
 
 namespace C8S.UtilityApp.Tasks;
 

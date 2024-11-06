@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using C8S.Common.Extensions;
 using C8S.Database.Abstractions.Base;
 using C8S.Database.Abstractions.Enumerations;
 using SC.Common;
+using SC.Common.Extensions;
 
 namespace C8S.Database.EFCore.Models;
 
@@ -16,7 +16,7 @@ public class ClubDb : BaseDb
     public override int Id => ClubId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
-                                       ?? SharedConstants.Display.NotSet;
+                                       ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -33,11 +33,11 @@ public class ClubDb : BaseDb
 
     public Guid? OldSystemMeetingAddressId { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AgeLevel AgeLevel { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ClubSize ClubSize { get; set; } = default!;
 
@@ -47,7 +47,7 @@ public class ClubDb : BaseDb
     [Required]
     public DateOnly StartsOn { get; set; }
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Notes { get; set; } = null;
     #endregion
 

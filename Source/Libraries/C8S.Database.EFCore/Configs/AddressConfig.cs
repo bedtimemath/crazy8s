@@ -24,43 +24,43 @@ public class AddressConfig : BaseConfig<AddressDb>
         //[MaxLength(SharedConstants.MaxLengths.Name)]
         //public string? RecipientName { get; set; } = null;
         entity.Property(m => m.RecipientName)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Name)]
         //public string? BusinessName { get; set; } = default!;
         entity.Property(m => m.BusinessName)
-            .HasMaxLength(SharedConstants.MaxLengths.Name)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Standard)]
         //public string StreetAddress { get; set; } = default!;
         entity.Property(m => m.StreetAddress)
-            .HasMaxLength(SharedConstants.MaxLengths.Standard)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string City { get; set; } = default!;
         entity.Property(m => m.City)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Tiny)]
         //public string State { get; set; } = default!;
         entity.Property(m => m.State)
-            .HasMaxLength(SharedConstants.MaxLengths.Tiny)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.ZIPCode)]
         //public string PostalCode { get; set; } = default!;
         entity.Property(m => m.PostalCode)
-            .HasMaxLength(SharedConstants.MaxLengths.ZIPCode)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.ZIPCode)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string TimeZone { get; set; } = default!;
         entity.Property(m => m.TimeZone)
-            .HasMaxLength(SharedConstants.MaxLengths.Medium)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(true);
 
         //[Required]

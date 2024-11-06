@@ -1,4 +1,4 @@
-﻿namespace C8S.Common.Models;
+﻿namespace C8S.Domain.AppConfigs;
 
 public class Endpoints
 {

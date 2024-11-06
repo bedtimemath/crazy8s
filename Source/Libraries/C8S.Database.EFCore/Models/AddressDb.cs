@@ -25,25 +25,25 @@ public class AddressDb : BaseDb
     #region Database Properties
     public Guid? OldSystemUsaPostalId { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Name)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string? RecipientName { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Name)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string? BusinessName { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Standard)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string StreetAddress { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string City { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Tiny)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
     public string State { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.ZIPCode)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
     public string PostalCode { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string TimeZone { get; set; } = default!;
 
     [Required]

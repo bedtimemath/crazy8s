@@ -15,7 +15,7 @@ public class UnfinishedDb : BaseDb
     public override int Id => UnfinishedId;
     [NotMapped]
     public override string Display => String.Join(" ", new[] { ApplicantFirstName, ApplicantLastName, OrganizationName })
-                                       ?? SharedConstants.Display.NotSet;
+                                       ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -27,70 +27,70 @@ public class UnfinishedDb : BaseDb
     [Required]
     public Guid Code { get; set; } = Guid.NewGuid();
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ApplicantType? ApplicantType { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Name)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string? ApplicantFirstName { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Name)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string? ApplicantLastName { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Email)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string? ApplicantEmail { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? ApplicantPhone { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? ApplicantTimeZone { get; set; } = default!;
 
     public bool? HasHostedBefore { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.FullName)]
+    [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
     public string? OrganizationName { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Standard)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? OrganizationAddress1 { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Standard)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? OrganizationAddress2 { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? OrganizationCity { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Tiny)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
     public string? OrganizationState { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.ZIPCode)]
+    [MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
     public string? OrganizationPostalCode { get; set; } = default!;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrganizationType? OrganizationType { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? OrganizationTypeOther { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? OrganizationTaxIdentifier { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.XLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
     public string? ClubsString { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? WorkshopCode { get; set; } = null;
 
     public DateTimeOffset? ChosenTimeSlot { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Medium)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? ReferenceSource { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.Long)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Long)]
     public string? ReferenceSourceOther { get; set; } = null;
 
-    [MaxLength(SharedConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Comments { get; set; } = null;
 
     public DateTimeOffset? EndPart01On { get; set; }

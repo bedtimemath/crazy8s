@@ -24,10 +24,10 @@ public class SelfService(
 
         Self.SessionId = Guid.NewGuid();
         Self.AuthIdentifier = _uniqueId.ToString("N"); //principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? SharedConstants.Display.NotSet;
-        Self.EmailAddress = principal.FindFirst(ClaimTypes.Email)?.Value ?? SharedConstants.Display.NotSet;
+        Self.EmailAddress = principal.FindFirst(ClaimTypes.Email)?.Value ?? SoftCrowConstants.Display.NotSet;
         Self.DisplayName = principal.FindFirst(ClaimTypes.Name)?.Value ??
                            principal.FindFirst("name")?.Value ??
-                           SharedConstants.Display.NotSet;
+                           SoftCrowConstants.Display.NotSet;
 
         _logger.LogInformation("Self: {@Self}", Self);
 

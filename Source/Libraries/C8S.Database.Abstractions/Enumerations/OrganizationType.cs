@@ -1,4 +1,4 @@
-﻿using C8S.Common.Attributes;
+﻿using SC.Common.Attributes;
 
 namespace C8S.Database.Abstractions.Enumerations;
 

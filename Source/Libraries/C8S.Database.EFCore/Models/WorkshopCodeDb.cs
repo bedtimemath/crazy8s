@@ -21,7 +21,7 @@ public class WorkshopCodeDb : BaseDb
     #endregion
 
     #region Database Properties
-    [Required, MaxLength(SharedConstants.MaxLengths.Key)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Key)]
     public string Key { get; set; } = default!;
 
     public DateTimeOffset? StartsOn { get; set; } = null;

@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using C8S.Common.Extensions;
 using C8S.Database.Abstractions.Base;
 using C8S.Database.Abstractions.Enumerations;
 using SC.Common;
+using SC.Common.Extensions;
 
 namespace C8S.Database.EFCore.Models;
 
@@ -16,7 +16,7 @@ public class ApplicationClubDb : BaseDb
     public override int Id => ApplicationClubId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
-                                       ?? SharedConstants.Display.NotSet;
+                                       ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -31,11 +31,11 @@ public class ApplicationClubDb : BaseDb
 
     public Guid? OldSystemLinkedClubId { get; set; } = null;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AgeLevel AgeLevel { get; set; } = default!;
 
-    [Required, MaxLength(SharedConstants.MaxLengths.Short)]
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ClubSize ClubSize { get; set; } = default!;
 

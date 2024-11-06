@@ -37,26 +37,26 @@ public class OrderConfig : BaseConfig<OrderDb>
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public OrderStatus Status { get; set; } = OrderStatus.Ordered;
         entity.Property(m => m.Status)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Email)]
         //public string? ContactEmail { get; set; } = null;
         entity.Property(m => m.ContactEmail)
-            .HasMaxLength(SharedConstants.MaxLengths.Email)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? ContactPhone { get; set; } = null;
         entity.Property(m => m.ContactPhone)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? ContactPhoneExt { get; set; } = null;
         entity.Property(m => m.ContactPhoneExt)
-            .HasMaxLength(SharedConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[Required]
@@ -84,7 +84,7 @@ public class OrderConfig : BaseConfig<OrderDb>
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
         //public string? Notes { get; set; } = null;
         entity.Property(m => m.Notes)
-            .HasMaxLength(SharedConstants.MaxLengths.XXXLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 
