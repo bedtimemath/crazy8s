@@ -16,6 +16,8 @@ public abstract class BaseDb: IBaseDb
     public abstract int Id { get; }
     [NotMapped]
     public abstract string Display { get; }
+    [NotMapped]
+    public virtual Guid UniqueId { get; } = Guid.NewGuid();
 
     [Required]
     public DateTimeOffset CreatedOn { get; set; }

@@ -18,7 +18,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 
-const string MS_OIDC_SCHEME = "MicrosoftOidc";
+const string msOidcScheme = "MicrosoftOidc";
 
 /*****************************************
  * INITIAL LOGGING
@@ -119,8 +119,8 @@ try
     /*****************************************
      * AUTHENTICATION
      */
-    builder.Services.AddAuthentication(MS_OIDC_SCHEME)
-        .AddOpenIdConnect(MS_OIDC_SCHEME, oidcOptions =>
+    builder.Services.AddAuthentication(msOidcScheme)
+        .AddOpenIdConnect(msOidcScheme, oidcOptions =>
         {
             // For the following OIDC settings, any line that's commented out
             // represents a DEFAULT setting. If you adopt the default, you can
@@ -238,7 +238,7 @@ try
     // new access token saved inside. If the refresh fails, the user will be signed
     // out. OIDC connect options are set for saving tokens and the offline access
     // scope.
-    builder.Services.ConfigureCookieOidcRefresh(CookieAuthenticationDefaults.AuthenticationScheme, MS_OIDC_SCHEME);
+    builder.Services.ConfigureCookieOidcRefresh(CookieAuthenticationDefaults.AuthenticationScheme, msOidcScheme);
     builder.Services.AddAuthorization();
     builder.Services.AddCascadingAuthenticationState();
 

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SC.Audit.EFCore.Extensions;
 using SC.Common;
 using SC.Common.Helpers.Extensions;
 using Serilog;
@@ -22,7 +23,6 @@ using Serilog.Sinks.SystemConsole.Themes;
 /*****************************************
  * INITIAL LOGGING
  */
-
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
@@ -57,16 +57,16 @@ try
         .AddEnvironmentVariables();
 
     // check for the two variables we need immediately
-    var appConfigCnnString = builder.Configuration["C8S_AppConfig"];
-    var sensitiveFolderPath = builder.Configuration["C8S_SensitiveFolder"];
+    var appConfig = builder.Configuration["C8S_AppConfig"];
+    var configFolder = builder.Configuration["C8S_ConfigFolder"];
 
-    if (String.IsNullOrEmpty(sensitiveFolderPath))
+    if (String.IsNullOrEmpty(configFolder))
     {
         // configure with the azure configuration
         configBuilder = configBuilder
             .AddAzureAppConfiguration(config =>
             {
-                config.Connect(appConfigCnnString)
+                config.Connect(appConfig)
                     .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
                     .Select(KeyFilter.Any, LabelFilter.Null)
                     .Select(KeyFilter.Any, platform);
@@ -76,8 +76,8 @@ try
     {
         // configure with a file (much faster)
         configBuilder = configBuilder
-            .SetBasePath(sensitiveFolderPath)
-            .AddJsonFile($"c8s-admin.appsettings.{platform.ToLowerInvariant()}.json", optional: false);
+            .SetBasePath(configFolder)
+            .AddJsonFile($"c8s.appsettings.{platform.ToLowerInvariant()}.json", optional: false);
     }
 
     var configuration = configBuilder.Build();
@@ -150,6 +150,7 @@ try
             throw new Exception("Missing OldSystem connection string");
 
         services.AddCommonHelpers();
+        services.AddSCAuditContext(connections.Audit);
         services.AddC8SRepository(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
         services.AddApplicationServices();

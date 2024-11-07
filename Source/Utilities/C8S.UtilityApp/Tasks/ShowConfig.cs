@@ -1,5 +1,4 @@
 ﻿using C8S.Domain.AppConfigs;
-using C8S.FullSlate.Abstractions;
 using C8S.UtilityApp.Base;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

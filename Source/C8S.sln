@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Domain.EFCore", "Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SC.Common.Radzen", "..\..\SoftCrow\Source\RazorLibs\SC.Common.Radzen\SC.Common.Radzen.csproj", "{33C1664B-9BD2-41A8-A01C-0C5D18113FE9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SC.Audit.EFCore", "..\..\SoftCrow\Source\Libraries\SC.Audit.EFCore\SC.Audit.EFCore.csproj", "{494DAF9E-FC76-4B3C-9F4E-944E0C8F4BD1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{33C1664B-9BD2-41A8-A01C-0C5D18113FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33C1664B-9BD2-41A8-A01C-0C5D18113FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33C1664B-9BD2-41A8-A01C-0C5D18113FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{494DAF9E-FC76-4B3C-9F4E-944E0C8F4BD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{494DAF9E-FC76-4B3C-9F4E-944E0C8F4BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{494DAF9E-FC76-4B3C-9F4E-944E0C8F4BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{494DAF9E-FC76-4B3C-9F4E-944E0C8F4BD1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,6 +142,7 @@ Global
 		{B6FC9EF9-7E59-427C-A818-24CFCF6E65E0} = {FAE3D83F-CDBD-4ECA-B31B-B318BC792346}
 		{4CB23C3B-62DB-48ED-8831-0767E30D93C5} = {FAE3D83F-CDBD-4ECA-B31B-B318BC792346}
 		{33C1664B-9BD2-41A8-A01C-0C5D18113FE9} = {5B1D362B-9047-4151-B890-7CE489E51A24}
+		{494DAF9E-FC76-4B3C-9F4E-944E0C8F4BD1} = {5B1D362B-9047-4151-B890-7CE489E51A24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}

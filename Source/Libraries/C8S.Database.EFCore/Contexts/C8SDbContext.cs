@@ -1,12 +1,21 @@
 ﻿#nullable disable
 using C8S.Database.EFCore.Configs;
+using C8S.Database.EFCore.Interceptors;
 using C8S.Database.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace C8S.Database.EFCore.Contexts;
 
-public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(options)
+public class C8SDbContext(
+    ILoggerFactory loggerFactory,
+    IServiceProvider serviceProvider,
+    DbContextOptions<C8SDbContext> options) : DbContext(options)
 {
+    private readonly ILogger<C8SDbContext> _logger = loggerFactory.CreateLogger<C8SDbContext>();
+    private readonly AuditInterceptor _auditInterceptor = serviceProvider.GetRequiredService<AuditInterceptor>();
+
     #region DbSet Properties
     public DbSet<AddressDb> Addresses { get; set; }
     public DbSet<ApplicationDb> Applications { get; set; }
@@ -22,6 +31,9 @@ public class C8SDbContext(DbContextOptions<C8SDbContext> options) : DbContext(op
     #endregion
 
     #region DbContext Overrides
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
+        optionsBuilder.AddInterceptors(_auditInterceptor);
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new AddressConfig());

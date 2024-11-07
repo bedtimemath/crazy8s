@@ -27,10 +27,4 @@
     <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

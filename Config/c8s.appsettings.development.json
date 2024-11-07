@@ -4,6 +4,7 @@
   },
   "Connections": {
     "AzureStorage": "UseDevelopmentStorage=true",
+    "Audit": "Server=localhost;Database=C8SAudit-Development;Trusted_Connection=True;TrustServerCertificate=True",
     "Database": "Server=localhost;Database=C8S-Development;Trusted_Connection=True;TrustServerCertificate=True",
     "OldSystem": "Server=localhost;Database=BedtimeMath-Crazy8s-Local;Trusted_Connection=True;TrustServerCertificate=True",
     "ApplicationInsights": ""

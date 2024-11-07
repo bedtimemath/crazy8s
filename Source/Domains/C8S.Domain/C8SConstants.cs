@@ -11,13 +11,6 @@ public static class C8SConstants
         public const string ApplicationsProcessed = "c8s-applications-processed";
         public const string ApplicationsError = "c8s-applications-error";
     }
-    
-    public static class Connections
-    {
-        public const string AzureStorage = "AzureStorage";
-        public const string AppConfig = "AppConfig";
-        public const string Database = "Database";
-    }
 
     public static class Defaults
     {

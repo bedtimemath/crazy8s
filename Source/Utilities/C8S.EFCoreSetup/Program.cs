@@ -33,11 +33,19 @@ var builder = Host.CreateDefaultBuilder(args);
 //    way we can get rid of a bunch of messages we don't need to see
 
 // add some of the configuration so that we can use it below
-builder.ConfigureHostConfiguration(configurationBuilder =>
-    configurationBuilder
-        .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile("appsettings.json", optional: false)
-        .AddEnvironmentVariables());
+builder.ConfigureHostConfiguration(configBuilder =>
+{
+    configBuilder.AddEnvironmentVariables();
+    var config = configBuilder.Build();
+    var configFolderPath = config["C8S_ConfigFolder"];
+
+    if (!String.IsNullOrEmpty(configFolderPath))
+    {
+        configBuilder
+            .SetBasePath(configFolderPath)
+            .AddJsonFile("c8s.appsettings.development.json", optional: false);
+    }
+});
     
 // set up the serilog logger
 builder.UseSerilog((context, services, configuration) => configuration
@@ -56,7 +64,7 @@ SelfLog.Enable(msg => Debug.WriteLine(msg));
 builder.ConfigureServices((context, services) =>
 {
     // LIBRARY
-    var libraryConnection = context.Configuration.GetConnectionString("Database");
+    var libraryConnection = context.Configuration["Connections:Database"];
     services.AddDbContext<C8SDbContext>(config => 
         config.UseSqlServer(libraryConnection));
 });

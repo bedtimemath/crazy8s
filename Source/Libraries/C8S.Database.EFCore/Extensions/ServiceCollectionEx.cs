@@ -14,14 +14,15 @@ public static class ServiceCollectionEx
         if (String.IsNullOrEmpty(connectionString))
             throw new NotImplementedException();
 
-        services.AddSingleton<AuditInterceptor>();
+
+        services.AddTransient<AuditInterceptor>();
         services.AddSingleton<CreateModifyInterceptor>();
 
         services.AddDbContextFactory<C8SDbContext>((sp, config) =>
         {
+            // do the configuration
             config.UseSqlServer(connectionString);
             config.AddInterceptors(
-                sp.GetRequiredService<AuditInterceptor>(),
                 sp.GetRequiredService<CreateModifyInterceptor>());
 
             if (loggerFactory != null)

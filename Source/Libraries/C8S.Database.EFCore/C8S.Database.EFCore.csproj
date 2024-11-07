@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Audit.EFCore\SC.Audit.EFCore.csproj" />
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
   </ItemGroup>
 
