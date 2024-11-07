@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using C8S.Database.Abstractions.DTOs;
-using C8S.Database.EFCore.Contexts;
 using C8S.Database.Repository.Repositories;
+using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Obsolete.DTOs;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;

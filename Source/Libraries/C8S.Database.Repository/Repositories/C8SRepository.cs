@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using C8S.Database.EFCore.Contexts;
+using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

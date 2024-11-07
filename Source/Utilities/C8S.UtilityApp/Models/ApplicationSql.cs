@@ -1,7 +1,7 @@
-﻿using C8S.Database.Abstractions.Enumerations;
-using System.ComponentModel.DataAnnotations.Schema;
-using AppType = C8S.Database.Abstractions.Enumerations.ApplicantType;
-using OrgType = C8S.Database.Abstractions.Enumerations.OrganizationType;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using C8S.Domain.Enums;
+using AppType = C8S.Domain.Enums.ApplicantType;
+using OrgType = C8S.Domain.Enums.OrganizationType;
 
 namespace C8S.UtilityApp.Models;
 

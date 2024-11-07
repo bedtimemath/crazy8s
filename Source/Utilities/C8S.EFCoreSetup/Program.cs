@@ -6,7 +6,7 @@
 // ************************
 
 using System.Diagnostics;
-using C8S.Database.EFCore.Contexts;
+using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

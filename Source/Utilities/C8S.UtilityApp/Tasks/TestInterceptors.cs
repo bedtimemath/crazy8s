@@ -1,5 +1,5 @@
-﻿using C8S.Database.EFCore.Contexts;
-using C8S.Database.EFCore.Models;
+﻿using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.EFCore.Models;
 using C8S.UtilityApp.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

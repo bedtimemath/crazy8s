@@ -1,5 +1,5 @@
-﻿using C8S.Database.Abstractions.DTOs;
-using C8S.Database.Abstractions.Filters;
+﻿using C8S.Domain.Obsolete.DTOs;
+using C8S.Domain.Obsolete.Filters;
 using Microsoft.EntityFrameworkCore;
 
 namespace C8S.Database.Repository.Repositories;

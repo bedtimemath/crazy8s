@@ -1,7 +1,7 @@
-﻿using C8S.Database.Abstractions.Enumerations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ALevel = C8S.Database.Abstractions.Enumerations.AgeLevel;
-using CSize = C8S.Database.Abstractions.Enumerations.ClubSize;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using C8S.Domain.Enums;
+using ALevel = C8S.Domain.Enums.AgeLevel;
+using CSize = C8S.Domain.Enums.ClubSize;
 
 namespace C8S.UtilityApp.Models;
 

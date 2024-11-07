@@ -18,8 +18,4 @@
     <ProjectReference Include="..\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

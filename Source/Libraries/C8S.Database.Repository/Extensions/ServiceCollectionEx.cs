@@ -1,6 +1,6 @@
-﻿using C8S.Database.EFCore.Extensions;
-using C8S.Database.Repository.Profiles;
+﻿using C8S.Database.Repository.Profiles;
 using C8S.Database.Repository.Repositories;
+using C8S.Domain.EFCore.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

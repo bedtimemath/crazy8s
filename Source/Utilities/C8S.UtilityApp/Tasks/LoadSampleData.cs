@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using AutoMapper;
-using C8S.Database.Abstractions.DTOs;
-using C8S.Database.EFCore.Contexts;
-using C8S.Database.EFCore.Models;
+using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.EFCore.Models;
+using C8S.Domain.Obsolete.DTOs;
 using C8S.UtilityApp.Base;
 using CsvHelper;
 using Microsoft.EntityFrameworkCore;

@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\C8S.Database.Abstractions\C8S.Database.Abstractions.csproj" />
-    <ProjectReference Include="..\C8S.Database.EFCore\C8S.Database.EFCore.csproj" />
+    <ProjectReference Include="..\..\Domains\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
+    <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
   </ItemGroup>
 
 </Project>

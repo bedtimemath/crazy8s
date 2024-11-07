@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using C8S.Database.Abstractions.DTOs;
-using C8S.Database.EFCore.Models;
+using C8S.Domain.EFCore.Models;
+using C8S.Domain.Obsolete.DTOs;
 
 namespace C8S.Database.Repository.Profiles;
 

@@ -1,7 +1,6 @@
-﻿using C8S.Database.Abstractions.Enumerations;
-using System.ComponentModel.DataAnnotations.Schema;
-using ALevel = C8S.Database.Abstractions.Enumerations.AgeLevel;
-using CSize = C8S.Database.Abstractions.Enumerations.ClubSize;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using ALevel = C8S.Domain.Enums.AgeLevel;
+using CSize = C8S.Domain.Enums.ClubSize;
 
 namespace C8S.UtilityApp.Models;
 
@@ -43,7 +42,7 @@ public class ClubSql
     #endregion
 
     #region Derived Properties
-    public AgeLevel? AgeLevel => AgeLevelString switch
+    public ALevel? AgeLevel => AgeLevelString switch
     {
         "3rd - 5th Grade" => ALevel.GradesK2,
         "K - 2nd Grade" => ALevel.Grades35,
@@ -51,7 +50,7 @@ public class ClubSql
         _ => throw new Exception($"Unrecognized: {AgeLevelString}")
     };
 
-    public ClubSize? ClubSize => ClubSizeString switch
+    public CSize? ClubSize => ClubSizeString switch
     {
         "Extra A4" => CSize.ExtraA4,
         "Extra A4a" => CSize.ExtraA4a,

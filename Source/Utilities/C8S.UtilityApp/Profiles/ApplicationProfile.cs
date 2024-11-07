@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using C8S.Applications;
 using C8S.Applications.Models;
-using C8S.Database.Abstractions.DTOs;
-using C8S.Database.Abstractions.Enumerations;
+using C8S.Domain.Enums;
+using C8S.Domain.Obsolete.DTOs;
 using C8S.UtilityApp.Models;
 using SC.Common;
 
