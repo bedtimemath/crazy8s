@@ -1,4 +1,7 @@
+using System.Text;
+using System.Text.Json;
 using Azure.Identity;
+using Azure.Storage.Blobs;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
@@ -7,11 +10,13 @@ using C8S.Domain.AppConfigs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Radzen;
 using SC.Common;
+using SC.Common.Extensions;
 using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
@@ -88,6 +93,14 @@ try
     builder.Services.AddScoped<NotificationService>();
     builder.Services.AddScoped<TooltipService>();
     builder.Services.AddScoped<ContextMenuService>();
+
+    /*****************************************
+     * AZURE CLIENTS SETUP
+     */
+    builder.Services.AddAzureClients(clientBuilder =>
+    {
+        clientBuilder.AddBlobServiceClient(connections.AzureStorage);
+    });
 
     /*****************************************
      * MINIMAL APIS
@@ -291,6 +304,40 @@ try
             typeof(SC.Common.Razor._Imports).Assembly);
 
     app.MapGroup("/authentication").MapLoginAndLogout();
+
+    app.MapPost("/datachanges", async (IServiceProvider services, HttpContext context) =>
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        var blobClient = services.GetRequiredService<BlobServiceClient>();
+
+        var results = String.Empty;
+        try
+        {
+            var req = context.Request;
+            var reqObject = new
+            {
+                req.Method,
+                req.Headers,
+                req.Cookies,
+                Body = await new StreamReader(req.Body).ReadToEndAsync()
+            };
+            results = JsonSerializer.Serialize(reqObject);
+
+            var container = blobClient.GetBlobContainerClient("webhooks");
+            await container.CreateIfNotExistsAsync();
+            var blob = container.GetBlobClient(
+                $"{DateTimeOffset.UtcNow:yyyyMMddHHmm}-{String.Empty.AppendRandomAlphaOnly(4)}.json");
+
+            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(results));
+            await blob.UploadAsync(stream);
+        }
+        catch (Exception exc)
+        {
+            logger.LogError(exc, "Could not upload data");
+        }
+
+        return Results.Ok(results);
+    }).AllowAnonymous();
 
     app.Run();
 

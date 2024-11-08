@@ -31,6 +31,7 @@ internal class TestInterceptors(
 
         Console.WriteLine();
 
+        // ADD COACH
         var coach = new CoachDb()
         {
             FirstName = String.Empty.AppendRandomAlphaOnly(),
@@ -39,7 +40,9 @@ internal class TestInterceptors(
             TimeZone = String.Empty.AppendRandomAlphaOnly()
         };
         dbContext.Coaches.Add(coach);
+        logger.LogInformation("Added {Coach}", coach.Display);
 
+        // MODIFY 5 APPLICATIONS
         var applications = await dbContext.Applications
             .OrderByDescending(a => a.CreatedOn)
             .Take(5)
@@ -48,14 +51,18 @@ internal class TestInterceptors(
         {
             application.ApplicantFirstName = String.Empty.AppendRandomAlphaOnly(8);
             application.ApplicantLastName = String.Empty.AppendRandomAlphaOnly(8);
+            logger.LogInformation("Modified {Application}", application.Display);
         }
 
+        // REMOVE APPLICATION
         var toDelete = await dbContext.Applications
             .OrderBy(a => a.CreatedOn)
             .Skip(randomizer.GetIntBetween(100,1000))
             .FirstAsync();
+        logger.LogInformation("Deleting {Application}", toDelete.Display);
         dbContext.Applications.Remove(toDelete);
 
+        // UPDATE THE DATABASE
         await dbContext.SaveChangesAsync();
 
         logger.LogInformation("{Name}: complete.", nameof(TestInterceptors));
