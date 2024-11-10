@@ -1,19 +1,25 @@
 ﻿@page "/applications"
-@using C8S.Domain
-@inherits C8S.AdminApp.Client.Base.SoftCrowComponentBase
+@inherits BaseRazorPage
 @rendermode InteractiveWebAssembly
 
-
+@*
 <RenderStateViewer Parent="this" />
-
-<RadzenStack Orientation="Orientation.Horizontal"
-             AlignItems="AlignItems.Center"
-             JustifyContent="JustifyContent.SpaceBetween">
-    <div>Applications</div>
-    <IconButton ButtonType="ButtonType.Button"
-                ButtonStyle="ButtonStyle.Primary"
-                IconString="@C8SConstants.Icons.Refresh"
-                Text="Refresh"
-                Click="@(async () => await _applicationsLister.Reload())" />
+   *@
+   
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.Stretch"
+             class="h-100">
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween"
+                 class="flex-shrink-0">
+        <div>Applications</div>
+        <IconButton ButtonType="ButtonType.Button"
+                    ButtonStyle="ButtonStyle.Primary"
+                    IconString="@C8SConstants.Icons.Refresh"
+                    Text="Refresh"
+                    Click="@(async () => await _applicationsLister.Reload())" />
+    </RadzenStack>
+    <ApplicationsLister @ref="_applicationsLister" CssClass="flex-grow-1" />
 </RadzenStack>
-<ApplicationsLister @ref="_applicationsLister" />

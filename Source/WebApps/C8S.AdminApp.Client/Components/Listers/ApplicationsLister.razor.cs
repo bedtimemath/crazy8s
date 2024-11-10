@@ -1,41 +1,22 @@
-﻿using System.Text.Json;
-using C8S.Domain.Enums;
+﻿using Blazr.RenderState.WASM;
+using C8S.AdminApp.Client.Components.Base;
 using C8S.Domain.Models;
+using C8S.Domain.Queries.List;
+using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
-using SC.Common.Extensions;
-using SC.Common.Interfaces;
-using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Components.Listers;
 
-public partial class ApplicationsLister : BaseRazorComponent
+public partial class ApplicationsLister : BaseRenderStateComponent
 {
-    private const int TotalApplications = 500;
-
     [Inject]
     public ILogger<ApplicationsLister> Logger { get; set; } = default!;
 
     [Inject]
-    public IRandomizer Randomizer { get; set; } = default!;
+    public IMediator Mediator { get; set; } = default!;
 
     private Virtualize<ApplicationBase>? _listerComponent;
-    private List<ApplicationBase> _applications = new();
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        for (int index = 0; index < TotalApplications; index++)
-        {
-            _applications.Add(new ApplicationBase()
-            {
-                ApplicationId = index,
-                Status = (ApplicationStatus)Randomizer.GetIntLessThan(6),
-                ApplicantEmail = String.Empty.AppendRandomAlphaOnly(),
-                ApplicantLastName = String.Empty.AppendRandomAlphaOnly()
-            });
-        }
-    }
 
     public async Task Reload()
     {
@@ -46,14 +27,14 @@ public partial class ApplicationsLister : BaseRazorComponent
     private async ValueTask<ItemsProviderResult<ApplicationBase>>
         GetRows(ItemsProviderRequest request)
     {
-        var results = _applications.Skip(request.StartIndex).Take(request.Count).ToList();
+        // shouldn't be called before prerender, but if it is...
+        if (IsPreRender) return default;
 
-        await Task.Delay(0);
-
-        Logger.LogInformation("{Index}:{Count}, {@Json}",
-            request.StartIndex, request.Count,
-            JsonSerializer.Serialize(results.Select(r => r.ApplicationId).ToList()));
-
-        return new ItemsProviderResult<ApplicationBase>(results, 1000);
+        var results = await Mediator.Send(new ListApplicationsQuery()
+        {
+            StartIndex = request.StartIndex,
+            Count = request.Count
+        });
+        return new ItemsProviderResult<ApplicationBase>(results.Items, results.Total);
     }
 }

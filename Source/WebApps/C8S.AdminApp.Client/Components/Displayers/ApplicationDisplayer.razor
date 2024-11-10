@@ -1,0 +1,33 @@
+﻿@using SC.Common
+@inherits BaseRazorComponent
+@rendermode InteractiveWebAssembly
+
+<div class="c8s-application-displayer @CssClass">
+    @* OUTER *@
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.SpaceBetween">
+        
+        @* DETAILS *@
+        <RadzenStack Orientation="Orientation.Vertical"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Start">
+                     
+            <RadzenText TagName="TagName.H3"
+                        TextStyle="TextStyle.DisplayH3"
+                        Text="@(Application?.ApplicantLastName ?? SoftCrowConstants.Display.NotSet)" />
+
+        </RadzenStack>
+        
+        @* VIEW BUTTON *@
+        <RadzenStack Orientation="Orientation.Vertical"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Start">
+                     
+            <RadzenButton ButtonType="ButtonType.Button"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Text="View >" />
+
+        </RadzenStack>
+    </RadzenStack>
+</div>

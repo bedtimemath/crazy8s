@@ -10,4 +10,8 @@
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mediatr" Version="12.4.1" />
+  </ItemGroup>
+
 </Project>

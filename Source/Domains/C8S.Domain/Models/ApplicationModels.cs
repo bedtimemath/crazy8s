@@ -11,3 +11,9 @@ public class ApplicationBase
     public string ApplicantEmail { get; set; } = default!;
     #endregion
 }
+
+public class ApplicationListDisplay : ApplicationBase
+{
+    public string? ApplicantFirstName { get; set; } = null;
+    public DateTimeOffset SubmittedOn { get; set; }
+}
