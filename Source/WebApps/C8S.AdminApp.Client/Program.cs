@@ -2,6 +2,7 @@ using System.Reflection;
 using Blazr.RenderState.WASM;
 using C8S.AdminApp.Client;
 using C8S.AdminApp.Client.Auth;
+using C8S.AdminApp.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
@@ -20,7 +21,13 @@ builder.AddBlazrRenderStateWASMServices();
 builder.Services.AddRadzenComponents();
 
 builder.Services.AddMediatR(config =>
-    config.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
+{
+    config.RegisterServicesFromAssembly(typeof(_Imports).Assembly);
+});
 
+builder.Services.AddHttpClient(nameof(CallbackService), client =>
+{
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+});
 
 await builder.Build().RunAsync();

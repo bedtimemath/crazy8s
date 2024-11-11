@@ -9,6 +9,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+    <ProjectReference Include="..\..\Domains\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
+    <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Client\C8S.AdminApp.Client.csproj" />
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.22.2" />

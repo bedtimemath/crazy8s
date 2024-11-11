@@ -7,6 +7,7 @@ using C8S.AdminApp;
 using C8S.AdminApp.Auth;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
+using C8S.Domain.EFCore.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Radzen;
+using SC.Audit.EFCore.Extensions;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Helpers.Extensions;
@@ -85,6 +87,14 @@ try
             theme: AnsiConsoleTheme.Code)
     );
     SelfLog.Enable(m => Console.Error.WriteLine(m));
+
+    /*****************************************
+     * SOFT CROW & LOCAL
+     */
+    builder.Services.AddCommonHelpers();
+    builder.Services.AddScoped<SelfService>();
+    builder.Services.AddSCAuditContext(connections.Audit);
+    builder.Services.AddC8SDbContext(connections.Database);
     
     /*****************************************
      * RADZEN SERVICES
@@ -110,8 +120,8 @@ try
     /*****************************************
      * MINIMAL APIS
      */
-    builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    //builder.Services.AddEndpointsApiExplorer();
+    //builder.Services.AddSwaggerGen();
 
     /*****************************************
      * SIGNAL-R
@@ -122,12 +132,6 @@ try
         opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
             ["application/octet-stream"]);
     });
-
-    /*****************************************
-     * SOFT CROW & LOCAL
-     */
-    builder.Services.AddCommonHelpers();
-    builder.Services.AddScoped<SelfService>();
 
     /*****************************************
      * API CONTROLLERS
@@ -297,8 +301,6 @@ try
 
     //app.MapHub<ChatHub>("/changes");
 
-    //app.MapAccountLoginLogout();
-    //app.MapApiEndpoints();
     app.MapControllers();
 
     app.MapRazorComponents<AppRoot>()
