@@ -15,6 +15,12 @@ public partial class ApplicationsLister : BaseRenderStateComponent
     [Inject]
     public IMediator Mediator { get; set; } = default!;
 
+    [Parameter]
+    public string? SortDescription { get; set; }
+
+    [Parameter]
+    public EventCallback<int> TotalCountChanged { get; set; }
+
     private Virtualize<ApplicationListDisplay>? _listerComponent;
 
     public async Task Reload()
@@ -34,11 +40,14 @@ public partial class ApplicationsLister : BaseRenderStateComponent
             var backendResponse = await Mediator.Send(new ListApplicationsQuery()
             {
                 StartIndex = request.StartIndex,
-                Count = request.Count
+                Count = request.Count,
+                SortDescription = SortDescription
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
             var results = backendResponse.Result!;
+            await TotalCountChanged.InvokeAsync(results.Total);
+
             return new ItemsProviderResult<ApplicationListDisplay>(results.Items, results.Total);
         }
         catch (Exception ex)

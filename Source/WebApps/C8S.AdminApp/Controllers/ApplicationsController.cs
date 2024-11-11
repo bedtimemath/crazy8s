@@ -1,9 +1,9 @@
-﻿using System.Text.Json;
+﻿using System.Linq.Dynamic.Core;
+using System.Text.Json;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.Models;
 using C8S.Domain.Queries;
 using C8S.Domain.Queries.List;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.Extensions;
@@ -26,13 +26,18 @@ public class ApplicationsController(
         try
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            var totalApplications = await dbContext.Applications.CountAsync();
             var queryable = dbContext.Applications
                 .Include(a => a.LinkedOrganization)
                 .Include(a => a.Address)
                 .Include(a => a.ApplicationClubs)
+                .Where(a => !String.IsNullOrWhiteSpace(a.ApplicantLastName) &&
+                            !String.IsNullOrWhiteSpace(a.ApplicantEmail))
                 .AsSingleQuery()
                 .AsNoTracking();
+
+            if (!String.IsNullOrEmpty(query.SortDescription)) queryable = queryable.OrderBy(query.SortDescription);
+            
+            var totalApplications = await queryable.CountAsync();
 
             if (query.StartIndex != null) queryable = queryable.Skip(query.StartIndex.Value);
             if (query.Count != null) queryable = queryable.Take(query.Count.Value);
@@ -56,7 +61,6 @@ public class ApplicationsController(
                             OrganizationCity = a.Address?.City,
                             OrganizationState = a.Address?.State
                         })
-                        .OrderByDescending(m => m.SubmittedOn)
                         .ToList(),
                     Total = totalApplications
                 }

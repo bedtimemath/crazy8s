@@ -1,31 +1,42 @@
 ﻿@page "/applications"
+@using SC.Common
 @inherits BaseRazorPage
 @rendermode InteractiveWebAssembly
-
-@*
-<RenderStateViewer Parent="this" />
-   *@
-
-@inject NotificationService NotificationService;
    
 <RadzenStack Orientation="Orientation.Vertical"
              AlignItems="AlignItems.Stretch"
              JustifyContent="JustifyContent.Stretch"
              class="h-100">
+
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.SpaceBetween"
                  class="flex-shrink-0">
-        <div>Applications</div>
+
+        <RadzenText TagName="TagName.H3"
+                    TextStyle="TextStyle.DisplayH3">
+            Applications: @(_totalCount?.ToString("(#,##0)") ?? SoftCrowConstants.Display.NotSet)
+        </RadzenText>
+        
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     Gap="0.25rem">
+            <RadzenTextBox @bind-Value="@_sortDescription" />
+        </RadzenStack>
+
         <IconButton ButtonType="ButtonType.Button"
                     ButtonStyle="ButtonStyle.Primary"
                     IconString="@C8SConstants.Icons.Refresh"
                     Text="Refresh"
-                    Click="@(async () => await _applicationsLister.Reload())" />
+                    Click="@(async () => await _applicationsLister.Reload())"/>
+
     </RadzenStack>
-    <ApplicationsLister @ref="_applicationsLister" 
+    <ApplicationsLister @ref="_applicationsLister"
+                        SortDescription="@_sortDescription"
+                        TotalCountChanged="@((int c) => _totalCount = c)"
                         ExceptionRaised="@(async (ex) => await HandleExceptionRaisedAsync(ex))"
-                        CssClass="flex-grow-1" />
+                        CssClass="flex-grow-1"/>
 </RadzenStack>
 
 
