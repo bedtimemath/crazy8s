@@ -150,7 +150,7 @@ try
             throw new Exception("Missing OldSystem connection string");
 
         services.AddCommonHelpers();
-        services.AddSCAuditContext(connections.Audit);
+        //services.AddSCAuditContext(connections.Audit);
         services.AddC8SDbContext(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
         services.AddApplicationServices();

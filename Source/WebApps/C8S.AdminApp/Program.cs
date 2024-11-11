@@ -99,10 +99,7 @@ try
     /*****************************************
      * RADZEN SERVICES
      */
-    builder.Services.AddScoped<DialogService>();
-    builder.Services.AddScoped<NotificationService>();
-    builder.Services.AddScoped<TooltipService>();
-    builder.Services.AddScoped<ContextMenuService>();
+    builder.Services.AddRadzenComponents();
 
     /*****************************************
      * AZURE CLIENTS SETUP
@@ -113,7 +110,7 @@ try
     });
 
     /*****************************************
-     * MEDIATOR
+     * MEDIATR
      */
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
 

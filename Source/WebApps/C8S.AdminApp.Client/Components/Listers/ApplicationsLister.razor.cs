@@ -36,7 +36,7 @@ public partial class ApplicationsLister : BaseRenderStateComponent
                 StartIndex = request.StartIndex,
                 Count = request.Count
             });
-            if (!backendResponse.Success) throw new Exception();
+            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
             var results = backendResponse.Result!;
             return new ItemsProviderResult<ApplicationListDisplay>(results.Items, results.Total);
@@ -44,7 +44,7 @@ public partial class ApplicationsLister : BaseRenderStateComponent
         catch (Exception ex)
         {
             Logger.LogError(ex, "Error Getting Rows");
-            await RaiseExceptionAsync(ex);
+            await RaiseExceptionAsync(ex).ConfigureAwait(false);
             return default;
         }
     }

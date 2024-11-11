@@ -5,6 +5,8 @@
 @*
 <RenderStateViewer Parent="this" />
    *@
+
+@inject NotificationService NotificationService;
    
 <RadzenStack Orientation="Orientation.Vertical"
              AlignItems="AlignItems.Stretch"
@@ -21,5 +23,13 @@
                     Text="Refresh"
                     Click="@(async () => await _applicationsLister.Reload())" />
     </RadzenStack>
-    <ApplicationsLister @ref="_applicationsLister" CssClass="flex-grow-1" />
+    <ApplicationsLister @ref="_applicationsLister" 
+                        ExceptionRaised="@(async (ex) => await HandleExceptionRaisedAsync(ex))"
+                        CssClass="flex-grow-1" />
 </RadzenStack>
+
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />
