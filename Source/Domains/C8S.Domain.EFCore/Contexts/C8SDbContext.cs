@@ -1,10 +1,10 @@
 ﻿#nullable disable
 using C8S.Domain.EFCore.Configs;
-using C8S.Domain.EFCore.Interceptors;
 using C8S.Domain.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SC.Audit.Abstractions.Interfaces;
 
 namespace C8S.Domain.EFCore.Contexts;
 
@@ -14,7 +14,7 @@ public class C8SDbContext(
     DbContextOptions<C8SDbContext> options) : DbContext(options)
 {
     private readonly ILogger<C8SDbContext> _logger = loggerFactory.CreateLogger<C8SDbContext>();
-    private readonly AuditInterceptor _auditInterceptor = serviceProvider.GetRequiredService<AuditInterceptor>();
+    private readonly IAuditInterceptor? _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
 
     #region DbSet Properties
     public DbSet<AddressDb> Addresses { get; set; }
@@ -31,8 +31,13 @@ public class C8SDbContext(
     #endregion
 
     #region DbContext Overrides
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) =>
-        optionsBuilder.AddInterceptors(_auditInterceptor);
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (_auditInterceptor != null)
+            optionsBuilder.AddInterceptors(_auditInterceptor);
+        else
+            _logger.LogWarning("AuditInterceptor is not being used.");
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

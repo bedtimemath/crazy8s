@@ -10,7 +10,7 @@ namespace C8S.AdminApp.Client.Services;
 public class CallbackService(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : 
-        IRequestHandler<ListApplicationsQuery, ApplicationListResults>
+        IRequestHandler<ListApplicationsQuery, BackendResponse<ApplicationListResults>>
 {
     private readonly ILogger<CallbackService> _logger = loggerFactory.CreateLogger<CallbackService>();
 
@@ -19,16 +19,24 @@ public class CallbackService(
         PropertyNameCaseInsensitive = true
     };
     
-    public async Task<ApplicationListResults> Handle(
+    public async Task<BackendResponse<ApplicationListResults>> Handle(
         ListApplicationsQuery request, CancellationToken cancellationToken)
     {
-        // todo: check for exceptions when posting
-        var httpClient = httpClientFactory.CreateClient(nameof(CallbackService));
-        var httpResponse = await httpClient.PostAsJsonAsync("api/applications", request, cancellationToken);
-        var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-        var backendResponse = JsonSerializer
-            .Deserialize<BackendResponse<ApplicationListResults>>(bodyJson, _options);
+        try
+        {
+            var httpClient = httpClientFactory.CreateClient(nameof(CallbackService));
+            var httpResponse = await httpClient.PostAsJsonAsync("api/applications", request, cancellationToken);
+            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+            var backendResponse = JsonSerializer
+                .Deserialize<BackendResponse<ApplicationListResults>>(bodyJson, _options) ??
+                                  throw new Exception($"Could not deserialize: {bodyJson}");
 
-        return backendResponse!.Result!;
+            return backendResponse;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling request: {@Request}", request);
+            return BackendResponse<ApplicationListResults>.CreateFailureResponse(exception);
+        }
     }
 }

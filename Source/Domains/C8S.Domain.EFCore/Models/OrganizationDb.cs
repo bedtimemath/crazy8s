@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using C8S.Domain.Base;
 using C8S.Domain.Enums;
 using SC.Common;
+using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 

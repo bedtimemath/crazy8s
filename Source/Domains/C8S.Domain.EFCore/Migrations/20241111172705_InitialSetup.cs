@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace C8S.Database.EFCore.Migrations
+namespace C8S.Domain.EFCore.Migrations
 {
     /// <inheritdoc />
     public partial class InitialSetup : Migration
@@ -26,7 +26,8 @@ namespace C8S.Database.EFCore.Migrations
                     PostalCode = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     TimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     IsMilitary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +48,8 @@ namespace C8S.Database.EFCore.Migrations
                     AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,6 +69,7 @@ namespace C8S.Database.EFCore.Migrations
                     ApplicantEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     ApplicantPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     ApplicantTimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    HasHostedBefore = table.Column<bool>(type: "bit", nullable: true),
                     OrganizationName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     OrganizationAddress1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     OrganizationAddress2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -76,16 +79,41 @@ namespace C8S.Database.EFCore.Migrations
                     OrganizationType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     OrganizationTypeOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     OrganizationTaxIdentifier = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ClubsString = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     WorkshopCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ChosenTimeSlot = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     ReferenceSource = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ReferenceSourceOther = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
-                    SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    EndPart01On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndPart02On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndPart03On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndPart04On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndPart05On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Unfinisheds", x => x.UnfinishedId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkshopCodes",
+                columns: table => new
+                {
+                    WorkshopCodeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    StartsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkshopCodes", x => x.WorkshopCodeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -105,7 +133,8 @@ namespace C8S.Database.EFCore.Migrations
                     TaxIdentifier = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
                     AddressId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -135,7 +164,8 @@ namespace C8S.Database.EFCore.Migrations
                     PhoneExt = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
                     OrganizationId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -180,7 +210,8 @@ namespace C8S.Database.EFCore.Migrations
                     AddressId = table.Column<int>(type: "int", nullable: true),
                     LinkedCoachId = table.Column<int>(type: "int", nullable: true),
                     LinkedOrganizationId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -220,7 +251,8 @@ namespace C8S.Database.EFCore.Migrations
                     CoachId = table.Column<int>(type: "int", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
                     AddressId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -257,7 +289,8 @@ namespace C8S.Database.EFCore.Migrations
                     Season = table.Column<int>(type: "int", nullable: false),
                     StartsOn = table.Column<DateOnly>(type: "date", nullable: false),
                     ApplicationId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -292,7 +325,8 @@ namespace C8S.Database.EFCore.Migrations
                     Notes = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
                     AddressId = table.Column<int>(type: "int", nullable: false),
                     ClubId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -322,7 +356,8 @@ namespace C8S.Database.EFCore.Migrations
                     Quantity = table.Column<short>(type: "smallint", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     SkuId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -494,6 +529,9 @@ namespace C8S.Database.EFCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Unfinisheds");
+
+            migrationBuilder.DropTable(
+                name: "WorkshopCodes");
 
             migrationBuilder.DropTable(
                 name: "Applications");

@@ -1,5 +1,4 @@
-﻿using Blazr.RenderState.WASM;
-using C8S.AdminApp.Client.Components.Base;
+﻿using C8S.AdminApp.Client.Components.Base;
 using C8S.Domain.Models;
 using C8S.Domain.Queries.List;
 using MediatR;
@@ -16,7 +15,7 @@ public partial class ApplicationsLister : BaseRenderStateComponent
     [Inject]
     public IMediator Mediator { get; set; } = default!;
 
-    private Virtualize<ApplicationBase>? _listerComponent;
+    private Virtualize<ApplicationListDisplay>? _listerComponent;
 
     public async Task Reload()
     {
@@ -24,17 +23,29 @@ public partial class ApplicationsLister : BaseRenderStateComponent
             await _listerComponent.RefreshDataAsync();
     }
 
-    private async ValueTask<ItemsProviderResult<ApplicationBase>>
+    private async ValueTask<ItemsProviderResult<ApplicationListDisplay>>
         GetRows(ItemsProviderRequest request)
     {
         // shouldn't be called before prerender, but if it is...
         if (IsPreRender) return default;
 
-        var results = await Mediator.Send(new ListApplicationsQuery()
+        try
         {
-            StartIndex = request.StartIndex,
-            Count = request.Count
-        });
-        return new ItemsProviderResult<ApplicationBase>(results.Items, results.Total);
+            var backendResponse = await Mediator.Send(new ListApplicationsQuery()
+            {
+                StartIndex = request.StartIndex,
+                Count = request.Count
+            });
+            if (!backendResponse.Success) throw new Exception();
+
+            var results = backendResponse.Result!;
+            return new ItemsProviderResult<ApplicationListDisplay>(results.Items, results.Total);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error Getting Rows");
+            await RaiseExceptionAsync(ex);
+            return default;
+        }
     }
 }

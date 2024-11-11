@@ -7,5 +7,5 @@ namespace C8S.AdminApp.Client.Components.Displayers;
 public partial class ApplicationDisplayer: BaseRazorComponent
 {
     [Parameter]
-    public ApplicationBase? Application { get; set; } = null;
+    public ApplicationListDisplay Application { get; set; } = default!;
 }

@@ -1,10 +1,10 @@
 if ($args.Count -eq 0) 
 {
-	dotnet ef -p .\Libraries\C8S.Database.EFCore -s .\Utilities\C8S.EFCoreSetup migrations list
+	dotnet ef -p .\Domains\C8S.Domain.EFCore -s .\Utilities\C8S.EFCoreSetup migrations list --context C8SDbContext
 }
 else
 {
-	dotnet ef -p .\Libraries\C8S.Database.EFCore -s .\Utilities\C8S.EFCoreSetup migrations list $args
+	dotnet ef -p .\Domains\C8S.Domain.EFCore -s .\Utilities\C8S.EFCoreSetup migrations list --context C8SDbContext $args
 }
 
 

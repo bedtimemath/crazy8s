@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using C8S.Applications;
 using C8S.Applications.Models;
+using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using C8S.Domain.Obsolete.DTOs;
 using C8S.UtilityApp.Models;
@@ -30,6 +31,13 @@ internal class ApplicationProfile : Profile
                                 OrganizationType.Other))))))
             .ForMember(m => m.SubmittedOn, opt => opt.MapFrom(src => src.CreatedOn))
             ;
+        
+        CreateMap<ApplicationDb, ApplicationDTO>()
+            .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
+            .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
+            .ReverseMap()
+            .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
+            .ForSourceMember(src => src.Display, opt => opt.DoNotValidate());
     }
 
 }

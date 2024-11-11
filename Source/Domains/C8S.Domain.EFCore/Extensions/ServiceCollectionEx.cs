@@ -14,8 +14,6 @@ public static class ServiceCollectionEx
         if (String.IsNullOrEmpty(connectionString))
             throw new NotImplementedException();
 
-
-        services.AddTransient<AuditInterceptor>();
         services.AddSingleton<CreateModifyInterceptor>();
 
         services.AddDbContextFactory<C8SDbContext>((sp, config) =>

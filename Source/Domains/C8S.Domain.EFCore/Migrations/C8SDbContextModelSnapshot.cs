@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace C8S.Database.EFCore.Migrations
+namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
     partial class C8SDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace C8S.Database.EFCore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.AddressDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.AddressDb", b =>
                 {
                     b.Property<int>("AddressId")
                         .ValueGeneratedOnAdd()
@@ -83,10 +83,10 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemUsaPostalId] IS NOT NULL");
 
-                    b.ToTable("Addresses", (string)null);
+                    b.ToTable("Addresses");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ApplicationClubDb", b =>
                 {
                     b.Property<int>("ApplicationClubId")
                         .ValueGeneratedOnAdd()
@@ -136,10 +136,10 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemApplicationClubId] IS NOT NULL");
 
-                    b.ToTable("ApplicationClubs", (string)null);
+                    b.ToTable("ApplicationClubs");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ApplicationDb", b =>
                 {
                     b.Property<int>("ApplicationId")
                         .ValueGeneratedOnAdd()
@@ -273,10 +273,10 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemApplicationId] IS NOT NULL");
 
-                    b.ToTable("Applications", (string)null);
+                    b.ToTable("Applications");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubDb", b =>
                 {
                     b.Property<int>("ClubId")
                         .ValueGeneratedOnAdd()
@@ -345,10 +345,10 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Clubs", (string)null);
+                    b.ToTable("Clubs");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.CoachDb", b =>
                 {
                     b.Property<int>("CoachId")
                         .ValueGeneratedOnAdd()
@@ -417,10 +417,10 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Coaches", (string)null);
+                    b.ToTable("Coaches");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -499,10 +499,10 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemOrderId] IS NOT NULL");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderSkuDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderSkuDb", b =>
                 {
                     b.Property<int>("OrderSkuId")
                         .ValueGeneratedOnAdd()
@@ -547,10 +547,10 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasIndex("SkuId");
 
-                    b.ToTable("OrderSkus", (string)null);
+                    b.ToTable("OrderSkus");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrganizationDb", b =>
                 {
                     b.Property<int>("OrganizationId")
                         .ValueGeneratedOnAdd()
@@ -618,10 +618,10 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemOrganizationId] IS NOT NULL");
 
-                    b.ToTable("Organizations", (string)null);
+                    b.ToTable("Organizations");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.SkuDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.SkuDb", b =>
                 {
                     b.Property<int>("SkuId")
                         .ValueGeneratedOnAdd()
@@ -676,10 +676,10 @@ namespace C8S.Database.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemSkuId] IS NOT NULL");
 
-                    b.ToTable("Skus", (string)null);
+                    b.ToTable("Skus");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.UnfinishedDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.UnfinishedDb", b =>
                 {
                     b.Property<int>("UnfinishedId")
                         .ValueGeneratedOnAdd()
@@ -807,10 +807,10 @@ namespace C8S.Database.EFCore.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Unfinisheds", (string)null);
+                    b.ToTable("Unfinisheds");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.WorkshopCodeDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.WorkshopCodeDb", b =>
                 {
                     b.Property<int>("WorkshopCodeId")
                         .ValueGeneratedOnAdd()
@@ -837,12 +837,12 @@ namespace C8S.Database.EFCore.Migrations
 
                     b.HasKey("WorkshopCodeId");
 
-                    b.ToTable("WorkshopCodes", (string)null);
+                    b.ToTable("WorkshopCodes");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationClubDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ApplicationClubDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.ApplicationDb", "Application")
+                    b.HasOne("C8S.Domain.EFCore.Models.ApplicationDb", "Application")
                         .WithMany("ApplicationClubs")
                         .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -851,17 +851,17 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Application");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ApplicationDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                    b.HasOne("C8S.Domain.EFCore.Models.AddressDb", "Address")
                         .WithOne("Application")
-                        .HasForeignKey("C8S.Database.EFCore.Models.ApplicationDb", "AddressId");
+                        .HasForeignKey("C8S.Domain.EFCore.Models.ApplicationDb", "AddressId");
 
-                    b.HasOne("C8S.Database.EFCore.Models.CoachDb", "LinkedCoach")
+                    b.HasOne("C8S.Domain.EFCore.Models.CoachDb", "LinkedCoach")
                         .WithMany("Applications")
                         .HasForeignKey("LinkedCoachId");
 
-                    b.HasOne("C8S.Database.EFCore.Models.OrganizationDb", "LinkedOrganization")
+                    b.HasOne("C8S.Domain.EFCore.Models.OrganizationDb", "LinkedOrganization")
                         .WithMany("Applications")
                         .HasForeignKey("LinkedOrganizationId");
 
@@ -872,17 +872,17 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("LinkedOrganization");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                    b.HasOne("C8S.Domain.EFCore.Models.AddressDb", "Address")
                         .WithOne("Club")
-                        .HasForeignKey("C8S.Database.EFCore.Models.ClubDb", "AddressId");
+                        .HasForeignKey("C8S.Domain.EFCore.Models.ClubDb", "AddressId");
 
-                    b.HasOne("C8S.Database.EFCore.Models.CoachDb", "Coach")
+                    b.HasOne("C8S.Domain.EFCore.Models.CoachDb", "Coach")
                         .WithMany("Clubs")
                         .HasForeignKey("CoachId");
 
-                    b.HasOne("C8S.Database.EFCore.Models.OrganizationDb", "Organization")
+                    b.HasOne("C8S.Domain.EFCore.Models.OrganizationDb", "Organization")
                         .WithMany("Clubs")
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -895,22 +895,22 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.CoachDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.OrganizationDb", "Organization")
+                    b.HasOne("C8S.Domain.EFCore.Models.OrganizationDb", "Organization")
                         .WithMany("Coaches")
                         .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                    b.HasOne("C8S.Domain.EFCore.Models.AddressDb", "Address")
                         .WithOne("Order")
-                        .HasForeignKey("C8S.Database.EFCore.Models.OrderDb", "AddressId");
+                        .HasForeignKey("C8S.Domain.EFCore.Models.OrderDb", "AddressId");
 
-                    b.HasOne("C8S.Database.EFCore.Models.ClubDb", "Club")
+                    b.HasOne("C8S.Domain.EFCore.Models.ClubDb", "Club")
                         .WithMany("Orders")
                         .HasForeignKey("ClubId");
 
@@ -919,15 +919,15 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Club");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderSkuDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderSkuDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.OrderDb", "Order")
+                    b.HasOne("C8S.Domain.EFCore.Models.OrderDb", "Order")
                         .WithMany("OrderSkus")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("C8S.Database.EFCore.Models.SkuDb", "Sku")
+                    b.HasOne("C8S.Domain.EFCore.Models.SkuDb", "Sku")
                         .WithMany("OrderSkus")
                         .HasForeignKey("SkuId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -938,16 +938,16 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Sku");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrganizationDb", b =>
                 {
-                    b.HasOne("C8S.Database.EFCore.Models.AddressDb", "Address")
+                    b.HasOne("C8S.Domain.EFCore.Models.AddressDb", "Address")
                         .WithOne("Organization")
-                        .HasForeignKey("C8S.Database.EFCore.Models.OrganizationDb", "AddressId");
+                        .HasForeignKey("C8S.Domain.EFCore.Models.OrganizationDb", "AddressId");
 
                     b.Navigation("Address");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.AddressDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.AddressDb", b =>
                 {
                     b.Navigation("Application");
 
@@ -958,29 +958,29 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ApplicationDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ApplicationDb", b =>
                 {
                     b.Navigation("ApplicationClubs");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.ClubDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubDb", b =>
                 {
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.CoachDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.CoachDb", b =>
                 {
                     b.Navigation("Applications");
 
                     b.Navigation("Clubs");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrderDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
                     b.Navigation("OrderSkus");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.OrganizationDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrganizationDb", b =>
                 {
                     b.Navigation("Applications");
 
@@ -989,7 +989,7 @@ namespace C8S.Database.EFCore.Migrations
                     b.Navigation("Coaches");
                 });
 
-            modelBuilder.Entity("C8S.Database.EFCore.Models.SkuDb", b =>
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.SkuDb", b =>
                 {
                     b.Navigation("OrderSkus");
                 });

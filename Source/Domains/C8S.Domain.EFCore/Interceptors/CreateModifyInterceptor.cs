@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
+using SC.Common.Base;
 using SC.Common.Helpers.PassThrus;
 using SC.Common.Interfaces;
 

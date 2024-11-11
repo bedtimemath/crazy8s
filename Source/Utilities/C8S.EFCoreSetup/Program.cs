@@ -6,12 +6,13 @@
 // ************************
 
 using System.Diagnostics;
-using C8S.Domain.EFCore.Contexts;
-using Microsoft.EntityFrameworkCore;
+using C8S.Domain.AppConfigs;
+using C8S.Domain.EFCore.Extensions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SC.Audit.EFCore.Extensions;
 using SC.Common;
+using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -63,10 +64,12 @@ SelfLog.Enable(msg => Debug.WriteLine(msg));
 // CONTEXT SETUP
 builder.ConfigureServices((context, services) =>
 {
-    // LIBRARY
-    var libraryConnection = context.Configuration["Connections:Database"];
-    services.AddDbContext<C8SDbContext>(config => 
-        config.UseSqlServer(libraryConnection));
+    var connections = context.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                      throw new Exception($"Missing configuration section: {Connections.SectionName}");
+
+    services.AddCommonHelpers();
+    services.AddSCAuditContext(connections.Audit);
+    services.AddC8SDbContext(connections.Database);
 });
 
 // BUILD & RUN

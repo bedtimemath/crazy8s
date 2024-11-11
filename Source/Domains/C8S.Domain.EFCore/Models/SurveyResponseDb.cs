@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using C8S.Domain.Base;
 using SC.Common;
+using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 

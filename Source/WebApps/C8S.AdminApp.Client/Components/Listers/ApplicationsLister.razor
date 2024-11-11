@@ -4,14 +4,18 @@
 <div class="c8s-page-lister c8s-applications-lister @CssClass">
     @if (IsPreRender)
     {
-        <div>loading...</div>
+        <div>loading app...</div>
     }
     else
     {
         <Virtualize @ref="@_listerComponent"
                     ItemsProvider="@GetRows"
                     Context="application">
-            <ApplicationDisplayer Application="@application"/>
+            <ItemContent>
+                <RadzenCard class="rz-mb-2">
+                    <ApplicationDisplayer Application="@application"/>
+                </RadzenCard>
+            </ItemContent>
         </Virtualize>
     }
 </div>

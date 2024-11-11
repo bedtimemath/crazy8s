@@ -24,13 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Audit.EFCore\SC.Audit.EFCore.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.Applications\C8S.Applications.csproj" />
-    <ProjectReference Include="..\..\Libraries\C8S.Database.Repository\C8S.Database.Repository.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.FullSlate\C8S.FullSlate.csproj" />
   </ItemGroup>

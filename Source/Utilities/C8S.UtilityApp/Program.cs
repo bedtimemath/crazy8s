@@ -1,7 +1,7 @@
 ﻿using Azure.Identity;
 using C8S.Applications.Extensions;
-using C8S.Database.Repository.Extensions;
 using C8S.Domain.AppConfigs;
+using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
@@ -151,7 +151,7 @@ try
 
         services.AddCommonHelpers();
         services.AddSCAuditContext(connections.Audit);
-        services.AddC8SRepository(connections.Database);
+        services.AddC8SDbContext(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
         services.AddApplicationServices();
 

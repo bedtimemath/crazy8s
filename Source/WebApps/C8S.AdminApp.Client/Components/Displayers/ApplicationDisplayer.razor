@@ -1,29 +1,108 @@
-﻿@using SC.Common
-@inherits BaseRazorComponent
+﻿@inherits BaseRazorComponent
 @rendermode InteractiveWebAssembly
+
+@using SC.Common.Extensions
 
 <div class="c8s-application-displayer @CssClass">
     @* OUTER *@
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.SpaceBetween">
-        
+
         @* DETAILS *@
         <RadzenStack Orientation="Orientation.Vertical"
-                     AlignItems="AlignItems.Center"
+                     AlignItems="AlignItems.Start"
                      JustifyContent="JustifyContent.Start">
-                     
-            <RadzenText TagName="TagName.H3"
-                        TextStyle="TextStyle.DisplayH3"
-                        Text="@(Application?.ApplicantLastName ?? SoftCrowConstants.Display.NotSet)" />
 
+            <RadzenText TagName="TagName.H4"
+                        TextStyle="TextStyle.DisplayH4"
+                        Text="@Application.ApplicantFullName" />
+
+            <RadzenStack Orientation="Orientation.Horizontal"
+                         AlignItems="AlignItems.Start"
+                         JustifyContent="JustifyContent.Start"
+                         Gap="1rem">
+
+                @* COLUMN #1 *@
+                <RadzenStack Orientation="Orientation.Vertical"
+                             AlignItems="AlignItems.Stretch"
+                             JustifyContent="JustifyContent.Start"
+                             Gap="0">
+
+                    @* EMAIL *@
+                    <RadzenText TagName="TagName.Div"
+                                TextStyle="TextStyle.Body1"
+                                TextAlign="TextAlign.Start"
+                                Text="@Application.ApplicantEmail" />
+
+                    @* SCHOOL *@
+                    <RadzenText TagName="TagName.Div"
+                                TextStyle="TextStyle.Body1"
+                                TextAlign="TextAlign.Start"
+                                Text="@Application.OrganizationName" />
+
+                    @* CITY, STATE *@
+                    <RadzenText TagName="TagName.Div"
+                                TextStyle="TextStyle.Body1"
+                                TextAlign="TextAlign.Start"
+                                Text="@Application.OrganizationCityState" />
+
+                </RadzenStack>
+                @* COLUMN #1 *@
+
+                @* COLUMN #2 *@
+                <RadzenStack Orientation="Orientation.Vertical"
+                             AlignItems="AlignItems.Stretch"
+                             JustifyContent="JustifyContent.Start"
+                             Gap="0">
+
+                    @* STATUS *@
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0.25rem">
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Caption"
+                                    TextAlign="TextAlign.Start"
+                                    Text="Status:" />
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Body1"
+                                    TextAlign="TextAlign.Start"
+                                    Text="@Application.Status.GetLabel()" />
+
+                    </RadzenStack>
+
+                    @* SUBMITTED *@
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0.25rem">
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Caption"
+                                    TextAlign="TextAlign.Start"
+                                    Text="Submitted:" />
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Body1"
+                                    TextAlign="TextAlign.Start"
+                                    Text="@Application.SubmittedOn.ToString("D")" />
+
+                    </RadzenStack>
+
+                </RadzenStack>
+                @* COLUMN #2 *@
+
+            </RadzenStack>
         </RadzenStack>
-        
+
         @* VIEW BUTTON *@
         <RadzenStack Orientation="Orientation.Vertical"
                      AlignItems="AlignItems.Center"
                      JustifyContent="JustifyContent.Start">
-                     
+
             <RadzenButton ButtonType="ButtonType.Button"
                           ButtonStyle="ButtonStyle.Primary"
                           Text="View >" />

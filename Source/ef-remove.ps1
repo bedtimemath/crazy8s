@@ -1,1 +1,1 @@
-dotnet ef -p .\Libraries\C8S.Database.EFCore -s .\Utilities\C8S.EFCoreSetup migrations remove
+dotnet ef -p .\Domains\C8S.Domain.EFCore -s .\Utilities\C8S.EFCoreSetup migrations remove --context C8SDbContext

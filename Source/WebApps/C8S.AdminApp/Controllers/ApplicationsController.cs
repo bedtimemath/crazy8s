@@ -13,7 +13,6 @@ namespace C8S.AdminApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[AllowAnonymous]
 public class ApplicationsController(
     ILoggerFactory loggerFactory,
     IDbContextFactory<C8SDbContext> dbContextFactory) : ControllerBase
@@ -29,6 +28,10 @@ public class ApplicationsController(
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var totalApplications = await dbContext.Applications.CountAsync();
             var queryable = dbContext.Applications
+                .Include(a => a.LinkedOrganization)
+                .Include(a => a.Address)
+                .Include(a => a.ApplicationClubs)
+                .AsSingleQuery()
                 .AsNoTracking();
 
             if (query.StartIndex != null) queryable = queryable.Skip(query.StartIndex.Value);
@@ -46,9 +49,14 @@ public class ApplicationsController(
                             ApplicationId = a.ApplicationId,
                             ApplicantFirstName = a.ApplicantFirstName,
                             ApplicantLastName = a.ApplicantLastName,
+                            ApplicantEmail = a.ApplicantEmail,
                             Status = a.Status,
-                            SubmittedOn = a.SubmittedOn
+                            SubmittedOn = a.SubmittedOn,
+                            OrganizationName = a.OrganizationName,
+                            OrganizationCity = a.Address?.City,
+                            OrganizationState = a.Address?.State
                         })
+                        .OrderByDescending(m => m.SubmittedOn)
                         .ToList(),
                     Total = totalApplications
                 }
