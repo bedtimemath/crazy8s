@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Components\ProfileDisplay.razor.cs" />
+    <None Include="Components\Common\ProfileDisplay.razor.cs" />
   </ItemGroup>
 
 	<ItemGroup>
