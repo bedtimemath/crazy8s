@@ -110,28 +110,36 @@ internal class LoadC8SData(
         var coachesWithoutOrgCount = coachesWithoutOrg.Count;
         var coachesUpdated = 0;
 
-        ConsoleEx.StartProgress("Joining coaches with organizations: ");
-        for (int index = 0; index < coachesWithoutOrgCount; index++)
+        await using (var dbContext = await dbContextFactory.CreateDbContextAsync())
         {
-            var coach = coachesWithoutOrg[index];
-            if (coach.OldSystemOrganizationId.HasValue)
+            ConsoleEx.StartProgress("Joining coaches with organizations: ");
+            for (int index = 0; index < coachesWithoutOrgCount; index++)
             {
-                var organization = allOrganizations.FirstOrDefault(
-                                       o => o.OldSystemOrganizationId == coach.OldSystemOrganizationId.Value) ??
-                                   throw new Exception($"Could not find organization: {coach.OldSystemOrganizationId.Value}");
-                if (coach.OrganizationId == null)
+                var coach = coachesWithoutOrg[index];
+                if (coach.OldSystemOrganizationId.HasValue)
                 {
-                    coach.OrganizationId = organization.OrganizationId;
+                    var organization = allOrganizations.FirstOrDefault(
+                                           o => o.OldSystemOrganizationId == coach.OldSystemOrganizationId.Value) ??
+                                       throw new Exception($"Could not find organization: {coach.OldSystemOrganizationId.Value}");
+                    if (coach.OrganizationId == null)
+                    {
+                        coach.OrganizationId = organization.OrganizationId;
+                        
+                        var dbCoach = mapper.Map<CoachDb>(coach);
 
-                    await UpdateCoach(coach);
-                    coachesUpdated++;
+                        var entry = dbContext.Coaches.Attach(dbCoach);
+                        entry.State = EntityState.Modified;
+
+                        coachesUpdated++;
+                    }
                 }
+
+                ConsoleEx.ShowProgress((float)index / (float)coachesWithoutOrgCount);
             }
-
-            ConsoleEx.ShowProgress((float)index / (float)coachesWithoutOrgCount);
+            ConsoleEx.EndProgress();
+            
+            await dbContext.SaveChangesAsync();
         }
-        ConsoleEx.EndProgress();
-
         logger.LogInformation("{Count:#,##0} coaches updated.", coachesUpdated);
 
         /*** APPLICATIONS ***/
@@ -449,20 +457,6 @@ internal class LoadC8SData(
 
         await dbContext.SaveChangesAsync();
         return dtosAdded;
-    }
-    
-    public async Task<CoachDTO> UpdateCoach(CoachDTO dto)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var db = mapper.Map<CoachDb>(dto);
-
-        var entry = dbContext.Coaches.Attach(db);
-        entry.State = EntityState.Modified;
-        await dbContext.SaveChangesAsync();
-
-        var dtoModified = mapper.Map<CoachDTO>(entry.Entity);
-
-        return dtoModified;
     }
     
     public async Task<IList<OrganizationDTO>> GetOrganizations()

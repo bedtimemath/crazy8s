@@ -1,4 +1,4 @@
-﻿using C8S.Database.Abstractions.DTOs;
+﻿using C8S.Domain.Obsolete.DTOs;
 
 namespace C8S.Functions.Models;
 

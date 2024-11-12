@@ -1,30 +1,31 @@
-using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Web;
 using Azure.Storage.Blobs;
-using C8S.Common;
-using C8S.Common.Extensions;
-using C8S.Common.Interfaces;
-using C8S.Database.Abstractions.DTOs;
-using C8S.Database.Abstractions.Enumerations;
-using C8S.Database.Repository.Repositories;
+using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.EFCore.Models;
+using C8S.Domain.Enums;
 using C8S.FullSlate.Abstractions;
+using C8S.FullSlate.Abstractions.Interactions;
 using C8S.FullSlate.Abstractions.Models;
 using C8S.FullSlate.Services;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Common;
+using SC.Common.Extensions;
+using SC.Common.Interfaces;
 
 namespace C8S.Functions.Functions;
 
 public class SubmitForm(
     ILoggerFactory loggerFactory,
     IDateTimeHelper dateTimeHelper,
+    IDbContextFactory<C8SDbContext> dbContextFactory,
     BlobServiceClient blobServiceClient,
-    C8SRepository repository,
     FullSlateService fullSlateService)
 {
     #region ReadOnly Constructor Variables
@@ -70,12 +71,17 @@ public class SubmitForm(
         try
         {
             _logger.LogInformation("Submit-Page01 triggered");
+            
+            // setup for each page request
+            //const int pageNumber = 1;
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-            var unfinished = await repository.AddUnfinished();
-            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+            var unfinished = new UnfinishedDb() { EndPart01On = dateTimeHelper.UtcNow };
+            await dbContext.Unfinisheds.AddAsync(unfinished);
+            await dbContext.SaveChangesAsync();
 
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-2/?code={code:N}");
+            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-2/?code={unfinished.Code:N}");
         }
         catch (Exception ex)
         {
@@ -96,10 +102,20 @@ public class SubmitForm(
         try
         {
             _logger.LogInformation("Submit-Page02 triggered");
+            
+            // setup for each page request
+            const int pageNumber = 2;
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+            var queryCode = req.Query["code"] ??
+                       throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
+            if (!Guid.TryParse(queryCode, out var guidCode))
+                throw new Exception($"Badly formatted code: {queryCode}");
 
             // find the unfinished using the code in the request
-            var unfinished = await GetUnfinishedFromRequest(req);
-            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+            var unfinished = await dbContext.Unfinisheds // clubs included automatically
+                .FirstOrDefaultAsync(a => a.Code == guidCode) ??
+                   throw new Exception($"Unrecognized code: {guidCode:N}");
 
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
@@ -111,7 +127,7 @@ public class SubmitForm(
             var isCoach = isCoachString == CoachResponse;
 
             // save to storage just in case
-            await SaveFormDataToBlob(formData, code, 2);
+            await SaveFormDataToBlob(formData, guidCode, pageNumber);
 
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(lastName)) throw new Exception("Could not read last name.");
@@ -120,7 +136,8 @@ public class SubmitForm(
             if (String.IsNullOrEmpty(isCoachString)) throw new Exception("Could not read applicant type.");
 
             // check for an existing email
-            var existing = await repository.GetCoachByEmail(email);
+            var existing = await dbContext.Coaches
+                .FirstOrDefaultAsync(c => c.Email == email);
             if (existing != null)
             {
                 // redirect to the 'existing' page
@@ -136,11 +153,12 @@ public class SubmitForm(
                 unfinished.ApplicantPhone = phone;
                 unfinished.ApplicantType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
                 unfinished.EndPart02On = dateTimeHelper.UtcNow;
-                await repository.UpdateUnfinished(unfinished);
+
+                await dbContext.SaveChangesAsync();
 
                 // return our redirect with the code
                 httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-                httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-3/?code={code:N}");
+                httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-3/?code={guidCode:N}");
             }
         }
         catch (Exception ex)
@@ -162,10 +180,21 @@ public class SubmitForm(
         try
         {
             _logger.LogInformation("Submit-Page03 triggered");
+            
+            // setup for each page request
+            const int pageNumber = 3;
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
             // find the unfinished using the code in the request
-            var unfinished = await GetUnfinishedFromRequest(req);
-            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+            var queryCode = req.Query["code"] ??
+                            throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
+            if (!Guid.TryParse(queryCode, out var guidCode))
+                throw new Exception($"Badly formatted code: {queryCode}");
+
+            // find the unfinished using the code in the request
+            var unfinished = await dbContext.Unfinisheds // clubs included automatically
+                                 .FirstOrDefaultAsync(a => a.Code == guidCode) ??
+                             throw new Exception($"Unrecognized code: {guidCode:N}");
 
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
@@ -181,7 +210,7 @@ public class SubmitForm(
             var taxId = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TaxId"])?.Data;
 
             // save to storage just in case
-            await SaveFormDataToBlob(formData, code, 3);
+            await SaveFormDataToBlob(formData, guidCode, pageNumber);
 
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(hostedBeforeString)) throw new Exception("Could not read has done before.");
@@ -213,11 +242,12 @@ public class SubmitForm(
             unfinished.OrganizationTypeOther = organizationTypeOther;
             unfinished.OrganizationTaxIdentifier = taxId;
             unfinished.EndPart03On = dateTimeHelper.UtcNow;
-            await repository.UpdateUnfinished(unfinished);
+            
+            await dbContext.SaveChangesAsync();
 
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-4/?code={code:N}");
+            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-4/?code={guidCode:N}");
         }
         catch (Exception ex)
         {
@@ -238,17 +268,28 @@ public class SubmitForm(
         try
         {
             _logger.LogInformation("Submit-Page04 triggered");
+            
+            // setup for each page request
+            const int pageNumber = 4;
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
             // find the unfinished using the code in the request
-            var unfinished = await GetUnfinishedFromRequest(req);
-            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+            var queryCode = req.Query["code"] ??
+                            throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
+            if (!Guid.TryParse(queryCode, out var guidCode))
+                throw new Exception($"Badly formatted code: {queryCode}");
+
+            // find the unfinished using the code in the request
+            var unfinished = await dbContext.Unfinisheds // clubs included automatically
+                                 .FirstOrDefaultAsync(a => a.Code == guidCode) ??
+                             throw new Exception($"Unrecognized code: {guidCode:N}");
 
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
             var clubsString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ClubsString"])?.Data;
 
             // save to storage just in case
-            await SaveFormDataToBlob(formData, code, 4);
+            await SaveFormDataToBlob(formData, guidCode, pageNumber);
 
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(clubsString)) throw new Exception("Could not read clubs string.");
@@ -256,11 +297,12 @@ public class SubmitForm(
             // update the unfinished data
             unfinished.ClubsString = clubsString;
             unfinished.EndPart04On = dateTimeHelper.UtcNow;
-            await repository.UpdateUnfinished(unfinished);
+
+            await dbContext.SaveChangesAsync();
 
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-5/?code={code:N}");
+            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-5/?code={guidCode:N}");
         }
         catch (Exception ex)
         {
@@ -281,10 +323,21 @@ public class SubmitForm(
         try
         {
             _logger.LogInformation("Submit-Page05 triggered");
+            
+            // setup for each page request
+            const int pageNumber = 5;
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
             // find the unfinished using the code in the request
-            var unfinished = await GetUnfinishedFromRequest(req);
-            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+            var queryCode = req.Query["code"] ??
+                            throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
+            if (!Guid.TryParse(queryCode, out var guidCode))
+                throw new Exception($"Badly formatted code: {queryCode}");
+
+            // find the unfinished using the code in the request
+            var unfinished = await dbContext.Unfinisheds // clubs included automatically
+                                 .FirstOrDefaultAsync(a => a.Code == guidCode) ??
+                             throw new Exception($"Unrecognized code: {guidCode:N}");
 
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
@@ -295,7 +348,7 @@ public class SubmitForm(
             var workshopCode = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["WorkshopCode"])?.Data;
 
             // save to storage just in case
-            await SaveFormDataToBlob(formData, code, 5);
+            await SaveFormDataToBlob(formData, guidCode, 5);
 
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(hasWorkshopCodeString)) throw new Exception("Could not read has workshop code.");
@@ -304,12 +357,14 @@ public class SubmitForm(
             if (hasWorkshopCode)
             {
                 if (String.IsNullOrEmpty(workshopCode)) throw new Exception("Could not read workshop code.");
-                var found = await repository.GetWorkshopCodeByKey(workshopCode);
+
+                var found = await dbContext.WorkshopCodes
+                    .FirstOrDefaultAsync(a => a.Key == workshopCode);
                 if (found == null ||
                     (found.StartsOn != null && found.StartsOn > dateTimeHelper.UtcNow) ||
                     (found.EndsOn != null && found.EndsOn <= dateTimeHelper.UtcNow))
                 {
-                    return GetPage5ErrorMessageResponse(req, code,
+                    return GetPage5ErrorMessageResponse(req, guidCode,
                         "Unrecognized workshop code. Please try again or choose \"No\".");
                 }
             }
@@ -327,14 +382,18 @@ public class SubmitForm(
             if (String.IsNullOrEmpty(unfinished.ApplicantEmail)) throw new Exception("Applicant missing email.");
             if (String.IsNullOrEmpty(unfinished.ApplicantPhone)) throw new Exception("Applicant missing phone.");
 
+            // convert timeslot to eastern time
+            var easternTimeSlot =
+                TimeZoneInfo.ConvertTimeBySystemTimeZoneId(chosenTimeSlot.Value, "Eastern Standard Time");
+
             // check on the new timeslot
             var appointmentCreation = new FullSlateAppointmentCreation()
             {
-                At = chosenTimeSlot!.Value,
+                At = easternTimeSlot,
                 Services = [FullSlateConstants.Offerings.CoachCall],
                 Client = new FullSlateAppointmentCreationClient()
                 {
-                    FirstName = unfinished.ApplicantFirstName ?? SharedConstants.Display.None,
+                    FirstName = unfinished.ApplicantFirstName ?? SoftCrowConstants.Display.None,
                     LastName = unfinished.ApplicantLastName,
                     Email = unfinished.ApplicantEmail,
                     PhoneNumber = new FullSlatePhoneNumber() { Number = unfinished.ApplicantPhone }
@@ -344,19 +403,21 @@ public class SubmitForm(
             var appointmentResponse = await fullSlateService.AddAppointment(appointmentCreation);
             if (!appointmentResponse.Success)
             {
+                await SaveFullSlateErrorToBlob(appointmentResponse, guidCode, pageNumber);
+
                 if (appointmentResponse.Errors?
                         .Any(e => e.ErrorCode is
                             FullSlateConstants.ErrorCodes.StatusBooked or
                             FullSlateConstants.ErrorCodes.NoOpening)
                     ?? false)
                 {
-                    return GetPage5ErrorMessageResponse(req, code,
+                    return GetPage5ErrorMessageResponse(req, guidCode,
                         "Unfortunately, that time slot has been booked. Please try another.");
                 }
 
                 var errorMessages = appointmentResponse.Errors?
                     .Select(e => RemoveSupportTeamMessage(e.ErrorMessage)) ?? ["Unknown error"];
-                return GetPage5ErrorMessageResponse(req, code,
+                return GetPage5ErrorMessageResponse(req, guidCode,
                     $"ERROR: {String.Join("; ", errorMessages)} Please try again later.");
             }
 
@@ -365,11 +426,10 @@ public class SubmitForm(
             unfinished.ApplicantTimeZone = timeZone;
             unfinished.ChosenTimeSlot = chosenTimeSlot;
             unfinished.EndPart05On = dateTimeHelper.UtcNow;
-            await repository.UpdateUnfinished(unfinished);
 
             // create the application
-            var application = await repository.AddApplication(
-                new ApplicationDTO()
+            var application = 
+                new ApplicationDb()
                 {
                     Status = ApplicationStatus.Received,
                     ApplicantType = unfinished.ApplicantType,
@@ -384,11 +444,14 @@ public class SubmitForm(
                     OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
                     WorkshopCode = unfinished.WorkshopCode,
                     SubmittedOn = dateTimeHelper.UtcNow
-                });
+                };
+            await dbContext.Applications.AddAsync(application);
+
+            await dbContext.SaveChangesAsync();
 
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-6/?code={code:N}&appid={application.ApplicationId}");
+            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-6/?code={guidCode:N}&appid={application.ApplicationId}");
         }
         catch (Exception ex)
         {
@@ -409,10 +472,21 @@ public class SubmitForm(
         try
         {
             _logger.LogInformation("Submit-Page06 triggered");
+            
+            // setup for each page request
+            const int pageNumber = 6;
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
             // find the unfinished using the code in the request
-            var unfinished = await GetUnfinishedFromRequest(req);
-            var code = unfinished.Code ?? throw new Exception("Request missing code.");
+            var queryCode = req.Query["code"] ??
+                            throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
+            if (!Guid.TryParse(queryCode, out var guidCode))
+                throw new Exception($"Badly formatted code: {queryCode}");
+
+            // find the unfinished using the code in the request
+            var unfinished = await dbContext.Unfinisheds // clubs included automatically
+                                 .FirstOrDefaultAsync(a => a.Code == guidCode) ??
+                             throw new Exception($"Unrecognized code: {guidCode:N}");
 
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
@@ -421,17 +495,18 @@ public class SubmitForm(
             var comments = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Comments"])?.Data;
 
             // save to storage just in case
-            await SaveFormDataToBlob(formData, code, 6);
+            await SaveFormDataToBlob(formData, guidCode, pageNumber);
 
             // check for errors (after saving to storage)
-            if (String.IsNullOrEmpty(referenceSource)) throw new Exception("Could not read has reference source.");
+            if (String.IsNullOrEmpty(referenceSource)) throw new Exception("Could not read reference source.");
 
             // update the unfinished data
             unfinished.ReferenceSource = referenceSource;
             unfinished.ReferenceSourceOther = referenceSourceOther;
             unfinished.Comments = comments;
             unfinished.SubmittedOn = dateTimeHelper.UtcNow;
-            await repository.UpdateUnfinished(unfinished);
+
+            await dbContext.SaveChangesAsync();
 
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
@@ -467,21 +542,21 @@ public class SubmitForm(
         return httpResponse;
     }
 
-    protected async Task<UnfinishedDTO> GetUnfinishedFromRequest(HttpRequestData req)
-    {
-        var code = req.Query["code"] ??
-                   throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
-        if (!Guid.TryParse(code, out var guid))
-            throw new Exception($"Badly formatted code: {code}");
-        return await repository.GetUnfinishedByCode(guid) ??
-                         throw new Exception($"Unrecognized code: {guid:N}");
-    }
-
     private async Task SaveFormDataToBlob(MultipartFormDataParser formData, Guid code, int pageNumber)
     {
         var containerClient = blobServiceClient.GetBlobContainerClient("c8s-applications");
         var blobName = $"{dateTimeHelper.UtcNow:yyyyMMddTHHmmss}-{code:N}-{pageNumber:00}-{String.Empty.AppendRandomAlphaOnly(3)}.json";
         var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(formData.Parameters)));
+        var azureResponse = await containerClient.UploadBlobAsync(blobName, jsonStream);
+        if (!azureResponse.HasValue)
+            throw new Exception($"Could not create blob: {blobName}");
+    }
+
+    private async Task SaveFullSlateErrorToBlob(ServiceResponse<FullSlateAppointment> response, Guid code, int pageNumber)
+    {
+        var containerClient = blobServiceClient.GetBlobContainerClient("c8s-applications");
+        var blobName = $"{dateTimeHelper.UtcNow:yyyyMMddTHHmmss}-{code:N}-{pageNumber:00}-FullSlateError-{String.Empty.AppendRandomAlphaOnly(3)}.json";
+        var jsonStream = new MemoryStream(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(response)));
         var azureResponse = await containerClient.UploadBlobAsync(blobName, jsonStream);
         if (!azureResponse.HasValue)
             throw new Exception($"Could not create blob: {blobName}");
@@ -496,7 +571,7 @@ public class SubmitForm(
             "America/Los_Angeles" => "Pacific Time",
             "America/Anchorage" => "Alaskan Time",
             "Pacific/Honolulu" => "Hawaiian Time",
-            _ => SharedConstants.Display.NotSet
+            _ => SoftCrowConstants.Display.NotSet
         };
     #endregion
 }

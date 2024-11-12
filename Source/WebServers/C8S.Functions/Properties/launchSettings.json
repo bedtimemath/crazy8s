@@ -2,8 +2,7 @@
   "profiles": {
     "C8S.Functions": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7071",
-      "launchBrowser": false
+      "commandLineArgs": "host start --useHttps --cert \"certificate.pfx\" --password \"123\" --port 7071"
     }
   }
 }

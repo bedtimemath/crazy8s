@@ -1,10 +1,10 @@
 using System.Net;
 using System.Text.Json;
-using C8S.Common.Extensions;
 using C8S.FullSlate.Services;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
+using SC.Common.Extensions;
 
 namespace C8S.Functions.Functions.Deprecated;
 

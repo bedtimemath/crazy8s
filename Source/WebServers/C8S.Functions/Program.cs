@@ -1,9 +1,6 @@
 using Azure.Identity;
-using C8S.Common;
-using C8S.Common.Helpers.Extensions;
-using C8S.Common.Models;
-using C8S.Database.Abstractions.Models;
-using C8S.Database.Repository.Extensions;
+using C8S.Domain.AppConfigs;
+using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Azure;
@@ -11,6 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SC.Audit.EFCore.Extensions;
+using SC.Common;
+using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -28,16 +28,18 @@ try
 {
     var host = new HostBuilder();
 
+    // check for the two variables we need immediately
+    var appConfig = Environment.GetEnvironmentVariable("C8S_AppConfig");
+    var configFolder = Environment.GetEnvironmentVariable("C8S_ConfigFolder");
+
     host.ConfigureHostConfiguration(builder =>
     {
         Log.Logger.Information("Configuring Host Configuration");
 
-        builder.AddJsonFile("local.settings.json", true)
-            .AddEnvironmentVariables();
+        builder.AddEnvironmentVariables();
 
-        var sensitiveFolderPath = Environment.GetEnvironmentVariable("C8S_SensitiveFolder");
-        if (!String.IsNullOrEmpty(sensitiveFolderPath))
-            builder.SetBasePath(sensitiveFolderPath)
+        if (!String.IsNullOrEmpty(configFolder))
+            builder.SetBasePath(configFolder)
                 .AddJsonFile($"c8s.appsettings.{environmentName?.ToLower()}.json");
     });
 
@@ -45,16 +47,14 @@ try
     {
         Log.Logger.Information("Configuring App Configuration");
                     
-        // check for the two variables we need immediately
-        var sensitiveFolderPath = Environment.GetEnvironmentVariable("C8S_SensitiveFolder");
-        if (!String.IsNullOrEmpty(sensitiveFolderPath)) return;
+        // if we're using the config folder, the app config isn't needed
+        if (!String.IsNullOrEmpty(configFolder)) return;
 
         // configure with the azure configuration
-        var appConfigCnnString = Environment.GetEnvironmentVariable("C8S_AppConfig");
         builder.AddAzureAppConfiguration(config =>
         {
-            Log.Logger.Information("Connecting to Azure App Configuration using: {CnnString}", appConfigCnnString);
-            config.Connect(appConfigCnnString)
+            Log.Logger.Information("Connecting to Azure App Configuration using: {CnnString}", appConfig);
+            config.Connect(appConfig)
                 .ConfigureKeyVault(kv => kv.SetCredential(new DefaultAzureCredential()))
                 .Select(KeyFilter.Any, LabelFilter.Null)
                 .Select(KeyFilter.Any, environmentName);
@@ -84,9 +84,11 @@ try
         });
 
         /*****************************************
-         * REPOSITORY SETUP
+         * SOFT CROW & LOCAL
          */
-        services.AddC8SRepository(connections.Database);
+        services.AddCommonHelpers();
+        services.AddSCAuditContext(connections.Audit);
+        services.AddC8SDbContext(connections.Database);
 
         /*****************************************
          * OTHER CRAZY 8s SETUP
@@ -111,7 +113,7 @@ try
         .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
         .Enrich.FromLogContext()
         .WriteTo.Console(
-            outputTemplate: SharedConstants.Templates.DefaultConsoleLog,
+            outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
             theme: AnsiConsoleTheme.Code)
         .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
             .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), new TraceTelemetryConverter())

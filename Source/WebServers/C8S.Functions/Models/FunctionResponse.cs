@@ -1,5 +1,5 @@
-﻿using C8S.Common.Extensions;
-using C8S.Common.Models;
+﻿using SC.Common.Extensions;
+using SC.Common.Models;
 
 namespace C8S.Functions.Models;
 

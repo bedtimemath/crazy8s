@@ -35,8 +35,8 @@ public class C8SDbContext(
     {
         if (_auditInterceptor != null)
             optionsBuilder.AddInterceptors(_auditInterceptor);
-        else
-            _logger.LogWarning("AuditInterceptor is not being used.");
+        //else
+        //    _logger.LogWarning("AuditInterceptor is not being used.");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

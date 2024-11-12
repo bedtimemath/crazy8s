@@ -1,14 +1,12 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using C8S.Common;
-using C8S.Common.Extensions;
-using C8S.Common.Models;
-using C8S.Database.Abstractions.Models;
+using C8S.Domain.AppConfigs;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using SC.Common.Extensions;
 
 namespace C8S.Functions.Functions;
 
@@ -36,9 +34,16 @@ public class PingServer(
             // GENERAL
             sbOutput.Append("== General ==\r\n");
             sbOutput.AppendFormat("Environment: {0}\r\n", configuration["ENVIRONMENT"]);
-            sbOutput.AppendFormat("AppConfig: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.AppConfig)?.Obscure());
-            sbOutput.AppendFormat("AzureStorage: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.AzureStorage)?.Obscure());
-            sbOutput.AppendFormat("Database: {0}\r\n", configuration.GetConnectionString(C8SConstants.Connections.Database)?.Obscure());
+
+            // CONNECTIONS
+            var connections = configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
+            sbOutput.Append("== Connections ==\r\n");
+            sbOutput.AppendFormat("Audit: {0}\r\n", connections.Audit?.Obscure());
+            sbOutput.AppendFormat("ApplicationInsights: {0}\r\n", connections.ApplicationInsights?.Obscure());
+            sbOutput.AppendFormat("AzureStorage: {0}\r\n", connections.AzureStorage?.Obscure());
+            sbOutput.AppendFormat("Database: {0}\r\n", connections.Database?.Obscure());
+            sbOutput.AppendFormat("OldSystem: {0}\r\n", connections.OldSystem?.Obscure());
 
             // API KEYS
             var apiKeys = new ApiKeys();
