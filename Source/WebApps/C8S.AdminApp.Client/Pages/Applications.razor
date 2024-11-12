@@ -1,5 +1,7 @@
 ﻿@page "/applications"
+@using C8S.Domain.Enums
 @using SC.Common
+@using SC.Common.Models
 @inherits BaseRazorPage
 @rendermode InteractiveWebAssembly
    
@@ -23,6 +25,17 @@
                      JustifyContent="JustifyContent.SpaceBetween"
                      Gap="0.25rem">
             <RadzenTextBox @bind-Value="@_sortDescription" />
+            
+            <RadzenDropDown @ref="@_statusDropDown" 
+                            @bind-Value="@_selectedStatuses"
+                            Data="EnumLabel<ApplicationStatus>.GetAllEnumLabels()"
+                            TextProperty="@nameof(EnumLabel<ApplicationStatus>.Display)"
+                            ValueProperty="@nameof(EnumLabel<ApplicationStatus>.Value)"
+                            Placeholder="Filter by Status"
+                            Multiple="true"
+                            AllowClear="true"
+                            Chips="true"
+                            Change="@(async (a) => await HandleStatusDropdownChange(a))" />
         </RadzenStack>
 
         <IconButton ButtonType="ButtonType.Button"
@@ -34,6 +47,7 @@
     </RadzenStack>
     <ApplicationsLister @ref="_applicationsLister"
                         SortDescription="@_sortDescription"
+                        Statuses="@_selectedStatuses"
                         TotalCountChanged="@((int c) => _totalCount = c)"
                         ExceptionRaised="@(async (ex) => await HandleExceptionRaisedAsync(ex))"
                         CssClass="flex-grow-1"/>

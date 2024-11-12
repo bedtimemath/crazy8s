@@ -1,4 +1,5 @@
 ﻿using C8S.AdminApp.Client.Components.Base;
+using C8S.Domain.Enums;
 using C8S.Domain.Models;
 using C8S.Domain.Queries.List;
 using MediatR;
@@ -17,6 +18,9 @@ public partial class ApplicationsLister : BaseRenderStateComponent
 
     [Parameter]
     public string? SortDescription { get; set; }
+
+    [Parameter]
+    public IList<ApplicationStatus>? Statuses { get; set; }
 
     [Parameter]
     public EventCallback<int> TotalCountChanged { get; set; }
@@ -41,7 +45,8 @@ public partial class ApplicationsLister : BaseRenderStateComponent
             {
                 StartIndex = request.StartIndex,
                 Count = request.Count,
-                SortDescription = SortDescription
+                SortDescription = SortDescription,
+                Statuses = Statuses
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 

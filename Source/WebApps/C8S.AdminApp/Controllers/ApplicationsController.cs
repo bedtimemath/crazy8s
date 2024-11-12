@@ -1,6 +1,8 @@
 ﻿using System.Linq.Dynamic.Core;
+using System.Text;
 using System.Text.Json;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Enums;
 using C8S.Domain.Models;
 using C8S.Domain.Queries;
 using C8S.Domain.Queries.List;
@@ -30,12 +32,24 @@ public class ApplicationsController(
                 .Include(a => a.LinkedOrganization)
                 .Include(a => a.Address)
                 .Include(a => a.ApplicationClubs)
-                .Where(a => !String.IsNullOrWhiteSpace(a.ApplicantLastName) &&
-                            !String.IsNullOrWhiteSpace(a.ApplicantEmail))
                 .AsSingleQuery()
                 .AsNoTracking();
 
-            if (!String.IsNullOrEmpty(query.SortDescription)) queryable = queryable.OrderBy(query.SortDescription);
+            if (!String.IsNullOrEmpty(query.SortDescription)) 
+                queryable = queryable.OrderBy(query.SortDescription);
+            if (query.Statuses != null && query.Statuses.Any())
+            {
+                var statusClauses = new List<string>();
+                var paramObjects = new object?[query.Statuses.Count];
+                for (int index = 0; index < query.Statuses.Count; index++)
+                {
+                    statusClauses.Add($"x.Status == @{index}");
+                    paramObjects[index] = query.Statuses[index];
+                }
+                var dynamicWhere = "x => " + String.Join(" || ", statusClauses);
+                _logger.LogInformation("WHERE: {Where}", dynamicWhere);
+                queryable = queryable.Where(dynamicWhere, paramObjects);
+            }
             
             var totalApplications = await queryable.CountAsync();
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using C8S.Domain.Enums;
 using MediatR;
 using SC.Common.Interactions;
 
@@ -9,4 +10,5 @@ public class ListApplicationsQuery : IRequest<BackendResponse<ApplicationListRes
     public int? StartIndex { get; set; }
     public int? Count { get; set; }
     public string? SortDescription { get; set; }
+    public IList<ApplicationStatus>? Statuses { get; set; }
 }
