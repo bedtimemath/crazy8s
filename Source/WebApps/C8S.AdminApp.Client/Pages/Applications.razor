@@ -24,9 +24,17 @@
                      AlignItems="AlignItems.Center"
                      JustifyContent="JustifyContent.SpaceBetween"
                      Gap="0.25rem">
-            <RadzenTextBox @bind-Value="@_sortDescription" />
             
-            <RadzenDropDown @ref="@_statusDropDown" 
+            <RadzenDropDown @ref="@_sortDropDown"
+                            @bind-Value="@_selectedSort"
+                            Data="@_sortDropDownOptions"
+                            TextProperty="@nameof(SortDropDownOption.Display)"
+                            ValueProperty="@nameof(SortDropDownOption.Value)"
+                            Multiple="false"
+                            AllowClear="false"
+                            Change="@(async (a) => await HandleSortDropdownChange(a))" />
+
+            <RadzenDropDown @ref="@_statusDropDown"
                             @bind-Value="@_selectedStatuses"
                             Data="EnumLabel<ApplicationStatus>.GetAllEnumLabels()"
                             TextProperty="@nameof(EnumLabel<ApplicationStatus>.Display)"
@@ -46,7 +54,7 @@
 
     </RadzenStack>
     <ApplicationsLister @ref="_applicationsLister"
-                        SortDescription="@_sortDescription"
+                        SortDescription="@_selectedSort"
                         Statuses="@_selectedStatuses"
                         TotalCountChanged="@((int c) => _totalCount = c)"
                         ExceptionRaised="@(async (ex) => await HandleExceptionRaisedAsync(ex))"
