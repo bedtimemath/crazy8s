@@ -1,5 +1,4 @@
-﻿using C8S.Domain.Base;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common.Base;
 

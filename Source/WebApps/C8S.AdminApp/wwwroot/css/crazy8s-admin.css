@@ -107,9 +107,23 @@ ul.rz-profile-menu {
     font-size: x-large;
 }
 
-
+/** PAGE HEADER **/
+.c8s-page-header {
+    background-color: var(--c8s-primary-mid);
+    padding: 0.5rem;
+}
+.c8s-page-title {
+    color: var(--c8s-light);
+    margin-bottom: 0;
+    font-size: x-large;
+}
 
 /** LIST PAGES **/
+.c8s-search-description {
+    color: var(--c8s-light);
+    font-weight: bold;
+}
+
 .c8s-page-lister {
     height: 500px;
     overflow-y: scroll;

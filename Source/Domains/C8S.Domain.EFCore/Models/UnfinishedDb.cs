@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using C8S.Domain.Base;
 using C8S.Domain.Enums;
 using SC.Common;
 using SC.Common.Base;
@@ -101,8 +100,6 @@ public class UnfinishedDb : BaseDb
     public DateTimeOffset? EndPart03On { get; set; }
 
     public DateTimeOffset? EndPart04On { get; set; }
-
-    public DateTimeOffset? EndPart05On { get; set; }
 
     public DateTimeOffset? SubmittedOn { get; set; }
     #endregion

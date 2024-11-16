@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
+using Exception = System.Exception;
 
 namespace C8S.Functions.Functions;
 
@@ -39,7 +41,6 @@ public class SubmitForm(
         { "FirstName", "wpforms[fields][7][first]" },
         { "LastName", "wpforms[fields][7][last]" },
         { "Email", "wpforms[fields][9]" },
-        { "Phone", "wpforms[fields][10]" },
         { "IsCoach", "wpforms[fields][6]" },
         { "HostedBefore", "wpforms[fields][11]" },
         { "OrganizationName", "wpforms[fields][19]" },
@@ -56,9 +57,10 @@ public class SubmitForm(
         { "TimeZone", "wpforms[fields][66]" },
         { "TimeSlotString", "wpforms[fields][64]" },
         { "WorkshopCode", "wpforms[fields][23]" },
-        { "ReferenceSource", "wpforms[fields][38]" },
-        { "ReferenceSourceOther", "wpforms[fields][46]" },
-        { "Comments", "wpforms[fields][39]" }
+        { "Phone", "wpforms[fields][74]" },
+        { "ReferenceSource", "wpforms[fields][67]" },
+        { "ReferenceSourceOther", "wpforms[fields][71]" },
+        { "Comments", "wpforms[fields][73]" }
     };
     #endregion
 
@@ -122,7 +124,6 @@ public class SubmitForm(
             var firstName = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["FirstName"])?.Data;
             var lastName = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["LastName"])?.Data;
             var email = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Email"])?.Data;
-            var phone = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Phone"])?.Data;
             var isCoachString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["IsCoach"])?.Data;
             var isCoach = isCoachString == CoachResponse;
 
@@ -132,7 +133,6 @@ public class SubmitForm(
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(lastName)) throw new Exception("Could not read last name.");
             if (String.IsNullOrEmpty(email)) throw new Exception("Could not read email.");
-            if (String.IsNullOrEmpty(phone)) throw new Exception("Could not read phone.");
             if (String.IsNullOrEmpty(isCoachString)) throw new Exception("Could not read applicant type.");
 
             // check for an existing email
@@ -150,7 +150,6 @@ public class SubmitForm(
                 unfinished.ApplicantFirstName = firstName;
                 unfinished.ApplicantLastName = lastName;
                 unfinished.ApplicantEmail = email;
-                unfinished.ApplicantPhone = phone;
                 unfinished.ApplicantType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
                 unfinished.EndPart02On = dateTimeHelper.UtcNow;
 
@@ -338,19 +337,24 @@ public class SubmitForm(
             var unfinished = await dbContext.Unfinisheds // clubs included automatically
                                  .FirstOrDefaultAsync(a => a.Code == guidCode) ??
                              throw new Exception($"Unrecognized code: {guidCode:N}");
-
+            
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
             var hasWorkshopCodeString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["HasWorkshopCodeString"])?.Data;
             var timeSlotString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TimeSlotString"])?.Data;
             var timeZone = ConvertFromJavascriptTimeZone(
                 formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TimeZone"])?.Data);
+            var phone = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Phone"])?.Data;
             var workshopCode = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["WorkshopCode"])?.Data;
+            var referenceSource = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ReferenceSource"])?.Data;
+            var referenceSourceOther = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ReferenceSourceOther"])?.Data;
+            var comments = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Comments"])?.Data;
 
             // save to storage just in case
             await SaveFormDataToBlob(formData, guidCode, 5);
 
             // check for errors (after saving to storage)
+            if (String.IsNullOrEmpty(phone)) throw new Exception("Could not read phone.");
             if (String.IsNullOrEmpty(hasWorkshopCodeString)) throw new Exception("Could not read has workshop code.");
             var hasWorkshopCode = hasWorkshopCodeString != NoWorkshopCodeResponse;
             var chosenTimeSlot = (DateTimeOffset?)null;
@@ -376,12 +380,78 @@ public class SubmitForm(
                 chosenTimeSlot = timeSlot;
             }
 
-            // these should be unnecessary
+            /*** DATABASE ***/
+            // update the unfinished data
+            unfinished.ApplicantPhone = phone;
+            unfinished.WorkshopCode = workshopCode;
+            unfinished.ApplicantTimeZone = timeZone;
+            unfinished.ChosenTimeSlot = chosenTimeSlot;
+            unfinished.ReferenceSource = referenceSource;
+            unfinished.ReferenceSourceOther = referenceSourceOther;
+            unfinished.Comments = comments;
+            unfinished.SubmittedOn = dateTimeHelper.UtcNow;
+            
+            // these should be unnecessary, but full slate requires them
             if (chosenTimeSlot == null) throw new Exception("Could not read chosen timeslot.");
             if (String.IsNullOrEmpty(unfinished.ApplicantLastName)) throw new Exception("Applicant missing last name.");
             if (String.IsNullOrEmpty(unfinished.ApplicantEmail)) throw new Exception("Applicant missing email.");
             if (String.IsNullOrEmpty(unfinished.ApplicantPhone)) throw new Exception("Applicant missing phone.");
 
+            // create the application & clubs
+            var application = 
+                new ApplicationDb()
+                {
+                    Status = ApplicationStatus.Received,
+                    ApplicantType = unfinished.ApplicantType,
+                    ApplicantFirstName = unfinished.ApplicantFirstName,
+                    ApplicantLastName = unfinished.ApplicantLastName,
+                    ApplicantEmail = unfinished.ApplicantEmail,
+                    ApplicantPhone = unfinished.ApplicantPhone,
+                    ApplicantTimeZone = unfinished.ApplicantTimeZone,
+                    OrganizationName = unfinished.OrganizationName,
+                    OrganizationType = unfinished.OrganizationType,
+                    OrganizationTypeOther = unfinished.OrganizationTypeOther,
+                    OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
+                    WorkshopCode = unfinished.WorkshopCode,
+                    ReferenceSource = unfinished.ReferenceSource,
+                    ReferenceSourceOther = unfinished.ReferenceSourceOther,
+                    Comments = unfinished.Comments,
+                    SubmittedOn = dateTimeHelper.UtcNow
+                };
+
+            var clubStrings = unfinished.ClubsString?.Split(' ') ?? [];
+            foreach (var clubString in clubStrings)
+            {
+                var parts = clubString.Split(':');
+                if (parts.Length != 3) throw new UnreachableException($"ClubString cannot be parsed: {clubString}");
+
+                var applicationClub = new ApplicationClubDb()
+                {
+                    Application = application,
+                    ClubSize = ClubSize.Size16,
+                    AgeLevel = parts[0] switch
+                    {
+                        "K2" => AgeLevel.GradesK2,
+                        "35" => AgeLevel.Grades35,
+                        _ => throw new UnreachableException($"Unrecognizable AgeLevel: {parts[0]}")
+                    },
+                    Season = parts[1] switch
+                    {
+                        "Season1" => 1,
+                        "Season2" => 2,
+                        "Season3" => 3,
+                        _ => throw new UnreachableException($"Unrecognizable Season: {parts[1]}")
+                    },
+                    StartsOn = DateOnly.Parse(parts[2])
+                };
+                application.ApplicationClubs ??= new List<ApplicationClubDb>();
+                application.ApplicationClubs.Add(applicationClub);
+            }
+
+            await dbContext.Applications.AddAsync(application);
+            await dbContext.SaveChangesAsync();
+
+            /*** FULL SLATE ***/
             // convert timeslot to eastern time
             var easternTimeSlot =
                 TimeZoneInfo.ConvertTimeBySystemTimeZoneId(chosenTimeSlot.Value, "Eastern Standard Time");
@@ -405,6 +475,7 @@ public class SubmitForm(
             {
                 await SaveFullSlateErrorToBlob(appointmentResponse, guidCode, pageNumber);
 
+                // gather the full slate errors
                 if (appointmentResponse.Errors?
                         .Any(e => e.ErrorCode is
                             FullSlateConstants.ErrorCodes.StatusBooked or
@@ -414,100 +485,28 @@ public class SubmitForm(
                     return GetPage5ErrorMessageResponse(req, guidCode,
                         "Unfortunately, that time slot has been booked. Please try another.");
                 }
-
                 var errorMessages = appointmentResponse.Errors?
-                    .Select(e => RemoveSupportTeamMessage(e.ErrorMessage)) ?? ["Unknown error"];
+                    .Select(e => RemoveSupportTeamMessage(e.ErrorMessage))?
+                    .ToList() ?? new List<string>();
+                
+                // back out the application
+                try
+                {
+                    dbContext.Applications.Remove(application);
+                    await dbContext.SaveChangesAsync();
+                }
+                catch (Exception exception)
+                {
+                    errorMessages.Add($"Could not remove application: {exception.Message}");
+                }
+
+                // return the error messages to the user
+                if (!errorMessages.Any()) errorMessages.Add("Unknown Error");
                 return GetPage5ErrorMessageResponse(req, guidCode,
                     $"ERROR: {String.Join("; ", errorMessages)} Please try again later.");
             }
 
-            // update the unfinished data
-            unfinished.WorkshopCode = workshopCode;
-            unfinished.ApplicantTimeZone = timeZone;
-            unfinished.ChosenTimeSlot = chosenTimeSlot;
-            unfinished.EndPart05On = dateTimeHelper.UtcNow;
-
-            // create the application
-            var application = 
-                new ApplicationDb()
-                {
-                    Status = ApplicationStatus.Received,
-                    ApplicantType = unfinished.ApplicantType,
-                    ApplicantFirstName = unfinished.ApplicantFirstName,
-                    ApplicantLastName = unfinished.ApplicantLastName,
-                    ApplicantEmail = unfinished.ApplicantEmail,
-                    ApplicantPhone = unfinished.ApplicantPhone,
-                    ApplicantTimeZone = unfinished.ApplicantTimeZone,
-                    OrganizationName = unfinished.OrganizationName,
-                    OrganizationType = unfinished.OrganizationType,
-                    OrganizationTypeOther = unfinished.OrganizationTypeOther,
-                    OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
-                    WorkshopCode = unfinished.WorkshopCode,
-                    SubmittedOn = dateTimeHelper.UtcNow
-                };
-            await dbContext.Applications.AddAsync(application);
-
-            await dbContext.SaveChangesAsync();
-
-            // return our redirect with the code
-            httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-6/?code={guidCode:N}&appid={application.ApplicationId}");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Exception raised");
-            httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
-            httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
-                                                 HttpUtility.UrlEncode(RemoveSupportTeamMessage(ex.Message)));
-        }
-
-        return httpResponse;
-    }
-
-    [Function("Submit-Page06")]
-    public async Task<HttpResponseData> RunPage06(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/6")] HttpRequestData req)
-    {
-        HttpResponseData httpResponse;
-        try
-        {
-            _logger.LogInformation("Submit-Page06 triggered");
-            
-            // setup for each page request
-            const int pageNumber = 6;
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-            // find the unfinished using the code in the request
-            var queryCode = req.Query["code"] ??
-                            throw new Exception($"Could not read code from query string: {req.Url.AbsoluteUri}");
-            if (!Guid.TryParse(queryCode, out var guidCode))
-                throw new Exception($"Badly formatted code: {queryCode}");
-
-            // find the unfinished using the code in the request
-            var unfinished = await dbContext.Unfinisheds // clubs included automatically
-                                 .FirstOrDefaultAsync(a => a.Code == guidCode) ??
-                             throw new Exception($"Unrecognized code: {guidCode:N}");
-
-            // read the form data
-            var formData = await MultipartFormDataParser.ParseAsync(req.Body);
-            var referenceSource = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ReferenceSource"])?.Data;
-            var referenceSourceOther = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ReferenceSourceOther"])?.Data;
-            var comments = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Comments"])?.Data;
-
-            // save to storage just in case
-            await SaveFormDataToBlob(formData, guidCode, pageNumber);
-
-            // check for errors (after saving to storage)
-            if (String.IsNullOrEmpty(referenceSource)) throw new Exception("Could not read reference source.");
-
-            // update the unfinished data
-            unfinished.ReferenceSource = referenceSource;
-            unfinished.ReferenceSourceOther = referenceSourceOther;
-            unfinished.Comments = comments;
-            unfinished.SubmittedOn = dateTimeHelper.UtcNow;
-
-            await dbContext.SaveChangesAsync();
-
+            /*** COMPLETE ***/
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
             httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-complete");
@@ -517,7 +516,7 @@ public class SubmitForm(
             _logger.LogError(ex, "Exception raised");
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
             httpResponse.Headers.Add("location", "https://crazy8sclub.org/coach-application-error/?error=" +
-                                                 HttpUtility.UrlEncode(ex.Message));
+                                                 HttpUtility.UrlEncode(RemoveSupportTeamMessage(ex.Message)));
         }
 
         return httpResponse;

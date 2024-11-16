@@ -83,8 +83,6 @@ public class UnfinishedDTO : BaseDTO
 
     public DateTimeOffset? EndPart04On { get; set; } = null;
 
-    public DateTimeOffset? EndPart05On { get; set; } = null;
-
     public DateTimeOffset? SubmittedOn { get; set; } = null;
     #endregion
 

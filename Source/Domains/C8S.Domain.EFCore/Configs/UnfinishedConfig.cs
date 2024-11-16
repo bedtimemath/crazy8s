@@ -169,10 +169,6 @@ public class UnfinishedConfig : BaseConfig<UnfinishedDb>
         entity.Property(m => m.EndPart04On)
             .IsRequired(false);
 
-        //public DateTimeOffset? EndPart05On { get; set; }
-        entity.Property(m => m.EndPart05On)
-            .IsRequired(false);
-
         //public DateTimeOffset? SubmittedOn { get; set; }
         entity.Property(m => m.SubmittedOn)
             .IsRequired(false);

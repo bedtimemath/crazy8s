@@ -14,7 +14,7 @@ public class C8SDbContext(
     DbContextOptions<C8SDbContext> options) : DbContext(options)
 {
     private readonly ILogger<C8SDbContext> _logger = loggerFactory.CreateLogger<C8SDbContext>();
-    private readonly IAuditInterceptor? _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
+    private readonly IAuditInterceptor _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
 
     #region DbSet Properties
     public DbSet<AddressDb> Addresses { get; set; }

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
-using C8S.Domain.Base;
 using C8S.Domain.Enums;
 using SC.Common;
 using SC.Common.Base;

@@ -7,7 +7,7 @@ using SC.Common.Radzen.Base;
 
 namespace C8S.AdminApp.Client.Pages;
 
-public partial class Applications: BaseRazorPage
+public partial class Applications : BaseRazorPage
 {
     private readonly IList<SortDropDownOption> _sortDropDownOptions = [
         new( "Submitted (newest)", "SubmittedOn DESC" ),
@@ -30,15 +30,15 @@ public partial class Applications: BaseRazorPage
 
     private int? _totalCount;
 
-    private async Task HandleSortDropdownChange(object args)
+    private Task HandleSortDropdownChange(object args)
     {
-
+        return Task.CompletedTask;
     }
-    private async Task HandleStatusDropdownChange(object args)
+    private Task HandleStatusDropdownChange(object args)
     {
         var statuses = args as EnumerableQuery<ApplicationStatus> ??
                        throw new UnreachableException();
-
+        return Task.CompletedTask;
     }
 
     private record SortDropDownOption(string Display, string Value);
