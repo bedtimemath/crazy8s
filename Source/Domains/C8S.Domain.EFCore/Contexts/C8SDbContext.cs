@@ -1,5 +1,4 @@
-﻿#nullable disable
-using C8S.Domain.EFCore.Configs;
+﻿using C8S.Domain.EFCore.Configs;
 using C8S.Domain.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +12,10 @@ public class C8SDbContext(
     IServiceProvider serviceProvider,
     DbContextOptions<C8SDbContext> options) : DbContext(options)
 {
+    private static bool _hasBeenWarned;
+
     private readonly ILogger<C8SDbContext> _logger = loggerFactory.CreateLogger<C8SDbContext>();
-    private readonly IAuditInterceptor _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
+    private readonly IAuditInterceptor? _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
 
     #region DbSet Properties
     public DbSet<AddressDb> Addresses { get; set; }
@@ -35,8 +36,11 @@ public class C8SDbContext(
     {
         if (_auditInterceptor != null)
             optionsBuilder.AddInterceptors(_auditInterceptor);
-        //else
-        //    _logger.LogWarning("AuditInterceptor is not being used.");
+        else if (!_hasBeenWarned)
+        {
+            _logger.LogWarning("AuditInterceptor is not being used.");
+            _hasBeenWarned = true;
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
