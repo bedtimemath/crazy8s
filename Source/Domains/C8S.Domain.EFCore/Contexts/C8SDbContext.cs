@@ -12,10 +12,12 @@ public class C8SDbContext(
     IServiceProvider serviceProvider,
     DbContextOptions<C8SDbContext> options) : DbContext(options)
 {
-    private static bool _hasBeenWarned;
+    private static bool _auditWarned;
+    private static bool _queueWarned;
 
     private readonly ILogger<C8SDbContext> _logger = loggerFactory.CreateLogger<C8SDbContext>();
     private readonly IAuditInterceptor? _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
+    private readonly IQueueInterceptor? _queueInterceptor = serviceProvider.GetService<IQueueInterceptor>();
 
     #region DbSet Properties
     public DbSet<AddressDb> Addresses { get; set; }
@@ -36,10 +38,18 @@ public class C8SDbContext(
     {
         if (_auditInterceptor != null)
             optionsBuilder.AddInterceptors(_auditInterceptor);
-        else if (!_hasBeenWarned)
+        else if (!_auditWarned)
         {
             _logger.LogWarning("AuditInterceptor is not being used.");
-            _hasBeenWarned = true;
+            _auditWarned = true;
+        }
+
+        if (_queueInterceptor != null)
+            optionsBuilder.AddInterceptors(_queueInterceptor);
+        else if (!_queueWarned)
+        {
+            _logger.LogWarning("QueueInterceptor is not being used.");
+            _queueWarned = true;
         }
     }
 
