@@ -3,6 +3,10 @@
     "C8S.UtilityApp": {
       "commandName": "Project"
     },
+    "Add Application": {
+      "commandName": "Project",
+      "commandLineArgs": "add-application"
+    },
     "Load C8s Data": {
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data"

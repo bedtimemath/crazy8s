@@ -40,6 +40,7 @@ try
      */
     var parserResult = Parser.Default
         .ParseArguments<
+            AddApplicationOptions,
             LoadC8SDataOptions,
             LoadSampleDataOptions,
             ProcessApplicationsOptions,
@@ -102,6 +103,11 @@ try
     {
         // Parsing the arguments
         parserResult
+            .WithParsed<AddApplicationOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, AddApplication>();
+            })
             .WithParsed<LoadSampleDataOptions>(options =>
             {
                 services.AddSingleton(options);

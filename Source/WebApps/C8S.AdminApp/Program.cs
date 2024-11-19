@@ -5,9 +5,11 @@ using Azure.Storage.Blobs;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
+using C8S.AdminApp.Notifications;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -17,6 +19,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Radzen;
 using SC.Audit.EFCore.Extensions;
+using SC.Audit.EFCore.Models;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Helpers.Extensions;
@@ -89,30 +92,28 @@ try
     SelfLog.Enable(m => Console.Error.WriteLine(m));
 
     /*****************************************
-     * SOFT CROW & LOCAL
-     */
-    builder.Services.AddCommonHelpers();
-    builder.Services.AddScoped<SelfService>();
-    builder.Services.AddSCAuditContext(connections.Audit);
-    builder.Services.AddC8SDbContext(connections.Database);
-    
-    /*****************************************
-     * RADZEN SERVICES
-     */
-    builder.Services.AddRadzenComponents();
-
-    /*****************************************
      * AZURE CLIENTS SETUP
      */
     builder.Services.AddAzureClients(clientBuilder =>
     {
         clientBuilder.AddBlobServiceClient(connections.AzureStorage);
+        clientBuilder.AddQueueServiceClient(connections.AzureStorage);
     });
 
     /*****************************************
      * MEDIATR
      */
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
+
+    /*****************************************
+     * SOFT CROW & LOCAL
+     */
+    builder.Services.AddCommonHelpers();
+    builder.Services.AddSCAuditContext(connections.Audit);
+    builder.Services.AddC8SDbContext(connections.Database);
+    
+    builder.Services.AddScoped<ChangesService>();
+    builder.Services.AddScoped<SelfService>();
 
     /*****************************************
      * MINIMAL APIS
@@ -263,6 +264,11 @@ try
 
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
     builder.Services.AddHttpContextAccessor();
+    
+    /*****************************************
+     * RADZEN SERVICES
+     */
+    builder.Services.AddRadzenComponents();
 
     /*****************************************
      * BLAZOR SERVICES
@@ -309,38 +315,21 @@ try
 
     app.MapGroup("/authentication").MapLoginAndLogout();
 
-    app.MapPost("/datachanges", async (IServiceProvider services, HttpContext context) =>
+    app.MapPost("/data-changes", async (ILogger<Program> logger, IPublisher publisher, HttpContext context) =>
     {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        var blobClient = services.GetRequiredService<BlobServiceClient>();
-
-        var results = String.Empty;
         try
         {
-            var req = context.Request;
-            var reqObject = new
-            {
-                req.Method,
-                req.Headers,
-                req.Cookies,
-                Body = await new StreamReader(req.Body).ReadToEndAsync()
-            };
-            results = JsonSerializer.Serialize(reqObject);
-
-            var container = blobClient.GetBlobContainerClient("webhooks");
-            await container.CreateIfNotExistsAsync();
-            var blob = container.GetBlobClient(
-                $"{DateTimeOffset.UtcNow:yyyyMMddHHmm}-{String.Empty.AppendRandomAlphaOnly(4)}.json");
-
-            using var stream = new MemoryStream(Encoding.UTF8.GetBytes(results));
-            await blob.UploadAsync(stream);
+            var bodyJson = await new StreamReader(context.Request.Body).ReadToEndAsync();
+            var dataChange = JsonSerializer.Deserialize<DataChangeDb>(bodyJson) ??
+                             throw new Exception($"Could not deserialize data change: {bodyJson}");
+            await publisher.Publish(new DataChangeNotification(dataChange));
         }
         catch (Exception exc)
         {
-            logger.LogError(exc, "Could not upload data");
+            logger.LogError(exc, "Could not send notification");
         }
 
-        return Results.Ok(results);
+        return Results.Ok();
     }).AllowAnonymous();
 
     app.Run();
