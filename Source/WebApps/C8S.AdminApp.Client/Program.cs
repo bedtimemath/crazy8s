@@ -2,6 +2,7 @@ using Blazr.RenderState.WASM;
 using C8S.AdminApp.Client;
 using C8S.AdminApp.Client.Auth;
 using C8S.AdminApp.Client.Services;
+using C8S.AdminApp.Common.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
@@ -66,12 +67,12 @@ try
      * SOFT CROW & LOCAL
      */
     builder.Services.AddCommonHelpers();
+    builder.Services.AddSingleton<ICommunicationService, CommunicationService>();
 
     /*****************************************
-     * APP
+     * APP BUILD & RUN
      */
     await builder.Build().RunAsync();
-
 }
 catch (Exception ex)
 {

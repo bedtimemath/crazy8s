@@ -1,10 +1,12 @@
-using System.Text;
 using System.Text.Json;
+using Azure.Core;
 using Azure.Identity;
-using Azure.Storage.Blobs;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
+using C8S.AdminApp.Common.Dummies;
+using C8S.AdminApp.Common.Interfaces;
+using C8S.AdminApp.Hubs;
 using C8S.AdminApp.Notifications;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
@@ -19,9 +21,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Radzen;
 using SC.Audit.EFCore.Extensions;
-using SC.Audit.EFCore.Models;
 using SC.Common;
-using SC.Common.Extensions;
 using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
@@ -111,9 +111,14 @@ try
     builder.Services.AddCommonHelpers();
     builder.Services.AddSCAuditContext(connections.Audit);
     builder.Services.AddC8SDbContext(connections.Database);
-    
+
     builder.Services.AddScoped<ChangesService>();
     builder.Services.AddScoped<SelfService>();
+
+    /*****************************************
+     * DUMMY SERVICES (for server-instantiated components)
+     */
+    builder.Services.AddSingleton<ICommunicationService, DummyCommunicationService>();
 
     /*****************************************
      * MINIMAL APIS
@@ -264,7 +269,7 @@ try
 
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
     builder.Services.AddHttpContextAccessor();
-    
+
     /*****************************************
      * RADZEN SERVICES
      */
@@ -297,12 +302,14 @@ try
         app.UseHsts();
     }
 
+    app.UseResponseCompression();
+
     app.UseHttpsRedirection();
 
     app.UseStaticFiles();
     app.UseAntiforgery();
 
-    //app.MapHub<ChatHub>("/changes");
+    app.MapHub<CommunicationHub>("/communication");
 
     app.MapControllers();
 
@@ -314,23 +321,6 @@ try
             typeof(SC.Common.Razor._Imports).Assembly);
 
     app.MapGroup("/authentication").MapLoginAndLogout();
-
-    app.MapPost("/data-changes", async (ILogger<Program> logger, IPublisher publisher, HttpContext context) =>
-    {
-        try
-        {
-            var bodyJson = await new StreamReader(context.Request.Body).ReadToEndAsync();
-            var dataChange = JsonSerializer.Deserialize<DataChangeDb>(bodyJson) ??
-                             throw new Exception($"Could not deserialize data change: {bodyJson}");
-            await publisher.Publish(new DataChangeNotification(dataChange));
-        }
-        catch (Exception exc)
-        {
-            logger.LogError(exc, "Could not send notification");
-        }
-
-        return Results.Ok();
-    }).AllowAnonymous();
 
     app.Run();
 

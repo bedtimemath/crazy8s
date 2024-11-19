@@ -6,4 +6,5 @@ public class Endpoints
 
     public string? AzureStorage { get; set; }
     public string? FullSlateApi { get; set; }
+    public string? C8SAdminApp { get; set; }
 }

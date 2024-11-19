@@ -19,6 +19,7 @@ using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.Net.Http.Headers;
 
 /*****************************************
  * INITIAL LOGGING
@@ -166,6 +167,18 @@ try
         var fullSlateApi = endpoints.FullSlateApi ?? throw new Exception("Missing Endpoints:FullSlateApi");
         var fullSlateToken = apiKeys.FullSlate ?? throw new Exception("Missing ApiKeys:FullSlate");
         services.AddFullSlateServices(fullSlateApi, fullSlateToken);
+        
+        /*****************************************
+         * HTTP CLIENTS
+         */
+        if (String.IsNullOrEmpty(endpoints.C8SAdminApp)) throw new Exception("Missing C8SAdminApp endpoint");
+        services.AddHttpClient(nameof(Endpoints.C8SAdminApp), client =>
+        {
+            client.BaseAddress = new Uri(endpoints.C8SAdminApp);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        });
+
     });
 
     /*****************************************

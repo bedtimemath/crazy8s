@@ -1,8 +1,6 @@
 ﻿using System.Linq.Dynamic.Core;
-using System.Text;
 using System.Text.Json;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.Enums;
 using C8S.Domain.Models;
 using C8S.Domain.Queries;
 using C8S.Domain.Queries.List;

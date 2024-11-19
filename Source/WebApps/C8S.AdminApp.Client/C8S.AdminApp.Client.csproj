@@ -30,11 +30,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Audit.Abstractions\SC.Audit.Abstractions.csproj" />
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Radzen\SC.Common.Radzen.csproj" />
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
 		<ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
+		<ProjectReference Include="..\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj" />
 	</ItemGroup>
 
 </Project>

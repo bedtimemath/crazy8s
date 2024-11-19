@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using SC.Audit.EFCore.Models;
+using SC.Audit.Abstractions.Models;
 
 namespace C8S.AdminApp.Notifications;
 
 public class DataChangeNotification(
-    DataChangeDb dataChange): INotification
+    DataChange dataChange): INotification
 {
-    public DataChangeDb DataChange { get; private set; } = dataChange;
+    public DataChange DataChange { get; private set; } = dataChange;
 }

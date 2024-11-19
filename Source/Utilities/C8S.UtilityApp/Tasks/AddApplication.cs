@@ -1,9 +1,13 @@
-﻿using C8S.Domain.EFCore.Contexts;
+﻿using System.Net.Http.Json;
+using C8S.Domain.AppConfigs;
+using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using C8S.UtilityApp.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Audit.Abstractions.Models;
+using SC.Audit.EFCore.Models;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
 
@@ -13,7 +17,8 @@ internal class AddApplication(
     ILogger<AddApplication> logger,
     AddApplicationOptions options,
     IRandomizer randomizer,
-    IDbContextFactory<C8SDbContext> dbContextFactory)
+    IDbContextFactory<C8SDbContext> dbContextFactory,
+    IHttpClientFactory httpClientFactory)
     : IActionLauncher
 {
     public async Task<int> Launch()
@@ -59,6 +64,26 @@ internal class AddApplication(
         // UPDATE THE DATABASE
         await dbContext.SaveChangesAsync();
         logger.LogInformation("Added {Application}", application.Display);
+
+        // ALERT THROUGH THE ENDPOINT
+        var httpClient = httpClientFactory.CreateClient(nameof(Endpoints.C8SAdminApp));
+        var dataChange = new DataChange()
+        {
+            EntityId = application.ApplicationId,
+            EntityName = nameof(ApplicationDb),
+            EntityState = EntityState.Added
+        };
+
+        try
+        {
+            var response = await httpClient.PostAsJsonAsync("data-changes", dataChange);
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Bad response status: {response.StatusCode}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Could not post to endpoint");
+        }
 
         logger.LogInformation("{Name}: complete.", nameof(AddApplication));
         return 0;
