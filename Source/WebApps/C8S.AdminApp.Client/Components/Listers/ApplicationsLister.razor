@@ -1,21 +1,14 @@
-﻿@inherits C8S.AdminApp.Client.Components.Base.BaseRenderStateComponent
+﻿@inherits BaseRazorComponent
 @rendermode InteractiveWebAssembly
 
 <div class="c8s-page-lister c8s-applications-lister @CssClass">
-    @if (IsPreRender)
-    {
-        <div>loading app...</div>
-    }
-    else
-    {
-        <Virtualize @ref="@_listerComponent"
-                    ItemsProvider="@GetRows"
-                    Context="application">
-            <ItemContent>
-                <RadzenCard class="rz-mb-2">
-                    <ApplicationDisplayer Application="@application"/>
-                </RadzenCard>
-            </ItemContent>
-        </Virtualize>
-    }
+    <Virtualize @ref="@_listerComponent"
+                ItemsProvider="@GetRows"
+                Context="application">
+        <ItemContent>
+            <RadzenCard class="rz-mb-2">
+                <ApplicationDisplayer Application="@application"/>
+            </RadzenCard>
+        </ItemContent>
+    </Virtualize>
 </div>

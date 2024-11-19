@@ -47,7 +47,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebServers", "WebServers", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.Functions", "WebServers\C8S.Functions\C8S.Functions.csproj", "{F97A69D5-113E-48F1-83D0-7EC0F4B87BAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.AdminApp.Common", "WebApps\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj", "{3075227A-EA1D-4DB3-A9D9-21EBF2E02341}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "C8S.AdminApp.Common", "WebApps\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj", "{3075227A-EA1D-4DB3-A9D9-21EBF2E02341}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

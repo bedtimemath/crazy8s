@@ -159,7 +159,6 @@ try
 
         services.AddCommonHelpers();
         //services.AddSCAuditContext(connections.Audit);
-        services.AddSCQueueInterceptor();
         services.AddC8SDbContext(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
         services.AddApplicationServices();

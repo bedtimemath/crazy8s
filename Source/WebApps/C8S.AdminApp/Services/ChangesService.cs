@@ -1,5 +1,5 @@
-﻿using C8S.AdminApp.Notifications;
-using MediatR;
+﻿using MediatR;
+using SC.Audit.Abstractions.Notifications;
 
 namespace C8S.AdminApp.Services;
 

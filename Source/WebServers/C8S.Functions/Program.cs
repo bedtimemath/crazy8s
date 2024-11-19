@@ -16,6 +16,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.Net.Http.Headers;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -84,19 +85,26 @@ try
         });
 
         /*****************************************
+         * HTTP CLIENTS
+         */
+        if (String.IsNullOrEmpty(endpoints.C8SAdminApp)) throw new Exception("Missing Endpoints:C8SAdminApp");
+        services.AddHttpClient(nameof(endpoints.C8SAdminApp), client =>
+        {
+            client.BaseAddress = new Uri(endpoints.C8SAdminApp);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        });
+
+        /*****************************************
          * SOFT CROW & LOCAL
          */
         services.AddCommonHelpers();
         services.AddSCAuditContext(connections.Audit);
         services.AddC8SDbContext(connections.Database);
 
-        /*****************************************
-         * OTHER CRAZY 8s SETUP
-         */
         if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
         if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
         services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
-        services.AddCommonHelpers();
 
         /*****************************************
          * TELEMETRY

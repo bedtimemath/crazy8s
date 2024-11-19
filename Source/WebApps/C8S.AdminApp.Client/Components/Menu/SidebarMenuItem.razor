@@ -1,0 +1,29 @@
+﻿@inherits BaseRazorComponent
+@rendermode InteractiveWebAssembly
+
+<div id="@ComponentId" class="c8s-menu-item @(_isSelected ? "selected" : null) @CssClass">
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Left"
+                 @onclick="@HandleMenuItemClicked"
+                 class="w-100">
+
+        <div class="c8s-menu-item-icon">
+            @if (!String.IsNullOrEmpty(Icon))
+            {
+                <IconDisplay Icon="@Icon"
+                             CssClass="flex-shrink-0" />
+            }
+        </div>
+        <div class="c8s-menu-item-display">
+            @if (!String.IsNullOrEmpty(Display))
+            {
+                <RadzenText TagName="TagName.Div"
+                            TextStyle="TextStyle.Body1"
+                            TextAlign="TextAlign.Left"
+                            Text="@Display" />
+            }
+        </div>
+
+    </RadzenStack>
+</div>

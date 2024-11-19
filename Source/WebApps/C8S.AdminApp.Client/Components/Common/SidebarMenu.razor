@@ -3,20 +3,37 @@
 <div class="c8s-sidebar-menu @CssClass">
     <RadzenRow>
         <RadzenColumn>
-            <RadzenCard class="w-100">
-                <RadzenStack Orientation="Orientation.Horizontal"
-                             AlignItems="AlignItems.Center"
-                             JustifyContent="JustifyContent.Left"
-                             class="w-100">
-                    <IconDisplay Icon="@C8SConstants.Icons.Application"
-                                 CssClass="flex-shrink-0" />
-                    <RadzenText TagName="TagName.Div"
-                                TextStyle="TextStyle.Body1"
-                                TextAlign="TextAlign.Left"
-                                Text="Applications"
-                                class="flex-shrink-0 flex-grow-1" />
-                </RadzenStack>
-            </RadzenCard>
+            <SidebarMenuItem Display="Applications"
+                             Icon="@C8SConstants.Icons.Application"
+                             PageRoute="/applications"/>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn>
+            <SidebarMenuItem Display="Organizations"
+                             Icon="@C8SConstants.Icons.Organization"
+                             PageRoute="/organizations" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn>
+            <SidebarMenuItem Display="Coaches"
+                             Icon="@C8SConstants.Icons.Coach"
+                             PageRoute="/coaches" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn>
+            <SidebarMenuItem Display="Orders"
+                             Icon="@C8SConstants.Icons.Order"
+                             PageRoute="/orders" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn>
+            <SidebarMenuItem Display="SKUs"
+                             Icon="@C8SConstants.Icons.Sku"
+                             PageRoute="/skus" />
         </RadzenColumn>
     </RadzenRow>
 </div>

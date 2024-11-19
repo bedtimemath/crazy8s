@@ -81,6 +81,7 @@ ul.rz-profile-menu {
 .rzi {
     min-width: 2rem;
 }
+
 .rz-radiobutton-box .rzi,
 .rz-chkbox-box .rzi {
     min-width: 0;
@@ -98,20 +99,89 @@ ul.rz-profile-menu {
 }
 
 /** SIDEBAR MENU **/
-.c8s-sidebar-menu .sc-icon-display {
-    font-size: x-large;
-    padding-left: 1.25rem;
+.c8s-sidebar-menu .c8s-menu-item {
+    padding: 0.75rem 0;
+    cursor: pointer;
 }
-.c8s-sidebar-menu .rz-text-body1 {
-    margin-block-end: 0;
-    font-size: x-large;
+
+    .c8s-sidebar-menu .c8s-menu-item .c8s-menu-item-icon {
+        padding-left: 1.25rem;
+        flex-shrink: 0;
+        min-width: 2.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+        .c8s-sidebar-menu .c8s-menu-item .c8s-menu-item-icon .sc-icon-display {
+            font-size: x-large;
+            text-align: center;
+            min-width: 32px;
+        }
+
+    .c8s-sidebar-menu .c8s-menu-item .c8s-menu-item-display {
+        flex-shrink: 0;
+        flex-grow: 1;
+    }
+
+        .c8s-sidebar-menu .c8s-menu-item .c8s-menu-item-display .rz-text-body1 {
+            margin-block-end: 0;
+            font-size: x-large;
+        }
+
+    /** SIDEBAR MENU - SELECTED **/
+    .c8s-sidebar-menu .c8s-menu-item.selected {
+        color: var(--c8s-light);
+        background-color: var(--c8s-primary-dark);
+    }
+
+    .c8s-sidebar-menu .c8s-menu-item:not(.selected) {
+        color: revert;
+        background-color: revert;
+    }
+
+    .c8s-sidebar-menu .c8s-menu-item.selected .c8s-menu-item-display .rz-text-body1 {
+        color: var(--c8s-light);
+    }
+
+    .c8s-sidebar-menu .c8s-menu-item:not(.selected) .c8s-menu-item-display .rz-text-body1 {
+        color: revert;
+    }
+
+/** LOADING **/
+.c8s-page-loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
+.c8s-spinner {
+    border: 16px solid silver;
+    border-top: 16px solid #337AB7;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
 
 /** PAGE HEADER **/
 .c8s-page-header {
     background-color: var(--c8s-primary-mid);
     padding: 0.5rem;
 }
+
 .c8s-page-title {
     color: var(--c8s-light);
     margin-bottom: 0;

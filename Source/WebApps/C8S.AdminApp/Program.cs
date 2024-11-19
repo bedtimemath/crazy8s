@@ -7,7 +7,6 @@ using C8S.AdminApp.Auth;
 using C8S.AdminApp.Common.Dummies;
 using C8S.AdminApp.Common.Interfaces;
 using C8S.AdminApp.Hubs;
-using C8S.AdminApp.Notifications;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;

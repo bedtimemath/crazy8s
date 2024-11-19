@@ -1,9 +1,12 @@
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Web;
 using Azure.Storage.Blobs;
+using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
@@ -16,6 +19,7 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Audit.Abstractions.Models;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
@@ -25,6 +29,7 @@ namespace C8S.Functions.Functions;
 
 public class SubmitForm(
     ILoggerFactory loggerFactory,
+    IHttpClientFactory httpClientFactory,
     IDateTimeHelper dateTimeHelper,
     IDbContextFactory<C8SDbContext> dbContextFactory,
     BlobServiceClient blobServiceClient,
@@ -507,6 +512,26 @@ public class SubmitForm(
             }
 
             /*** COMPLETE ***/
+            // call the admin app endpoint to let it know
+            try
+            {
+                using var httpClient = httpClientFactory.CreateClient(nameof(Endpoints.C8SAdminApp));
+                var options = new JsonSerializerOptions() { Converters = { new JsonStringEnumConverter() } };
+                var dataChange = new DataChange()
+                {
+                    EntityId = application.ApplicationId,
+                    EntityName = nameof(ApplicationDb),
+                    EntityState = EntityState.Added
+                };
+                var response = await httpClient.PostAsJsonAsync("/api/datachanges", dataChange, options);
+                if (!response.IsSuccessStatusCode)
+                    _logger.LogWarning("Failure calling C8SAdminApp endpoint: {Message}", response.ReasonPhrase);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogWarning("Error calling C8SAdminApp endpoint: {Message}", exception.Message);
+            }
+
             // return our redirect with the code
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
             httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-complete");

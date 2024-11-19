@@ -1,0 +1,15 @@
+﻿@if (HideDuringPreRender && IsPreRender)
+{
+    <div class="c8s-page-loading">
+        <div class="c8s-spinner"></div>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenContextMenu />
+<RadzenTooltip />

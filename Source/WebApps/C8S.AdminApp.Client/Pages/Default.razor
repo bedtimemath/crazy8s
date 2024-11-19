@@ -2,17 +2,16 @@
 @inherits BaseRazorPage
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Default</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<RadzenPageContainer HideDuringPreRender="true">
 
-Welcome to your new app.
+    <h1>Hello, world!</h1>
 
-<a href="/applications">Applications</a>
+    Welcome to your new app.
 
-<RenderStateViewer Parent="this" />
+    <a href="/applications">Applications</a>
 
-<RadzenDialog />
-<RadzenNotification />
-<RadzenContextMenu />
-<RadzenTooltip />
+    <RenderStateViewer Parent="this" />
+
+</RadzenPageContainer>
