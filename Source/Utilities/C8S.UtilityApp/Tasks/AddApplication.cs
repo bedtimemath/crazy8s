@@ -7,7 +7,6 @@ using C8S.UtilityApp.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SC.Audit.Abstractions.Models;
-using SC.Audit.EFCore.Models;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
 
@@ -76,7 +75,7 @@ internal class AddApplication(
 
         try
         {
-            var response = await httpClient.PostAsJsonAsync("data-changes", dataChange);
+            var response = await httpClient.PostAsJsonAsync("api/datachanges", dataChange);
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Bad response status: {response.StatusCode}");
         }

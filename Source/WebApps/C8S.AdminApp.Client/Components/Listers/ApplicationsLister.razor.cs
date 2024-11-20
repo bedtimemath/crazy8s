@@ -36,14 +36,16 @@ public partial class ApplicationsLister : BaseRazorComponent
     #endregion
 
     #region Component References
-    private Virtualize<ApplicationListDisplay>? _listerComponent; 
+    private Virtualize<ApplicationListDisplay>? _listerComponent;
     #endregion
 
     #region Public Methods
     public async Task Reload()
     {
-        if (_listerComponent != null)
-            await _listerComponent.RefreshDataAsync();
+        if (_listerComponent == null) return;
+
+        await _listerComponent.RefreshDataAsync();
+        await InvokeAsync(StateHasChanged);
     }
     #endregion
 

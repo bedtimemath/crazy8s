@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Web;
 using Azure.Storage.Blobs;
 using C8S.Domain.AppConfigs;
@@ -49,11 +50,11 @@ public class SubmitForm(
         { "IsCoach", "wpforms[fields][6]" },
         { "HostedBefore", "wpforms[fields][11]" },
         { "OrganizationName", "wpforms[fields][19]" },
-        { "Address1", "wpforms[fields][20][address1]" },
-        { "Address2", "wpforms[fields][20][address2]" },
-        { "City", "wpforms[fields][20][city]" },
-        { "State", "wpforms[fields][20][state]" },
-        { "ZIPCode", "wpforms[fields][20][postal]" },
+        { "Address1", "wpforms[fields][65]" },
+        { "Address2", "wpforms[fields][70]" },
+        { "City", "wpforms[fields][67]" },
+        { "State", "wpforms[fields][68]" },
+        { "ZIPCode", "wpforms[fields][69]" },
         { "OrganizationType", "wpforms[fields][21]" },
         { "OrganizationTypeOther", "wpforms[fields][22]" },
         { "TaxId", "wpforms[fields][24]" },
@@ -67,6 +68,8 @@ public class SubmitForm(
         { "ReferenceSourceOther", "wpforms[fields][71]" },
         { "Comments", "wpforms[fields][73]" }
     };
+
+    private readonly Regex _parseStateFull = new Regex(@".*\((?<code>[A-Z][A-Z])\)");
     #endregion
 
     #region Function Methods
@@ -207,11 +210,16 @@ public class SubmitForm(
             var address1 = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Address1"])?.Data;
             var address2 = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Address2"])?.Data;
             var city = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["City"])?.Data;
-            var state = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["State"])?.Data;
+            var stateFull = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["State"])?.Data;
             var zipCode = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ZIPCode"])?.Data;
             var organizationType = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["OrganizationType"])?.Data;
             var organizationTypeOther = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["OrganizationTypeOther"])?.Data;
             var taxId = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TaxId"])?.Data;
+
+            // the full state name is too long, but in case the values get changed, we'll use the best we can
+            var stateMatch = _parseStateFull.Match(stateFull ?? String.Empty);
+            var state = stateMatch.Success ? stateMatch.Groups["code"].Value : 
+                (stateFull ?? String.Empty).LimitTo(SoftCrowConstants.MaxLengths.Tiny);
 
             // save to storage just in case
             await SaveFormDataToBlob(formData, guidCode, pageNumber);

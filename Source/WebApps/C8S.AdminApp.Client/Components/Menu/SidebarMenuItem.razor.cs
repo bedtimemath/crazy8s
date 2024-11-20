@@ -1,5 +1,4 @@
-﻿using C8S.Domain.Enums;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using SC.Common.Razor.Base;
