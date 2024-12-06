@@ -70,5 +70,6 @@ public class PlaceDb: BaseDb
     public ICollection<ClubDb> Clubs { get; set; } = default!;
     public ICollection<PersonDb> Persons { get; set; } = default!;
     public ICollection<RequestDb> Requests { get; set; } = default!;
+    public ICollection<SaleDb> Sales { get; set; } = default!;
     #endregion
 }

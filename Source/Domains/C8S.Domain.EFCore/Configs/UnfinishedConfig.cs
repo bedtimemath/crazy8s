@@ -174,6 +174,13 @@ public class UnfinishedConfig : BaseConfig<UnfinishedDb>
             .IsRequired(false);
         #endregion
 
+        #region Reference Properties
+        //[ForeignKey(nameof(Request))]
+        //public int? RequestId { get; set; } = default!;
+        entity.Property(m => m.RequestId)
+            .IsRequired(false);
+        #endregion
+
         #region Indices
         entity.HasIndex(m => m.Code)
             .IsUnique(true);

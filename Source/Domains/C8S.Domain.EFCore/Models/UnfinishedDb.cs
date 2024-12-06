@@ -103,4 +103,10 @@ public class UnfinishedDb : BaseDb
 
     public DateTimeOffset? SubmittedOn { get; set; }
     #endregion
+
+    #region Reference Properties
+    [ForeignKey(nameof(Request))]
+    public int? RequestId { get; set; } = default!;
+    public RequestDb? Request { get; set; } = default!;
+    #endregion
 }

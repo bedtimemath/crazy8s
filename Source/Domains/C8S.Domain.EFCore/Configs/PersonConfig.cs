@@ -105,8 +105,8 @@ public class PersonConfig : BaseConfig<PersonDb>
             .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
 
-        //public ICollection<PersonClubDb> PersonClubs { get; set; } = default!;
-        entity.HasMany(m => m.PersonClubs)
+        //public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
+        entity.HasMany(m => m.ClubPersons)
             .WithOne(m => m.Person)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(false);

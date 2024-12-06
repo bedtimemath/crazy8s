@@ -7,7 +7,7 @@ using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("Coaches")]
+[Table("Persons")]
 public class PersonDb : BaseDb
 {
     #region Override Properties
@@ -68,6 +68,7 @@ public class PersonDb : BaseDb
 
     #region Reference Collections
     public ICollection<RequestDb> Requests { get; set; } = default!;
-    public ICollection<PersonClubDb> PersonClubs { get; set; } = default!;
+    public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
+    public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
     #endregion
 }

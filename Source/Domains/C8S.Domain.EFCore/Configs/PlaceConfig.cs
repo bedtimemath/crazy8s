@@ -112,8 +112,12 @@ public class PlaceConfig : BaseConfig<PlaceDb>
         //public ICollection<RequestDb> Requests { get; set; } = default!;
         entity.HasMany(m => m.Requests)
             .WithOne(m => m.Place)
-            .HasForeignKey(m => m.PlaceId)
-            .IsRequired(false);
+            .HasForeignKey(m => m.PlaceId);
+
+        //public ICollection<SaleDb> Sales { get; set; } = default!;
+        entity.HasMany(m => m.Sales)
+            .WithOne(m => m.Place)
+            .HasForeignKey(m => m.PlaceId);
         #endregion
 
         #region Indices

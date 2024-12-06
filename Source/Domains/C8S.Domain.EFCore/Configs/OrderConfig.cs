@@ -136,6 +136,11 @@ public class OrderConfig : BaseConfig<OrderDb>
             .HasForeignKey(m => m.ClubId)
             .IsRequired(false);
         
+        //public ICollection<ShipmentDb> Shipments { get; set; } = default!;
+        entity.HasMany(m => m.Shipments)
+            .WithOne(m => m.Order)
+            .HasForeignKey(m => m.OrderId);
+        
         //public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
         entity.HasMany(m => m.OrderSkus)
             .WithOne(m => m.Order)

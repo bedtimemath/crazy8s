@@ -19,17 +19,19 @@ public class C8SDbContext(
 
     #region DbSet Properties
     public DbSet<ClubDb> Clubs { get; set; }
+    public DbSet<ClubPersonDb> ClubPersons { get; set; }
+    public DbSet<OrderDb> Orders { get; set; }
+    public DbSet<OrderSkuDb> OrderSkus { get; set; }
     public DbSet<PersonDb> Persons { get; set; }
     public DbSet<PlaceDb> Places { get; set; }
     public DbSet<ProposedClubDb> ProposedClubs { get; set; }
     public DbSet<RequestDb> Requests { get; set; }
+    public DbSet<SaleDb> Sales { get; set; }
+    public DbSet<SalePersonDb> SalePersons { get; set; }
+    public DbSet<ShipmentDb> Shipments { get; set; }
     public DbSet<SkuDb> Skus { get; set; }
     public DbSet<UnfinishedDb> Unfinisheds { get; set; }
     public DbSet<WorkshopCodeDb> WorkshopCodes { get; set; }
-
-
-    public DbSet<OrderDb> Orders { get; set; }
-    public DbSet<OrderSkuDb> OrderSkus { get; set; }
     #endregion
 
     #region DbContext Overrides
@@ -47,17 +49,19 @@ public class C8SDbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ClubConfig());
+        modelBuilder.ApplyConfiguration(new ClubPersonConfig());
+        modelBuilder.ApplyConfiguration(new OrderConfig());
+        modelBuilder.ApplyConfiguration(new OrderSkuConfig());
         modelBuilder.ApplyConfiguration(new PersonConfig());
         modelBuilder.ApplyConfiguration(new PlaceConfig());
         modelBuilder.ApplyConfiguration(new ProposedClubConfig());
         modelBuilder.ApplyConfiguration(new RequestConfig());
+        modelBuilder.ApplyConfiguration(new SaleConfig());
+        modelBuilder.ApplyConfiguration(new SalePersonConfig());
+        modelBuilder.ApplyConfiguration(new ShipmentConfig());
         modelBuilder.ApplyConfiguration(new SkuConfig());
         modelBuilder.ApplyConfiguration(new UnfinishedConfig());
         modelBuilder.ApplyConfiguration(new WorkshopCodeConfig());
-
-
-        modelBuilder.ApplyConfiguration(new OrderConfig());
-        modelBuilder.ApplyConfiguration(new OrderSkuConfig());
     }
     #endregion
 }

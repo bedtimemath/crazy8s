@@ -4,19 +4,19 @@ using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("PersonClubs")]
-public class PersonClubDb: BaseDb
+[Table("SalePersons")]
+public class SalePersonDb: BaseDb
 {
     #region Override Properties
     [NotMapped] 
-    public override int Id => PersonClubId;
+    public override int Id => SalePersonId;
     [NotMapped] 
     public override string Display => IsPrimary.ToString();
     #endregion
 
     #region Id Property
     [Required] 
-    public int PersonClubId { get; set; }
+    public int SalePersonId { get; set; }
     #endregion
 
     #region Database Properties
@@ -29,8 +29,8 @@ public class PersonClubDb: BaseDb
     public int PersonId { get; set; } = default!;
     public PersonDb Person { get; set; } = default!;
 
-    [ForeignKey(nameof(Club))]
-    public int ClubId { get; set; } = default!;
-    public ClubDb Club { get; set; } = default!;
+    [ForeignKey(nameof(Sale))]
+    public int SaleId { get; set; } = default!;
+    public SaleDb Sale { get; set; } = default!;
     #endregion
 }

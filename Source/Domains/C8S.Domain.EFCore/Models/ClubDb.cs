@@ -56,6 +56,6 @@ public class ClubDb : BaseDb
 
     #region Reference Collections
     public ICollection<OrderDb> Orders { get; set; } = default!;
-    public ICollection<PersonClubDb> PersonClubs { get; set; } = default!;
+    public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
     #endregion
 }
