@@ -1,5 +1,6 @@
 ﻿using C8S.Domain.EFCore.Base;
 using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
@@ -15,7 +16,7 @@ public class OrderConfig : BaseConfig<OrderDb>
         entity.HasKey(m => m.OrderId);
         #endregion
 
-        #region Database Properties
+        #region Database Properties (Old System)
         //public Guid? OldSystemOrderId { get; set; } = null;
         entity.Property(m => m.OldSystemOrderId)
             .IsRequired(false);
@@ -27,7 +28,9 @@ public class OrderConfig : BaseConfig<OrderDb>
         //public Guid? OldSystemClubId { get; set; } = null;
         entity.Property(m => m.OldSystemClubId)
             .IsRequired(false);
+        #endregion
 
+        #region Database Properties
         //[Required]
         //public int Number { get; set; } = default!;
         entity.Property(m => m.Number)
@@ -41,6 +44,12 @@ public class OrderConfig : BaseConfig<OrderDb>
             .HasConversion<string>()
             .IsRequired(true);
 
+        //[MaxLength(SharedConstants.MaxLengths.Name)]
+        //public string? ContactName { get; set; } = null;
+        entity.Property(m => m.ContactName)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
+            .IsRequired(false);
+
         //[MaxLength(SharedConstants.MaxLengths.Email)]
         //public string? ContactEmail { get; set; } = null;
         entity.Property(m => m.ContactEmail)
@@ -52,48 +61,68 @@ public class OrderConfig : BaseConfig<OrderDb>
         entity.Property(m => m.ContactPhone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
+        
+        //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]
+        //public string Recipient { get; set; } = default!;
+        entity.Property(m => m.Recipient)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
+            .IsRequired(true);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? ContactPhoneExt { get; set; } = null;
-        entity.Property(m => m.ContactPhoneExt)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+        //[Required, MaxLength(SharedConstants.MaxLengths.Standard)]
+        //public string StreetAddress { get; set; } = default!;
+        entity.Property(m => m.Line1)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
+            .IsRequired(true);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+        //public string? Line2 { get; set; } = default!;
+        entity.Property(m => m.Line2)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
+
+        //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
+        //public string City { get; set; } = default!;
+        entity.Property(m => m.City)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
+            .IsRequired(true);
+
+        //[Required, MaxLength(SharedConstants.MaxLengths.Tiny)]
+        //public string State { get; set; } = default!;
+        entity.Property(m => m.State)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
+            .IsRequired(true);
+
+        //[Required, MaxLength(SharedConstants.MaxLengths.ZIPCode)]
+        //public string PostalCode { get; set; } = default!;
+        entity.Property(m => m.ZIPCode)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.ZIPCode)
+            .IsRequired(true);
+
+        //[Required]
+        //public bool IsMilitary { get; set; } = default!;
+        entity.Property(m => m.IsMilitary)
+            .HasDefaultValue(false)
+            .IsRequired(true);
 
         //[Required]
         //public DateTimeOffset OrderedOn { get; set; } = default!;
         entity.Property(m => m.OrderedOn)
             .IsRequired(true);
 
-        //[Required]
-        //public DateOnly ArriveBy { get; set; } = default!;
+        //public DateOnly? ArriveBy { get; set; } = default!;
         entity.Property(m => m.ArriveBy)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //public DateTimeOffset? ShippedOn { get; set; } = default!;
         entity.Property(m => m.ShippedOn)
             .IsRequired(false);
 
         //public DateTimeOffset? EmailedOn { get; set; } = default!;
-        entity.Property(m => m.ShippedOn)
-            .IsRequired(false);
-
-        //public Guid? BatchIdentifier { get; set; } = default!;
-        entity.Property(m => m.BatchIdentifier)
-            .IsRequired(false);
-
-        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? Notes { get; set; } = null;
-        entity.Property(m => m.Notes)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
+        entity.Property(m => m.EmailedOn)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(Address))]
-        //public int AddressId { get; set; } = null;
-        entity.Property(m => m.AddressId)
-            .IsRequired(true);
-        
         //[ForeignKey(nameof(Club))]
         //public int? ClubId { get; set; } = null;
         entity.Property(m => m.ClubId)
@@ -101,12 +130,6 @@ public class OrderConfig : BaseConfig<OrderDb>
         #endregion
 
         #region Navigation Configuration
-        //public AddressDb? Address { get; set; } = null;
-        entity.HasOne(m => m.Address)
-            .WithOne(m => m.Order)
-            .HasForeignKey<OrderDb>(m => m.AddressId)
-            .IsRequired(false);
-
         //public ClubDb? Club { get; set; } = null;
         entity.HasOne(m => m.Club)
             .WithMany(m => m.Orders)
@@ -122,11 +145,6 @@ public class OrderConfig : BaseConfig<OrderDb>
         #region Indices
         entity.HasIndex(m => m.OldSystemOrderId)
             .IsUnique(true);
-        #endregion
-
-        #region Auto-Includes
-        entity.Navigation(m => m.Address)
-            .AutoInclude();
         #endregion
     }
 }

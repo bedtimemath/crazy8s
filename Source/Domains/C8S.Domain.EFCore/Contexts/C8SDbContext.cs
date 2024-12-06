@@ -18,17 +18,18 @@ public class C8SDbContext(
     private readonly IAuditInterceptor? _auditInterceptor = serviceProvider.GetService<IAuditInterceptor>();
 
     #region DbSet Properties
-    public DbSet<AddressDb> Addresses { get; set; }
-    public DbSet<ApplicationDb> Applications { get; set; }
-    public DbSet<ApplicationClubDb> ApplicationClubs { get; set; }
     public DbSet<ClubDb> Clubs { get; set; }
-    public DbSet<CoachDb> Coaches { get; set; }
-    public DbSet<OrderDb> Orders { get; set; }
-    public DbSet<OrderSkuDb> OrderSkus { get; set; }
-    public DbSet<OrganizationDb> Organizations { get; set; }
+    public DbSet<PersonDb> Persons { get; set; }
+    public DbSet<PlaceDb> Places { get; set; }
+    public DbSet<ProposedClubDb> ProposedClubs { get; set; }
+    public DbSet<RequestDb> Requests { get; set; }
     public DbSet<SkuDb> Skus { get; set; }
     public DbSet<UnfinishedDb> Unfinisheds { get; set; }
     public DbSet<WorkshopCodeDb> WorkshopCodes { get; set; }
+
+
+    public DbSet<OrderDb> Orders { get; set; }
+    public DbSet<OrderSkuDb> OrderSkus { get; set; }
     #endregion
 
     #region DbContext Overrides
@@ -45,17 +46,18 @@ public class C8SDbContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfiguration(new AddressConfig());
-        modelBuilder.ApplyConfiguration(new ApplicationConfig());
-        modelBuilder.ApplyConfiguration(new ApplicationClubConfig());
         modelBuilder.ApplyConfiguration(new ClubConfig());
-        modelBuilder.ApplyConfiguration(new CoachConfig());
-        modelBuilder.ApplyConfiguration(new OrderConfig());
-        modelBuilder.ApplyConfiguration(new OrderSkuConfig());
-        modelBuilder.ApplyConfiguration(new OrganizationConfig());
+        modelBuilder.ApplyConfiguration(new PersonConfig());
+        modelBuilder.ApplyConfiguration(new PlaceConfig());
+        modelBuilder.ApplyConfiguration(new ProposedClubConfig());
+        modelBuilder.ApplyConfiguration(new RequestConfig());
         modelBuilder.ApplyConfiguration(new SkuConfig());
         modelBuilder.ApplyConfiguration(new UnfinishedConfig());
         modelBuilder.ApplyConfiguration(new WorkshopCodeConfig());
+
+
+        modelBuilder.ApplyConfiguration(new OrderConfig());
+        modelBuilder.ApplyConfiguration(new OrderSkuConfig());
     }
     #endregion
 }

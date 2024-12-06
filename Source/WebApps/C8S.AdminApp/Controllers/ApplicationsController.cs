@@ -26,10 +26,9 @@ public class ApplicationsController(
         try
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            var queryable = dbContext.Applications
-                .Include(a => a.LinkedOrganization)
-                .Include(a => a.Address)
-                .Include(a => a.ApplicationClubs)
+            var queryable = dbContext.Requests
+                .Include(a => a.Place)
+                .Include(a => a.ProposedClubs)
                 .AsSingleQuery()
                 .AsNoTracking();
 
@@ -64,14 +63,12 @@ public class ApplicationsController(
                         .Select(a => new ApplicationListDisplay()
                         {
                             ApplicationId = a.ApplicationId,
-                            ApplicantFirstName = a.ApplicantFirstName,
-                            ApplicantLastName = a.ApplicantLastName,
-                            ApplicantEmail = a.ApplicantEmail,
+                            ApplicantFirstName = a.PersonFirstName,
+                            ApplicantLastName = a.PersonLastName,
+                            ApplicantEmail = a.PersonEmail,
                             Status = a.Status,
                             SubmittedOn = a.SubmittedOn,
-                            OrganizationName = a.OrganizationName,
-                            OrganizationCity = a.Address?.City,
-                            OrganizationState = a.Address?.State
+                            OrganizationName = a.PlaceName
                         })
                         .ToList(),
                     Total = totalApplications

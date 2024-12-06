@@ -4,5 +4,5 @@ namespace C8S.Domain.Obsolete.Filters;
 
 public class OrganizationFilter: BaseFilter
 {
-    public OrganizationType? Type { get; set; }
+    public PlaceType? Type { get; set; }
 }

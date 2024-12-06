@@ -32,35 +32,35 @@ internal class TestInterceptors(
         Console.WriteLine();
 
         // ADD COACH
-        var coach = new CoachDb()
+        var coach = new PersonDb()
         {
             FirstName = String.Empty.AppendRandomAlphaOnly(),
             LastName = String.Empty.AppendRandomAlphaOnly(),
             Email = String.Empty.AppendRandomAlphaOnly() + "@example.com",
             TimeZone = String.Empty.AppendRandomAlphaOnly()
         };
-        dbContext.Coaches.Add(coach);
+        dbContext.Persons.Add(coach);
         logger.LogInformation("Added {Coach}", coach.Display);
 
         // MODIFY 5 APPLICATIONS
-        var applications = await dbContext.Applications
+        var applications = await dbContext.Requests
             .OrderByDescending(a => a.CreatedOn)
             .Take(5)
             .ToListAsync();
         foreach (var application in applications)
         {
-            application.ApplicantFirstName = String.Empty.AppendRandomAlphaOnly(8);
-            application.ApplicantLastName = String.Empty.AppendRandomAlphaOnly(8);
+            application.PersonFirstName = String.Empty.AppendRandomAlphaOnly(8);
+            application.PersonLastName = String.Empty.AppendRandomAlphaOnly(8);
             logger.LogInformation("Modified {Application}", application.Display);
         }
 
         // REMOVE APPLICATION
-        var toDelete = await dbContext.Applications
+        var toDelete = await dbContext.Requests
             .OrderBy(a => a.CreatedOn)
             .Skip(randomizer.GetIntBetween(100,1000))
             .FirstAsync();
         logger.LogInformation("Deleting {Application}", toDelete.Display);
-        dbContext.Applications.Remove(toDelete);
+        dbContext.Requests.Remove(toDelete);
 
         // UPDATE THE DATABASE
         await dbContext.SaveChangesAsync();

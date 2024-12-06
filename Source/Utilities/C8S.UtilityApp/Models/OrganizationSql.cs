@@ -41,15 +41,15 @@ public class OrganizationSql
     #endregion
 
     #region Derived Properties
-    public OrganizationType Type =>
+    public PlaceType Type =>
         OldSystemType switch
         {
-            "Boys & Girls Club" => OrganizationType.BoysGirlsClub,
-            "Home School Co-Op" => OrganizationType.HomeSchool,
-            "Library" => OrganizationType.Library,
-            "Other" => OrganizationType.Other,
-            "School" => OrganizationType.School,
-            "YMCA" => OrganizationType.YMCA,
+            "Boys & Girls Club" => PlaceType.BoysGirlsClub,
+            "Home School Co-Op" => PlaceType.HomeSchool,
+            "Library" => PlaceType.Library,
+            "Other" => PlaceType.Other,
+            "School" => PlaceType.School,
+            "YMCA" => PlaceType.YMCA,
             _ => throw new Exception("Unrecognized")
         };
 

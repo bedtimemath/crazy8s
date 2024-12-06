@@ -7,14 +7,14 @@ using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("Applications")]
-public class ApplicationDb : BaseDb
+[Table("Requests")]
+public class RequestDb : BaseDb
 {
     #region Override Properties
     [NotMapped] 
     public override int Id => ApplicationId;
     [NotMapped] 
-    public override string Display =>  String.Join(" ", new [] { ApplicantFirstName, ApplicantLastName, OrganizationName }) 
+    public override string Display =>  String.Join(" ", new [] { PersonFirstName, PersonLastName, PlaceName }) 
                                        ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
@@ -23,7 +23,7 @@ public class ApplicationDb : BaseDb
     public int ApplicationId { get; set; }
     #endregion
 
-    #region Database Properties
+    #region Database Properties (Old System)
     public Guid? OldSystemApplicationId { get; set; } = null;
     
     public Guid? OldSystemAddressId { get; set; } = null;
@@ -31,45 +31,44 @@ public class ApplicationDb : BaseDb
     public Guid? OldSystemLinkedCoachId { get; set; } = null;
     
     public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
+    #endregion
 
+    #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ApplicationStatus Status { get; set; } = default!;
+    public RequestStatus Status { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ApplicantType? ApplicantType { get; set; } = null;
+    public ApplicantType? PersonType { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string? ApplicantFirstName { get; set; } = null;
+    public string? PersonFirstName { get; set; } = null;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string ApplicantLastName { get; set; } = default!;
+    public string PersonLastName { get; set; } = default!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Email)]
-    public string ApplicantEmail { get; set; } = default!;
+    public string PersonEmail { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? ApplicantPhone { get; set; } = null;
-
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? ApplicantPhoneExt { get; set; } = null;
+    public string? PersonPhone { get; set; } = null;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string ApplicantTimeZone { get; set; } = default!;
+    public string PersonTimeZone { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
-    public string? OrganizationName { get; set; } = null;
+    public string? PlaceName { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public OrganizationType? OrganizationType { get; set; } = null;
+    public PlaceType? PlaceType { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? OrganizationTypeOther { get; set; } = null;
+    public string? PlaceTypeOther { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? OrganizationTaxIdentifier { get; set; } = null;
+    public string? PlaceTaxIdentifier { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? WorkshopCode { get; set; } = null;
@@ -85,33 +84,20 @@ public class ApplicationDb : BaseDb
 
     [Required]
     public DateTimeOffset SubmittedOn { get; set; }
-
-    [Required]
-    public bool IsCoachRemoved { get; set; } = false;
-
-    [Required]
-    public bool IsOrganizationRemoved { get; set; } = false;
-
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
-    public string? Notes { get; set; } = null;
     #endregion
 
     #region Reference Properties
-    [ForeignKey(nameof(Address))]
-    public int? AddressId { get; set; } = default!;
-    public AddressDb? Address { get; set; } = default!;
-    
-    [ForeignKey(nameof(LinkedCoach))]
-    public int? LinkedCoachId { get; set; } = default!;
-    public CoachDb? LinkedCoach { get; set; } = default!;
+    [ForeignKey(nameof(Person))]
+    public int? PersonId { get; set; } = default!;
+    public PersonDb? Person { get; set; } = default!;
 
-    [ForeignKey(nameof(LinkedOrganization))]
-    public int? LinkedOrganizationId { get; set; } = default!;
-    public OrganizationDb? LinkedOrganization { get; set; } = default!;
+    [ForeignKey(nameof(Place))]
+    public int? PlaceId { get; set; } = default!;
+    public PlaceDb? Place { get; set; } = default!;
     #endregion
 
     #region Reference Collections
     // one-to-many
-    public ICollection<ApplicationClubDb> ApplicationClubs { get; set; } = default!;
+    public ICollection<ProposedClubDb> ProposedClubs { get; set; } = default!;
     #endregion
 }

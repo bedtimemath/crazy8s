@@ -27,7 +27,7 @@ public partial class ApplicationsLister : BaseRazorComponent
     public string? SortDescription { get; set; }
 
     [Parameter]
-    public IList<ApplicationStatus>? Statuses { get; set; }
+    public IList<RequestStatus>? Statuses { get; set; }
     #endregion
 
     #region Component Callbacks

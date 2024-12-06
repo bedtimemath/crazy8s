@@ -10,7 +10,7 @@ internal class OrganizationProfile: Profile
     public OrganizationProfile()
     {
         CreateMap<OrganizationSql, OrganizationDTO>();
-        CreateMap<OrganizationDb, OrganizationDTO>()
+        CreateMap<PlaceDb, OrganizationDTO>()
             .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
             .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
             .ReverseMap()

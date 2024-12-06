@@ -37,28 +37,28 @@ internal class AddApplication(
         Console.WriteLine();
 
         // ADD APPLICATION
-        var application = new ApplicationDb()
+        var application = new RequestDb()
         {
-            Status = ApplicationStatus.Received,
-            ApplicantType = (randomizer.GetDouble() <= 0.5) ? ApplicantType.Coach : ApplicantType.Supervisor,
-            ApplicantFirstName = String.Empty.AppendRandomAlphaOnly(),
-            ApplicantLastName = String.Empty.AppendRandomAlphaOnly(),
-            ApplicantEmail = String.Empty.AppendRandomAlphaOnly() + "@example.com",
-            ApplicantTimeZone = String.Empty.AppendRandomAlphaOnly(),
+            Status = RequestStatus.Received,
+            PersonType = (randomizer.GetDouble() <= 0.5) ? ApplicantType.Coach : ApplicantType.Supervisor,
+            PersonFirstName = String.Empty.AppendRandomAlphaOnly(),
+            PersonLastName = String.Empty.AppendRandomAlphaOnly(),
+            PersonEmail = String.Empty.AppendRandomAlphaOnly() + "@example.com",
+            PersonTimeZone = String.Empty.AppendRandomAlphaOnly(),
             SubmittedOn = DateTimeOffset.UtcNow
         };
         var applicationClubs = Enumerable.Range(0, 3)
-            .Select(_ => new ApplicationClubDb()
+            .Select(_ => new ProposedClubDb()
             {
-                Application = application,
+                Request = application,
                 AgeLevel = (AgeLevel)(randomizer.GetIntLessThan(2)),
                 ClubSize = ClubSize.Size16,
                 Season = randomizer.GetIntBetween(1,3),
                 StartsOn = DateOnly.FromDateTime(DateTime.Today.AddDays(randomizer.GetIntBetween(21,50)))
             })
             .ToList();
-        application.ApplicationClubs = applicationClubs;
-        dbContext.Applications.Add(application);
+        application.ProposedClubs = applicationClubs;
+        dbContext.Requests.Add(application);
 
         // UPDATE THE DATABASE
         await dbContext.SaveChangesAsync();
@@ -69,7 +69,7 @@ internal class AddApplication(
         var dataChange = new DataChange()
         {
             EntityId = application.ApplicationId,
-            EntityName = nameof(ApplicationDb),
+            EntityName = nameof(RequestDb),
             EntityState = EntityState.Added
         };
 

@@ -125,9 +125,9 @@ internal class LoadC8SData(
                     {
                         coach.OrganizationId = organization.OrganizationId;
                         
-                        var dbCoach = mapper.Map<CoachDb>(coach);
+                        var dbCoach = mapper.Map<PersonDb>(coach);
 
-                        var entry = dbContext.Coaches.Attach(dbCoach);
+                        var entry = dbContext.Persons.Attach(dbCoach);
                         entry.State = EntityState.Modified;
 
                         coachesUpdated++;
@@ -434,8 +434,8 @@ internal class LoadC8SData(
         var dtosAdded = new List<OrganizationDTO>();
         foreach (var dto in dtos)
         {
-            var db = mapper.Map<OrganizationDb>(dto);
-            var entry = await dbContext.Organizations.AddAsync(db);
+            var db = mapper.Map<PlaceDb>(dto);
+            var entry = await dbContext.Places.AddAsync(db);
             dtosAdded.Add(mapper.Map<OrganizationDTO>(entry.Entity));
         }
 
@@ -450,8 +450,8 @@ internal class LoadC8SData(
         var dtosAdded = new List<CoachDTO>();
         foreach (var dto in dtos)
         {
-            var db = mapper.Map<CoachDb>(dto);
-            var entry = await dbContext.Coaches.AddAsync(db);
+            var db = mapper.Map<PersonDb>(dto);
+            var entry = await dbContext.Persons.AddAsync(db);
             dtosAdded.Add(mapper.Map<CoachDTO>(entry.Entity));
         }
 
@@ -464,7 +464,7 @@ internal class LoadC8SData(
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
-            dbContext.Organizations 
+            dbContext.Places 
                 .OrderBy(a => a.Name)
                 .AsNoTracking()
                 .AsSingleQuery()
@@ -479,7 +479,7 @@ internal class LoadC8SData(
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
-            dbContext.Coaches // clubs included automatically
+            dbContext.Persons // clubs included automatically
                 .OrderBy(a => a.LastName)
                 .AsNoTracking()
                 .AsSingleQuery()
@@ -494,7 +494,7 @@ internal class LoadC8SData(
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
-            dbContext.Applications // clubs included automatically
+            dbContext.Requests // clubs included automatically
                 .OrderByDescending(a => a.SubmittedOn)
                 .AsNoTracking()
                 .AsSingleQuery()
@@ -509,7 +509,7 @@ internal class LoadC8SData(
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var queryable =
-            dbContext.ApplicationClubs
+            dbContext.ProposedClubs
                 .AsNoTracking()
                 .AsQueryable();
 
@@ -524,8 +524,8 @@ internal class LoadC8SData(
         var dtosAdded = new List<ApplicationDTO>();
         foreach (var dto in dtos)
         {
-            var db = mapper.Map<ApplicationDb>(dto);
-            var entry = await dbContext.Applications.AddAsync(db);
+            var db = mapper.Map<RequestDb>(dto);
+            var entry = await dbContext.Requests.AddAsync(db);
             dtosAdded.Add(mapper.Map<ApplicationDTO>(entry.Entity));
         }
 
@@ -536,9 +536,9 @@ internal class LoadC8SData(
     public async Task<ApplicationDTO> UpdateApplication(ApplicationDTO dto)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var db = mapper.Map<ApplicationDb>(dto);
+        var db = mapper.Map<RequestDb>(dto);
 
-        var entry = dbContext.Applications.Attach(db);
+        var entry = dbContext.Requests.Attach(db);
         entry.State = EntityState.Modified;
         await dbContext.SaveChangesAsync();
 

@@ -32,11 +32,6 @@ public class SkuConfig : BaseConfig<SkuDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
-        //[Required]
-        //public int Season { get; set; } = default!;
-        entity.Property(m => m.Season)
-            .IsRequired(true);
-
         //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public SkuStatus Status { get; set; } = default!;
@@ -45,26 +40,30 @@ public class SkuConfig : BaseConfig<SkuDb>
             .HasConversion<string>()
             .IsRequired(true);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
+        //public int? Season { get; set; } = default!;
+        entity.Property(m => m.Season)
+            .IsRequired(false);
+
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public AgeLevel AgeLevel { get; set; } = default!;
+        //public AgeLevel? AgeLevel { get; set; } = default!;
         entity.Property(m => m.AgeLevel)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(true);
+            .IsRequired(false);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ClubSize ClubSize { get; set; } = default!;
+        //public ClubSize? ClubSize { get; set; } = default!;
         entity.Property(m => m.ClubSize)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(true);
+            .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? Notes { get; set; } = null;
-        entity.Property(m => m.Notes)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong);
+        //[MaxLength(SharedConstants.MaxLengths.XLong)]
+        //public string? Comments { get; set; } = null;
+        entity.Property(m => m.Comments)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XLong);
         #endregion
 
         #region Navigation Configuration

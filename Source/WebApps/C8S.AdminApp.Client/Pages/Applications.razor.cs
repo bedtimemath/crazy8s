@@ -28,11 +28,11 @@ public partial class Applications : BaseRazorPage, IDisposable
     public ICommunicationService CommunicationService { get; set; } = default!;
 
     private ApplicationsLister _applicationsLister = default!;
-    private RadzenDropDown<IList<ApplicationStatus>> _statusDropDown = default!;
+    private RadzenDropDown<IList<RequestStatus>> _statusDropDown = default!;
     private RadzenDropDown<string> _sortDropDown = default!;
 
     private string _selectedSort = "SubmittedOn DESC";
-    private IList<ApplicationStatus> _selectedStatuses = [ApplicationStatus.Received];
+    private IList<RequestStatus> _selectedStatuses = [RequestStatus.Received];
 
     private int? _totalCount;
     
@@ -64,7 +64,7 @@ public partial class Applications : BaseRazorPage, IDisposable
     }
     private Task HandleStatusDropdownChange(object args)
     {
-        var statuses = args as EnumerableQuery<ApplicationStatus> ??
+        var statuses = args as EnumerableQuery<RequestStatus> ??
                        throw new UnreachableException();
         return Task.CompletedTask;
     }

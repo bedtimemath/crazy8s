@@ -23,16 +23,16 @@ internal class ApplicationProfile : Profile
                     (src) => src.IsSupervisor ? ApplicantType.Supervisor : ApplicantType.Coach))
             .ForMember(m => m.OrganizationType,
                 opt => opt.MapFrom(
-                    (src) => src.OrganizationType == CoachAppConstants.OrganizationTypes.School ? OrganizationType.School :
-                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.Library ? OrganizationType.Library :
-                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.HomeSchool ? OrganizationType.HomeSchool :
-                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.BoysGirlsClub ? OrganizationType.BoysGirlsClub :
-                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.YMCA ? OrganizationType.YMCA : 
-                                OrganizationType.Other))))))
+                    (src) => src.OrganizationType == CoachAppConstants.OrganizationTypes.School ? PlaceType.School :
+                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.Library ? PlaceType.Library :
+                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.HomeSchool ? PlaceType.HomeSchool :
+                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.BoysGirlsClub ? PlaceType.BoysGirlsClub :
+                            (src.OrganizationType == CoachAppConstants.OrganizationTypes.YMCA ? PlaceType.YMCA : 
+                                PlaceType.Other))))))
             .ForMember(m => m.SubmittedOn, opt => opt.MapFrom(src => src.CreatedOn))
             ;
         
-        CreateMap<ApplicationDb, ApplicationDTO>()
+        CreateMap<RequestDb, ApplicationDTO>()
             .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
             .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
             .ReverseMap()

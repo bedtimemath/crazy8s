@@ -10,7 +10,7 @@ internal class CoachProfile: Profile
     public CoachProfile()
     {
         CreateMap<CoachSql, CoachDTO>();
-        CreateMap<CoachDb, CoachDTO>()
+        CreateMap<PersonDb, CoachDTO>()
             .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
             .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
             .ReverseMap()

@@ -14,7 +14,7 @@ public class OrderSkuConfig : BaseConfig<OrderSkuDb>
         entity.HasKey(m => m.OrderSkuId);
         #endregion
 
-        #region Database Properties
+        #region Database Properties (Old System)
         //public Guid? OldSystemOrderSkuId { get; set; } = null;
         entity.Property(m => m.OldSystemOrderSkuId)
             .IsRequired(false);
@@ -26,7 +26,9 @@ public class OrderSkuConfig : BaseConfig<OrderSkuDb>
         //public Guid? OldSystemSkuId { get; set; } = null;
         entity.Property(m => m.OldSystemSkuId)
             .IsRequired(false);
+        #endregion
 
+        #region Database Properties
         //[Required]
         //public int Ordinal { get; set; } = default!;
         entity.Property(m => m.Ordinal)

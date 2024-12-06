@@ -2,8 +2,10 @@
 
 namespace C8S.Domain.Enums;
 
-public enum OrganizationType
+public enum PlaceType
 {
+    [Label("Organization")]
+    Organization,
     [Label("School")]
     School,
     [Label("Library")]

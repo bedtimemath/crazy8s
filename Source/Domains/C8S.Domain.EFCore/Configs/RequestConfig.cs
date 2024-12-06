@@ -6,9 +6,9 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class ApplicationConfig : BaseConfig<ApplicationDb>
+public class RequestConfig : BaseConfig<RequestDb>
 {
-    public override void Configure(EntityTypeBuilder<ApplicationDb> entity)
+    public override void Configure(EntityTypeBuilder<RequestDb> entity)
     {
         #region Id Property
         // [Required]
@@ -16,7 +16,7 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
         entity.HasKey(m => m.ApplicationId);
         #endregion
 
-        #region Database Properties
+        #region Database Properties (Old System)
         //public Guid? OldSystemApplicationId { get; set; } = null;
         entity.Property(m => m.OldSystemApplicationId)
             .IsRequired(false);
@@ -32,7 +32,9 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
         //public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
         entity.Property(m => m.OldSystemLinkedOrganizationId)
             .IsRequired(false);
+        #endregion
 
+        #region Database Properties
         //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public ApplicationStatus Status { get; set; } = default!;
@@ -43,71 +45,65 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ApplicantType? ApplicantType { get; set; } = default!;
-        entity.Property(m => m.ApplicantType)
+        //public PersonType? PersonType { get; set; } = default!;
+        entity.Property(m => m.PersonType)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string? ApplicantFirstName { get; set; } = default!;
-        entity.Property(m => m.ApplicantFirstName)
+        //public string? PersonFirstName { get; set; } = default!;
+        entity.Property(m => m.PersonFirstName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string ApplicantLastName { get; set; } = default!;
-        entity.Property(m => m.ApplicantLastName)
+        //public string PersonLastName { get; set; } = default!;
+        entity.Property(m => m.PersonLastName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Email)]
-        //public string ApplicantEmail { get; set; } = default!;
-        entity.Property(m => m.ApplicantEmail)
+        //public string PersonEmail { get; set; } = default!;
+        entity.Property(m => m.PersonEmail)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? ApplicantPhone { get; set; } = default!;
-        entity.Property(m => m.ApplicantPhone)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .IsRequired(false);
-
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? ApplicantPhoneExt { get; set; } = default!;
-        entity.Property(m => m.ApplicantPhoneExt)
+        //public string? PersonPhone { get; set; } = default!;
+        entity.Property(m => m.PersonPhone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string ApplicantTimeZone { get; set; } = default!;
-        entity.Property(m => m.ApplicantTimeZone)
+        //public string PersonTimeZone { get; set; } = default!;
+        entity.Property(m => m.PersonTimeZone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string? OrganizationName { get; set; } = null;
-        entity.Property(m => m.OrganizationName)
+        entity.Property(m => m.PlaceName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public OrganizationType? OrganizationType { get; set; } = null;
-        entity.Property(m => m.OrganizationType)
+        entity.Property(m => m.PlaceType)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
         //public string? OrganizationTypeOther { get; set; } = null;
-        entity.Property(m => m.OrganizationTypeOther)
+        entity.Property(m => m.PlaceTypeOther)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //public string? OrganizationTaxIdentifier { get; set; } = null;
-        entity.Property(m => m.OrganizationTaxIdentifier)
+        entity.Property(m => m.PlaceTaxIdentifier)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
@@ -117,83 +113,54 @@ public class ApplicationConfig : BaseConfig<ApplicationDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? Comments { get; set; } = null;
-        entity.Property(m => m.Notes)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
+        //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
+        //public string? ReferenceSource { get; set; } = null;
+        entity.Property(m => m.ReferenceSource)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
-        //[Required]
-        //public DateTimeOffset SubmittedOn { get; set; }
-        entity.Property(m => m.SubmittedOn)
-            .IsRequired(true);
-
-        //[Required]
-        //public bool IsCoachRemoved { get; set; } = false;
-        entity.Property(m => m.IsCoachRemoved)
-            .HasDefaultValue(false)
-            .IsRequired(true);
-
-        //[Required]
-        //public bool IsOrganizationRemoved { get; set; } = false;
-        entity.Property(m => m.IsOrganizationRemoved)
-            .HasDefaultValue(false)
-            .IsRequired(true);
+        //[MaxLength(SoftCrowConstants.MaxLengths.Long)]
+        //public string? ReferenceSourceOther { get; set; } = null;
+        entity.Property(m => m.ReferenceSourceOther)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Long)
+            .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? Notes { get; set; } = null;
-        entity.Property(m => m.Notes)
+        //public string? Comments { get; set; } = null;
+        entity.Property(m => m.Comments)
             .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(Address))]
-        //public int? AddressId { get; set; } = default!;
-        entity.Property(m => m.AddressId)
-            .IsRequired(false);
-
         //[ForeignKey(nameof(LinkedCoach))]
         //public int? LinkedCoachId { get; set; } = default!;
-        entity.Property(m => m.LinkedCoachId)
+        entity.Property(m => m.PersonId)
             .IsRequired(false);
 
         //[ForeignKey(nameof(LinkedOrganization))]
         //public int? LinkedOrganizationId { get; set; } = default!;
-        entity.Property(m => m.LinkedOrganizationId)
+        entity.Property(m => m.PlaceId)
             .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
-        //public AddressDb? Address { get; set; } = default!;
-        entity.HasOne(m => m.Address)
-            .WithOne(m => m.Application)
-            .HasForeignKey<ApplicationDb>(m => m.AddressId)
-            .IsRequired(false);
-
         //public CoachDb? LinkedCoach { get; set; } = default!;
-        entity.HasOne(m => m.LinkedCoach)
-            .WithMany(m => m.Applications)
-            .HasForeignKey(m => m.LinkedCoachId)
+        entity.HasOne(m => m.Person)
+            .WithMany(m => m.Requests)
+            .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
 
         //public OrganizationDb? LinkedOrganization { get; set; } = default!;
-        entity.HasOne(m => m.LinkedOrganization)
-            .WithMany(m => m.Applications)
-            .HasForeignKey(m => m.LinkedOrganizationId)
+        entity.HasOne(m => m.Place)
+            .WithMany(m => m.Requests)
+            .HasForeignKey(m => m.PlaceId)
             .IsRequired(false);
         #endregion
 
         #region Indices
         entity.HasIndex(m => m.OldSystemApplicationId)
             .IsUnique(true);
-        #endregion
-
-        #region Auto-Includes
-        entity.Navigation(m => m.ApplicationClubs)
-            .AutoInclude();
-        entity.Navigation(m => m.Address)
-            .AutoInclude();
         #endregion
     }
 }

@@ -40,7 +40,7 @@ public class OrganizationDTO: BaseDTO
 
     public string? Culture { get; set; } = default!;
 
-    public OrganizationType? Type { get; set; } = OrganizationType.Other;
+    public PlaceType? Type { get; set; } = PlaceType.Other;
 
     public string? TypeOther { get; set; } = null;
 

@@ -1,6 +1,6 @@
 ﻿namespace C8S.Domain.Enums;
 
-public enum ApplicationStatus
+public enum RequestStatus
 {
     Received,
     Pending,

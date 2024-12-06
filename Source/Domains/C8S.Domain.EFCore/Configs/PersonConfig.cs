@@ -5,17 +5,17 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class CoachConfig : BaseConfig<CoachDb>
+public class PersonConfig : BaseConfig<PersonDb>
 {
-    public override void Configure(EntityTypeBuilder<CoachDb> entity)
+    public override void Configure(EntityTypeBuilder<PersonDb> entity)
     {
         #region Id Property
         // [Required]
         // public int CoachId { get; set; }
-        entity.HasKey(m => m.CoachId);
+        entity.HasKey(m => m.PersonId);
         #endregion
 
-        #region Database Properties
+        #region Database Properties (Old System)
         //public Guid? OldSystemCoachId { get; set; } = null;
         entity.Property(m => m.OldSystemCoachId)
             .IsRequired(false);
@@ -31,12 +31,14 @@ public class CoachConfig : BaseConfig<CoachDb>
         //public Guid? OldSystemCompanyId { get; set; } = null;
         entity.Property(m => m.OldSystemCompanyId)
             .IsRequired(false);
+        #endregion
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string FirstName { get; set; } = default!;
+        #region Database Properties
+        //[MaxLength(SharedConstants.MaxLengths.Name)]
+        //public string? FirstName { get; set; } = default!;
         entity.Property(m => m.FirstName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
         //public string LastName { get; set; } = default!;
@@ -62,43 +64,51 @@ public class CoachConfig : BaseConfig<CoachDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? PhoneExt { get; set; } = null;
-        entity.Property(m => m.PhoneExt)
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //[JsonConverter(typeof(JsonStringEnumConverter))]
+        //public JobTitle? JobTitle { get; set; } = null;
+        entity.Property(m => m.JobTitle)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasConversion<string>()
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? Notes { get; set; } = null;
-        entity.Property(m => m.Notes)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
+        //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
+        //public string? JobTitleOther { get; set; } = null;
+        entity.Property(m => m.JobTitleOther)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
+            .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+        //public string? WordPressUser { get; set; } = null;
+        entity.Property(m => m.WordPressUser)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(Organization))]
-        //public int? OrganizationId { get; set; } = default!;
-        entity.Property(m => m.OrganizationId)
+        //[ForeignKey(nameof(Place))]
+        //public int? PlaceId { get; set; } = default!;
+        entity.Property(m => m.PlaceId)
             .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
-        //public OrganizationDb? Organization { get; set; } = default!;
-        entity.HasOne(m => m.Organization)
-            .WithMany(m => m.Coaches)
-            .HasForeignKey(m => m.OrganizationId)
+        //public PlaceDb? Place { get; set; } = default!;
+        entity.HasOne(m => m.Place)
+            .WithMany(m => m.Persons)
+            .HasForeignKey(m => m.PlaceId)
             .IsRequired(false);
 
-        //public ICollection<ApplicationDb> Applications { get; set; } = default!;
-        entity.HasMany(m => m.Applications)
-            .WithOne(m => m.LinkedCoach)
-            .HasForeignKey(m => m.LinkedCoachId)
+        //public ICollection<RequestDb> Requests { get; set; } = default!;
+        entity.HasMany(m => m.Requests)
+            .WithOne(m => m.Person)
+            .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
 
-        //public ICollection<ClubDb> Clubs { get; set; } = default!;
-        entity.HasMany(m => m.Clubs)
-            .WithOne(m => m.Coach)
-            .HasForeignKey(m => m.CoachId)
+        //public ICollection<PersonClubDb> PersonClubs { get; set; } = default!;
+        entity.HasMany(m => m.PersonClubs)
+            .WithOne(m => m.Person)
+            .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
         #endregion
 

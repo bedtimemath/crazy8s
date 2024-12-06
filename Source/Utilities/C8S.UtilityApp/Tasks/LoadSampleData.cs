@@ -72,20 +72,20 @@ internal class LoadSampleData(
         var records = csv.GetRecords<CoachDTO>().ToList();
 
         // put all the records in a lookup, so they can reference each other
-        var lookup = new Dictionary<int, Tuple<CoachDTO, CoachDb>>();
+        var lookup = new Dictionary<int, Tuple<CoachDTO, PersonDb>>();
 
         int ignoreId = 1000000;
         foreach (var dto in records)
         {
             // start with a db that doesn't have its id or its parent id set
-            var db = mapper.Map<CoachDb>(dto);
-            db.CoachId = 0;
+            var db = mapper.Map<PersonDb>(dto);
+            db.PersonId = 0;
 
             // add the db to the data context, before hooking up parents & children
-            dbContext.Coaches.Add(db);
+            dbContext.Persons.Add(db);
 
             // add both to the lookup
-            lookup.Add(dto.CoachId ?? ignoreId++, new Tuple<CoachDTO, CoachDb>(dto, db));
+            lookup.Add(dto.CoachId ?? ignoreId++, new Tuple<CoachDTO, PersonDb>(dto, db));
         }
 
         // hook up the parents & children

@@ -24,7 +24,7 @@ public class ClubDb : BaseDb
     public int ClubId { get; set; }
     #endregion
 
-    #region Database Properties
+    #region Database Properties (Old System)
     public Guid? OldSystemClubId { get; set; } = null;
 
     public Guid? OldSystemOrganizationId { get; set; } = null;
@@ -32,40 +32,30 @@ public class ClubDb : BaseDb
     public Guid? OldSystemCoachId { get; set; } = null;
 
     public Guid? OldSystemMeetingAddressId { get; set; } = null;
+    #endregion
 
-    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    #region Database Properties
+    public int? Season { get; set; } = default!;
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel AgeLevel { get; set; } = default!;
+    public AgeLevel? AgeLevel { get; set; } = default!;
 
-    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize ClubSize { get; set; } = default!;
+    public ClubSize? ClubSize { get; set; } = default!;
 
-    [Required]
-    public int Season { get; set; } = default!;
-
-    [Required]
-    public DateOnly StartsOn { get; set; }
-
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
-    public string? Notes { get; set; } = null;
+    public DateOnly? StartsOn { get; set; }
     #endregion
 
     #region Reference Properties
-    [ForeignKey(nameof(Coach))]
-    public int CoachId { get; set; } = default!;
-    public CoachDb Coach { get; set; } = default!;
-
-    [ForeignKey(nameof(Organization))]
-    public int OrganizationId { get; set; } = default!;
-    public OrganizationDb Organization { get; set; } = default!;
-    
-    [ForeignKey(nameof(Address))]
-    public int? AddressId { get; set; } = null;
-    public AddressDb? Address { get; set; } = null;
+    [ForeignKey(nameof(Place))]
+    public int PlaceId { get; set; } = default!;
+    public PlaceDb Place { get; set; } = default!;
     #endregion
 
-    #region Parent Properties
+    #region Reference Collections
     public ICollection<OrderDb> Orders { get; set; } = default!;
+    public ICollection<PersonClubDb> PersonClubs { get; set; } = default!;
     #endregion
 }

@@ -64,9 +64,9 @@
                                 class="flex-shrink-0">
                     <RadzenDropDown @ref="@_statusDropDown"
                                     @bind-Value="@_selectedStatuses"
-                                    Data="EnumLabel<ApplicationStatus>.GetAllEnumLabels()"
-                                    TextProperty="@nameof(EnumLabel<ApplicationStatus>.Display)"
-                                    ValueProperty="@nameof(EnumLabel<ApplicationStatus>.Value)"
+                                    Data="EnumLabel<RequestStatus>.GetAllEnumLabels()"
+                                    TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
+                                    ValueProperty="@nameof(EnumLabel<RequestStatus>.Value)"
                                     Placeholder="Filter by Status"
                                     Multiple="true"
                                     AllowClear="true"

@@ -5,9 +5,9 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class ApplicationClubConfig : BaseConfig<ApplicationClubDb>
+public class ProposedClubConfig : BaseConfig<ProposedClubDb>
 {
-    public override void Configure(EntityTypeBuilder<ApplicationClubDb> entity)
+    public override void Configure(EntityTypeBuilder<ProposedClubDb> entity)
     {
         #region Id Property
         // [Required]
@@ -64,8 +64,8 @@ public class ApplicationClubConfig : BaseConfig<ApplicationClubDb>
 
         #region Navigation Configuration
         //public ApplicationDb Application { get; set; } = default!;
-        entity.HasOne(m => m.Application)
-            .WithMany(m => m.ApplicationClubs)
+        entity.HasOne(m => m.Request)
+            .WithMany(m => m.ProposedClubs)
             .HasForeignKey(m => m.ApplicationId)
             .IsRequired(true);
         #endregion

@@ -19,13 +19,15 @@ public class OrderSkuDb: BaseDb
     public int OrderSkuId { get; set; }
     #endregion
 
-    #region Database Properties
+    #region Database Properties (Old System)
     public Guid? OldSystemOrderSkuId { get; set; } = null;
     
     public Guid? OldSystemOrderId { get; set; } = null;
     
     public Guid? OldSystemSkuId { get; set; } = null;
+    #endregion
 
+    #region Database Properties
     [Required]
     public int Ordinal { get; set; } = default!;
 

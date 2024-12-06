@@ -15,8 +15,8 @@ public class SkuDb : BaseDb
     [NotMapped] 
     public override int Id => SkuId;
     [NotMapped] 
-    public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
-                                       ?? SoftCrowConstants.Display.NotSet;
+    public override string Display => String.Join(" ", new [] { Season?.ToString(), AgeLevel?.GetLabel(), ClubSize?.GetLabel() }
+                                           .Select(s => !String.IsNullOrEmpty(s)));
     #endregion
 
     #region Id Property
@@ -37,19 +37,18 @@ public class SkuDb : BaseDb
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public SkuStatus Status { get; set; } = default!;
 
-    [Required]
-    public int Season { get; set; } = default!;
+    public int? Season { get; set; } = default!;
 
-    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel AgeLevel { get; set; } = default!;
+    public AgeLevel? AgeLevel { get; set; } = default!;
 
-    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize ClubSize { get; set; } = default!;
+    public ClubSize? ClubSize { get; set; } = default!;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
-    public string? Notes { get; set; } = null;
+    [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
+    public string? Comments { get; set; } = null;
     #endregion
 
     #region Child Properties

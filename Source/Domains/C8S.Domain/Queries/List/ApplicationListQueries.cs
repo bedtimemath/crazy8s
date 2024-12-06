@@ -10,5 +10,5 @@ public class ListApplicationsQuery : IRequest<BackendResponse<ApplicationListRes
     public int? StartIndex { get; set; }
     public int? Count { get; set; }
     public string? SortDescription { get; set; }
-    public IList<ApplicationStatus>? Statuses { get; set; }
+    public IList<RequestStatus>? Statuses { get; set; }
 }

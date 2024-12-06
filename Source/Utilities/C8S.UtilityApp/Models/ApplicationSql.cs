@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using C8S.Domain.Enums;
 using AppType = C8S.Domain.Enums.ApplicantType;
-using OrgType = C8S.Domain.Enums.OrganizationType;
 
 namespace C8S.UtilityApp.Models;
 
@@ -73,14 +72,14 @@ public class ApplicationSql
             _ => $"({ApplicantPhoneString.Substring(0,3)}) {ApplicantPhoneString.Substring(3,3)}-{ApplicantPhoneString.Substring(6,4)}"
         };
 
-    public ApplicationStatus? Status => StatusString switch
+    public RequestStatus? Status => StatusString switch
     {
-        "Approved" => ApplicationStatus.Approved,
-        "Deleted" => ApplicationStatus.Deleted,
-        "Denied" => ApplicationStatus.Denied,
-        "Future" => ApplicationStatus.Future,
-        "Pending" => ApplicationStatus.Pending,
-        "Received" => ApplicationStatus.Received,
+        "Approved" => RequestStatus.Approved,
+        "Deleted" => RequestStatus.Deleted,
+        "Denied" => RequestStatus.Denied,
+        "Future" => RequestStatus.Future,
+        "Pending" => RequestStatus.Pending,
+        "Received" => RequestStatus.Received,
         null => null,
         _ => throw new Exception($"Unrecognized: {StatusString}")
     };
@@ -95,14 +94,14 @@ public class ApplicationSql
         _ => throw new Exception($"Unrecognized: {ApplicantTypeString}")
     };
 
-    public OrganizationType? OrganizationType => OrganizationTypeString switch
+    public PlaceType? OrganizationType => OrganizationTypeString switch
     {
-        "Boys & Girls Club" => OrgType.BoysGirlsClub,
-        "Home School Co-Op" => OrgType.HomeSchool,
-        "Library" => OrgType.Library,
-        "Other" => OrgType.Other,
-        "School" => OrgType.School,
-        "YMCA" => OrgType.YMCA,
+        "Boys & Girls Club" => PlaceType.BoysGirlsClub,
+        "Home School Co-Op" => PlaceType.HomeSchool,
+        "Library" => PlaceType.Library,
+        "Other" => PlaceType.Other,
+        "School" => PlaceType.School,
+        "YMCA" => PlaceType.YMCA,
         _ => throw new Exception($"Unrecognized: {OrganizationTypeString}")
     };
 

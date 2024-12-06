@@ -14,7 +14,7 @@ public class UnfinishedDb : BaseDb
     [NotMapped]
     public override int Id => UnfinishedId;
     [NotMapped]
-    public override string Display => String.Join(" ", new[] { ApplicantFirstName, ApplicantLastName, OrganizationName })
+    public override string Display => String.Join(" ", new[] { PersonFirstName, PersonLastName, PlaceName })
                                        ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
@@ -29,52 +29,52 @@ public class UnfinishedDb : BaseDb
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ApplicantType? ApplicantType { get; set; } = null;
+    public ApplicantType? PersonType { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string? ApplicantFirstName { get; set; } = null;
+    public string? PersonFirstName { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string? ApplicantLastName { get; set; } = default!;
+    public string? PersonLastName { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
-    public string? ApplicantEmail { get; set; } = default!;
+    public string? PersonEmail { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? ApplicantPhone { get; set; } = null;
+    public string? PersonPhone { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? ApplicantTimeZone { get; set; } = default!;
+    public string? PersonTimeZone { get; set; } = default!;
 
     public bool? HasHostedBefore { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
-    public string? OrganizationName { get; set; } = null;
+    public string? PlaceName { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? OrganizationAddress1 { get; set; } = default!;
+    public string? PlaceAddress1 { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? OrganizationAddress2 { get; set; } = default!;
+    public string? PlaceAddress2 { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? OrganizationCity { get; set; } = default!;
+    public string? PlaceCity { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
-    public string? OrganizationState { get; set; } = default!;
+    public string? PlaceState { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
-    public string? OrganizationPostalCode { get; set; } = default!;
+    public string? PlacePostalCode { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public OrganizationType? OrganizationType { get; set; } = null;
+    public PlaceType? PlaceType { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? OrganizationTypeOther { get; set; } = null;
+    public string? PlaceTypeOther { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? OrganizationTaxIdentifier { get; set; } = null;
+    public string? PlaceTaxIdentifier { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
     public string? ClubsString { get; set; } = null;

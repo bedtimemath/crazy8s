@@ -57,7 +57,7 @@ public class UnfinishedDTO : BaseDTO
 
     public string? OrganizationPostalCode { get; set; } = null;
 
-    public OrganizationType? OrganizationType { get; set; } = null;
+    public PlaceType? OrganizationType { get; set; } = null;
 
     public string? OrganizationTypeOther { get; set; } = null;
 

@@ -37,7 +37,7 @@ public class ApplicationDTO : BaseDTO
 
     public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
 
-    public ApplicationStatus? Status { get; set; } = null;
+    public RequestStatus? Status { get; set; } = null;
 
     public ApplicantType? ApplicantType { get; set; } = null;
 
@@ -55,7 +55,7 @@ public class ApplicationDTO : BaseDTO
 
     public string? OrganizationName { get; set; } = null;
 
-    public OrganizationType? OrganizationType { get; set; } = null;
+    public PlaceType? OrganizationType { get; set; } = null;
 
     public string? OrganizationTypeOther { get; set; } = null;
 

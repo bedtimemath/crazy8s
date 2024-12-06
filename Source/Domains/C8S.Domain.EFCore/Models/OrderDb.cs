@@ -22,13 +22,15 @@ public class OrderDb: BaseDb
     public int OrderId { get; set; }
     #endregion
 
-    #region Database Properties
+    #region Database Properties (Old System)
     public Guid? OldSystemOrderId { get; set; } = null;
     
     public Guid? OldSystemShippingAddressId { get; set; } = null;
 
     public Guid? OldSystemClubId { get; set; } = null;
+    #endregion
 
+    #region Database Properties
     [Required]
     public int Number { get; set; } = default!;
 
@@ -36,36 +38,47 @@ public class OrderDb: BaseDb
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OrderStatus Status { get; set; } = OrderStatus.Ordered;
 
+    [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
+    public string? ContactName { get; set; } = null;
+
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string? ContactEmail { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? ContactPhone { get; set; } = null;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? ContactPhoneExt { get; set; } = null;
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.FullName)]
+    public string Recipient { get; set; } = default!;
+
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+    public string Line1 { get; set; } = default!;
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+    public string? Line2 { get; set; } = default!;
+
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
+    public string City { get; set; } = default!;
+
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+    public string State { get; set; } = default!;
+
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
+    public string ZIPCode { get; set; } = default!;
+
+    [Required]
+    public bool IsMilitary { get; set; } = default!;
     
     [Required]
     public DateTimeOffset OrderedOn { get; set; } = default!;
     
-    [Required]
-    public DateOnly ArriveBy { get; set; } = default!;
+    public DateOnly? ArriveBy { get; set; } = default!;
     
     public DateTimeOffset? ShippedOn { get; set; } = default!;
     
     public DateTimeOffset? EmailedOn { get; set; } = default!;
-    
-    public Guid? BatchIdentifier { get; set; } = default!;
-
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
-    public string? Notes { get; set; } = null;
     #endregion
 
     #region Reference Properties
-    [ForeignKey(nameof(Address))]
-    public int AddressId { get; set; } = default!;
-    public AddressDb Address { get; set; } = default!;
-
     [ForeignKey(nameof(Club))]
     public int? ClubId { get; set; } = default!;
     public ClubDb? Club { get; set; } = default!;

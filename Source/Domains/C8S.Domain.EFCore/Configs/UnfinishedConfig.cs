@@ -24,39 +24,39 @@ public class UnfinishedConfig : BaseConfig<UnfinishedDb>
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ApplicantType? ApplicantType { get; set; } = default!;
-        entity.Property(m => m.ApplicantType)
+        //public PersonType? PersonType { get; set; } = default!;
+        entity.Property(m => m.PersonType)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string? ApplicantFirstName { get; set; } = default!;
-        entity.Property(m => m.ApplicantFirstName)
+        //public string? PersonFirstName { get; set; } = default!;
+        entity.Property(m => m.PersonFirstName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string ApplicantLastName { get; set; } = default!;
-        entity.Property(m => m.ApplicantLastName)
+        //public string PersonLastName { get; set; } = default!;
+        entity.Property(m => m.PersonLastName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Email)]
-        //public string ApplicantEmail { get; set; } = default!;
-        entity.Property(m => m.ApplicantEmail)
+        //public string PersonEmail { get; set; } = default!;
+        entity.Property(m => m.PersonEmail)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? ApplicantPhone { get; set; } = default!;
-        entity.Property(m => m.ApplicantPhone)
+        //public string? PersonPhone { get; set; } = default!;
+        entity.Property(m => m.PersonPhone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string ApplicantTimeZone { get; set; } = default!;
-        entity.Property(m => m.ApplicantTimeZone)
+        //public string PersonTimeZone { get; set; } = default!;
+        entity.Property(m => m.PersonTimeZone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
@@ -65,58 +65,58 @@ public class UnfinishedConfig : BaseConfig<UnfinishedDb>
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.FullName)]
-        //public string? OrganizationName { get; set; } = null;
-        entity.Property(m => m.OrganizationName)
+        //public string? PlaceName { get; set; } = null;
+        entity.Property(m => m.PlaceName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Standard)]
-        //public string? OrganizationAddress1 { get; set; } = default!;
-        entity.Property(m => m.OrganizationAddress1)
+        //public string? PlaceAddress1 { get; set; } = default!;
+        entity.Property(m => m.PlaceAddress1)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Standard)]
-        //public string? OrganizationAddress2 { get; set; } = default!;
-        entity.Property(m => m.OrganizationAddress2)
+        //public string? PlaceAddress2 { get; set; } = default!;
+        entity.Property(m => m.PlaceAddress2)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string? OrganizationCity { get; set; } = default!;
-        entity.Property(m => m.OrganizationCity)
+        //public string? PlaceCity { get; set; } = default!;
+        entity.Property(m => m.PlaceCity)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Tiny)]
         //public string? State { get; set; } = default!;
-        entity.Property(m => m.OrganizationState)
+        entity.Property(m => m.PlaceState)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.ZIPCode)]
         //public string? PostalCode { get; set; } = default!;
-        entity.Property(m => m.OrganizationPostalCode)
+        entity.Property(m => m.PlacePostalCode)
             .HasMaxLength(SoftCrowConstants.MaxLengths.ZIPCode)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public OrganizationType? OrganizationType { get; set; } = null;
-        entity.Property(m => m.OrganizationType)
+        //public PlaceType? PlaceType { get; set; } = null;
+        entity.Property(m => m.PlaceType)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string? OrganizationTypeOther { get; set; } = null;
-        entity.Property(m => m.OrganizationTypeOther)
+        //public string? PlaceTypeOther { get; set; } = null;
+        entity.Property(m => m.PlaceTypeOther)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? OrganizationTaxIdentifier { get; set; } = null;
-        entity.Property(m => m.OrganizationTaxIdentifier)
+        //public string? PlaceTaxIdentifier { get; set; } = null;
+        entity.Property(m => m.PlaceTaxIdentifier)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 

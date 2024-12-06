@@ -8,8 +8,8 @@ using SC.Common.Extensions;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("ApplicationClubs")]
-public class ApplicationClubDb : BaseDb
+[Table("ProposedClubs")]
+public class ProposedClubDb : BaseDb
 {
     #region Override Properties
     [NotMapped] 
@@ -47,8 +47,8 @@ public class ApplicationClubDb : BaseDb
     #endregion
 
     #region Reference Properties
-    [ForeignKey(nameof(Application))]
+    [ForeignKey(nameof(Request))]
     public int ApplicationId { get; set; } = default!;
-    public ApplicationDb Application { get; set; } = default!;
+    public RequestDb Request { get; set; } = default!;
     #endregion
 }

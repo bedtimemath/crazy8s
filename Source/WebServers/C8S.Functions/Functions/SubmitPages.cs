@@ -49,14 +49,14 @@ public class SubmitForm(
         { "Email", "wpforms[fields][9]" },
         { "IsCoach", "wpforms[fields][6]" },
         { "HostedBefore", "wpforms[fields][11]" },
-        { "OrganizationName", "wpforms[fields][19]" },
+        { "PlaceName", "wpforms[fields][19]" },
         { "Address1", "wpforms[fields][65]" },
         { "Address2", "wpforms[fields][70]" },
         { "City", "wpforms[fields][67]" },
         { "State", "wpforms[fields][68]" },
         { "ZIPCode", "wpforms[fields][69]" },
-        { "OrganizationType", "wpforms[fields][21]" },
-        { "OrganizationTypeOther", "wpforms[fields][22]" },
+        { "PlaceType", "wpforms[fields][21]" },
+        { "PlaceTypeOther", "wpforms[fields][22]" },
         { "TaxId", "wpforms[fields][24]" },
         { "ClubsString", "wpforms[fields][66]" },
         { "HasWorkshopCodeString", "wpforms[fields][34]" },
@@ -144,7 +144,7 @@ public class SubmitForm(
             if (String.IsNullOrEmpty(isCoachString)) throw new Exception("Could not read applicant type.");
 
             // check for an existing email
-            var existing = await dbContext.Coaches
+            var existing = await dbContext.Persons
                 .FirstOrDefaultAsync(c => c.Email == email);
             if (existing != null)
             {
@@ -155,10 +155,10 @@ public class SubmitForm(
             else
             {
                 // update the unfinished data
-                unfinished.ApplicantFirstName = firstName;
-                unfinished.ApplicantLastName = lastName;
-                unfinished.ApplicantEmail = email;
-                unfinished.ApplicantType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
+                unfinished.PersonFirstName = firstName;
+                unfinished.PersonLastName = lastName;
+                unfinished.PersonEmail = email;
+                unfinished.PersonType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
                 unfinished.EndPart02On = dateTimeHelper.UtcNow;
 
                 await dbContext.SaveChangesAsync();
@@ -206,14 +206,14 @@ public class SubmitForm(
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
             var hostedBeforeString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["HostedBefore"])?.Data;
-            var organizationName = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["OrganizationName"])?.Data;
+            var placeName = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["PlaceName"])?.Data;
             var address1 = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Address1"])?.Data;
             var address2 = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Address2"])?.Data;
             var city = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["City"])?.Data;
             var stateFull = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["State"])?.Data;
             var zipCode = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ZIPCode"])?.Data;
-            var organizationType = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["OrganizationType"])?.Data;
-            var organizationTypeOther = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["OrganizationTypeOther"])?.Data;
+            var placeType = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["PlaceType"])?.Data;
+            var placeTypeOther = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["PlaceTypeOther"])?.Data;
             var taxId = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TaxId"])?.Data;
 
             // the full state name is too long, but in case the values get changed, we'll use the best we can
@@ -226,33 +226,33 @@ public class SubmitForm(
 
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(hostedBeforeString)) throw new Exception("Could not read has done before.");
-            if (String.IsNullOrEmpty(organizationName)) throw new Exception("Could not read organization name.");
+            if (String.IsNullOrEmpty(placeName)) throw new Exception("Could not read place name.");
             if (String.IsNullOrEmpty(address1)) throw new Exception("Could not read address line 1.");
             if (String.IsNullOrEmpty(city)) throw new Exception("Could not read city.");
             if (String.IsNullOrEmpty(state)) throw new Exception("Could not read state.");
             if (String.IsNullOrEmpty(zipCode)) throw new Exception("Could not read ZIP code.");
-            if (String.IsNullOrEmpty(organizationType)) throw new Exception("Could not read organization type.");
+            if (String.IsNullOrEmpty(placeType)) throw new Exception("Could not read place type.");
 
             // update the unfinished data
             unfinished.HasHostedBefore = hostedBeforeString == HostedBeforeResponse;
-            unfinished.OrganizationName = organizationName;
-            unfinished.OrganizationAddress1 = address1;
-            unfinished.OrganizationAddress2 = address2;
-            unfinished.OrganizationCity = city;
-            unfinished.OrganizationState = state;
-            unfinished.OrganizationPostalCode = zipCode;
-            unfinished.OrganizationType = organizationType switch
+            unfinished.PlaceName = placeName;
+            unfinished.PlaceAddress1 = address1;
+            unfinished.PlaceAddress2 = address2;
+            unfinished.PlaceCity = city;
+            unfinished.PlaceState = state;
+            unfinished.PlacePostalCode = zipCode;
+            unfinished.PlaceType = placeType switch
             {
-                "School" => OrganizationType.School,
-                "Library" => OrganizationType.Library,
-                "Home School Co-Op" => OrganizationType.HomeSchool,
-                "Boys & Girls Club" => OrganizationType.BoysGirlsClub,
-                "YMCA" => OrganizationType.YMCA,
-                "Other" => OrganizationType.Other,
-                _ => throw new ArgumentOutOfRangeException(nameof(organizationType))
+                "School" => PlaceType.School,
+                "Library" => PlaceType.Library,
+                "Home School Co-Op" => PlaceType.HomeSchool,
+                "Boys & Girls Club" => PlaceType.BoysGirlsClub,
+                "YMCA" => PlaceType.YMCA,
+                "Other" => PlaceType.Other,
+                _ => throw new ArgumentOutOfRangeException(nameof(placeType))
             };
-            unfinished.OrganizationTypeOther = organizationTypeOther;
-            unfinished.OrganizationTaxIdentifier = taxId;
+            unfinished.PlaceTypeOther = placeTypeOther;
+            unfinished.PlaceTaxIdentifier = taxId;
             unfinished.EndPart03On = dateTimeHelper.UtcNow;
             
             await dbContext.SaveChangesAsync();
@@ -395,9 +395,9 @@ public class SubmitForm(
 
             /*** DATABASE ***/
             // update the unfinished data
-            unfinished.ApplicantPhone = phone;
+            unfinished.PersonPhone = phone;
             unfinished.WorkshopCode = workshopCode;
-            unfinished.ApplicantTimeZone = timeZone;
+            unfinished.PersonTimeZone = timeZone;
             unfinished.ChosenTimeSlot = chosenTimeSlot;
             unfinished.ReferenceSource = referenceSource;
             unfinished.ReferenceSourceOther = referenceSourceOther;
@@ -406,31 +406,31 @@ public class SubmitForm(
             
             // these should be unnecessary, but full slate requires them
             if (chosenTimeSlot == null) throw new Exception("Could not read chosen timeslot.");
-            if (String.IsNullOrEmpty(unfinished.ApplicantLastName)) throw new Exception("Applicant missing last name.");
-            if (String.IsNullOrEmpty(unfinished.ApplicantEmail)) throw new Exception("Applicant missing email.");
-            if (String.IsNullOrEmpty(unfinished.ApplicantPhone)) throw new Exception("Applicant missing phone.");
+            if (String.IsNullOrEmpty(unfinished.PersonLastName)) throw new Exception("Person missing last name.");
+            if (String.IsNullOrEmpty(unfinished.PersonEmail)) throw new Exception("Person missing email.");
+            if (String.IsNullOrEmpty(unfinished.PersonPhone)) throw new Exception("Person missing phone.");
 
             // create the application & clubs
-            var application = 
-                new ApplicationDb()
-                {
-                    Status = ApplicationStatus.Received,
-                    ApplicantType = unfinished.ApplicantType,
-                    ApplicantFirstName = unfinished.ApplicantFirstName,
-                    ApplicantLastName = unfinished.ApplicantLastName,
-                    ApplicantEmail = unfinished.ApplicantEmail,
-                    ApplicantPhone = unfinished.ApplicantPhone,
-                    ApplicantTimeZone = unfinished.ApplicantTimeZone,
-                    OrganizationName = unfinished.OrganizationName,
-                    OrganizationType = unfinished.OrganizationType,
-                    OrganizationTypeOther = unfinished.OrganizationTypeOther,
-                    OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
-                    WorkshopCode = unfinished.WorkshopCode,
-                    ReferenceSource = unfinished.ReferenceSource,
-                    ReferenceSourceOther = unfinished.ReferenceSourceOther,
-                    Comments = unfinished.Comments,
-                    SubmittedOn = dateTimeHelper.UtcNow
-                };
+            var application = new RequestDb();
+                //new ApplicationDb()
+                //{
+                //    Status = ApplicationStatus.Received,
+                //    ApplicantType = unfinished.ApplicantType,
+                //    ApplicantFirstName = unfinished.ApplicantFirstName,
+                //    ApplicantLastName = unfinished.ApplicantLastName,
+                //    ApplicantEmail = unfinished.ApplicantEmail,
+                //    ApplicantPhone = unfinished.ApplicantPhone,
+                //    ApplicantTimeZone = unfinished.ApplicantTimeZone,
+                //    OrganizationName = unfinished.OrganizationName,
+                //    OrganizationType = unfinished.OrganizationType,
+                //    OrganizationTypeOther = unfinished.OrganizationTypeOther,
+                //    OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
+                //    WorkshopCode = unfinished.WorkshopCode,
+                //    ReferenceSource = unfinished.ReferenceSource,
+                //    ReferenceSourceOther = unfinished.ReferenceSourceOther,
+                //    Comments = unfinished.Comments,
+                //    SubmittedOn = dateTimeHelper.UtcNow
+                //};
 
             var clubStrings = unfinished.ClubsString?.Split(' ') ?? [];
             foreach (var clubString in clubStrings)
@@ -438,9 +438,9 @@ public class SubmitForm(
                 var parts = clubString.Split(':');
                 if (parts.Length != 3) throw new UnreachableException($"ClubString cannot be parsed: {clubString}");
 
-                var applicationClub = new ApplicationClubDb()
+                var applicationClub = new ProposedClubDb()
                 {
-                    Application = application,
+                    Request = application,
                     ClubSize = ClubSize.Size16,
                     AgeLevel = parts[0] switch
                     {
@@ -457,11 +457,11 @@ public class SubmitForm(
                     },
                     StartsOn = DateOnly.Parse(parts[2])
                 };
-                application.ApplicationClubs ??= new List<ApplicationClubDb>();
-                application.ApplicationClubs.Add(applicationClub);
+                application.ProposedClubs ??= new List<ProposedClubDb>();
+                application.ProposedClubs.Add(applicationClub);
             }
 
-            await dbContext.Applications.AddAsync(application);
+            await dbContext.Requests.AddAsync(application);
             await dbContext.SaveChangesAsync();
 
             /*** FULL SLATE ***/
@@ -476,10 +476,10 @@ public class SubmitForm(
                 Services = [FullSlateConstants.Offerings.CoachCall],
                 Client = new FullSlateAppointmentCreationClient()
                 {
-                    FirstName = unfinished.ApplicantFirstName ?? SoftCrowConstants.Display.None,
-                    LastName = unfinished.ApplicantLastName,
-                    Email = unfinished.ApplicantEmail,
-                    PhoneNumber = new FullSlatePhoneNumber() { Number = unfinished.ApplicantPhone }
+                    FirstName = unfinished.PersonFirstName ?? SoftCrowConstants.Display.None,
+                    LastName = unfinished.PersonLastName,
+                    Email = unfinished.PersonEmail,
+                    PhoneNumber = new FullSlatePhoneNumber() { Number = unfinished.PersonPhone }
                 },
                 UserTypeString = FullSlateConstants.UserTypes.Client
             };
@@ -505,7 +505,7 @@ public class SubmitForm(
                 // back out the application
                 try
                 {
-                    dbContext.Applications.Remove(application);
+                    dbContext.Requests.Remove(application);
                     await dbContext.SaveChangesAsync();
                 }
                 catch (Exception exception)
@@ -528,7 +528,7 @@ public class SubmitForm(
                 var dataChange = new DataChange()
                 {
                     EntityId = application.ApplicationId,
-                    EntityName = nameof(ApplicationDb),
+                    EntityName = nameof(RequestDb),
                     EntityState = EntityState.Added
                 };
                 var response = await httpClient.PostAsJsonAsync("/api/datachanges", dataChange, options);
