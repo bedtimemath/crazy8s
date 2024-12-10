@@ -6,7 +6,7 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class UnfinishedConfig : BaseConfig<UnfinishedDb>
+public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
 {
     public override void Configure(EntityTypeBuilder<UnfinishedDb> entity)
     {

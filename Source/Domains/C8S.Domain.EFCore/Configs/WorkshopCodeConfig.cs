@@ -1,13 +1,13 @@
-﻿using C8S.Domain.EFCore.Base;
-using C8S.Domain.EFCore.Models;
+﻿using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class WorkshopCodeConfig : BaseConfig<WorkshopCodeDb>
+public class WorkshopCodeConfig : IEntityTypeConfiguration<WorkshopCodeDb>
 {
-    public override void Configure(EntityTypeBuilder<WorkshopCodeDb> entity)
+    public void Configure(EntityTypeBuilder<WorkshopCodeDb> entity)
     {
         #region Id Property
         // [Required]

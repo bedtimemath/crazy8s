@@ -1,13 +1,13 @@
-﻿using C8S.Domain.EFCore.Base;
-using C8S.Domain.EFCore.Models;
+﻿using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class ShipmentConfig : BaseConfig<ShipmentDb>
+public class ShipmentConfig : IEntityTypeConfiguration<ShipmentDb>
 {
-    public override void Configure(EntityTypeBuilder<ShipmentDb> entity)
+    public void Configure(EntityTypeBuilder<ShipmentDb> entity)
     {
         #region Id Property
         // [Required]

@@ -20,6 +20,8 @@ public class C8SDbContext(
     #region DbSet Properties
     public DbSet<ClubDb> Clubs { get; set; }
     public DbSet<ClubPersonDb> ClubPersons { get; set; }
+    public DbSet<InvoiceDb> Invoices { get; set; }
+    public DbSet<InvoicePersonDb> InvoicePersons { get; set; }
     public DbSet<OrderDb> Orders { get; set; }
     public DbSet<OrderSkuDb> OrderSkus { get; set; }
     public DbSet<PersonDb> Persons { get; set; }

@@ -6,7 +6,7 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class RequestConfig : BaseConfig<RequestDb>
+public class RequestConfig : BaseCoreConfig<RequestDb>
 {
     public override void Configure(EntityTypeBuilder<RequestDb> entity)
     {
@@ -17,19 +17,19 @@ public class RequestConfig : BaseConfig<RequestDb>
         #endregion
 
         #region Database Properties (Old System)
-        //public Guid? OldSystemApplicationId { get; set; } = null;
+        //public Guid? OldSystemApplicationId { get; set; }
         entity.Property(m => m.OldSystemApplicationId)
             .IsRequired(false);
 
-        //public Guid? OldSystemAddressId { get; set; } = null;
+        //public Guid? OldSystemAddressId { get; set; }
         entity.Property(m => m.OldSystemAddressId)
             .IsRequired(false);
 
-        //public Guid? OldSystemLinkedCoachId { get; set; } = null;
+        //public Guid? OldSystemLinkedCoachId { get; set; }
         entity.Property(m => m.OldSystemLinkedCoachId)
             .IsRequired(false);
 
-        //public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
+        //public Guid? OldSystemLinkedOrganizationId { get; set; }
         entity.Property(m => m.OldSystemLinkedOrganizationId)
             .IsRequired(false);
         #endregion
@@ -82,80 +82,102 @@ public class RequestConfig : BaseConfig<RequestDb>
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.FullName)]
-        //public string? OrganizationName { get; set; } = null;
+        //public string? OrganizationName { get; set; }
         entity.Property(m => m.PlaceName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public OrganizationType? OrganizationType { get; set; } = null;
+        //public OrganizationType? OrganizationType { get; set; }
         entity.Property(m => m.PlaceType)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string? OrganizationTypeOther { get; set; } = null;
+        //public string? OrganizationTypeOther { get; set; }
         entity.Property(m => m.PlaceTypeOther)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? OrganizationTaxIdentifier { get; set; } = null;
+        //public string? OrganizationTaxIdentifier { get; set; }
         entity.Property(m => m.PlaceTaxIdentifier)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? WorkshopCode { get; set; } = null;
+        //public string? WorkshopCode { get; set; }
         entity.Property(m => m.WorkshopCode)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-        //public string? ReferenceSource { get; set; } = null;
+        //public string? ReferenceSource { get; set; }
         entity.Property(m => m.ReferenceSource)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Long)]
-        //public string? ReferenceSourceOther { get; set; } = null;
+        //public string? ReferenceSourceOther { get; set; }
         entity.Property(m => m.ReferenceSourceOther)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Long)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
-        //public string? Comments { get; set; } = null;
+        //public string? Comments { get; set; }
         entity.Property(m => m.Comments)
             .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(LinkedCoach))]
-        //public int? LinkedCoachId { get; set; } = default!;
+        //[ForeignKey(nameof(Person))]
+        //public int? PersonId { get; set; }
         entity.Property(m => m.PersonId)
             .IsRequired(false);
 
-        //[ForeignKey(nameof(LinkedOrganization))]
-        //public int? LinkedOrganizationId { get; set; } = default!;
+        //[ForeignKey(nameof(Place))]
+        //public int? PlaceId { get; set; }
         entity.Property(m => m.PlaceId)
+            .IsRequired(false);
+
+        //[ForeignKey(nameof(Sale))]
+        //public int? SaleId { get; set; }
+        entity.Property(m => m.SaleId)
             .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
-        //public CoachDb? LinkedCoach { get; set; } = default!;
+        //public PersonDb? Person { get; set; }
         entity.HasOne(m => m.Person)
             .WithMany(m => m.Requests)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
 
-        //public OrganizationDb? LinkedOrganization { get; set; } = default!;
+        //public PlaceDb? Place { get; set; }
         entity.HasOne(m => m.Place)
             .WithMany(m => m.Requests)
             .HasForeignKey(m => m.PlaceId)
             .IsRequired(false);
+
+        //public SaleDb? Sale { get; set; }
+        entity.HasOne(m => m.Sale)
+            .WithOne(m => m.Request)
+            .HasForeignKey<RequestDb>(m => m.Sale)
+            .IsRequired(false);
+
+        //public ICollection<ProposedClubDb> ProposedClubs { get; set; } = default!;
+        entity.HasMany(m => m.ProposedClubs)
+            .WithOne(m => m.Request)
+            .IsRequired(false);
+
+        //public ICollection<RequestNoteDb> Notes { get; set; } = default!;
+        entity.HasMany(m => m.Notes)
+            .WithOne(m => m.Request)
+            .HasForeignKey(m => m.RequestId)
+            .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Indices

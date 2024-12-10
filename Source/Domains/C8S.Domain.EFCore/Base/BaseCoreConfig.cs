@@ -4,8 +4,8 @@ using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Base;
 
-public abstract class BaseConfig<TCoreDb> : IEntityTypeConfiguration<TCoreDb>
-where TCoreDb : class, IBaseDb
+public abstract class BaseCoreConfig<TCoreDb> : IEntityTypeConfiguration<TCoreDb>
+where TCoreDb : class, ICoreDb
 {
     public virtual void Configure(EntityTypeBuilder<TCoreDb> entity)
     {

@@ -6,7 +6,7 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class OrderConfig : BaseConfig<OrderDb>
+public class OrderConfig : BaseCoreConfig<OrderDb>
 {
     public override void Configure(EntityTypeBuilder<OrderDb> entity)
     {
@@ -61,7 +61,7 @@ public class OrderConfig : BaseConfig<OrderDb>
         entity.Property(m => m.ContactPhone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
-        
+
         //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string Recipient { get; set; } = default!;
         entity.Property(m => m.Recipient)
@@ -132,19 +132,25 @@ public class OrderConfig : BaseConfig<OrderDb>
         #region Navigation Configuration
         //public ClubDb? Club { get; set; } = null;
         entity.HasOne(m => m.Club)
-            .WithMany(m => m.Orders)
-            .HasForeignKey(m => m.ClubId)
+            .WithOne(m => m.Order)
+            .HasForeignKey<OrderDb>(m => m.ClubId)
             .IsRequired(false);
-        
+
         //public ICollection<ShipmentDb> Shipments { get; set; } = default!;
         entity.HasMany(m => m.Shipments)
             .WithOne(m => m.Order)
             .HasForeignKey(m => m.OrderId);
-        
+
         //public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
         entity.HasMany(m => m.OrderSkus)
             .WithOne(m => m.Order)
             .HasForeignKey(m => m.OrderId);
+
+        //public ICollection<OrderNoteDb> Notes { get; set; } = default!;
+        entity.HasMany(m => m.Notes)
+            .WithOne(m => m.Order)
+            .HasForeignKey(m => m.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Indices

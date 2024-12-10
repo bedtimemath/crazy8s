@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
+public class InvoicePersonConfig : IEntityTypeConfiguration<InvoicePersonDb>
 {
-    public void Configure(EntityTypeBuilder<SalePersonDb> entity)
+    public void Configure(EntityTypeBuilder<InvoicePersonDb> entity)
     {
         #region Id Property
         // [Required]
-        // public int SalePersonId { get; set; }
-        entity.HasKey(m => m.SalePersonId);
+        // public int InvoicePersonId { get; set; }
+        entity.HasKey(m => m.InvoicePersonId);
         #endregion
 
         #region Database Properties
@@ -28,23 +28,23 @@ public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
         entity.Property(m => m.PersonId)
             .IsRequired(true);
         
-        //[ForeignKey(nameof(Sale))]
-        //public int SaleId { get; set; } = null;
-        entity.Property(m => m.SaleId)
+        //[ForeignKey(nameof(Invoice))]
+        //public int InvoiceId { get; set; } = null;
+        entity.Property(m => m.InvoiceId)
             .IsRequired(true);
         #endregion
 
         #region Navigation Configuration
         //public PersonDb Person { get; set; } = null;
         entity.HasOne(m => m.Person)
-            .WithMany(m => m.SalePersons)
+            .WithMany(m => m.InvoicePersons)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(true);
 
-        //public SaleDb Sale { get; set; } = null;
-        entity.HasOne(m => m.Sale)
-            .WithMany(m => m.SalePersons)
-            .HasForeignKey(m => m.SaleId)
+        //public InvoiceDb Invoice { get; set; } = null;
+        entity.HasOne(m => m.Invoice)
+            .WithMany(m => m.InvoicePersons)
+            .HasForeignKey(m => m.InvoiceId)
             .IsRequired(true);
         #endregion
     }

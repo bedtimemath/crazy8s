@@ -9,7 +9,7 @@ using SC.Common.Extensions;
 namespace C8S.Domain.EFCore.Models;
 
 [Table("Clubs")]
-public class ClubDb : BaseDb
+public class ClubDb : BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
@@ -35,27 +35,40 @@ public class ClubDb : BaseDb
     #endregion
 
     #region Database Properties
-    public int? Season { get; set; } = default!;
+
+    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public ClubStatus Status { get; set; } = default!;
+    
+    public int? Season { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel? AgeLevel { get; set; } = default!;
+    public AgeLevel? AgeLevel { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize? ClubSize { get; set; } = default!;
+    public ClubSize? ClubSize { get; set; }
 
     public DateOnly? StartsOn { get; set; }
     #endregion
 
     #region Reference Properties
-    [ForeignKey(nameof(Place))]
+    [Required, ForeignKey(nameof(Place))]
     public int PlaceId { get; set; } = default!;
     public PlaceDb Place { get; set; } = default!;
+
+    [ForeignKey(nameof(Sale))]
+    public int? SaleId { get; set; }
+    public SaleDb? Sale { get; set; }
+
+    [ForeignKey(nameof(Order))]
+    public int? OrderId { get; set; }
+    public OrderDb? Order { get; set; }
     #endregion
 
     #region Reference Collections
-    public ICollection<OrderDb> Orders { get; set; } = default!;
     public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
+    public ICollection<ClubNoteDb> Notes { get; set; } = default!;
     #endregion
 }

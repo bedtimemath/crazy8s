@@ -9,7 +9,7 @@ using SC.Common.Extensions;
 namespace C8S.Domain.EFCore.Models;
 
 [Table("Skus")]
-public class SkuDb : BaseDb
+public class SkuDb : BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
@@ -24,9 +24,11 @@ public class SkuDb : BaseDb
     public int SkuId { get; set; }
     #endregion
 
-    #region Database Properties
+    #region Database Properties (Old System)
     public Guid? OldSystemSkuId { get; set; } = null;
+    #endregion
 
+    #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Key)]
     public string Key { get; set; } = default!;
 
@@ -37,21 +39,22 @@ public class SkuDb : BaseDb
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public SkuStatus Status { get; set; } = default!;
 
-    public int? Season { get; set; } = default!;
+    public int? Season { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel? AgeLevel { get; set; } = default!;
+    public AgeLevel? AgeLevel { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize? ClubSize { get; set; } = default!;
+    public ClubSize? ClubSize { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
-    public string? Comments { get; set; } = null;
+    public string? Comments { get; set; }
     #endregion
 
     #region Child Properties
     public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
+    public ICollection<PermissionDb> Permissions { get; set; } = default!;
     #endregion
 }

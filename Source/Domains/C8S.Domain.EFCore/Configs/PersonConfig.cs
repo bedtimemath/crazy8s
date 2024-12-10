@@ -1,11 +1,12 @@
 ﻿using C8S.Domain.EFCore.Base;
 using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class PersonConfig : BaseConfig<PersonDb>
+public class PersonConfig : BaseCoreConfig<PersonDb>
 {
     public override void Configure(EntityTypeBuilder<PersonDb> entity)
     {
@@ -35,7 +36,7 @@ public class PersonConfig : BaseConfig<PersonDb>
 
         #region Database Properties
         //[MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string? FirstName { get; set; } = default!;
+        //public string? FirstName { get; set; }
         entity.Property(m => m.FirstName)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(false);
@@ -46,40 +47,40 @@ public class PersonConfig : BaseConfig<PersonDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
             .IsRequired(true);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Email)]
-        //public string Email { get; set; } = default!;
+        //[MaxLength(SharedConstants.MaxLengths.Email)]
+        //public string Email { get; set; }
         entity.Property(m => m.Email)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
-            .IsRequired(true);
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
+            .IsRequired(false);
 
-        //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string TimeZone { get; set; } = default!;
+        //[MaxLength(SharedConstants.MaxLengths.Medium)]
+        //public string? TimeZone { get; set; }
         entity.Property(m => m.TimeZone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? Phone { get; set; } = null;
+        //public string? Phone { get; set; }
         entity.Property(m => m.Phone)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public JobTitle? JobTitle { get; set; } = null;
+        //public JobTitle? JobTitle { get; set; }
         entity.Property(m => m.JobTitle)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-        //public string? JobTitleOther { get; set; } = null;
+        //public string? JobTitleOther { get; set; }
         entity.Property(m => m.JobTitleOther)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-        //public string? WordPressUser { get; set; } = null;
+        //public string? WordPressUser { get; set; }
         entity.Property(m => m.WordPressUser)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
@@ -99,6 +100,12 @@ public class PersonConfig : BaseConfig<PersonDb>
             .HasForeignKey(m => m.PlaceId)
             .IsRequired(false);
 
+        //public ICollection<PermissionDb> Permissions { get; set; } = default!;
+        entity.HasMany(m => m.Permissions)
+            .WithOne(m => m.Person)
+            .HasForeignKey(m => m.PersonId)
+            .IsRequired(false);
+
         //public ICollection<RequestDb> Requests { get; set; } = default!;
         entity.HasMany(m => m.Requests)
             .WithOne(m => m.Person)
@@ -110,6 +117,24 @@ public class PersonConfig : BaseConfig<PersonDb>
             .WithOne(m => m.Person)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
+
+        //public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
+        entity.HasMany(m => m.SalePersons)
+            .WithOne(m => m.Person)
+            .HasForeignKey(m => m.PersonId)
+            .IsRequired(false);
+
+        //public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;
+        entity.HasMany(m => m.InvoicePersons)
+            .WithOne(m => m.Person)
+            .HasForeignKey(m => m.PersonId)
+            .IsRequired(false);
+
+        //public ICollection<PersonNoteDb> Notes { get; set; } = default!;
+        entity.HasMany(m => m.Notes)
+            .WithOne(m => m.Person)
+            .HasForeignKey(m => m.PersonId)
+            .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Indices

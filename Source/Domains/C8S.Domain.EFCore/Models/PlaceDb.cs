@@ -8,7 +8,7 @@ using SC.Common.Base;
 namespace C8S.Domain.EFCore.Models;
 
 [Table("Places")]
-public class PlaceDb: BaseDb
+public class PlaceDb: BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
@@ -23,13 +23,13 @@ public class PlaceDb: BaseDb
     #endregion
 
     #region Database Properties (Old System)
-    public Guid? OldSystemCompanyId { get; set; } = null;
+    public Guid? OldSystemCompanyId { get; set; }
     
-    public Guid? OldSystemOrganizationId { get; set; } = null;
+    public Guid? OldSystemOrganizationId { get; set; }
     
-    public Guid? OldSystemPostalAddressId { get; set; } = null;
+    public Guid? OldSystemPostalAddressId { get; set; }
     
-    public Guid? OldSystemUsaPostalId { get; set; } = null;
+    public Guid? OldSystemUsaPostalId { get; set; }
     #endregion
 
     #region Database Properties
@@ -38,19 +38,19 @@ public class PlaceDb: BaseDb
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public PlaceType Type { get; set; } = PlaceType.Other;
+    public PlaceType Type { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? TypeOther { get; set; } = null;
+    public string? TypeOther { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? TaxIdentifier { get; set; } = null;
+    public string? TaxIdentifier { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string Line1 { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? Line2 { get; set; } = default!;
+    public string? Line2 { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string City { get; set; } = default!;
@@ -65,11 +65,19 @@ public class PlaceDb: BaseDb
     public bool IsMilitary { get; set; } = default!;
     #endregion
 
-    #region Child Properties
-    // one-to-many
+    #region Reference Properties
+    [ForeignKey(nameof(Parent))]
+    public int? ParentId { get; set; } = default!;
+    public PlaceDb? Parent { get; set; } = default!;
+    #endregion
+    
+    #region Reference Collections
+    public ICollection<PlaceDb> Children { get; set; } = default!;
+
     public ICollection<ClubDb> Clubs { get; set; } = default!;
     public ICollection<PersonDb> Persons { get; set; } = default!;
     public ICollection<RequestDb> Requests { get; set; } = default!;
     public ICollection<SaleDb> Sales { get; set; } = default!;
+    public ICollection<PlaceNoteDb> Notes { get; set; } = default!;
     #endregion
 }

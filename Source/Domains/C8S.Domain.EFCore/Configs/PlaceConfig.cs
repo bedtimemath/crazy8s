@@ -2,11 +2,12 @@
 using C8S.Domain.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class PlaceConfig : BaseConfig<PlaceDb>
+public class PlaceConfig : BaseCoreConfig<PlaceDb>
 {
     public override void Configure(EntityTypeBuilder<PlaceDb> entity)
     {
@@ -17,19 +18,19 @@ public class PlaceConfig : BaseConfig<PlaceDb>
         #endregion
 
         #region Database Properties (Old System)
-        //public Guid? OldSystemCompanyId { get; set; } = null;
+        //public Guid? OldSystemCompanyId { get; set; }
         entity.Property(m => m.OldSystemCompanyId)
             .IsRequired(false);
-    
-        //public Guid? OldSystemOrganizationId { get; set; } = null;
+
+        //public Guid? OldSystemOrganizationId { get; set; }
         entity.Property(m => m.OldSystemOrganizationId)
             .IsRequired(false);
-        
-        //public Guid? OldSystemPostalAddressId { get; set; } = null;
+
+        //public Guid? OldSystemPostalAddressId { get; set; }
         entity.Property(m => m.OldSystemPostalAddressId)
             .IsRequired(false);
-        
-        //public Guid? OldSystemUsaPostalId { get; set; } = null;
+
+        //public Guid? OldSystemUsaPostalId { get; set; }
         entity.Property(m => m.OldSystemUsaPostalId)
             .IsRequired(false);
         #endregion
@@ -50,13 +51,13 @@ public class PlaceConfig : BaseConfig<PlaceDb>
             .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]
-        //public string? TypeOther { get; set; } = null;
+        //public string? TypeOther { get; set; }
         entity.Property(m => m.TypeOther)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //public string? TaxIdentifier { get; set; } = null;
+        //public string? TaxIdentifier { get; set; }
         entity.Property(m => m.TaxIdentifier)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
@@ -68,7 +69,7 @@ public class PlaceConfig : BaseConfig<PlaceDb>
             .IsRequired(true);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-        //public string? Line2 { get; set; } = default!;
+        //public string? Line2 { get; set; }
         entity.Property(m => m.Line2)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
@@ -98,7 +99,25 @@ public class PlaceConfig : BaseConfig<PlaceDb>
             .IsRequired(true);
         #endregion
 
+        #region Reference Properties
+        //[ForeignKey(nameof(Parent))]
+        //public int? ParentId { get; set; } = default!;
+        entity.Property(m => m.ParentId)
+            .IsRequired(false);
+        #endregion
+
         #region Navigation Configuration
+        //public PlaceDb? Parent { get; set; } = default!;
+        entity.HasOne(m => m.Parent)
+            .WithMany(m => m.Children)
+            .IsRequired(false);
+
+        //public ICollection<PlaceDb> Children { get; set; } = default!;
+        entity.HasMany(m => m.Children)
+            .WithOne(m => m.Parent)
+            .HasForeignKey(m => m.ParentId)
+            .IsRequired(false);
+
         //public ICollection<ClubDb> Clubs { get; set; } = default!;
         entity.HasMany(m => m.Clubs)
             .WithOne(m => m.Place)
@@ -118,6 +137,12 @@ public class PlaceConfig : BaseConfig<PlaceDb>
         entity.HasMany(m => m.Sales)
             .WithOne(m => m.Place)
             .HasForeignKey(m => m.PlaceId);
+
+        //public ICollection<PlaceNoteDb> Notes { get; set; } = default!;
+        entity.HasMany(m => m.Notes)
+            .WithOne(m => m.Place)
+            .HasForeignKey(m => m.PlaceId)
+            .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Indices

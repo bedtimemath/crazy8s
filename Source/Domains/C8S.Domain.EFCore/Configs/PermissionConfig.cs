@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
+public class PermissionConfig : IEntityTypeConfiguration<PermissionDb>
 {
-    public void Configure(EntityTypeBuilder<SalePersonDb> entity)
+    public void Configure(EntityTypeBuilder<PermissionDb> entity)
     {
         #region Id Property
         // [Required]
-        // public int SalePersonId { get; set; }
-        entity.HasKey(m => m.SalePersonId);
+        // public int PermissionId { get; set; }
+        entity.HasKey(m => m.PermissionId);
         #endregion
 
         #region Database Properties
@@ -28,23 +28,23 @@ public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
         entity.Property(m => m.PersonId)
             .IsRequired(true);
         
-        //[ForeignKey(nameof(Sale))]
-        //public int SaleId { get; set; } = null;
-        entity.Property(m => m.SaleId)
+        //[ForeignKey(nameof(Sku))]
+        //public int SkuId { get; set; } = null;
+        entity.Property(m => m.SkuId)
             .IsRequired(true);
         #endregion
 
         #region Navigation Configuration
         //public PersonDb Person { get; set; } = null;
         entity.HasOne(m => m.Person)
-            .WithMany(m => m.SalePersons)
+            .WithMany(m => m.Permissions)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(true);
 
-        //public SaleDb Sale { get; set; } = null;
-        entity.HasOne(m => m.Sale)
-            .WithMany(m => m.SalePersons)
-            .HasForeignKey(m => m.SaleId)
+        //public SkuDb Sku { get; set; } = null;
+        entity.HasOne(m => m.Sku)
+            .WithMany(m => m.Permissions)
+            .HasForeignKey(m => m.SkuId)
             .IsRequired(true);
         #endregion
     }

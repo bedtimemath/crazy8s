@@ -1,13 +1,13 @@
-﻿using C8S.Domain.EFCore.Base;
-using C8S.Domain.EFCore.Models;
+﻿using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class ProposedClubConfig : BaseConfig<ProposedClubDb>
+public class ProposedClubConfig : IEntityTypeConfiguration<ProposedClubDb>
 {
-    public override void Configure(EntityTypeBuilder<ProposedClubDb> entity)
+    public void Configure(EntityTypeBuilder<ProposedClubDb> entity)
     {
         #region Id Property
         // [Required]

@@ -1,11 +1,12 @@
 ﻿using C8S.Domain.EFCore.Base;
 using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class ClubConfig : BaseConfig<ClubDb>
+public class ClubConfig : BaseCoreConfig<ClubDb>
 {
     public override void Configure(EntityTypeBuilder<ClubDb> entity)
     {
@@ -16,24 +17,32 @@ public class ClubConfig : BaseConfig<ClubDb>
         #endregion
 
         #region Database Properties (Old System)
-        //public Guid? OldSystemClubId { get; set; } = null;
+        //public Guid? OldSystemClubId { get; set; }
         entity.Property(m => m.OldSystemClubId)
             .IsRequired(false);
 
-        //public Guid? OldSystemOrganizationId { get; set; } = null;
+        //public Guid? OldSystemOrganizationId { get; set; }
         entity.Property(m => m.OldSystemOrganizationId)
             .IsRequired(false);
 
-        //public Guid? OldSystemCoachId { get; set; } = null;
+        //public Guid? OldSystemCoachId { get; set; }
         entity.Property(m => m.OldSystemCoachId)
             .IsRequired(false);
 
-        //public Guid? OldSystemMeetingAddressId { get; set; } = null;
+        //public Guid? OldSystemMeetingAddressId { get; set; }
         entity.Property(m => m.OldSystemMeetingAddressId)
             .IsRequired(false);
         #endregion
 
         #region Database Properties
+        //[Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //[JsonConverter(typeof(JsonStringEnumConverter))]
+        //public ClubStatus Status { get; set; } = default!;
+        entity.Property(m => m.Status)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasConversion<string>()
+            .IsRequired(true);
+
         //public int Season { get; set; } = default!;
         entity.Property(m => m.Season)
             .IsRequired(false);
@@ -60,10 +69,20 @@ public class ClubConfig : BaseConfig<ClubDb>
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(Organization))]
-        //public int OrganizationId { get; set; } = default!;
+        //[Required, ForeignKey(nameof(Place))]
+        //public int PlaceId { get; set; } = default!;
         entity.Property(m => m.PlaceId)
             .IsRequired(true);
+
+        //[ForeignKey(nameof(Sale))]
+        //public int? SaleId { get; set; } = default!;
+        entity.Property(m => m.SaleId)
+            .IsRequired(false);
+
+    //[ForeignKey(nameof(Order))]
+    //public int? OrderId { get; set; }
+    entity.Property(m => m.OrderId)
+        .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
@@ -73,10 +92,16 @@ public class ClubConfig : BaseConfig<ClubDb>
             .HasForeignKey(m => m.PlaceId)
             .IsRequired(true);
 
-        //public ICollection<OrderDb> Orders { get; set; } = default!;
-        entity.HasMany(m => m.Orders)
+        //public SaleDb? Sale { get; set; }
+        entity.HasOne(m => m.Sale)
+            .WithMany(m => m.Clubs)
+            .HasForeignKey(m => m.SaleId)
+            .IsRequired(false);
+
+        //public OrderDb? Order { get; set; }
+        entity.HasOne(m => m.Order)
             .WithOne(m => m.Club)
-            .HasForeignKey(m => m.ClubId)
+            .HasForeignKey<OrderDb>(m => m.ClubId)
             .IsRequired(false);
 
         //public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
@@ -84,6 +109,12 @@ public class ClubConfig : BaseConfig<ClubDb>
             .WithOne(m => m.Club)
             .HasForeignKey(m => m.ClubId)
             .IsRequired(false);
+
+        //public ICollection<ClubNoteDb> Notes { get; set; } = default!;
+        entity.HasMany(m => m.Notes)
+            .WithOne(m => m.Club)
+            .HasForeignKey(m => m.ClubId)
+            .OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Indices

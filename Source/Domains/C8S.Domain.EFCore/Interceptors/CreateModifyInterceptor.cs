@@ -39,18 +39,18 @@ internal sealed class CreateModifyInterceptor(
     private static void SetEntryValues(DbContext context, 
         IDateTimeHelper dateTimeHelper)
     {
-        var entries = context.ChangeTracker.Entries<IAuditable>();
+        var entries = context.ChangeTracker.Entries<ICoreDb>();
         foreach (var entry in entries)
         {
             if (entry.State == EntityState.Added)
             {
                 SetCurrentPropertyValue(entry, 
-                    nameof(IAuditable.CreatedOn), dateTimeHelper.UtcNow);
+                    nameof(ICoreDb.CreatedOn), dateTimeHelper.UtcNow);
             }
             else if (entry.State == EntityState.Modified)
             {
                 SetCurrentPropertyValue(entry, 
-                    nameof(IAuditable.ModifiedOn), dateTimeHelper.UtcNow);
+                    nameof(ICoreDb.ModifiedOn), dateTimeHelper.UtcNow);
             }
         }
     }

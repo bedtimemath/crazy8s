@@ -8,7 +8,7 @@ using SC.Common.Base;
 namespace C8S.Domain.EFCore.Models;
 
 [Table("Orders")]
-public class OrderDb: BaseDb
+public class OrderDb: BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
@@ -87,5 +87,6 @@ public class OrderDb: BaseDb
     #region Child Properties
     public ICollection<ShipmentDb> Shipments { get; set; } = default!;
     public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
+    public ICollection<OrderNoteDb> Notes { get; set; } = default!;
     #endregion
 }

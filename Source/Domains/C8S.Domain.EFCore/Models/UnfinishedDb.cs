@@ -8,7 +8,7 @@ using SC.Common.Base;
 namespace C8S.Domain.EFCore.Models;
 
 [Table("Unfinisheds")]
-public class UnfinishedDb : BaseDb
+public class UnfinishedDb : BaseCoreDb
 {
     #region Override Properties
     [NotMapped]
@@ -29,69 +29,69 @@ public class UnfinishedDb : BaseDb
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ApplicantType? PersonType { get; set; } = null;
+    public ApplicantType? PersonType { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string? PersonFirstName { get; set; } = null;
+    public string? PersonFirstName { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string? PersonLastName { get; set; } = default!;
+    public string? PersonLastName { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
-    public string? PersonEmail { get; set; } = default!;
+    public string? PersonEmail { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? PersonPhone { get; set; } = null;
+    public string? PersonPhone { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? PersonTimeZone { get; set; } = default!;
+    public string? PersonTimeZone { get; set; }
 
-    public bool? HasHostedBefore { get; set; } = null;
+    public bool? HasHostedBefore { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
-    public string? PlaceName { get; set; } = null;
+    public string? PlaceName { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? PlaceAddress1 { get; set; } = default!;
+    public string? PlaceAddress1 { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? PlaceAddress2 { get; set; } = default!;
+    public string? PlaceAddress2 { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? PlaceCity { get; set; } = default!;
+    public string? PlaceCity { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
-    public string? PlaceState { get; set; } = default!;
+    public string? PlaceState { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
-    public string? PlacePostalCode { get; set; } = default!;
+    public string? PlacePostalCode { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public PlaceType? PlaceType { get; set; } = null;
+    public PlaceType? PlaceType { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? PlaceTypeOther { get; set; } = null;
+    public string? PlaceTypeOther { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? PlaceTaxIdentifier { get; set; } = null;
+    public string? PlaceTaxIdentifier { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
-    public string? ClubsString { get; set; } = null;
+    public string? ClubsString { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? WorkshopCode { get; set; } = null;
+    public string? WorkshopCode { get; set; }
 
-    public DateTimeOffset? ChosenTimeSlot { get; set; } = null;
+    public DateTimeOffset? ChosenTimeSlot { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? ReferenceSource { get; set; } = null;
+    public string? ReferenceSource { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Long)]
-    public string? ReferenceSourceOther { get; set; } = null;
+    public string? ReferenceSourceOther { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
-    public string? Comments { get; set; } = null;
+    public string? Comments { get; set; }
 
     public DateTimeOffset? EndPart01On { get; set; }
 
@@ -106,7 +106,7 @@ public class UnfinishedDb : BaseDb
 
     #region Reference Properties
     [ForeignKey(nameof(Request))]
-    public int? RequestId { get; set; } = default!;
-    public RequestDb? Request { get; set; } = default!;
+    public int? RequestId { get; set; }
+    public RequestDb? Request { get; set; }
     #endregion
 }

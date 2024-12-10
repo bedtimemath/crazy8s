@@ -5,7 +5,7 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class SkuConfig : BaseConfig<SkuDb>
+public class SkuConfig : BaseCoreConfig<SkuDb>
 {
     public override void Configure(EntityTypeBuilder<SkuDb> entity)
     {
@@ -15,11 +15,13 @@ public class SkuConfig : BaseConfig<SkuDb>
         entity.HasKey(m => m.SkuId);
         #endregion
 
-        #region Database Properties
+        #region Database Properties (Old System)
         //public Guid? OldSystemSkuId { get; set; } = null;
         entity.Property(m => m.OldSystemSkuId)
             .IsRequired(false);
+        #endregion
 
+        #region Database Properties
         //[Required, MaxLength(SharedConstants.MaxLengths.Key)]
         //public string Key { get; set; } = default!;
         entity.Property(m => m.Key)
@@ -40,13 +42,13 @@ public class SkuConfig : BaseConfig<SkuDb>
             .HasConversion<string>()
             .IsRequired(true);
 
-        //public int? Season { get; set; } = default!;
+        //public int? Season { get; set; }
         entity.Property(m => m.Season)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public AgeLevel? AgeLevel { get; set; } = default!;
+        //public AgeLevel? AgeLevel { get; set; }
         entity.Property(m => m.AgeLevel)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
@@ -54,14 +56,14 @@ public class SkuConfig : BaseConfig<SkuDb>
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ClubSize? ClubSize { get; set; } = default!;
+        //public ClubSize? ClubSize { get; set; }
         entity.Property(m => m.ClubSize)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XLong)]
-        //public string? Comments { get; set; } = null;
+        //public string? Comments { get; set; }
         entity.Property(m => m.Comments)
             .HasMaxLength(SoftCrowConstants.MaxLengths.XLong);
         #endregion
@@ -71,6 +73,12 @@ public class SkuConfig : BaseConfig<SkuDb>
         entity.HasMany(m => m.OrderSkus)
             .WithOne(m => m.Sku)
             .HasForeignKey(m => m.SkuId);
+
+        //public ICollection<PermissionDb> Permissions { get; set; } = default!;
+        entity.HasMany(m => m.Permissions)
+            .WithOne(m => m.Sku)
+            .HasForeignKey(m => m.SkuId)
+            .IsRequired(false);
         #endregion
 
         #region Indices

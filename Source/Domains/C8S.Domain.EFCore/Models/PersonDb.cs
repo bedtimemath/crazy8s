@@ -8,7 +8,7 @@ using SC.Common.Base;
 namespace C8S.Domain.EFCore.Models;
 
 [Table("Persons")]
-public class PersonDb : BaseDb
+public class PersonDb : BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
@@ -35,29 +35,29 @@ public class PersonDb : BaseDb
 
     #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string? FirstName { get; set; } = default!;
+    public string? FirstName { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string LastName { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
-    public string? Email { get; set; } = default!;
+    public string? Email { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? TimeZone { get; set; } = default!;
+    public string? TimeZone { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? Phone { get; set; } = null;
+    public string? Phone { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public JobTitle? JobTitle { get; set; } = null;
+    public JobTitle? JobTitle { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string? JobTitleOther { get; set; } = null;
+    public string? JobTitleOther { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? WordPressUser { get; set; } = null;
+    public string? WordPressUser { get; set; }
     #endregion
 
     #region Reference Properties
@@ -67,8 +67,12 @@ public class PersonDb : BaseDb
     #endregion
 
     #region Reference Collections
+    public ICollection<PermissionDb> Permissions { get; set; } = default!;
     public ICollection<RequestDb> Requests { get; set; } = default!;
+
     public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
     public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
+    public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;
+    public ICollection<PersonNoteDb> Notes { get; set; } = default!;
     #endregion
 }

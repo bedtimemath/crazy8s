@@ -1,12 +1,12 @@
-﻿using C8S.Domain.EFCore.Base;
-using C8S.Domain.EFCore.Models;
+﻿using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class OrderSkuConfig : BaseConfig<OrderSkuDb>
+public class OrderSkuConfig : IEntityTypeConfiguration<OrderSkuDb>
 {
-    public override void Configure(EntityTypeBuilder<OrderSkuDb> entity)
+    public void Configure(EntityTypeBuilder<OrderSkuDb> entity)
     {
         #region Id Property
         // [Required]
