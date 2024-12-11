@@ -527,7 +527,7 @@ public class SubmitForm(
                 var options = new JsonSerializerOptions() { Converters = { new JsonStringEnumConverter() } };
                 var dataChange = new DataChange()
                 {
-                    EntityId = application.ApplicationId,
+                    EntityId = application.RequestId,
                     EntityName = nameof(RequestDb),
                     EntityState = EntityState.Added
                 };

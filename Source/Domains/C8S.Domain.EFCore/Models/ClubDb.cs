@@ -62,8 +62,7 @@ public class ClubDb : BaseCoreDb
     public int? SaleId { get; set; }
     public SaleDb? Sale { get; set; }
 
-    [ForeignKey(nameof(Order))]
-    public int? OrderId { get; set; }
+    // one-to-one
     public OrderDb? Order { get; set; }
     #endregion
 

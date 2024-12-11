@@ -68,7 +68,7 @@ internal class AddApplication(
         var httpClient = httpClientFactory.CreateClient(nameof(Endpoints.C8SAdminApp));
         var dataChange = new DataChange()
         {
-            EntityId = application.ApplicationId,
+            EntityId = application.RequestId,
             EntityName = nameof(RequestDb),
             EntityState = EntityState.Added
         };

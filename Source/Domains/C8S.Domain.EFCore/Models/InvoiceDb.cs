@@ -32,8 +32,7 @@ public class InvoiceDb : BaseCoreDb
     #endregion
 
     #region Reference Properties
-    [ForeignKey(nameof(Sale))]
-    public int? SaleId { get; set; }
+    // one-to-one
     public SaleDb? Sale { get; set; }
     #endregion
 

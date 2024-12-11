@@ -4,7 +4,6 @@ using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20241206213923_InitialSetup")]
-    partial class InitialSetup
+    partial class C8SDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +59,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<int>("PlaceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SaleDbSaleId")
+                    b.Property<int?>("SaleId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Season")
@@ -70,6 +67,11 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<DateOnly?>("StartsOn")
                         .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("ClubId");
 
@@ -79,7 +81,7 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.HasIndex("SaleDbSaleId");
+                    b.HasIndex("SaleId");
 
                     b.ToTable("Clubs");
                 });
@@ -95,16 +97,10 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<int>("ClubId")
                         .HasColumnType("int");
 
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<bool>("IsPrimary")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<DateTimeOffset?>("ModifiedOn")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
@@ -116,6 +112,101 @@ namespace C8S.Domain.EFCore.Migrations
                     b.HasIndex("PersonId");
 
                     b.ToTable("ClubPersons");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoiceDb", b =>
+                {
+                    b.Property<int>("InvoiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"));
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("InvoiceId");
+
+                    b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoicePersonDb", b =>
+                {
+                    b.Property<int>("InvoicePersonId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoicePersonId"));
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.HasKey("InvoicePersonId");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("InvoicePersons");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.NoteDb", b =>
+                {
+                    b.Property<int>("NoteId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NoteId"));
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("ModifiedOn")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("NoteId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator<string>("Reference");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
@@ -212,7 +303,9 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ClubId");
+                    b.HasIndex("ClubId")
+                        .IsUnique()
+                        .HasFilter("[ClubId] IS NOT NULL");
 
                     b.HasIndex("OldSystemOrderId")
                         .IsUnique()
@@ -228,12 +321,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderSkuId"));
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ModifiedOn")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("OldSystemOrderId")
                         .HasColumnType("uniqueidentifier");
@@ -269,6 +356,34 @@ namespace C8S.Domain.EFCore.Migrations
                     b.ToTable("OrderSkus");
                 });
 
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PermissionDb", b =>
+                {
+                    b.Property<int>("PermissionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PermissionId"));
+
+                    b.Property<bool>("IsPrimary")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkuId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PermissionId");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("SkuId");
+
+                    b.ToTable("Permissions");
+                });
+
             modelBuilder.Entity("C8S.Domain.EFCore.Models.PersonDb", b =>
                 {
                     b.Property<int>("PersonId")
@@ -281,7 +396,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -325,7 +439,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TimeZone")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -394,6 +507,9 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<Guid?>("OldSystemUsaPostalId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("ParentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(5)
@@ -423,6 +539,8 @@ namespace C8S.Domain.EFCore.Migrations
                         .IsUnique()
                         .HasFilter("[OldSystemOrganizationId] IS NOT NULL");
 
+                    b.HasIndex("ParentId");
+
                     b.ToTable("Places");
                 });
 
@@ -446,12 +564,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ModifiedOn")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("OldSystemApplicationClubId")
                         .HasColumnType("uniqueidentifier");
@@ -481,11 +593,11 @@ namespace C8S.Domain.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestDb", b =>
                 {
-                    b.Property<int>("ApplicationId")
+                    b.Property<int>("RequestId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestId"));
 
                     b.Property<string>("Comments")
                         .HasMaxLength(4096)
@@ -578,7 +690,7 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("ApplicationId");
+                    b.HasKey("RequestId");
 
                     b.HasIndex("OldSystemApplicationId")
                         .IsUnique()
@@ -602,10 +714,16 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int");
+
                     b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int?>("PlaceId")
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RequestId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -615,7 +733,15 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasKey("SaleId");
 
+                    b.HasIndex("InvoiceId")
+                        .IsUnique()
+                        .HasFilter("[InvoiceId] IS NOT NULL");
+
                     b.HasIndex("PlaceId");
+
+                    b.HasIndex("RequestId")
+                        .IsUnique()
+                        .HasFilter("[RequestId] IS NOT NULL");
 
                     b.ToTable("Sales");
                 });
@@ -628,16 +754,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SalePersonId"));
 
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<bool>("IsPrimary")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
-
-                    b.Property<DateTimeOffset?>("ModifiedOn")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
@@ -661,12 +781,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShipmentId"));
-
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ModifiedOn")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
@@ -860,6 +974,9 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
 
+                    b.Property<int?>("RequestId")
+                        .HasColumnType("int");
+
                     b.Property<DateTimeOffset?>("SubmittedOn")
                         .HasColumnType("datetimeoffset");
 
@@ -872,6 +989,8 @@ namespace C8S.Domain.EFCore.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
+                    b.HasIndex("RequestId");
+
                     b.ToTable("Unfinisheds");
                 });
 
@@ -883,9 +1002,6 @@ namespace C8S.Domain.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WorkshopCodeId"));
 
-                    b.Property<DateTimeOffset>("CreatedOn")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<DateTimeOffset?>("EndsOn")
                         .HasColumnType("datetimeoffset");
 
@@ -894,15 +1010,110 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTimeOffset?>("ModifiedOn")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<DateTimeOffset?>("StartsOn")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("WorkshopCodeId");
 
                     b.ToTable("WorkshopCodes");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("ClubId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ClubId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Club");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoiceNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Invoice");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("OrderId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Order");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PersonNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("PersonId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Person");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PlaceNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Place");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("RequestId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Request");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.SaleNoteDb", b =>
+                {
+                    b.HasBaseType("C8S.Domain.EFCore.Models.NoteDb");
+
+                    b.Property<int?>("SaleId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("SaleId");
+
+                    b.ToTable("Notes");
+
+                    b.HasDiscriminator().HasValue("Sale");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubDb", b =>
@@ -913,11 +1124,13 @@ namespace C8S.Domain.EFCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("C8S.Domain.EFCore.Models.SaleDb", null)
+                    b.HasOne("C8S.Domain.EFCore.Models.SaleDb", "Sale")
                         .WithMany("Clubs")
-                        .HasForeignKey("SaleDbSaleId");
+                        .HasForeignKey("SaleId");
 
                     b.Navigation("Place");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubPersonDb", b =>
@@ -937,11 +1150,28 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoicePersonDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.InvoiceDb", "Invoice")
+                        .WithMany("InvoicePersons")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("C8S.Domain.EFCore.Models.PersonDb", "Person")
+                        .WithMany("InvoicePersons")
+                        .HasForeignKey("PersonId");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Person");
+                });
+
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.ClubDb", "Club")
-                        .WithMany("Orders")
-                        .HasForeignKey("ClubId");
+                        .WithOne("Order")
+                        .HasForeignKey("C8S.Domain.EFCore.Models.OrderDb", "ClubId");
 
                     b.Navigation("Club");
                 });
@@ -965,6 +1195,21 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Navigation("Sku");
                 });
 
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PermissionDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.PersonDb", "Person")
+                        .WithMany("Permissions")
+                        .HasForeignKey("PersonId");
+
+                    b.HasOne("C8S.Domain.EFCore.Models.SkuDb", "Sku")
+                        .WithMany("Permissions")
+                        .HasForeignKey("SkuId");
+
+                    b.Navigation("Person");
+
+                    b.Navigation("Sku");
+                });
+
             modelBuilder.Entity("C8S.Domain.EFCore.Models.PersonDb", b =>
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.PlaceDb", "Place")
@@ -974,13 +1219,20 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Navigation("Place");
                 });
 
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PlaceDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.PlaceDb", "Parent")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId");
+
+                    b.Navigation("Parent");
+                });
+
             modelBuilder.Entity("C8S.Domain.EFCore.Models.ProposedClubDb", b =>
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
                         .WithMany("ProposedClubs")
-                        .HasForeignKey("ApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ApplicationId");
 
                     b.Navigation("Request");
                 });
@@ -1002,11 +1254,23 @@ namespace C8S.Domain.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.SaleDb", b =>
                 {
+                    b.HasOne("C8S.Domain.EFCore.Models.InvoiceDb", "Invoice")
+                        .WithOne("Sale")
+                        .HasForeignKey("C8S.Domain.EFCore.Models.SaleDb", "InvoiceId");
+
                     b.HasOne("C8S.Domain.EFCore.Models.PlaceDb", "Place")
                         .WithMany("Sales")
                         .HasForeignKey("PlaceId");
 
+                    b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
+                        .WithOne("Sale")
+                        .HasForeignKey("C8S.Domain.EFCore.Models.SaleDb", "RequestId");
+
+                    b.Navigation("Invoice");
+
                     b.Navigation("Place");
+
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.SalePersonDb", b =>
@@ -1037,15 +1301,107 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.UnfinishedDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
+                        .WithMany()
+                        .HasForeignKey("RequestId");
+
+                    b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.ClubDb", "Club")
+                        .WithMany("Notes")
+                        .HasForeignKey("ClubId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Club");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoiceNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.InvoiceDb", "Invoice")
+                        .WithMany("Notes")
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.OrderDb", "Order")
+                        .WithMany("Notes")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PersonNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.PersonDb", "Person")
+                        .WithMany("Notes")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.PlaceNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.PlaceDb", "Place")
+                        .WithMany("Notes")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Place");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
+                        .WithMany("Notes")
+                        .HasForeignKey("RequestId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Request");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.SaleNoteDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.SaleDb", "Sale")
+                        .WithMany("Notes")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Sale");
+                });
+
             modelBuilder.Entity("C8S.Domain.EFCore.Models.ClubDb", b =>
                 {
                     b.Navigation("ClubPersons");
 
-                    b.Navigation("Orders");
+                    b.Navigation("Notes");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoiceDb", b =>
+                {
+                    b.Navigation("InvoicePersons");
+
+                    b.Navigation("Notes");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
+                    b.Navigation("Notes");
+
                     b.Navigation("OrderSkus");
 
                     b.Navigation("Shipments");
@@ -1055,6 +1411,12 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     b.Navigation("ClubPersons");
 
+                    b.Navigation("InvoicePersons");
+
+                    b.Navigation("Notes");
+
+                    b.Navigation("Permissions");
+
                     b.Navigation("Requests");
 
                     b.Navigation("SalePersons");
@@ -1062,7 +1424,11 @@ namespace C8S.Domain.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.PlaceDb", b =>
                 {
+                    b.Navigation("Children");
+
                     b.Navigation("Clubs");
+
+                    b.Navigation("Notes");
 
                     b.Navigation("Persons");
 
@@ -1073,12 +1439,18 @@ namespace C8S.Domain.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestDb", b =>
                 {
+                    b.Navigation("Notes");
+
                     b.Navigation("ProposedClubs");
+
+                    b.Navigation("Sale");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.SaleDb", b =>
                 {
                     b.Navigation("Clubs");
+
+                    b.Navigation("Notes");
 
                     b.Navigation("SalePersons");
                 });
@@ -1086,6 +1458,8 @@ namespace C8S.Domain.EFCore.Migrations
             modelBuilder.Entity("C8S.Domain.EFCore.Models.SkuDb", b =>
                 {
                     b.Navigation("OrderSkus");
+
+                    b.Navigation("Permissions");
                 });
 #pragma warning restore 612, 618
         }

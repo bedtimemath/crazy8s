@@ -62,7 +62,7 @@ public class ApplicationsController(
                     Items = applications
                         .Select(a => new ApplicationListDisplay()
                         {
-                            ApplicationId = a.ApplicationId,
+                            ApplicationId = a.RequestId,
                             ApplicantFirstName = a.PersonFirstName,
                             ApplicantLastName = a.PersonLastName,
                             ApplicantEmail = a.PersonEmail,

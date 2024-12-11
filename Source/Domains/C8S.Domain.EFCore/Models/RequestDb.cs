@@ -12,7 +12,7 @@ public class RequestDb : BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
-    public override int Id => ApplicationId;
+    public override int Id => RequestId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { PersonFirstName, PersonLastName, PlaceName }) 
                                        ?? SoftCrowConstants.Display.NotSet;
@@ -20,7 +20,7 @@ public class RequestDb : BaseCoreDb
 
     #region Id Property
     [Required] 
-    public int ApplicationId { get; set; }
+    public int RequestId { get; set; }
     #endregion
 
     #region Database Properties (Old System)
@@ -95,8 +95,7 @@ public class RequestDb : BaseCoreDb
     public int? PlaceId { get; set; }
     public PlaceDb? Place { get; set; }
 
-    [ForeignKey(nameof(Sale))]
-    public int? SaleId { get; set; }
+    // one-to-one
     public SaleDb? Sale { get; set; }
     #endregion
 

@@ -12,6 +12,22 @@ namespace C8S.Domain.EFCore.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Invoices",
+                columns: table => new
+                {
+                    InvoiceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Identifier = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invoices", x => x.InvoiceId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Places",
                 columns: table => new
                 {
@@ -31,12 +47,18 @@ namespace C8S.Domain.EFCore.Migrations
                     State = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     ZIPCode = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     IsMilitary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    ParentId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Places", x => x.PlaceId);
+                    table.ForeignKey(
+                        name: "FK_Places_Places_ParentId",
+                        column: x => x.ParentId,
+                        principalTable: "Places",
+                        principalColumn: "PlaceId");
                 });
 
             migrationBuilder.CreateTable(
@@ -59,6 +81,208 @@ namespace C8S.Domain.EFCore.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Skus", x => x.SkuId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkshopCodes",
+                columns: table => new
+                {
+                    WorkshopCodeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    StartsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    EndsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkshopCodes", x => x.WorkshopCodeId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    PersonId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OldSystemCoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemOrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemCompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    TimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    JobTitle = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    JobTitleOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    WordPressUser = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    PlaceId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.PersonId);
+                    table.ForeignKey(
+                        name: "FK_Persons_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "PlaceId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoicePersons",
+                columns: table => new
+                {
+                    InvoicePersonId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false),
+                    InvoiceId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InvoicePersons", x => x.InvoicePersonId);
+                    table.ForeignKey(
+                        name: "FK_InvoicePersons_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "InvoiceId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InvoicePersons_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "PersonId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    PermissionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    PersonId = table.Column<int>(type: "int", nullable: false),
+                    SkuId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.PermissionId);
+                    table.ForeignKey(
+                        name: "FK_Permissions_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "PersonId");
+                    table.ForeignKey(
+                        name: "FK_Permissions_Skus_SkuId",
+                        column: x => x.SkuId,
+                        principalTable: "Skus",
+                        principalColumn: "SkuId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Requests",
+                columns: table => new
+                {
+                    RequestId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OldSystemApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemLinkedCoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemLinkedOrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    PersonType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    PersonFirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    PersonLastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    PersonEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    PersonPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    PersonTimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PlaceName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    PlaceType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    PlaceTypeOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    PlaceTaxIdentifier = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    WorkshopCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReferenceSource = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ReferenceSourceOther = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
+                    SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    PersonId = table.Column<int>(type: "int", nullable: true),
+                    PlaceId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Requests", x => x.RequestId);
+                    table.ForeignKey(
+                        name: "FK_Requests_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "PersonId");
+                    table.ForeignKey(
+                        name: "FK_Requests_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "PlaceId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProposedClubs",
+                columns: table => new
+                {
+                    ApplicationClubId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OldSystemApplicationClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    OldSystemLinkedClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Season = table.Column<int>(type: "int", nullable: false),
+                    StartsOn = table.Column<DateOnly>(type: "date", nullable: false),
+                    ApplicationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProposedClubs", x => x.ApplicationClubId);
+                    table.ForeignKey(
+                        name: "FK_ProposedClubs_Requests_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "Requests",
+                        principalColumn: "RequestId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Sales",
+                columns: table => new
+                {
+                    SaleId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    PlaceId = table.Column<int>(type: "int", nullable: false),
+                    RequestId = table.Column<int>(type: "int", nullable: true),
+                    InvoiceId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sales", x => x.SaleId);
+                    table.ForeignKey(
+                        name: "FK_Sales_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "InvoiceId");
+                    table.ForeignKey(
+                        name: "FK_Sales_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "PlaceId");
+                    table.ForeignKey(
+                        name: "FK_Sales_Requests_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "Requests",
+                        principalColumn: "RequestId");
                 });
 
             migrationBuilder.CreateTable(
@@ -95,128 +319,18 @@ namespace C8S.Domain.EFCore.Migrations
                     EndPart03On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     EndPart04On = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    RequestId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Unfinisheds", x => x.UnfinishedId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "WorkshopCodes",
-                columns: table => new
-                {
-                    WorkshopCodeId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Key = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    StartsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    EndsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_WorkshopCodes", x => x.WorkshopCodeId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Persons",
-                columns: table => new
-                {
-                    PersonId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OldSystemCoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemOrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemCompanyId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    TimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    JobTitle = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    JobTitleOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    WordPressUser = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    PlaceId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Persons", x => x.PersonId);
                     table.ForeignKey(
-                        name: "FK_Persons_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "PlaceId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Sales",
-                columns: table => new
-                {
-                    SaleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    PlaceId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sales", x => x.SaleId);
-                    table.ForeignKey(
-                        name: "FK_Sales_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "PlaceId");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Requests",
-                columns: table => new
-                {
-                    ApplicationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OldSystemApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemLinkedCoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemLinkedOrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    PersonType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    PersonFirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    PersonLastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PersonEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PersonPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    PersonTimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    PlaceName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
-                    PlaceType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    PlaceTypeOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    PlaceTaxIdentifier = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    WorkshopCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    ReferenceSource = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    ReferenceSourceOther = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
-                    Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
-                    SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    PersonId = table.Column<int>(type: "int", nullable: true),
-                    PlaceId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Requests", x => x.ApplicationId);
-                    table.ForeignKey(
-                        name: "FK_Requests_Persons_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "Persons",
-                        principalColumn: "PersonId");
-                    table.ForeignKey(
-                        name: "FK_Requests_Places_PlaceId",
-                        column: x => x.PlaceId,
-                        principalTable: "Places",
-                        principalColumn: "PlaceId");
+                        name: "FK_Unfinisheds_Requests_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "Requests",
+                        principalColumn: "RequestId");
                 });
 
             migrationBuilder.CreateTable(
@@ -229,12 +343,13 @@ namespace C8S.Domain.EFCore.Migrations
                     OldSystemOrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OldSystemCoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OldSystemMeetingAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Season = table.Column<int>(type: "int", nullable: true),
                     AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     StartsOn = table.Column<DateOnly>(type: "date", nullable: true),
                     PlaceId = table.Column<int>(type: "int", nullable: false),
-                    SaleDbSaleId = table.Column<int>(type: "int", nullable: true),
+                    SaleId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -248,8 +363,8 @@ namespace C8S.Domain.EFCore.Migrations
                         principalColumn: "PlaceId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Clubs_Sales_SaleDbSaleId",
-                        column: x => x.SaleDbSaleId,
+                        name: "FK_Clubs_Sales_SaleId",
+                        column: x => x.SaleId,
                         principalTable: "Sales",
                         principalColumn: "SaleId");
                 });
@@ -262,9 +377,7 @@ namespace C8S.Domain.EFCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    SaleId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                    SaleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -284,34 +397,6 @@ namespace C8S.Domain.EFCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProposedClubs",
-                columns: table => new
-                {
-                    ApplicationClubId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    OldSystemApplicationClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    OldSystemLinkedClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    Season = table.Column<int>(type: "int", nullable: false),
-                    StartsOn = table.Column<DateOnly>(type: "date", nullable: false),
-                    ApplicationId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProposedClubs", x => x.ApplicationClubId);
-                    table.ForeignKey(
-                        name: "FK_ProposedClubs_Requests_ApplicationId",
-                        column: x => x.ApplicationId,
-                        principalTable: "Requests",
-                        principalColumn: "ApplicationId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ClubPersons",
                 columns: table => new
                 {
@@ -319,9 +404,7 @@ namespace C8S.Domain.EFCore.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    ClubId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                    ClubId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -379,6 +462,65 @@ namespace C8S.Domain.EFCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Notes",
+                columns: table => new
+                {
+                    NoteId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Reference = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
+                    ClubId = table.Column<int>(type: "int", nullable: true),
+                    InvoiceId = table.Column<int>(type: "int", nullable: true),
+                    OrderId = table.Column<int>(type: "int", nullable: true),
+                    PersonId = table.Column<int>(type: "int", nullable: true),
+                    PlaceId = table.Column<int>(type: "int", nullable: true),
+                    RequestId = table.Column<int>(type: "int", nullable: true),
+                    SaleId = table.Column<int>(type: "int", nullable: true),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notes", x => x.NoteId);
+                    table.ForeignKey(
+                        name: "FK_Notes_Clubs_ClubId",
+                        column: x => x.ClubId,
+                        principalTable: "Clubs",
+                        principalColumn: "ClubId");
+                    table.ForeignKey(
+                        name: "FK_Notes_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
+                        principalColumn: "InvoiceId");
+                    table.ForeignKey(
+                        name: "FK_Notes_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId");
+                    table.ForeignKey(
+                        name: "FK_Notes_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "PersonId");
+                    table.ForeignKey(
+                        name: "FK_Notes_Places_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "Places",
+                        principalColumn: "PlaceId");
+                    table.ForeignKey(
+                        name: "FK_Notes_Requests_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "Requests",
+                        principalColumn: "RequestId");
+                    table.ForeignKey(
+                        name: "FK_Notes_Sales_SaleId",
+                        column: x => x.SaleId,
+                        principalTable: "Sales",
+                        principalColumn: "SaleId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderSkus",
                 columns: table => new
                 {
@@ -390,9 +532,7 @@ namespace C8S.Domain.EFCore.Migrations
                     Ordinal = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<short>(type: "smallint", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
-                    SkuId = table.Column<int>(type: "int", nullable: false),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                    SkuId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -420,9 +560,7 @@ namespace C8S.Domain.EFCore.Migrations
                     TrackingNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     ShipMethod = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     ShipMethodOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    OrderId = table.Column<int>(type: "int", nullable: true),
-                    CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                    OrderId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -457,14 +595,61 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "PlaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clubs_SaleDbSaleId",
+                name: "IX_Clubs_SaleId",
                 table: "Clubs",
-                column: "SaleDbSaleId");
+                column: "SaleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoicePersons_InvoiceId",
+                table: "InvoicePersons",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InvoicePersons_PersonId",
+                table: "InvoicePersons",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_ClubId",
+                table: "Notes",
+                column: "ClubId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_InvoiceId",
+                table: "Notes",
+                column: "InvoiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_OrderId",
+                table: "Notes",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_PersonId",
+                table: "Notes",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_PlaceId",
+                table: "Notes",
+                column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_RequestId",
+                table: "Notes",
+                column: "RequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Notes_SaleId",
+                table: "Notes",
+                column: "SaleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_ClubId",
                 table: "Orders",
-                column: "ClubId");
+                column: "ClubId",
+                unique: true,
+                filter: "[ClubId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_OldSystemOrderId",
@@ -491,6 +676,16 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "SkuId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Permissions_PersonId",
+                table: "Permissions",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Permissions_SkuId",
+                table: "Permissions",
+                column: "SkuId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Persons_OldSystemCoachId",
                 table: "Persons",
                 column: "OldSystemCoachId",
@@ -508,6 +703,11 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "OldSystemOrganizationId",
                 unique: true,
                 filter: "[OldSystemOrganizationId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Places_ParentId",
+                table: "Places",
+                column: "ParentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProposedClubs_ApplicationId",
@@ -549,9 +749,23 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "SaleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sales_InvoiceId",
+                table: "Sales",
+                column: "InvoiceId",
+                unique: true,
+                filter: "[InvoiceId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sales_PlaceId",
                 table: "Sales",
                 column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sales_RequestId",
+                table: "Sales",
+                column: "RequestId",
+                unique: true,
+                filter: "[RequestId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Shipments_OrderId",
@@ -570,6 +784,11 @@ namespace C8S.Domain.EFCore.Migrations
                 table: "Unfinisheds",
                 column: "Code",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Unfinisheds_RequestId",
+                table: "Unfinisheds",
+                column: "RequestId");
         }
 
         /// <inheritdoc />
@@ -579,7 +798,16 @@ namespace C8S.Domain.EFCore.Migrations
                 name: "ClubPersons");
 
             migrationBuilder.DropTable(
+                name: "InvoicePersons");
+
+            migrationBuilder.DropTable(
+                name: "Notes");
+
+            migrationBuilder.DropTable(
                 name: "OrderSkus");
+
+            migrationBuilder.DropTable(
+                name: "Permissions");
 
             migrationBuilder.DropTable(
                 name: "ProposedClubs");
@@ -600,19 +828,22 @@ namespace C8S.Domain.EFCore.Migrations
                 name: "Skus");
 
             migrationBuilder.DropTable(
-                name: "Requests");
-
-            migrationBuilder.DropTable(
                 name: "Orders");
-
-            migrationBuilder.DropTable(
-                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Clubs");
 
             migrationBuilder.DropTable(
                 name: "Sales");
+
+            migrationBuilder.DropTable(
+                name: "Invoices");
+
+            migrationBuilder.DropTable(
+                name: "Requests");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Places");

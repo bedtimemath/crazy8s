@@ -1,6 +1,7 @@
 ﻿using C8S.Domain.EFCore.Configs;
 using C8S.Domain.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SC.Audit.Abstractions.Interfaces;
@@ -22,8 +23,10 @@ public class C8SDbContext(
     public DbSet<ClubPersonDb> ClubPersons { get; set; }
     public DbSet<InvoiceDb> Invoices { get; set; }
     public DbSet<InvoicePersonDb> InvoicePersons { get; set; }
+    public DbSet<NoteDb> Notes { get; set; }
     public DbSet<OrderDb> Orders { get; set; }
     public DbSet<OrderSkuDb> OrderSkus { get; set; }
+    public DbSet<PermissionDb> Permissions { get; set; }
     public DbSet<PersonDb> Persons { get; set; }
     public DbSet<PlaceDb> Places { get; set; }
     public DbSet<ProposedClubDb> ProposedClubs { get; set; }
@@ -51,14 +54,25 @@ public class C8SDbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ClubConfig());
+        modelBuilder.ApplyConfiguration(new ClubNoteConfig());
         modelBuilder.ApplyConfiguration(new ClubPersonConfig());
+        modelBuilder.ApplyConfiguration(new InvoiceConfig());
+        modelBuilder.ApplyConfiguration(new InvoiceNoteConfig());
+        modelBuilder.ApplyConfiguration(new InvoicePersonConfig());
+        modelBuilder.ApplyConfiguration(new NoteConfig());
         modelBuilder.ApplyConfiguration(new OrderConfig());
+        modelBuilder.ApplyConfiguration(new OrderNoteConfig());
         modelBuilder.ApplyConfiguration(new OrderSkuConfig());
+        modelBuilder.ApplyConfiguration(new PermissionConfig());
         modelBuilder.ApplyConfiguration(new PersonConfig());
+        modelBuilder.ApplyConfiguration(new PersonNoteConfig());
         modelBuilder.ApplyConfiguration(new PlaceConfig());
+        modelBuilder.ApplyConfiguration(new PlaceNoteConfig());
         modelBuilder.ApplyConfiguration(new ProposedClubConfig());
         modelBuilder.ApplyConfiguration(new RequestConfig());
+        modelBuilder.ApplyConfiguration(new RequestNoteConfig());
         modelBuilder.ApplyConfiguration(new SaleConfig());
+        modelBuilder.ApplyConfiguration(new SaleNoteConfig());
         modelBuilder.ApplyConfiguration(new SalePersonConfig());
         modelBuilder.ApplyConfiguration(new ShipmentConfig());
         modelBuilder.ApplyConfiguration(new SkuConfig());

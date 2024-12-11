@@ -31,18 +31,11 @@ public class InvoiceConfig : BaseCoreConfig<InvoiceDb>
             .IsRequired(true);
         #endregion
 
-        #region Reference Properties
-        //[ForeignKey(nameof(Sale))]
-        //public int? SaleId { get; set; }
-        entity.Property(m => m.SaleId)
-            .IsRequired(false);
-        #endregion
-
         #region Navigation Configuration
         //public SaleDb? Sale { get; set; }
         entity.HasOne(m => m.Sale)
             .WithOne(m => m.Invoice)
-            .HasForeignKey<InvoiceDb>(m => m.SaleId)
+            .HasForeignKey<SaleDb>(m => m.InvoiceId)
             .IsRequired(false);
 
         //public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;

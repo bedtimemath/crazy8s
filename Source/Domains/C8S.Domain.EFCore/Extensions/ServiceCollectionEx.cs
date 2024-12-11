@@ -1,6 +1,7 @@
 ﻿using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

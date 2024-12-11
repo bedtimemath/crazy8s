@@ -78,11 +78,6 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
         //public int? SaleId { get; set; } = default!;
         entity.Property(m => m.SaleId)
             .IsRequired(false);
-
-    //[ForeignKey(nameof(Order))]
-    //public int? OrderId { get; set; }
-    entity.Property(m => m.OrderId)
-        .IsRequired(false);
         #endregion
 
         #region Navigation Configuration

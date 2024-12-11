@@ -12,8 +12,8 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
     {
         #region Id Property
         // [Required]
-        // public int ApplicationId { get; set; }
-        entity.HasKey(m => m.ApplicationId);
+        // public int RequestId { get; set; }
+        entity.HasKey(m => m.RequestId);
         #endregion
 
         #region Database Properties (Old System)
@@ -142,11 +142,6 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
         //public int? PlaceId { get; set; }
         entity.Property(m => m.PlaceId)
             .IsRequired(false);
-
-        //[ForeignKey(nameof(Sale))]
-        //public int? SaleId { get; set; }
-        entity.Property(m => m.SaleId)
-            .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
@@ -165,7 +160,7 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
         //public SaleDb? Sale { get; set; }
         entity.HasOne(m => m.Sale)
             .WithOne(m => m.Request)
-            .HasForeignKey<RequestDb>(m => m.Sale)
+            .HasForeignKey<SaleDb>(m => m.RequestId)
             .IsRequired(false);
 
         //public ICollection<ProposedClubDb> ProposedClubs { get; set; } = default!;
