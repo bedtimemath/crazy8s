@@ -69,10 +69,10 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(true);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Standard)]
         //public string? PersonPhone { get; set; } = default!;
         entity.Property(m => m.PersonPhone)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Medium)]
@@ -163,8 +163,8 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
             .HasForeignKey<SaleDb>(m => m.RequestId)
             .IsRequired(false);
 
-        //public ICollection<ProposedClubDb> ProposedClubs { get; set; } = default!;
-        entity.HasMany(m => m.ProposedClubs)
+        //public ICollection<RequestedClubDb> RequestedClubs { get; set; } = default!;
+        entity.HasMany(m => m.RequestedClubs)
             .WithOne(m => m.Request)
             .IsRequired(false);
 

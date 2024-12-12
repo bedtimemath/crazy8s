@@ -56,10 +56,10 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Standard)]
         //public string? ContactPhone { get; set; } = null;
         entity.Property(m => m.ContactPhone)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]

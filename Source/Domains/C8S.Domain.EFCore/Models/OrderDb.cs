@@ -44,7 +44,7 @@ public class OrderDb: BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string? ContactEmail { get; set; } = null;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? ContactPhone { get; set; } = null;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.FullName)]

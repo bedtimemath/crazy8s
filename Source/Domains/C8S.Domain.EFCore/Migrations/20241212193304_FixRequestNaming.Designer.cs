@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20241210235441_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20241212193304_FixRequestNaming")]
+    partial class FixRequestNaming
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -189,8 +189,8 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(4096)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
@@ -240,8 +240,8 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("nvarchar(512)");
 
                     b.Property<string>("ContactPhone")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
@@ -435,8 +435,8 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("PlaceId")
                         .HasColumnType("int");
@@ -547,53 +547,6 @@ namespace C8S.Domain.EFCore.Migrations
                     b.ToTable("Places");
                 });
 
-            modelBuilder.Entity("C8S.Domain.EFCore.Models.ProposedClubDb", b =>
-                {
-                    b.Property<int>("ApplicationClubId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationClubId"));
-
-                    b.Property<string>("AgeLevel")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<int>("ApplicationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ClubSize")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<Guid?>("OldSystemApplicationClubId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OldSystemApplicationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("OldSystemLinkedClubId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Season")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("StartsOn")
-                        .HasColumnType("date");
-
-                    b.HasKey("ApplicationClubId");
-
-                    b.HasIndex("ApplicationId");
-
-                    b.HasIndex("OldSystemApplicationClubId")
-                        .IsUnique()
-                        .HasFilter("[OldSystemApplicationClubId] IS NOT NULL");
-
-                    b.ToTable("ProposedClubs");
-                });
-
             modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestDb", b =>
                 {
                     b.Property<int>("RequestId")
@@ -642,8 +595,8 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PersonPhone")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PersonTimeZone")
                         .IsRequired()
@@ -704,6 +657,53 @@ namespace C8S.Domain.EFCore.Migrations
                     b.HasIndex("PlaceId");
 
                     b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestedClubDb", b =>
+                {
+                    b.Property<int>("RequestedClubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestedClubId"));
+
+                    b.Property<string>("AgeLevel")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("ClubSize")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<Guid?>("OldSystemApplicationClubId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("OldSystemLinkedClubId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RequestId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Season")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("StartsOn")
+                        .HasColumnType("date");
+
+                    b.HasKey("RequestedClubId");
+
+                    b.HasIndex("OldSystemApplicationClubId")
+                        .IsUnique()
+                        .HasFilter("[OldSystemApplicationClubId] IS NOT NULL");
+
+                    b.HasIndex("RequestId");
+
+                    b.ToTable("RequestedClubs");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.SaleDb", b =>
@@ -922,8 +922,8 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PersonPhone")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("PersonTimeZone")
                         .HasMaxLength(50)
@@ -1231,15 +1231,6 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("C8S.Domain.EFCore.Models.ProposedClubDb", b =>
-                {
-                    b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
-                        .WithMany("ProposedClubs")
-                        .HasForeignKey("ApplicationId");
-
-                    b.Navigation("Request");
-                });
-
             modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestDb", b =>
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.PersonDb", "Person")
@@ -1253,6 +1244,15 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Navigation("Person");
 
                     b.Navigation("Place");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.RequestedClubDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
+                        .WithMany("RequestedClubs")
+                        .HasForeignKey("RequestId");
+
+                    b.Navigation("Request");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.SaleDb", b =>
@@ -1444,7 +1444,7 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     b.Navigation("Notes");
 
-                    b.Navigation("ProposedClubs");
+                    b.Navigation("RequestedClubs");
 
                     b.Navigation("Sale");
                 });

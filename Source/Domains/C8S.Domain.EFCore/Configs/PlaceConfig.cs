@@ -2,7 +2,6 @@
 using C8S.Domain.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;

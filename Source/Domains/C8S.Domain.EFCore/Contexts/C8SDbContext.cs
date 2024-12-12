@@ -1,7 +1,6 @@
 ﻿using C8S.Domain.EFCore.Configs;
 using C8S.Domain.EFCore.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SC.Audit.Abstractions.Interfaces;
@@ -29,7 +28,7 @@ public class C8SDbContext(
     public DbSet<PermissionDb> Permissions { get; set; }
     public DbSet<PersonDb> Persons { get; set; }
     public DbSet<PlaceDb> Places { get; set; }
-    public DbSet<ProposedClubDb> ProposedClubs { get; set; }
+    public DbSet<RequestedClubDb> RequestedClubs { get; set; }
     public DbSet<RequestDb> Requests { get; set; }
     public DbSet<SaleDb> Sales { get; set; }
     public DbSet<SalePersonDb> SalePersons { get; set; }
@@ -68,7 +67,7 @@ public class C8SDbContext(
         modelBuilder.ApplyConfiguration(new PersonNoteConfig());
         modelBuilder.ApplyConfiguration(new PlaceConfig());
         modelBuilder.ApplyConfiguration(new PlaceNoteConfig());
-        modelBuilder.ApplyConfiguration(new ProposedClubConfig());
+        modelBuilder.ApplyConfiguration(new RequestedClubConfig());
         modelBuilder.ApplyConfiguration(new RequestConfig());
         modelBuilder.ApplyConfiguration(new RequestNoteConfig());
         modelBuilder.ApplyConfiguration(new SaleConfig());

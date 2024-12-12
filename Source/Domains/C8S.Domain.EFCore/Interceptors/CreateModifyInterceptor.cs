@@ -44,6 +44,9 @@ internal sealed class CreateModifyInterceptor(
         {
             if (entry.State == EntityState.Added)
             {
+                // we may set the created on value when migrating data; in which case, don't set it here
+                if (entry.CurrentValues.TryGetValue(nameof(BaseCoreDb.CreatedOn), out DateTimeOffset createdOn))
+                    if (createdOn != DateTimeOffset.MinValue) continue;
                 SetCurrentPropertyValue(entry, 
                     nameof(ICoreDb.CreatedOn), dateTimeHelper.UtcNow);
             }

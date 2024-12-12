@@ -51,7 +51,7 @@ public class RequestDb : BaseCoreDb
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string PersonEmail { get; set; } = default!;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? PersonPhone { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
@@ -100,7 +100,7 @@ public class RequestDb : BaseCoreDb
     #endregion
 
     #region Reference Collections
-    public ICollection<ProposedClubDb> ProposedClubs { get; set; } = default!;
+    public ICollection<RequestedClubDb> RequestedClubs { get; set; } = default!;
     public ICollection<RequestNoteDb> Notes { get; set; } = default!;
     #endregion
 }

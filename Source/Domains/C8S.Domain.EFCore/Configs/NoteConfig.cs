@@ -35,10 +35,10 @@ public class NoteConfig : IEntityTypeConfiguration<NoteDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(true);
 
-        // [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+        // [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
         // public string Content { get; set; } = null;
         entity.Property(m => m.Content)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(true);
         
         // [MaxLength(SoftCrowConstants.MaxLengths.FullName)]

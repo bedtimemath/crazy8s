@@ -28,7 +28,7 @@ public class ApplicationsController(
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var queryable = dbContext.Requests
                 .Include(a => a.Place)
-                .Include(a => a.ProposedClubs)
+                .Include(a => a.RequestedClubs)
                 .AsSingleQuery()
                 .AsNoTracking();
 

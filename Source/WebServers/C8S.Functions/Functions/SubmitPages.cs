@@ -438,7 +438,7 @@ public class SubmitForm(
                 var parts = clubString.Split(':');
                 if (parts.Length != 3) throw new UnreachableException($"ClubString cannot be parsed: {clubString}");
 
-                var applicationClub = new ProposedClubDb()
+                var applicationClub = new RequestedClubDb()
                 {
                     Request = application,
                     ClubSize = ClubSize.Size16,
@@ -457,8 +457,8 @@ public class SubmitForm(
                     },
                     StartsOn = DateOnly.Parse(parts[2])
                 };
-                application.ProposedClubs ??= new List<ProposedClubDb>();
-                application.ProposedClubs.Add(applicationClub);
+                application.RequestedClubs ??= new List<RequestedClubDb>();
+                application.RequestedClubs.Add(applicationClub);
             }
 
             await dbContext.Requests.AddAsync(application);

@@ -112,7 +112,7 @@ namespace C8S.Domain.EFCore.Migrations
                     LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     TimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     JobTitle = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     JobTitleOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     WordPressUser = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -196,7 +196,7 @@ namespace C8S.Domain.EFCore.Migrations
                     PersonFirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PersonLastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PersonEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PersonPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    PersonPhone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PersonTimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     PlaceName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     PlaceType = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
@@ -228,10 +228,10 @@ namespace C8S.Domain.EFCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProposedClubs",
+                name: "RequestedClubs",
                 columns: table => new
                 {
-                    ApplicationClubId = table.Column<int>(type: "int", nullable: false)
+                    RequestedClubId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OldSystemApplicationClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OldSystemApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -244,9 +244,9 @@ namespace C8S.Domain.EFCore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProposedClubs", x => x.ApplicationClubId);
+                    table.PrimaryKey("PK_RequestedClubs", x => x.RequestedClubId);
                     table.ForeignKey(
-                        name: "FK_ProposedClubs_Requests_ApplicationId",
+                        name: "FK_RequestedClubs_Requests_ApplicationId",
                         column: x => x.ApplicationId,
                         principalTable: "Requests",
                         principalColumn: "RequestId");
@@ -296,7 +296,7 @@ namespace C8S.Domain.EFCore.Migrations
                     PersonFirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PersonLastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PersonEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    PersonPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    PersonPhone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     PersonTimeZone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     HasHostedBefore = table.Column<bool>(type: "bit", nullable: true),
                     PlaceName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
@@ -435,7 +435,7 @@ namespace C8S.Domain.EFCore.Migrations
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     ContactName = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
                     ContactEmail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    ContactPhone = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    ContactPhone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Recipient = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     Line1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Line2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -468,7 +468,7 @@ namespace C8S.Domain.EFCore.Migrations
                     NoteId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Reference = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: false),
                     Author = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     ClubId = table.Column<int>(type: "int", nullable: true),
                     InvoiceId = table.Column<int>(type: "int", nullable: true),
@@ -710,13 +710,13 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProposedClubs_ApplicationId",
-                table: "ProposedClubs",
+                name: "IX_RequestedClubs_ApplicationId",
+                table: "RequestedClubs",
                 column: "ApplicationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProposedClubs_OldSystemApplicationClubId",
-                table: "ProposedClubs",
+                name: "IX_RequestedClubs_OldSystemApplicationClubId",
+                table: "RequestedClubs",
                 column: "OldSystemApplicationClubId",
                 unique: true,
                 filter: "[OldSystemApplicationClubId] IS NOT NULL");
@@ -810,7 +810,7 @@ namespace C8S.Domain.EFCore.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "ProposedClubs");
+                name: "RequestedClubs");
 
             migrationBuilder.DropTable(
                 name: "SalePersons");

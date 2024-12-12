@@ -4,6 +4,7 @@ using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241212183855_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -669,6 +672,9 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ClubSize")
                         .IsRequired()
                         .HasMaxLength(25)
@@ -683,9 +689,6 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<Guid?>("OldSystemLinkedClubId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Season")
                         .HasColumnType("int");
 
@@ -694,11 +697,11 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasKey("RequestedClubId");
 
+                    b.HasIndex("ApplicationId");
+
                     b.HasIndex("OldSystemApplicationClubId")
                         .IsUnique()
                         .HasFilter("[OldSystemApplicationClubId] IS NOT NULL");
-
-                    b.HasIndex("RequestId");
 
                     b.ToTable("RequestedClubs");
                 });
@@ -1247,7 +1250,7 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.RequestDb", "Request")
                         .WithMany("RequestedClubs")
-                        .HasForeignKey("RequestId");
+                        .HasForeignKey("ApplicationId");
 
                     b.Navigation("Request");
                 });

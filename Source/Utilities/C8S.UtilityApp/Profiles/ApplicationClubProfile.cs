@@ -10,7 +10,7 @@ internal class ApplicationClubProfile: Profile
     public ApplicationClubProfile()
     {
         CreateMap<ApplicationClubSql, ApplicationClubDTO>();
-        CreateMap<ProposedClubDb, ApplicationClubDTO>()
+        CreateMap<RequestedClubDb, ApplicationClubDTO>()
             .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
             .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
             .ReverseMap()

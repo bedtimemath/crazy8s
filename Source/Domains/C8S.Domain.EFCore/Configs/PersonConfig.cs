@@ -59,10 +59,10 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Standard)]
         //public string? Phone { get; set; }
         entity.Property(m => m.Phone)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Short)]

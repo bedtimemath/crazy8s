@@ -40,7 +40,7 @@ public class UnfinishedDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string? PersonEmail { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? PersonPhone { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]

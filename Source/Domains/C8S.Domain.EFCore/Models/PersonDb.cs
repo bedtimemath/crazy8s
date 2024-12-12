@@ -46,7 +46,7 @@ public class PersonDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? TimeZone { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
     public string? Phone { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]

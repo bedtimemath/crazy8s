@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
-using C8S.Domain.Obsolete.DTOs;
-using C8S.Domain.Obsolete.Filters;
+using C8S.Domain.Enums;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
-using C8S.UtilityApp.Models;
 using C8S.UtilityApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Common;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -20,6 +19,8 @@ internal class LoadC8SData(
     OldSystemService oldSystemService)
     : IActionLauncher
 {
+    private const int SaveBlock = 500;
+
     public async Task<int> Launch()
     {
         logger.LogInformation("=== {Name} ===", nameof(LoadC8SData));
@@ -46,47 +47,81 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
+        var dbContext = await dbContextFactory.CreateDbContextAsync();
+
         /*** ADDRESSES ***/
         var sqlAddresses = (await oldSystemService.GetAddresses())
-            .Select(mapper.Map<AddressSql, AddressDTO>)
             .ToList();
 
         logger.LogInformation("Found {Count:#,##0} addresses", sqlAddresses.Count);
 
         /*** ORGANIZATIONS ***/
         var sqlOrganizations = (await oldSystemService.GetOrganizations())
-            .Select(mapper.Map<OrganizationSql, OrganizationDTO>)
             .ToList();
 
         logger.LogInformation("Found {Count:#,##0} organizations", sqlOrganizations.Count);
 
-        var existingOrgIds = (await GetOrganizations()).Select(o => o.OldSystemOrganizationId).ToList();
+        var existingOrgIds = await dbContext.Places.Select(o => o.OldSystemOrganizationId).ToListAsync();
         sqlOrganizations.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
 
-        /*** JOIN ADDRESSES TO ORGANIZATIONS ***/
-        var sqlOrganizationsCount = sqlOrganizations.Count;
-        ConsoleEx.StartProgress("Joining addresses with organizations: ");
-        for (int index = 0; index < sqlOrganizationsCount; index++)
+        logger.LogInformation("Removed dupes, now {Count:#,##0} organizations", sqlOrganizations.Count);
+
+        if (sqlOrganizations.Count > 0)
         {
-            var organization = sqlOrganizations[index];
-            var address = sqlAddresses
-                .FirstOrDefault(a => a.OldSystemUsaPostalId == organization.OldSystemPostalAddressId);
-            if (address == null)
-                throw new Exception($"Could not find address ({organization.OldSystemPostalAddressId}) for organization ({organization.OldSystemOrganizationId})");
+            /*** ADDING PLACES ***/
+            var sqlOrganizationsCount = sqlOrganizations.Count;
+            ConsoleEx.StartProgress("Adding places: ");
+            for (int index = 0; index < sqlOrganizationsCount; index++)
+            {
+                var sqlOrganization = sqlOrganizations[index];
+                var sqlAddress = sqlAddresses
+                    .FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrganization.OldSystemPostalAddressId);
+                if (sqlAddress == null)
+                    throw new Exception($"Could not find address ({sqlOrganization.OldSystemPostalAddressId}) for organization ({sqlOrganization.OldSystemOrganizationId})");
 
-            organization.Address = address;
-            address.Organization = organization;
+                var place = new PlaceDb()
+                {
+                    OldSystemCompanyId = sqlOrganization.OldSystemCompanyId,
+                    OldSystemOrganizationId = sqlOrganization.OldSystemOrganizationId,
+                    OldSystemPostalAddressId = sqlOrganization.OldSystemPostalAddressId,
+                    OldSystemUsaPostalId = sqlAddress.OldSystemUsaPostalId,
+                    Name = sqlOrganization.Name ?? SoftCrowConstants.Display.NotSet,
+                    Type = sqlOrganization.Type,
+                    TypeOther = sqlOrganization.TypeOther,
+                    TaxIdentifier = sqlOrganization.TaxIdentifier,
+                    Line1 = sqlAddress.StreetAddress ?? SoftCrowConstants.Display.NotSet,
+                    Line2 = null,
+                    City = sqlAddress.City ?? SoftCrowConstants.Display.NotSet,
+                    State = sqlAddress.State ?? SoftCrowConstants.Display.NotSet,
+                    ZIPCode = sqlAddress.PostalCode ?? SoftCrowConstants.Display.NotSet,
+                    IsMilitary = sqlAddress.IsMilitary,
+                    CreatedOn = sqlAddress.CreatedOn
+                };
+                if (!String.IsNullOrEmpty(sqlOrganization.Notes))
+                    place.Notes = new List<PlaceNoteDb>
+                {
+                    new()
+                    {
+                        Author = SoftCrowConstants.Display.System,
+                        Content = sqlOrganization.Notes
+                    }
+                };
+                dbContext.Places.Add(place);
 
-            ConsoleEx.ShowProgress((float)index / (float)sqlOrganizationsCount);
+                if ((index+1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
+
+                ConsoleEx.ShowProgress((float)index / (float)sqlOrganizationsCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("Added {Count:#,##0} places", sqlOrganizationsCount);
+
         }
-        ConsoleEx.EndProgress();
 
-        var addedOrgs = await AddOrganizations(sqlOrganizations);
-        logger.LogInformation("Added {Count:#,##0} organizations", addedOrgs.Count());
-        
         /*** COACHES ***/
         var sqlCoaches = (await oldSystemService.GetCoaches())
-            .Select(mapper.Map<CoachSql, CoachDTO>)
             .ToList();
 
         logger.LogInformation("Found {Count:#,##0} coaches", sqlCoaches.Count);
@@ -94,98 +129,210 @@ internal class LoadC8SData(
         var hasOrgIds = sqlCoaches.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
         logger.LogInformation("Found {Count:#,##0} coaches with org ids", hasOrgIds.Count);
 
-        var existingCoachIds = (await GetCoaches()).Select(o => o.OldSystemCoachId).ToList();
+        var existingCoachIds = await dbContext.Persons.Select(o => o.OldSystemCoachId).ToListAsync();
         sqlCoaches.RemoveAll(m => existingCoachIds.Contains(m.OldSystemCoachId));
 
-        var addedCoaches = await AddCoaches(sqlCoaches);
-        logger.LogInformation("Added {Count:#,##0} coaches", addedCoaches.Count());
-        
-        /*** JOINING COACHES & ORGANIZATIONS ***/
-        var allOrganizations = (await GetOrganizations()).ToList();
+        logger.LogInformation("Removed dupes, now {Count:#,##0} coaches", sqlCoaches.Count);
 
-        var coachesWithoutOrg = (await GetCoaches())
-            .Where(c => c.OrganizationId == null && c.OldSystemOrganizationId != null)
-            .ToList();
-
-        var coachesWithoutOrgCount = coachesWithoutOrg.Count;
-        var coachesUpdated = 0;
-
-        await using (var dbContext = await dbContextFactory.CreateDbContextAsync())
-        {
-            ConsoleEx.StartProgress("Joining coaches with organizations: ");
-            for (int index = 0; index < coachesWithoutOrgCount; index++)
+        if (sqlCoaches.Count > 0)
+        {            
+            /*** ADDING PERSONS ***/
+            var sqlCoachesCount = sqlCoaches.Count;
+            ConsoleEx.StartProgress("Adding persons: ");
+            for (int index = 0; index < sqlCoachesCount; index++)
             {
-                var coach = coachesWithoutOrg[index];
-                if (coach.OldSystemOrganizationId.HasValue)
+                var sqlCoach = sqlCoaches[index];
+
+                var person = new PersonDb()
                 {
-                    var organization = allOrganizations.FirstOrDefault(
-                                           o => o.OldSystemOrganizationId == coach.OldSystemOrganizationId.Value) ??
-                                       throw new Exception($"Could not find organization: {coach.OldSystemOrganizationId.Value}");
-                    if (coach.OrganizationId == null)
+                    OldSystemCoachId = sqlCoach.OldSystemCoachId,
+                    OldSystemOrganizationId = sqlCoach.OldSystemOrganizationId,
+                    OldSystemUserId = sqlCoach.OldSystemUserId,
+                    OldSystemCompanyId = sqlCoach.OldSystemCompanyId,
+                    FirstName = sqlCoach.FirstName,
+                    LastName = sqlCoach.LastName,
+                    Email = sqlCoach.Email,
+                    TimeZone = sqlCoach.TimeZone,
+                    Phone = sqlCoach.Phone +
+                            (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
+                    CreatedOn = sqlCoach.CreatedOn
+                };
+                if (!String.IsNullOrEmpty(sqlCoach.Notes))
+                    person.Notes = new List<PersonNoteDb>
                     {
-                        coach.OrganizationId = organization.OrganizationId;
-                        
-                        var dbCoach = mapper.Map<PersonDb>(coach);
+                        new()
+                        {
+                            Author = SoftCrowConstants.Display.System,
+                            Content = sqlCoach.Notes
+                        }
+                    };
+                dbContext.Persons.Add(person);
 
-                        var entry = dbContext.Persons.Attach(dbCoach);
-                        entry.State = EntityState.Modified;
+                if ((index+1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
 
-                        coachesUpdated++;
+                ConsoleEx.ShowProgress((float)index / (float)sqlCoachesCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("Added {Count:#,##0} persons", sqlCoachesCount);
+        }
+
+        /*** JOINING PERSONS WITH PLACES ***/
+        var allPlaces = await dbContext.Places.ToListAsync();
+
+        var personsNoPlace = await dbContext.Persons
+            .Where(c => c.PlaceId == null && c.OldSystemOrganizationId != null)
+            .ToListAsync();
+
+        var personsNoPlaceCount = personsNoPlace.Count;
+        var personsUpdated = 0;
+        logger.LogInformation("Found {Count:#,##0} persons without a place", personsNoPlaceCount);
+
+        if (personsNoPlaceCount > 0)
+        {
+            ConsoleEx.StartProgress("Joining persons with places: ");
+            for (int index = 0; index < personsNoPlaceCount; index++)
+            {
+                var person = personsNoPlace[index];
+                if (person.OldSystemOrganizationId.HasValue)
+                {
+                    var place = allPlaces.FirstOrDefault(
+                                    o => o.OldSystemOrganizationId == person.OldSystemOrganizationId.Value) ??
+                                throw new Exception($"Could not find organization: {person.OldSystemOrganizationId.Value}");
+                    if (person.PlaceId == null)
+                    {
+                        person.PlaceId = place.PlaceId;
+                        personsUpdated++;
                     }
                 }
 
-                ConsoleEx.ShowProgress((float)index / (float)coachesWithoutOrgCount);
+                ConsoleEx.ShowProgress((float)index / (float)personsNoPlaceCount);
             }
             ConsoleEx.EndProgress();
             
             await dbContext.SaveChangesAsync();
+            logger.LogInformation("{Count:#,##0} persons updated with a place.", personsUpdated);
         }
-        logger.LogInformation("{Count:#,##0} coaches updated.", coachesUpdated);
 
         /*** APPLICATIONS ***/
         var sqlApplications = (await oldSystemService.GetApplications())
-            .Select(mapper.Map<ApplicationSql, ApplicationDTO>)
             .ToList();
 
         logger.LogInformation("Found {Count:#,##0} applications", sqlApplications.Count);
 
-        var existingApplicationIds = (await GetApplications()).Select(o => o.OldSystemApplicationId).ToList();
-        if (existingApplicationIds.Count > 0)
-            logger.LogInformation("Skipping {Count:#,##0} existing applications", existingApplicationIds.Count);
-        sqlApplications.RemoveAll(m => existingApplicationIds.Contains(m.OldSystemApplicationId));
+        var existingRequestIds = await dbContext.Requests.Select(o => o.OldSystemApplicationId).ToListAsync();
+        sqlApplications.RemoveAll(m => existingRequestIds.Contains(m.OldSystemApplicationId));
+
+        logger.LogInformation("Removed dupes, now {Count:#,##0} applications", sqlApplications.Count);
+
+        if (sqlApplications.Count > 0)
+        {            
+            /*** ADDING REQUESTS ***/
+            var sqlApplicationsCount = sqlApplications.Count;
+            ConsoleEx.StartProgress("Adding requests: ");
+            for (int index = 0; index < sqlApplicationsCount; index++)
+            {
+                var sqlApplication = sqlApplications[index];
+
+                var request = new RequestDb()
+                {
+                    OldSystemApplicationId = sqlApplication.OldSystemApplicationId,
+                    OldSystemAddressId = sqlApplication.OldSystemAddressId,
+                    OldSystemLinkedCoachId = sqlApplication.OldSystemLinkedCoachId,
+                    OldSystemLinkedOrganizationId = sqlApplication.OldSystemLinkedOrganizationId,
+                    Status = sqlApplication.Status ?? throw new Exception("Missing Status"),
+                    PersonType = sqlApplication.ApplicantType,
+                    PersonFirstName = sqlApplication.ApplicantFirstName,
+                    PersonLastName = sqlApplication.ApplicantLastName ?? throw new Exception("Missing Last Name"),
+                    PersonEmail = sqlApplication.ApplicantEmail ?? throw new Exception("Missing Email"),
+                    PersonTimeZone = sqlApplication.ApplicantTimeZone ?? throw new Exception("Missing Time Zone"),
+                    PersonPhone = sqlApplication.ApplicantPhone +
+                                  (String.IsNullOrEmpty(sqlApplication.ApplicantPhoneExt) ? null : $" x{sqlApplication.ApplicantPhoneExt}"),
+                    PlaceName = sqlApplication.OrganizationName,
+                    PlaceType = sqlApplication.OrganizationType,
+                    PlaceTypeOther = sqlApplication.OrganizationTypeOther,
+                    PlaceTaxIdentifier = sqlApplication.OrganizationTaxIdentifier,
+                    WorkshopCode = sqlApplication.WorkshopCode,
+                    ReferenceSource = null,
+                    ReferenceSourceOther = null,
+                    Comments = sqlApplication.Comments,
+                    SubmittedOn = sqlApplication.SubmittedOn ?? throw new Exception("Missing Submitted On"),
+                    CreatedOn = sqlApplication.CreatedOn
+                };
+                if (!String.IsNullOrEmpty(sqlApplication.Notes))
+                    request.Notes = new List<RequestNoteDb>
+                    {
+                        new()
+                        {
+                            Author = SoftCrowConstants.Display.System,
+                            Content = sqlApplication.Notes
+                        }
+                    };
+                dbContext.Requests.Add(request);
+
+                if ((index+1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
+
+                ConsoleEx.ShowProgress((float)index / (float)sqlApplicationsCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("Added {Count:#,##0} requests", sqlApplicationsCount);
+        }
 
         /*** APPLICATION CLUBS ***/
         var sqlApplicationClubs = (await oldSystemService.GetApplicationClubs())
-           .Select(mapper.Map<ApplicationClubSql, ApplicationClubDTO>)
-           .ToList();
+            .ToList();
 
         logger.LogInformation("Found {Count:#,##0} application clubs", sqlApplicationClubs.Count);
 
-        var existingApplicationClubIds = (await GetApplicationClubs()).Select(o => o.OldSystemApplicationClubId).ToList();
-        if (existingApplicationClubIds.Count > 0)
-            logger.LogInformation("Skipping {Count:#,##0} existing application clubs", existingApplicationClubIds.Count);
+        var existingApplicationClubIds = await dbContext.RequestedClubs.Select(o => o.OldSystemApplicationClubId).ToListAsync();
         sqlApplicationClubs.RemoveAll(m => existingApplicationClubIds.Contains(m.OldSystemApplicationClubId));
 
-        /*** JOIN APPLICATIONS TO CLUBS ***/
-        var applicationClubsCount = sqlApplicationClubs.Count;
-        ConsoleEx.StartProgress("Joining addresses with organizations: ");
-        for (int index = 0; index < applicationClubsCount; index++)
+        logger.LogInformation("Removed dupes, now {Count:#,##0} application clubs", sqlApplicationClubs.Count);
+
+        if (sqlApplicationClubs.Count > 0)
         {
-            var appClub = sqlApplicationClubs[index];
-            var application = sqlApplications
-                .FirstOrDefault(a => a.OldSystemApplicationId == appClub.OldSystemApplicationId);
-            if (application == null)
-                throw new Exception($"Could not find application ({appClub.OldSystemApplicationId}) for club ({appClub.OldSystemApplicationClubId})");
+            /*** ADDING REQUESTED CLUBS ***/
+            var applicationClubsCount = sqlApplicationClubs.Count;
+            ConsoleEx.StartProgress("Adding requested clubs: ");
+            for (int index = 0; index < applicationClubsCount; index++)
+            {
+                var appClub = sqlApplicationClubs[index];
+                var request = await dbContext.Requests.FirstOrDefaultAsync(r =>
+                        r.OldSystemApplicationId == appClub.OldSystemApplicationId);
+                if (request == null) continue; // some point to missing / incomplete applications
 
-            application.ApplicationClubs ??= new List<ApplicationClubDTO>();
-            application.ApplicationClubs.Add(appClub);
+                var requestedClub = new RequestedClubDb()
+                {
+                    RequestId = request.RequestId,
+                    OldSystemApplicationClubId = appClub.OldSystemApplicationClubId,
+                    OldSystemApplicationId = appClub.OldSystemApplicationId,
+                    OldSystemLinkedClubId = appClub.OldLinkedClubId,
+                    AgeLevel = appClub.AgeLevel ?? throw new Exception("Missing Age Level"),
+                    ClubSize = appClub.ClubSize ?? ClubSize.Size16,
+                    Season = appClub.Season ?? throw new Exception("Missing Season"),
+                    StartsOn = appClub.StartsOn ?? throw new Exception("Missing Starts On")
+                };
 
-            ConsoleEx.ShowProgress((float)index / (float)applicationClubsCount);
+                dbContext.RequestedClubs.Add(requestedClub);
+
+                if ((index+1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
+
+                ConsoleEx.ShowProgress((float)index / (float)applicationClubsCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("Added {Count:#,##0} request clubs", applicationClubsCount);
         }
-        ConsoleEx.EndProgress();
 
-        var addedApplications = await AddApplications(sqlApplications);
-        logger.LogInformation("Added {Count:#,##0} applications", addedApplications.Count());
+#if false
+
 
         /*** JOIN APPLICATIONS TO COACHES ***/
         var allCoaches = (await GetCoaches()).ToList();
@@ -422,274 +569,9 @@ internal class LoadC8SData(
 
         var addedOrderSkus = await AddOrderSkus(sqlOrderSkus);
         logger.LogInformation("Added {Count:#,##0} orderSkus; skipped {Skipped:#,##0}", addedOrderSkus.Count(), skippedOrderSkus.Count);  
+#endif
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
     }
-    
-    public async Task<IEnumerable<OrganizationDTO>> AddOrganizations(IEnumerable<OrganizationDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<OrganizationDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<PlaceDb>(dto);
-            var entry = await dbContext.Places.AddAsync(db);
-            dtosAdded.Add(mapper.Map<OrganizationDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-
-    public async Task<IEnumerable<CoachDTO>> AddCoaches(IEnumerable<CoachDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<CoachDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<PersonDb>(dto);
-            var entry = await dbContext.Persons.AddAsync(db);
-            dtosAdded.Add(mapper.Map<CoachDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-    
-    public async Task<IList<OrganizationDTO>> GetOrganizations()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.Places 
-                .OrderBy(a => a.Name)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<OrganizationDTO>).ToList();
-    }
-
-    public async Task<IList<CoachDTO>> GetCoaches()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.Persons // clubs included automatically
-                .OrderBy(a => a.LastName)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<CoachDTO>).ToList();
-    }
-    
-    public async Task<IList<ApplicationDTO>> GetApplications()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.Requests // clubs included automatically
-                .OrderByDescending(a => a.SubmittedOn)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<ApplicationDTO>).ToList();
-    }
-    
-    public async Task<IList<ApplicationClubDTO>> GetApplicationClubs()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.ProposedClubs
-                .AsNoTracking()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<ApplicationClubDTO>).ToList();
-    }
-
-    public async Task<IEnumerable<ApplicationDTO>> AddApplications(IEnumerable<ApplicationDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<ApplicationDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<RequestDb>(dto);
-            var entry = await dbContext.Requests.AddAsync(db);
-            dtosAdded.Add(mapper.Map<ApplicationDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-    
-    public async Task<ApplicationDTO> UpdateApplication(ApplicationDTO dto)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var db = mapper.Map<RequestDb>(dto);
-
-        var entry = dbContext.Requests.Attach(db);
-        entry.State = EntityState.Modified;
-        await dbContext.SaveChangesAsync();
-
-        var dtoModified = mapper.Map<ApplicationDTO>(entry.Entity);
-
-        return dtoModified;
-    }
-    
-    public async Task<IList<ClubDTO>> GetClubs(
-        ClubFilter? filter = null,
-        int? startIndex = null, int? takeCount = null)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.Clubs // clubs included automatically
-                .OrderBy(a => a.StartsOn)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        /* FILTER */
-        if (filter != null)
-        {
-            if (!String.IsNullOrEmpty(filter.Query))
-            {
-                //queryable = queryable
-                //    .Where(a => (a.FirstName.Contains(filter.Query)) ||
-                //                (a.LastName.Contains(filter.Query)) ||
-                //                (a.Email.Contains(filter.Query)) );
-            }
-        }
-
-        /* START & SKIP */
-        if (startIndex != null)
-            queryable = queryable.Skip(startIndex.Value);
-
-        if (takeCount != null)
-            queryable = queryable.Take(takeCount.Value);
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<ClubDTO>).ToList();
-    }
-
-    public async Task<IEnumerable<ClubDTO>> AddClubs(IEnumerable<ClubDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<ClubDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<ClubDb>(dto);
-            var entry = await dbContext.Clubs.AddAsync(db);
-            dtosAdded.Add(mapper.Map<ClubDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-    
-    public async Task<IList<SkuDTO>> GetSkus()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.Skus 
-                .OrderBy(a => a.Name)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<SkuDTO>).ToList();
-    }
-
-    public async Task<IEnumerable<SkuDTO>> AddSkus(IEnumerable<SkuDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<SkuDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<SkuDb>(dto);
-            var entry = await dbContext.Skus.AddAsync(db);
-            dtosAdded.Add(mapper.Map<SkuDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-    
-    public async Task<IList<OrderDTO>> GetOrders()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.Orders 
-                .OrderBy(a => a.Number)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<OrderDTO>).ToList();
-    }
-
-    public async Task<IEnumerable<OrderDTO>> AddOrders(IEnumerable<OrderDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<OrderDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<OrderDb>(dto);
-            var entry = await dbContext.Orders.AddAsync(db);
-            dtosAdded.Add(mapper.Map<OrderDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-    
-    public async Task<IList<OrderSkuDTO>> GetOrderSkus()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var queryable =
-            dbContext.OrderSkus 
-                .OrderBy(a => a.Ordinal)
-                .AsNoTracking()
-                .AsSingleQuery()
-                .AsQueryable();
-
-        return (await queryable.ToListAsync())
-            .Select(mapper.Map<OrderSkuDTO>).ToList();
-    }
-
-    public async Task<IEnumerable<OrderSkuDTO>> AddOrderSkus(IEnumerable<OrderSkuDTO> dtos)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var dtosAdded = new List<OrderSkuDTO>();
-        foreach (var dto in dtos)
-        {
-            var db = mapper.Map<OrderSkuDb>(dto);
-            var entry = await dbContext.OrderSkus.AddAsync(db);
-            dtosAdded.Add(mapper.Map<OrderSkuDTO>(entry.Entity));
-        }
-
-        await dbContext.SaveChangesAsync();
-        return dtosAdded;
-    }
-
 }

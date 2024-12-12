@@ -52,7 +52,7 @@ internal class ProcessApplications(
             var application = mapper.Map<RequestDb>(dto);
 
             application.PersonTimeZone = "Eastern Standard Time";
-            application.ProposedClubs ??= new List<ProposedClubDb>();
+            application.RequestedClubs ??= new List<RequestedClubDb>();
 
             foreach (var clubString in submitted.ClubListString.Split(" "))
             {
@@ -60,7 +60,7 @@ internal class ProcessApplications(
                 var match = rxClubString.Match(clubString.Trim());
                 if (!match.Success) throw new Exception($"Could not match club string:{clubString}");
 
-                var applicationClub = new ProposedClubDb()
+                var applicationClub = new RequestedClubDb()
                 {
                     ClubSize = ClubSize.Size12,
                     Season = Int32.Parse(match.Groups["season"].Value),
@@ -75,7 +75,7 @@ internal class ProcessApplications(
                         int.Parse(match.Groups["startMonth"].Value), 
                         int.Parse(match.Groups["startDay"].Value))
                 };
-                application.ProposedClubs.Add(applicationClub);
+                application.RequestedClubs.Add(applicationClub);
             }
 
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();

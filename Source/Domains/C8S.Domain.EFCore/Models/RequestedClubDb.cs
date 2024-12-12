@@ -8,12 +8,12 @@ using SC.Common.Extensions;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("ProposedClubs")]
-public class ProposedClubDb : BaseDb
+[Table("RequestedClubs")]
+public class RequestedClubDb : BaseDb
 {
     #region Override Properties
     [NotMapped] 
-    public override int Id => ApplicationClubId;
+    public override int Id => RequestedClubId;
     [NotMapped] 
     public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
                                        ?? SoftCrowConstants.Display.NotSet;
@@ -21,7 +21,7 @@ public class ProposedClubDb : BaseDb
 
     #region Id Property
     [Required] 
-    public int ApplicationClubId { get; set; }
+    public int RequestedClubId { get; set; }
     #endregion
 
     #region Database Properties
@@ -48,7 +48,7 @@ public class ProposedClubDb : BaseDb
 
     #region Reference Properties
     [ForeignKey(nameof(Request))]
-    public int ApplicationId { get; set; } = default!;
+    public int RequestId { get; set; } = default!;
     public RequestDb Request { get; set; } = default!;
     #endregion
 }

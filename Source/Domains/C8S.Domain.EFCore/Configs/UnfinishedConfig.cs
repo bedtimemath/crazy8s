@@ -48,10 +48,10 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Email)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Standard)]
         //public string? PersonPhone { get; set; } = default!;
         entity.Property(m => m.PersonPhone)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Medium)]

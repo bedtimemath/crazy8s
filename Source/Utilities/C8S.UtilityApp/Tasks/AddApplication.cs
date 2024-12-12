@@ -36,8 +36,8 @@ internal class AddApplication(
 
         Console.WriteLine();
 
-        // ADD APPLICATION
-        var application = new RequestDb()
+        // ADD REQUEST
+        var request = new RequestDb()
         {
             Status = RequestStatus.Received,
             PersonType = (randomizer.GetDouble() <= 0.5) ? ApplicantType.Coach : ApplicantType.Supervisor,
@@ -47,28 +47,28 @@ internal class AddApplication(
             PersonTimeZone = String.Empty.AppendRandomAlphaOnly(),
             SubmittedOn = DateTimeOffset.UtcNow
         };
-        var applicationClubs = Enumerable.Range(0, 3)
-            .Select(_ => new ProposedClubDb()
+        var requestedClubs = Enumerable.Range(0, 3)
+            .Select(_ => new RequestedClubDb()
             {
-                Request = application,
+                Request = request,
                 AgeLevel = (AgeLevel)(randomizer.GetIntLessThan(2)),
                 ClubSize = ClubSize.Size16,
                 Season = randomizer.GetIntBetween(1,3),
                 StartsOn = DateOnly.FromDateTime(DateTime.Today.AddDays(randomizer.GetIntBetween(21,50)))
             })
             .ToList();
-        application.ProposedClubs = applicationClubs;
-        dbContext.Requests.Add(application);
+        request.RequestedClubs = requestedClubs;
+        dbContext.Requests.Add(request);
 
         // UPDATE THE DATABASE
         await dbContext.SaveChangesAsync();
-        logger.LogInformation("Added {Application}", application.Display);
+        logger.LogInformation("Added {Application}", request.Display);
 
         // ALERT THROUGH THE ENDPOINT
         var httpClient = httpClientFactory.CreateClient(nameof(Endpoints.C8SAdminApp));
         var dataChange = new DataChange()
         {
-            EntityId = application.RequestId,
+            EntityId = request.RequestId,
             EntityName = nameof(RequestDb),
             EntityState = EntityState.Added
         };

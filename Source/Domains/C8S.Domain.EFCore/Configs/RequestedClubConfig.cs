@@ -5,14 +5,14 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class ProposedClubConfig : IEntityTypeConfiguration<ProposedClubDb>
+public class RequestedClubConfig : IEntityTypeConfiguration<RequestedClubDb>
 {
-    public void Configure(EntityTypeBuilder<ProposedClubDb> entity)
+    public void Configure(EntityTypeBuilder<RequestedClubDb> entity)
     {
         #region Id Property
         // [Required]
-        // public int ApplicationClubId { get; set; }
-        entity.HasKey(m => m.ApplicationClubId);
+        // public int RequestedClubId { get; set; }
+        entity.HasKey(m => m.RequestedClubId);
         #endregion
 
         #region Database Properties
@@ -56,17 +56,17 @@ public class ProposedClubConfig : IEntityTypeConfiguration<ProposedClubDb>
         #endregion
 
         #region Reference Properties
-        //[ForeignKey(nameof(Application))]
-        //public int ApplicationId { get; set; } = default!;
-        entity.Property(m => m.ApplicationId)
+        //[ForeignKey(nameof(Request))]
+        //public int RequestId { get; set; } = default!;
+        entity.Property(m => m.RequestId)
             .IsRequired(true);
         #endregion
 
         #region Navigation Configuration
-        //public ApplicationDb Application { get; set; } = default!;
+        //public RequestDb Request { get; set; } = default!;
         entity.HasOne(m => m.Request)
-            .WithMany(m => m.ProposedClubs)
-            .HasForeignKey(m => m.ApplicationId)
+            .WithMany(m => m.RequestedClubs)
+            .HasForeignKey(m => m.RequestId)
             .IsRequired(true);
         #endregion
 
