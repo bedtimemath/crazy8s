@@ -64,7 +64,7 @@ internal class LoadC8SData(
         var existingOrgIds = await dbContext.Places.Select(o => o.OldSystemOrganizationId).ToListAsync();
         sqlOrganizations.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
 
-        logger.LogInformation("Removed dupes, now {Count:#,##0} organizations", sqlOrganizations.Count);
+        logger.LogInformation("Removed existing, now {Count:#,##0} organizations", sqlOrganizations.Count);
 
         if (sqlOrganizations.Count > 0)
         {
@@ -132,7 +132,7 @@ internal class LoadC8SData(
         var existingCoachIds = await dbContext.Persons.Select(o => o.OldSystemCoachId).ToListAsync();
         sqlCoaches.RemoveAll(m => existingCoachIds.Contains(m.OldSystemCoachId));
 
-        logger.LogInformation("Removed dupes, now {Count:#,##0} coaches", sqlCoaches.Count);
+        logger.LogInformation("Removed existing, now {Count:#,##0} coaches", sqlCoaches.Count);
 
         if (sqlCoaches.Count > 0)
         {            
@@ -225,7 +225,7 @@ internal class LoadC8SData(
         var existingRequestIds = await dbContext.Requests.Select(o => o.OldSystemApplicationId).ToListAsync();
         sqlApplications.RemoveAll(m => existingRequestIds.Contains(m.OldSystemApplicationId));
 
-        logger.LogInformation("Removed dupes, now {Count:#,##0} applications", sqlApplications.Count);
+        logger.LogInformation("Removed existing, now {Count:#,##0} applications", sqlApplications.Count);
 
         if (sqlApplications.Count > 0)
         {            
@@ -289,36 +289,42 @@ internal class LoadC8SData(
 
         logger.LogInformation("Found {Count:#,##0} application clubs", sqlApplicationClubs.Count);
 
-        var existingApplicationClubIds = await dbContext.RequestedClubs.Select(o => o.OldSystemApplicationClubId).ToListAsync();
+        var existingApplicationClubIds = await dbContext.RequestedClubs
+            .Select(o => o.OldSystemApplicationClubId)
+            .ToListAsync();
         sqlApplicationClubs.RemoveAll(m => existingApplicationClubIds.Contains(m.OldSystemApplicationClubId));
 
-        logger.LogInformation("Removed dupes, now {Count:#,##0} application clubs", sqlApplicationClubs.Count);
+        logger.LogInformation("Removed existing, now {Count:#,##0} application clubs", sqlApplicationClubs.Count);
 
         if (sqlApplicationClubs.Count > 0)
         {
             /*** ADDING REQUESTED CLUBS ***/
             var applicationClubsCount = sqlApplicationClubs.Count;
             ConsoleEx.StartProgress("Adding requested clubs: ");
+            var requestedClubsAdded = 0;
             for (int index = 0; index < applicationClubsCount; index++)
             {
                 var appClub = sqlApplicationClubs[index];
                 var request = await dbContext.Requests.FirstOrDefaultAsync(r =>
                         r.OldSystemApplicationId == appClub.OldSystemApplicationId);
-                if (request == null) continue; // some point to missing / incomplete applications
 
-                var requestedClub = new RequestedClubDb()
+                // some point to missing / incomplete applications
+                if (request != null)
                 {
-                    RequestId = request.RequestId,
-                    OldSystemApplicationClubId = appClub.OldSystemApplicationClubId,
-                    OldSystemApplicationId = appClub.OldSystemApplicationId,
-                    OldSystemLinkedClubId = appClub.OldLinkedClubId,
-                    AgeLevel = appClub.AgeLevel ?? throw new Exception("Missing Age Level"),
-                    ClubSize = appClub.ClubSize ?? ClubSize.Size16,
-                    Season = appClub.Season ?? throw new Exception("Missing Season"),
-                    StartsOn = appClub.StartsOn ?? throw new Exception("Missing Starts On")
-                };
-
-                dbContext.RequestedClubs.Add(requestedClub);
+                    var requestedClub = new RequestedClubDb()
+                    {
+                        RequestId = request.RequestId,
+                        OldSystemApplicationClubId = appClub.OldSystemApplicationClubId,
+                        OldSystemApplicationId = appClub.OldSystemApplicationId,
+                        OldSystemLinkedClubId = appClub.OldLinkedClubId,
+                        AgeLevel = appClub.AgeLevel ?? throw new Exception("Missing Age Level"),
+                        ClubSize = appClub.ClubSize ?? ClubSize.Size16,
+                        Season = appClub.Season ?? throw new Exception("Missing Season"),
+                        StartsOn = appClub.StartsOn ?? throw new Exception("Missing Starts On")
+                    };
+                    dbContext.RequestedClubs.Add(requestedClub);
+                    requestedClubsAdded++;
+                }
 
                 if ((index+1) % SaveBlock == 0)
                     await dbContext.SaveChangesAsync();
@@ -328,52 +334,84 @@ internal class LoadC8SData(
             await dbContext.SaveChangesAsync();
             ConsoleEx.EndProgress();
 
-            logger.LogInformation("Added {Count:#,##0} request clubs", applicationClubsCount);
+            logger.LogInformation("Added {Count:#,##0} request clubs", requestedClubsAdded);
         }
 
-#if false
+        /*** JOIN REQUESTS TO PERSONS & PLACES ***/
+        var unlinkedRequestPersons = await dbContext.Requests
+            .Where(r => r.PersonId == null && r.OldSystemLinkedCoachId != null)
+            .ToListAsync();
 
+        var unlinkedRequestPersonsCount = unlinkedRequestPersons.Count;
+        logger.LogInformation("Found {Count:#,##0} requests missing persons.", 
+            unlinkedRequestPersonsCount);
 
-        /*** JOIN APPLICATIONS TO COACHES ***/
-        var allCoaches = (await GetCoaches()).ToList();
-
-        var unlinkedCoachApps = (await GetApplications())
-            .Where(a => a is { LinkedCoachId: null, OldSystemLinkedCoachId: not null, IsCoachRemoved: false })
-            .ToList();
-        logger.LogInformation("Found {Count:#,##0} applications missing linked coaches", unlinkedCoachApps.Count);
-
-        var unlinkedCoachAppsCount = unlinkedCoachApps.Count;
-        var appsMissingCoach = 0;
-        var appsLinkedToCoach = 0;
-
-        ConsoleEx.StartProgress("Joining applications with coaches: ");
-        for (int index = 0; index < unlinkedCoachAppsCount; index++)
+        ConsoleEx.StartProgress("Joining requests with persons: ");
+        var personsLinked = 0;
+        for (int index = 0; index < unlinkedRequestPersonsCount; index++)
         {
-            var application = unlinkedCoachApps[index];
-            var oldCoachLink = application.OldSystemLinkedCoachId;
-            if (oldCoachLink == null) continue;
+            var request = unlinkedRequestPersons[index];
 
-            var coach = allCoaches.FirstOrDefault(
-                                   a => a.OldSystemCoachId == oldCoachLink.Value);
-            if (coach == null)
+            var oldCoachLink = request.OldSystemLinkedCoachId;
+            if (oldCoachLink != null)
             {
-                application.IsCoachRemoved = true;
-                appsMissingCoach++;
-            }
-            else
-            {
-                application.LinkedCoachId = coach.CoachId;
-                appsLinkedToCoach++;
+                var person = await dbContext.Persons.FirstOrDefaultAsync(
+                    a => a.OldSystemCoachId == oldCoachLink.Value);
+                if (person != null)
+                {
+                    request.PersonId = person.PersonId;
+                    personsLinked++;
+                }
             }
 
-            await UpdateApplication(application);
+            if ((index+1) % SaveBlock == 0)
+                await dbContext.SaveChangesAsync();
 
-            ConsoleEx.ShowProgress((float)index / (float)unlinkedCoachAppsCount);
+            ConsoleEx.ShowProgress((float)index / (float)unlinkedRequestPersonsCount);
         }
         ConsoleEx.EndProgress();
+        await dbContext.SaveChangesAsync();
 
-        logger.LogInformation("{Count:#,##0} applications updated with coach link; {Missing:#,##0} missing.", appsLinkedToCoach, appsMissingCoach);
+        logger.LogInformation("{Count:#,##0} requests updated with person.", personsLinked);
 
+        /*** JOIN REQUESTS TO PLACES ***/
+        var unlinkedRequestPlaces = await dbContext.Requests
+            .Where(r => r.PlaceId == null && r.OldSystemLinkedOrganizationId != null)
+            .ToListAsync();
+
+        var unlinkedRequestPlacesCount = unlinkedRequestPlaces.Count;
+        logger.LogInformation("Found {Count:#,##0} requests missing places.", unlinkedRequestPlacesCount);
+
+        ConsoleEx.StartProgress("Joining requests with places: ");
+        var placesLinked = 0;
+        for (int index = 0; index < unlinkedRequestPlacesCount; index++)
+        {
+            var request = unlinkedRequestPlaces[index];
+
+            var oldOrganizationLink = request.OldSystemLinkedOrganizationId;
+            if (oldOrganizationLink != null)
+            {
+                var place = await dbContext.Places.FirstOrDefaultAsync(
+                    a => a.OldSystemOrganizationId == oldOrganizationLink.Value);
+                if (place != null)
+                {
+                    request.PlaceId = place.PlaceId;
+                    placesLinked++;
+                }
+            }
+
+            if ((index+1) % SaveBlock == 0)
+                await dbContext.SaveChangesAsync();
+
+            ConsoleEx.ShowProgress((float)index / (float)unlinkedRequestPlacesCount);
+        }
+        ConsoleEx.EndProgress();
+        await dbContext.SaveChangesAsync();
+
+        logger.LogInformation("{Count:#,##0} requests updated with place.", placesLinked);
+
+
+#if false
         /*** JOIN APPLICATIONS TO ORGANIZATIONS ***/
         var unlinkedOrganizationApps = (await GetApplications())
             .Where(a => a is { LinkedOrganizationId: null, OldSystemLinkedOrganizationId: not null, IsOrganizationRemoved: false })
