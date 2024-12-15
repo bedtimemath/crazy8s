@@ -3,6 +3,7 @@
 public enum ShipMethod
 {
     FedEx,
+    UPS,
     USPS,
     Other = 99
 }

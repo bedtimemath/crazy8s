@@ -211,6 +211,35 @@ public class OldSystemService(
         return orders;
     }
     
+    public async Task<List<OrderTrackerSql>> GetOrderTrackers()
+    {
+        var trackers = new List<OrderTrackerSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(OrderTrackerSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var trackerSql = reader.ConvertToObject<OrderTrackerSql>();
+                trackers.Add(trackerSql);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return trackers;
+    }
+    
     public async Task<List<OrderSkuSql>> GetOrderSkus()
     {
         var orderskus = new List<OrderSkuSql>();

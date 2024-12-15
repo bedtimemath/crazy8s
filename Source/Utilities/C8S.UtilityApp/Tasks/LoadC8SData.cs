@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics;
+using AutoMapper;
+using Azure.Core;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
@@ -50,8 +52,7 @@ internal class LoadC8SData(
         var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         /*** ADDRESSES ***/
-        var sqlAddresses = (await oldSystemService.GetAddresses())
-            .ToList();
+        var sqlAddresses = (await oldSystemService.GetAddresses()).ToList();
 
         logger.LogInformation("Found {Count:#,##0} addresses", sqlAddresses.Count);
 
@@ -108,7 +109,7 @@ internal class LoadC8SData(
                 };
                 dbContext.Places.Add(place);
 
-                if ((index+1) % SaveBlock == 0)
+                if ((index + 1) % SaveBlock == 0)
                     await dbContext.SaveChangesAsync();
 
                 ConsoleEx.ShowProgress((float)index / (float)sqlOrganizationsCount);
@@ -135,7 +136,7 @@ internal class LoadC8SData(
         logger.LogInformation("Removed existing, now {Count:#,##0} coaches", sqlCoaches.Count);
 
         if (sqlCoaches.Count > 0)
-        {            
+        {
             /*** ADDING PERSONS ***/
             var sqlCoachesCount = sqlCoaches.Count;
             ConsoleEx.StartProgress("Adding persons: ");
@@ -168,7 +169,7 @@ internal class LoadC8SData(
                     };
                 dbContext.Persons.Add(person);
 
-                if ((index+1) % SaveBlock == 0)
+                if ((index + 1) % SaveBlock == 0)
                     await dbContext.SaveChangesAsync();
 
                 ConsoleEx.ShowProgress((float)index / (float)sqlCoachesCount);
@@ -211,7 +212,7 @@ internal class LoadC8SData(
                 ConsoleEx.ShowProgress((float)index / (float)personsNoPlaceCount);
             }
             ConsoleEx.EndProgress();
-            
+
             await dbContext.SaveChangesAsync();
             logger.LogInformation("{Count:#,##0} persons updated with a place.", personsUpdated);
         }
@@ -228,7 +229,7 @@ internal class LoadC8SData(
         logger.LogInformation("Removed existing, now {Count:#,##0} applications", sqlApplications.Count);
 
         if (sqlApplications.Count > 0)
-        {            
+        {
             /*** ADDING REQUESTS ***/
             var sqlApplicationsCount = sqlApplications.Count;
             ConsoleEx.StartProgress("Adding requests: ");
@@ -272,7 +273,7 @@ internal class LoadC8SData(
                     };
                 dbContext.Requests.Add(request);
 
-                if ((index+1) % SaveBlock == 0)
+                if ((index + 1) % SaveBlock == 0)
                     await dbContext.SaveChangesAsync();
 
                 ConsoleEx.ShowProgress((float)index / (float)sqlApplicationsCount);
@@ -326,7 +327,7 @@ internal class LoadC8SData(
                     requestedClubsAdded++;
                 }
 
-                if ((index+1) % SaveBlock == 0)
+                if ((index + 1) % SaveBlock == 0)
                     await dbContext.SaveChangesAsync();
 
                 ConsoleEx.ShowProgress((float)index / (float)applicationClubsCount);
@@ -343,7 +344,7 @@ internal class LoadC8SData(
             .ToListAsync();
 
         var unlinkedRequestPersonsCount = unlinkedRequestPersons.Count;
-        logger.LogInformation("Found {Count:#,##0} requests missing persons.", 
+        logger.LogInformation("Found {Count:#,##0} requests missing persons.",
             unlinkedRequestPersonsCount);
 
         ConsoleEx.StartProgress("Joining requests with persons: ");
@@ -364,7 +365,7 @@ internal class LoadC8SData(
                 }
             }
 
-            if ((index+1) % SaveBlock == 0)
+            if ((index + 1) % SaveBlock == 0)
                 await dbContext.SaveChangesAsync();
 
             ConsoleEx.ShowProgress((float)index / (float)unlinkedRequestPersonsCount);
@@ -400,7 +401,7 @@ internal class LoadC8SData(
                 }
             }
 
-            if ((index+1) % SaveBlock == 0)
+            if ((index + 1) % SaveBlock == 0)
                 await dbContext.SaveChangesAsync();
 
             ConsoleEx.ShowProgress((float)index / (float)unlinkedRequestPlacesCount);
@@ -410,118 +411,230 @@ internal class LoadC8SData(
 
         logger.LogInformation("{Count:#,##0} requests updated with place.", placesLinked);
 
-
-#if false
-        /*** JOIN APPLICATIONS TO ORGANIZATIONS ***/
-        var unlinkedOrganizationApps = (await GetApplications())
-            .Where(a => a is { LinkedOrganizationId: null, OldSystemLinkedOrganizationId: not null, IsOrganizationRemoved: false })
-            .ToList();
-        logger.LogInformation("Found {Count:#,##0} applications missing linked organizations", unlinkedOrganizationApps.Count);
-
-        var unlinkedOrganizationAppsCount = unlinkedOrganizationApps.Count;
-        var appsMissingOrganization = 0;
-        var appsLinkedToOrganization = 0;
-
-        ConsoleEx.StartProgress("Joining applications with organizations: ");
-        for (int index = 0; index < unlinkedOrganizationAppsCount; index++)
-        {
-            var application = unlinkedOrganizationApps[index];
-            var oldOrganizationLink = application.OldSystemLinkedOrganizationId;
-            if (oldOrganizationLink == null) continue;
-
-            var organization = allOrganizations.FirstOrDefault(
-                                   a => a.OldSystemOrganizationId == oldOrganizationLink.Value);
-            if (organization == null)
-            {
-                application.IsOrganizationRemoved = true;
-                appsMissingOrganization++;
-            }
-            else
-            {
-                application.LinkedOrganizationId = organization.OrganizationId;
-                appsLinkedToOrganization++;
-            }
-
-            await UpdateApplication(application);
-            appsLinkedToOrganization++;
-
-            ConsoleEx.ShowProgress((float)index / (float)unlinkedOrganizationAppsCount);
-        }
-        ConsoleEx.EndProgress();
-
-        logger.LogInformation("{Count:#,##0} applications updated with organization link; {Missing:#,##0} missing.", appsLinkedToOrganization, appsMissingOrganization);
-
         /*** CLUBS ***/
         var sqlClubs = (await oldSystemService.GetClubs())
-            .Select(mapper.Map<ClubSql, ClubDTO>)
             .ToList();
 
         logger.LogInformation("Found {Count:#,##0} clubs", sqlClubs.Count);
 
-        var existingClubIds = (await GetClubs()).Select(o => o.OldSystemClubId).ToList();
+        var existingClubIds = await dbContext.Clubs.Select(o => o.OldSystemClubId).ToListAsync();
         sqlClubs.RemoveAll(m => existingClubIds.Contains(m.OldSystemClubId));
 
+        logger.LogInformation("Removed existing, now {Count:#,##0} applications", sqlApplications.Count);
+
         var sqlClubsCount = sqlClubs.Count;
-        ConsoleEx.StartProgress("Adding coaches, orgs and addresses to clubs: ");
+        ConsoleEx.StartProgress("Adding clubs, plus persons & places to clubs: ");
+        var clubsAdded = 0;
         for (int index = 0; index < sqlClubsCount; index++)
         {
-            var club = sqlClubs[index];
+            var sqlClub = sqlClubs[index];
 
-            var foundCoach = allCoaches.FirstOrDefault(c => c.OldSystemCoachId == club.OldSystemCoachId);
-            if (foundCoach == null && club.OldSystemCoachId != null)
+            // start by finding the original coach
+            var foundPerson = await dbContext.Persons
+                .FirstOrDefaultAsync(c => c.OldSystemCoachId == sqlClub.OldSystemCoachId);
+            if (foundPerson == null && sqlClub.OldSystemCoachId != null)
             {
-                var deletedCoach = (await oldSystemService.GetDeletedCoach(club.OldSystemCoachId.Value));
-                if (deletedCoach != null)
+                var deletedPerson = (await oldSystemService.GetDeletedCoach(sqlClub.OldSystemCoachId.Value));
+                if (deletedPerson != null)
                 {
-                    foundCoach = allCoaches.FirstOrDefault(c => c.Email == deletedCoach.Email);
+                    foundPerson = await dbContext.Persons
+                        .FirstOrDefaultAsync(c => c.Email == deletedPerson.Email);
                 }
             }
-            club.CoachId = foundCoach?.Id ??
-                throw new Exception($"Could not find coach ({club.OldSystemCoachId}) for club ({club.OldSystemClubId})");
+            var person = foundPerson ??
+                         throw new Exception($"Could not find person ({sqlClub.OldSystemCoachId}) for club ({sqlClub.OldSystemClubId})");
 
-            club.OrganizationId = allOrganizations.FirstOrDefault(c => c.OldSystemOrganizationId == club.OldSystemOrganizationId)?.Id ??
-                                throw new Exception($"Could not find organization ({club.OldSystemOrganizationId}) for club ({club.OldSystemClubId})");
+            // then by finding the original place
+            var place = (await dbContext.Places
+                    .FirstOrDefaultAsync(c => c.OldSystemOrganizationId == sqlClub.OldSystemOrganizationId)) ??
+                        throw new Exception($"Could not find organization ({sqlClub.OldSystemOrganizationId}) for club ({sqlClub.OldSystemClubId})");
 
-            var address = sqlAddresses
-                .FirstOrDefault(a => a.OldSystemUsaPostalId == club.OldSystemMeetingAddressId);
-            if (address == null)
-                throw new Exception($"Could not find address ({club.OldSystemMeetingAddressId}) for club ({club.OldSystemClubId})");
-            club.Address = address;
+            // now create the club itself
+            var clubStatus = sqlClub.StartsOnDateTime == null ? ClubStatus.Archived :
+                sqlClub.StartsOnDateTime < DateTime.Today ? ClubStatus.Complete : ClubStatus.Active;
+            var club = new ClubDb()
+            {
+                OldSystemClubId = sqlClub.OldSystemClubId,
+                OldSystemOrganizationId = sqlClub.OldSystemOrganizationId,
+                OldSystemCoachId = sqlClub.OldSystemCoachId,
+                OldSystemMeetingAddressId = sqlClub.OldSystemMeetingAddressId,
+                Status = clubStatus,
+                Season = sqlClub.Season,
+                AgeLevel = sqlClub.AgeLevel,
+                ClubSize = sqlClub.ClubSize ?? ClubSize.Size16,
+                StartsOn = sqlClub.StartsOn,
+                ClubPersons = new List<ClubPersonDb>()
+            };
+            if (!String.IsNullOrEmpty(sqlClub.Notes))
+                club.Notes = new List<ClubNoteDb>
+                {
+                    new()
+                    {
+                        Author = SoftCrowConstants.Display.System,
+                        Content = sqlClub.Notes
+                    }
+                };
+            dbContext.Clubs.Add(club);
+
+            // and add the place and person
+            club.Place = place;
+            club.ClubPersons.Add(new ClubPersonDb()
+            {
+                Person = person,
+                Club = club,
+                IsPrimary = true
+            });
+
+            clubsAdded++;
+
+            if ((index + 1) % SaveBlock == 0)
+                await dbContext.SaveChangesAsync();
 
             ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
         }
         ConsoleEx.EndProgress();
 
-        var addedClubs = await AddClubs(sqlClubs);
-        logger.LogInformation("Added {Count:#,##0} clubs", addedClubs.Count());
+        logger.LogInformation("Added {Count:#,##0} clubs", clubsAdded);
 
         /*** SKUS ***/
-        var sqlSkus = (await oldSystemService.GetSkus())
-            .Select(mapper.Map<SkuSql, SkuDTO>)
-            .ToList();
+        var sqlSkus = (await oldSystemService.GetSkus()).ToList();
 
         logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
 
-        var existingSkuIds = (await GetSkus()).Select(o => o.OldSystemSkuId).ToList();
+        var existingSkuIds = await dbContext.Skus.Select(o => o.OldSystemSkuId).ToListAsync();
         sqlSkus.RemoveAll(m => existingSkuIds.Contains(m.OldSystemSkuId));
 
-        var addedSkus = await AddSkus(sqlSkus);
-        logger.LogInformation("Added {Count:#,##0} skus", addedSkus.Count());
+        logger.LogInformation("Removed existing, now {Count:#,##0} skus", sqlSkus.Count);
+
+        if (sqlSkus.Count > 0)
+        {
+            /*** ADDING SKUS ***/
+            var skusCount = sqlSkus.Count;
+            ConsoleEx.StartProgress("Adding skus: ");
+            var skusAdded = 0;
+            for (int index = 0; index < skusCount; index++)
+            {
+                var sqlSku = sqlSkus[index];
+
+                var sku = new SkuDb()
+                {
+                    OldSystemSkuId = sqlSku.OldSystemSkuId,
+                    Key = sqlSku.Key,
+                    Name = sqlSku.Name,
+                    Status = sqlSku.Status ?? SkuStatus.Inactive,
+                    Season = sqlSku.Season,
+                    AgeLevel = sqlSku.AgeLevel,
+                    ClubSize = sqlSku.ClubSize ?? ClubSize.Size16,
+                    Comments = sqlSku.Notes
+                };
+                dbContext.Skus.Add(sku);
+
+                skusAdded++;
+
+                if ((index + 1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
+
+                ConsoleEx.ShowProgress((float)index / (float)skusCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("Added {Count:#,##0} skus", skusAdded);
+        }
 
         /*** ORDERS ***/
-        var sqlOrders = (await oldSystemService.GetOrders())
-            .Select(mapper.Map<OrderSql, OrderDTO>)
-            .ToList();
+        var sqlOrders = (await oldSystemService.GetOrders()).ToList();
+        var sqlOrderTrackers = (await oldSystemService.GetOrderTrackers()).ToList();
 
-        logger.LogInformation("Found {Count:#,##0} orders", sqlOrders.Count);
+        logger.LogInformation("Found {Orders:#,##0} orders with {Trackers:#,##0} trackers",
+            sqlOrders.Count, sqlOrderTrackers.Count);
 
-        var existingOrderIds = (await GetOrders()).Select(o => o.OldSystemOrderId).ToList();
+        var existingOrderIds = await dbContext.Orders.Select(o => o.OldSystemOrderId).ToListAsync();
         sqlOrders.RemoveAll(m => existingOrderIds.Contains(m.OldSystemOrderId));
 
-        // we remove the ones we're not adding, so we need to get this list again
-        sqlClubs = (await oldSystemService.GetClubs())
-            .Select(mapper.Map<ClubSql, ClubDTO>)
-            .ToList();
+        logger.LogInformation("Removed existing, now {Count:#,##0} orders", sqlOrders.Count);
+
+        if (sqlOrders.Count > 0)
+        {
+            var sqlOrdersCount = sqlOrders.Count;
+            ConsoleEx.StartProgress("Adding orders & shipments, plus persons & places to orders: ");
+            var ordersAdded = 0;
+            for (int index = 0; index < sqlOrdersCount; index++)
+            {
+                var sqlOrder = sqlOrders[index];
+
+                // start by finding the original club & address
+                var orderClub = await dbContext.Clubs
+                                    .FirstOrDefaultAsync(c => c.OldSystemClubId == sqlOrder.OldSystemClubId);
+                var sqlAddress = sqlAddresses
+                                     .FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrder.OldSystemShippingAddressId) ??
+                                 throw new Exception($"Could not find address ({sqlOrder.OldSystemShippingAddressId}) for order ({sqlOrder.OldSystemOrderId})");
+
+                // then the appropriate trackers
+                var sqlTrackers = sqlOrderTrackers
+                    .Where(t => t.OldSystemOrderId == sqlOrder.OldSystemOrderId)
+                    .ToList();
+
+                // then create the new order
+                var status = sqlOrder.Status ??
+                             throw new Exception($"Missing status for order ({sqlOrder.OldSystemOrderId})");
+                var recipient = sqlAddress.BusinessName ?? sqlAddress.RecipientName ??
+                    throw new Exception($"Missing recipient for order ({sqlOrder.OldSystemOrderId})");
+                var line1 = sqlAddress.StreetAddress ??
+                                  throw new Exception($"Missing street address for order ({sqlOrder.OldSystemOrderId})");
+                var city = sqlAddress.City ??
+                                  throw new Exception($"Missing city for order ({sqlOrder.OldSystemOrderId})");
+                var state = sqlAddress.State ??
+                                  throw new Exception($"Missing state for order ({sqlOrder.OldSystemOrderId})");
+                var zipCode = sqlAddress.PostalCode ??
+                                  throw new Exception($"Missing ZIP for order ({sqlOrder.OldSystemOrderId})");
+                var order = new OrderDb()
+                {
+                    OldSystemOrderId = sqlOrder.OldSystemOrderId,
+                    OldSystemClubId = sqlOrder.OldSystemClubId,
+                    OldSystemShippingAddressId = sqlOrder.OldSystemShippingAddressId,
+                    Number = sqlOrder.Number,
+                    Status = status,
+                    ContactName = sqlAddress.RecipientName,
+                    ContactEmail = sqlOrder.ContactEmail,
+                    ContactPhone = sqlOrder.ContactPhone,
+                    Recipient = recipient,
+                    Line1 = line1,
+                    City = city,
+                    State = state,
+                    ZIPCode = zipCode,
+                    IsMilitary = sqlAddress.IsMilitary,
+                    OrderedOn = sqlOrder.OrderedOn,
+                    ArriveBy = sqlOrder.ArriveBy,
+                    ShippedOn = sqlOrder.ShippedOn,
+                    EmailedOn = sqlOrder.EmailedOn,
+                    Club = orderClub,
+                    Shipments = sqlTrackers.Select(t => new ShipmentDb()
+                    {
+                        ShipMethod = t.Method,
+                        TrackingNumber = t.Code
+                    }).ToList(),
+                    Notes = String.IsNullOrEmpty(sqlOrder.Notes) ? [] :
+                        new List<OrderNoteDb>() {
+                            new() { Author = SoftCrowConstants.Display.System, Content = sqlOrder.Notes }
+                        }
+                };
+                dbContext.Orders.Add(order);
+
+                ordersAdded++;
+
+                if ((index + 1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
+
+                ConsoleEx.ShowProgress((float)index / (float)sqlOrdersCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("Added {Count:#,##0} orders", ordersAdded);
+
+        }
+#if false
 
         /*** JOIN ADDRESSES & COACHES TO ORDERS ***/
         var sqlOrdersCount = sqlOrders.Count;

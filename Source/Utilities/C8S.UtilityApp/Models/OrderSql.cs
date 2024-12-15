@@ -46,6 +46,8 @@ public class OrderSql
     
     public Guid? BatchIdentifier { get; set; } = default!;
 
+    public string? Notes { get; set; } = null;
+
     [NotMapped]
     public string? CreatedOnString { get; set; } = null;
     #endregion
