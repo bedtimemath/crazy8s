@@ -240,14 +240,14 @@ namespace C8S.Domain.EFCore.Migrations
                     ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Season = table.Column<int>(type: "int", nullable: false),
                     StartsOn = table.Column<DateOnly>(type: "date", nullable: false),
-                    ApplicationId = table.Column<int>(type: "int", nullable: false)
+                    RequestId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RequestedClubs", x => x.RequestedClubId);
                     table.ForeignKey(
-                        name: "FK_RequestedClubs_Requests_ApplicationId",
-                        column: x => x.ApplicationId,
+                        name: "FK_RequestedClubs_Requests_RequestId",
+                        column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "RequestId");
                 });
@@ -710,16 +710,16 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RequestedClubs_ApplicationId",
-                table: "RequestedClubs",
-                column: "ApplicationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RequestedClubs_OldSystemApplicationClubId",
                 table: "RequestedClubs",
                 column: "OldSystemApplicationClubId",
                 unique: true,
                 filter: "[OldSystemApplicationClubId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RequestedClubs_RequestId",
+                table: "RequestedClubs",
+                column: "RequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Requests_OldSystemApplicationId",

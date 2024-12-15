@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20241212193304_FixRequestNaming")]
-    partial class FixRequestNaming
+    [Migration("20241215182207_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

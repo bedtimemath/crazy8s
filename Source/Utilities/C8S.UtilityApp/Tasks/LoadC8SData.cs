@@ -634,93 +634,57 @@ internal class LoadC8SData(
             logger.LogInformation("Added {Count:#,##0} orders", ordersAdded);
 
         }
-#if false
-
-        /*** JOIN ADDRESSES & COACHES TO ORDERS ***/
-        var sqlOrdersCount = sqlOrders.Count;
-        ConsoleEx.StartProgress("Joining addresses & clubs with orders: ");
-        for (int index = 0; index < sqlOrdersCount; index++)
-        {
-            var order = sqlOrders[index];
-
-            var address = sqlAddresses
-                .FirstOrDefault(a => a.OldSystemUsaPostalId == order.OldSystemShippingAddressId);
-            if (address == null)
-                throw new Exception($"Could not find address ({order.OldSystemShippingAddressId}) for order ({order.OldSystemOrderId})");
-
-            order.Address = address;
-            address.Order = order;
-
-            if (order.OldSystemClubId != null)
-            {
-                var club = sqlClubs
-                    .FirstOrDefault(a => a.OldSystemClubId == order.OldSystemClubId);
-                if (club == null)
-                    throw new Exception($"Could not find club ({order.OldSystemClubId}) for order ({order.OldSystemOrderId})");
-            }
-
-            ConsoleEx.ShowProgress((float)index / (float)sqlOrdersCount);
-        }
-        ConsoleEx.EndProgress();
-
-        var addedOrders = await AddOrders(sqlOrders);
-        logger.LogInformation("Added {Count:#,##0} orders", addedOrders.Count());
-
         /*** ORDER SKUS ***/
         var sqlOrderSkus = (await oldSystemService.GetOrderSkus())
-            .Select(mapper.Map<OrderSkuSql, OrderSkuDTO>)
             .ToList();
 
         logger.LogInformation("Found {Count:#,##0} order skus", sqlOrderSkus.Count);
 
-        var existingOrderSkuIds = (await GetOrderSkus()).Select(o => o.OldSystemOrderSkuId).ToList();
+        var existingOrderSkuIds = await dbContext.OrderSkus.Select(o => o.OldSystemOrderSkuId).ToListAsync();
         sqlOrderSkus.RemoveAll(m => existingOrderSkuIds.Contains(m.OldSystemOrderSkuId));
 
-        // we remove the ones we're not adding, so we need to get these lists again
-        var dtoOrders = (await GetOrders()).ToList();
-        var dtoSkus = (await GetSkus()).ToList();
+        logger.LogInformation("Removed existing, now {Count:#,##0} order skus", sqlOrderSkus.Count);
 
         /*** JOIN ORDERS & SKUS TO ORDER SKUS ***/
-        var skippedOrderSkus = new List<OrderSkuDTO>();
         var sqlOrderSkusCount = sqlOrderSkus.Count;
         ConsoleEx.StartProgress("Joining orders & skus with order skus: ");
+        var addedOrderSkus = 0;
+        var skippedOrderSkus = 0;
         for (int index = 0; index < sqlOrderSkusCount; index++)
         {
-            var orderSku = sqlOrderSkus[index];
+            var sqlOrderSku = sqlOrderSkus[index];
 
-            var order = dtoOrders
-                .FirstOrDefault(o => o.OldSystemOrderId == orderSku.OldSystemOrderId);
-            if (order == null)
+            var order = dbContext.Orders
+                .FirstOrDefault(o => o.OldSystemOrderId == sqlOrderSku.OldSystemOrderId);
+            if (order == null) { skippedOrderSkus++; continue; }
+
+            var sku = dbContext.Skus
+                .FirstOrDefault(o => o.OldSystemSkuId == sqlOrderSku.OldSystemSkuId);
+            if (sku == null) { skippedOrderSkus++; continue; }
+
+            var orderSku = new OrderSkuDb()
             {
-                skippedOrderSkus.Add(orderSku);
-                continue;
-            }
+                OldSystemOrderSkuId = sqlOrderSku.OldSystemOrderSkuId,
+                OldSystemOrderId = sqlOrderSku.OldSystemOrderId,
+                OldSystemSkuId = sqlOrderSku.OldSystemSkuId,
+                Ordinal = sqlOrderSku.Ordinal,
+                Quantity = sqlOrderSku.Quantity,
+                Order = order,
+                Sku = sku
+            };
+            dbContext.OrderSkus.Add(orderSku);
 
-            orderSku.OrderId = order.Id;
+            addedOrderSkus++;
 
-            var sku = dtoSkus
-                .FirstOrDefault(o => o.OldSystemSkuId == orderSku.OldSystemSkuId);
-            if (sku == null)
-            {
-                skippedOrderSkus.Add(orderSku);
-                continue;
-            }
-
-            orderSku.SkuId = sku.Id;
-
-            //try { await repository.AddOrderSku(orderSku); }
-            //catch (Exception ex) { logger.LogError(ex, "Could not add OrderSku: {@OrderSku}", orderSku); } 
+            if ((index + 1) % SaveBlock == 0)
+                await dbContext.SaveChangesAsync();
 
             ConsoleEx.ShowProgress((float)index / (float)sqlOrderSkusCount);
         }
+        await dbContext.SaveChangesAsync();
         ConsoleEx.EndProgress();
 
-        var removedOrderSkuIds = skippedOrderSkus.Select(o => o.OldSystemOrderSkuId).ToList();
-        sqlOrderSkus.RemoveAll(m => removedOrderSkuIds.Contains(m.OldSystemOrderSkuId));
-
-        var addedOrderSkus = await AddOrderSkus(sqlOrderSkus);
-        logger.LogInformation("Added {Count:#,##0} orderSkus; skipped {Skipped:#,##0}", addedOrderSkus.Count(), skippedOrderSkus.Count);  
-#endif
+        logger.LogInformation("Added {Count:#,##0} orderSkus; skipped {Skipped:#,##0}", addedOrderSkus, skippedOrderSkus);  
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
