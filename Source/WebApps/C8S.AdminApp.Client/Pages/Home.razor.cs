@@ -6,10 +6,10 @@ using SC.Common.Radzen.Base;
 
 namespace C8S.AdminApp.Client.Pages;
 
-public partial class Default : BaseRazorPage, IDisposable
+public partial class Home : BaseRazorPage, IDisposable
 {
     [Inject]
-    public ILogger<Default> Logger { get; set; } = default!;
+    public ILogger<Home> Logger { get; set; } = default!;
 
     [Inject]
     public ICommunicationService CommunicationService { get; set; } = default!;

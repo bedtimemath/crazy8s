@@ -281,6 +281,8 @@ try
         .AddInteractiveServerComponents()
         .AddInteractiveWebAssemblyComponents();
 
+    builder.Services.AddRazorPages();
+
     // for checking the render state
     builder.AddBlazrRenderStateServerServices();
 
@@ -320,6 +322,8 @@ try
             typeof(SC.Common.Razor._Imports).Assembly);
 
     app.MapGroup("/authentication").MapLoginAndLogout();
+
+    app.MapRazorPages();
 
     app.Run();
 

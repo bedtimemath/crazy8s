@@ -4,10 +4,17 @@
 <div class="c8s-profile-display @CssClass">
     <AuthorizeView>
         <Authorized>
-            @(context.User.Identity?.Name ?? SoftCrowConstants.Display.NotSet)
+            <RadzenProfileMenu>
+                <Template>
+                    @(context.User.Identity?.Name ?? SoftCrowConstants.Display.NotSet)
+                </Template>
+                <ChildContent>
+                    <RadzenProfileMenuItem Text="Log Out" Path="/logout" />
+                </ChildContent>
+            </RadzenProfileMenu>
         </Authorized>
         <NotAuthorized>
-            <a href="authentication/login">log in</a>
+            @* Show the LOGIN button on the webpage, not in the profile area *@
         </NotAuthorized>
     </AuthorizeView>
 </div>

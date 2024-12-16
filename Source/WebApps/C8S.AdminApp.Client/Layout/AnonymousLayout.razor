@@ -9,12 +9,9 @@
                      JustifyContent="JustifyContent.SpaceBetween"
                      class="w-100 h-100">
             <LogoDisplay CssClass="flex-shrink-0 rz-pl-2"/>
-            <ProfileDisplay CssClass="flex-shrink-0 rz-pr-2"/>
+            <ProfileDisplay CssClass="flex-shrink-0 rz-pr-2" />
         </RadzenStack>
     </RadzenHeader>
-    <RadzenSidebar>
-        <SidebarMenu />
-    </RadzenSidebar>
     <RadzenBody>
         @Body
     </RadzenBody>
@@ -22,5 +19,3 @@
         <FooterDisplay />
     </RadzenFooter>
 </RadzenLayout>
-
-<RadzenComponents @rendermode="InteractiveWebAssembly" />
