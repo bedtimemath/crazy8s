@@ -14,7 +14,7 @@ public class UnfinishedDb : BaseCoreDb
     [NotMapped]
     public override int Id => UnfinishedId;
     [NotMapped]
-    public override string Display => String.Join(" ", new[] { PersonFirstName, PersonLastName, PlaceName })
+    public override string Display => String.Join(" ", [PersonFirstName, PersonLastName, PlaceName])
                                        ?? SoftCrowConstants.Display.NotSet;
     #endregion
 

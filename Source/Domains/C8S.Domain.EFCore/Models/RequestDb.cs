@@ -14,7 +14,7 @@ public class RequestDb : BaseCoreDb
     [NotMapped] 
     public override int Id => RequestId;
     [NotMapped] 
-    public override string Display =>  String.Join(" ", new [] { PersonFirstName, PersonLastName, PlaceName }) 
+    public override string Display =>  String.Join(" ", [PersonFirstName, PersonLastName, PlaceName]) 
                                        ?? SoftCrowConstants.Display.NotSet;
     #endregion
 

@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Logging;
 using SC.Common.Base;
 using SC.Common.Helpers.PassThrus;
 using SC.Common.Interfaces;
@@ -9,7 +8,7 @@ using SC.Common.Interfaces;
 namespace C8S.Domain.EFCore.Interceptors;
 
 internal sealed class CreateModifyInterceptor(
-    ILogger<CreateModifyInterceptor> logger,
+    //ILogger<CreateModifyInterceptor> logger,
     IDateTimeHelper? dateTimeHelper): SaveChangesInterceptor
 {
     private readonly IDateTimeHelper _dateTimeHelper = 

@@ -14,7 +14,6 @@ namespace C8S.UtilityApp.Tasks;
 
 internal class AddApplication(
     ILogger<AddApplication> logger,
-    AddApplicationOptions options,
     IRandomizer randomizer,
     IDbContextFactory<C8SDbContext> dbContextFactory,
     IHttpClientFactory httpClientFactory)

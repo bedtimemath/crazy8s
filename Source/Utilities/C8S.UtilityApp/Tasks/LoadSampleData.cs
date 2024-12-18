@@ -7,13 +7,11 @@ using C8S.UtilityApp.Base;
 using CsvHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SC.Common.Interfaces;
 
 namespace C8S.UtilityApp.Tasks;
 
 internal class LoadSampleData(
     ILogger<LoadSampleData> logger,
-    IRandomizer randomizer,
     LoadSampleDataOptions options,
     IDbContextFactory<C8SDbContext> dbContextFactory,
     IMapper mapper)

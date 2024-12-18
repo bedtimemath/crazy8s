@@ -10,7 +10,6 @@ namespace C8S.UtilityApp.Tasks;
 
 internal class TestInterceptors(
     ILogger<TestInterceptors> logger,
-    TestInterceptorsOptions options,
     IRandomizer randomizer,
     IDbContextFactory<C8SDbContext> dbContextFactory)
     : IActionLauncher

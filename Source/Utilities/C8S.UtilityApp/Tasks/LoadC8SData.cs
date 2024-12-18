@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using AutoMapper;
-using Azure.Core;
-using C8S.Domain.EFCore.Contexts;
+﻿using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using C8S.UtilityApp.Base;
@@ -17,7 +14,6 @@ internal class LoadC8SData(
     ILogger<LoadC8SData> logger,
     LoadC8SDataOptions options,
     IDbContextFactory<C8SDbContext> dbContextFactory,
-    IMapper mapper,
     OldSystemService oldSystemService)
     : IActionLauncher
 {
@@ -76,8 +72,7 @@ internal class LoadC8SData(
             {
                 var sqlOrganization = sqlOrganizations[index];
                 var sqlAddress = sqlAddresses
-                    .FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrganization.OldSystemPostalAddressId);
-                if (sqlAddress == null)
+                    .FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrganization.OldSystemPostalAddressId) ??
                     throw new Exception($"Could not find address ({sqlOrganization.OldSystemPostalAddressId}) for organization ({sqlOrganization.OldSystemOrganizationId})");
 
                 var place = new PlaceDb()
@@ -99,14 +94,13 @@ internal class LoadC8SData(
                     CreatedOn = sqlAddress.CreatedOn
                 };
                 if (!String.IsNullOrEmpty(sqlOrganization.Notes))
-                    place.Notes = new List<PlaceNoteDb>
-                {
-                    new()
-                    {
-                        Author = SoftCrowConstants.Display.System,
-                        Content = sqlOrganization.Notes
-                    }
-                };
+                    place.Notes = [
+                        new()
+                        {
+                            Author = SoftCrowConstants.Display.System,
+                            Content = sqlOrganization.Notes
+                        }
+                    ];
                 dbContext.Places.Add(place);
 
                 if ((index + 1) % SaveBlock == 0)
@@ -159,14 +153,14 @@ internal class LoadC8SData(
                     CreatedOn = sqlCoach.CreatedOn
                 };
                 if (!String.IsNullOrEmpty(sqlCoach.Notes))
-                    person.Notes = new List<PersonNoteDb>
-                    {
+                    person.Notes = (List<PersonNoteDb>)
+                    [
                         new()
                         {
                             Author = SoftCrowConstants.Display.System,
                             Content = sqlCoach.Notes
                         }
-                    };
+                    ];
                 dbContext.Persons.Add(person);
 
                 if ((index + 1) % SaveBlock == 0)
@@ -263,14 +257,14 @@ internal class LoadC8SData(
                     CreatedOn = sqlApplication.CreatedOn
                 };
                 if (!String.IsNullOrEmpty(sqlApplication.Notes))
-                    request.Notes = new List<RequestNoteDb>
-                    {
+                    request.Notes = (List<RequestNoteDb>)
+                    [
                         new()
                         {
                             Author = SoftCrowConstants.Display.System,
                             Content = sqlApplication.Notes
                         }
-                    };
+                    ];
                 dbContext.Requests.Add(request);
 
                 if ((index + 1) % SaveBlock == 0)
@@ -463,17 +457,17 @@ internal class LoadC8SData(
                 AgeLevel = sqlClub.AgeLevel,
                 ClubSize = sqlClub.ClubSize ?? ClubSize.Size16,
                 StartsOn = sqlClub.StartsOn,
-                ClubPersons = new List<ClubPersonDb>()
+                ClubPersons = []
             };
             if (!String.IsNullOrEmpty(sqlClub.Notes))
-                club.Notes = new List<ClubNoteDb>
-                {
+                club.Notes = (List<ClubNoteDb>)
+                [
                     new()
                     {
                         Author = SoftCrowConstants.Display.System,
                         Content = sqlClub.Notes
                     }
-                };
+                ];
             dbContext.Clubs.Add(club);
 
             // and add the place and person

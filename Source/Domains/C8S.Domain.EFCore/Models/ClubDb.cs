@@ -15,7 +15,12 @@ public class ClubDb : BaseCoreDb
     [NotMapped] 
     public override int Id => ClubId;
     [NotMapped] 
-    public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
+    public override string Display =>  String.Join("-", 
+                                           [ 
+                                               Season?.ToString() ?? SoftCrowConstants.Display.NotSet, 
+                                               AgeLevel?.GetLabel() ?? SoftCrowConstants.Display.NotSet, 
+                                               ClubSize?.GetLabel() ?? SoftCrowConstants.Display.NotSet 
+                                           ]) 
                                        ?? SoftCrowConstants.Display.NotSet;
     #endregion
 

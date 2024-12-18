@@ -1,6 +1,5 @@
 ﻿using C8S.FullSlate.Abstractions.Interactions;
 using C8S.FullSlate.Abstractions.Models;
-using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -13,13 +12,13 @@ using SC.Common.Models;
 namespace C8S.FullSlate.Services;
 
 public class FullSlateService(
-    ILogger<FullSlateService> logger,
+    //ILogger<FullSlateService> logger,
     IHttpClientFactory httpClientFactory)
 {
     #region Constants & ReadOnlys
-    public static string HttpAuthName = "FullSlate";
+    public const string HttpAuthName = "FullSlate";
 
-    public static JsonSerializerOptions FullSlateRequestJsonOptions =
+    public static readonly JsonSerializerOptions FullSlateRequestJsonOptions =
         new() { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault };
     #endregion
 
@@ -37,7 +36,7 @@ public class FullSlateService(
                 { { "services", FullSlateConstants.Offerings.CoachCall.ToString() } };
             if (fromDate != null) qsParams.Add("from", fromDate.Value.ToString("yyyy-MM-dd"));
             if (toDate != null) qsParams.Add("to", toDate.Value.ToString("yyyy-MM-dd"));
-            if (qsParams.Any())
+            if (qsParams.Count != 0)
                 url = QueryHelpers.AddQueryString(url, qsParams);
 
             // make the call
@@ -90,7 +89,7 @@ public class FullSlateService(
             var qsParams = new Dictionary<string, string?>();
             if (fromDate != null) qsParams.Add("from", fromDate.Value.ToString("yyyy-MM-dd"));
             if (toDate != null) qsParams.Add("to", toDate.Value.ToString("yyyy-MM-dd"));
-            if (qsParams.Any())
+            if (qsParams.Count != 0)
                 url = QueryHelpers.AddQueryString(url, qsParams);
 
             // make the call
