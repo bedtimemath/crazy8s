@@ -411,26 +411,30 @@ public class SubmitForm(
             if (String.IsNullOrEmpty(unfinished.PersonPhone)) throw new Exception("Person missing phone.");
 
             // create the application & clubs
-            var application = new RequestDb();
-                //new ApplicationDb()
-                //{
-                //    Status = ApplicationStatus.Received,
-                //    ApplicantType = unfinished.ApplicantType,
-                //    ApplicantFirstName = unfinished.ApplicantFirstName,
-                //    ApplicantLastName = unfinished.ApplicantLastName,
-                //    ApplicantEmail = unfinished.ApplicantEmail,
-                //    ApplicantPhone = unfinished.ApplicantPhone,
-                //    ApplicantTimeZone = unfinished.ApplicantTimeZone,
-                //    OrganizationName = unfinished.OrganizationName,
-                //    OrganizationType = unfinished.OrganizationType,
-                //    OrganizationTypeOther = unfinished.OrganizationTypeOther,
-                //    OrganizationTaxIdentifier = unfinished.OrganizationTaxIdentifier,
-                //    WorkshopCode = unfinished.WorkshopCode,
-                //    ReferenceSource = unfinished.ReferenceSource,
-                //    ReferenceSourceOther = unfinished.ReferenceSourceOther,
-                //    Comments = unfinished.Comments,
-                //    SubmittedOn = dateTimeHelper.UtcNow
-                //};
+            var application = new RequestDb()
+            {
+                Status = RequestStatus.Received,
+                PersonType = unfinished.PersonType,
+                PersonFirstName = unfinished.PersonFirstName,
+                PersonLastName = unfinished.PersonLastName,
+                PersonEmail = unfinished.PersonEmail,
+                PersonPhone = unfinished.PersonPhone,
+                PersonTimeZone = unfinished.PersonTimeZone,
+                PlaceName = unfinished.PlaceName,
+                PlaceAddress1 = unfinished.PlaceAddress1,
+                PlaceAddress2 = unfinished.PlaceAddress2,
+                PlaceCity = unfinished.PlaceCity,
+                PlaceState = unfinished.PlaceState,
+                PlacePostalCode = unfinished.PlacePostalCode,
+                PlaceType = unfinished.PlaceType,
+                PlaceTypeOther = unfinished.PlaceTypeOther,
+                PlaceTaxIdentifier = unfinished.PlaceTaxIdentifier,
+                WorkshopCode = unfinished.WorkshopCode,
+                ReferenceSource = unfinished.ReferenceSource,
+                ReferenceSourceOther = unfinished.ReferenceSourceOther,
+                Comments = unfinished.Comments,
+                SubmittedOn = dateTimeHelper.Now
+            };
 
             var clubStrings = unfinished.ClubsString?.Split(' ') ?? [];
             foreach (var clubString in clubStrings)

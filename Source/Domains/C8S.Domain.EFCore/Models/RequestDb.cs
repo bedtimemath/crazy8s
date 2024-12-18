@@ -60,6 +60,21 @@ public class RequestDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
     public string? PlaceName { get; set; }
 
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+    public string? PlaceAddress1 { get; set; }
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+    public string? PlaceAddress2 { get; set; }
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
+    public string? PlaceCity { get; set; }
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+    public string? PlaceState { get; set; }
+
+    [MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
+    public string? PlacePostalCode { get; set; }
+
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public PlaceType? PlaceType { get; set; }

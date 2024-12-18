@@ -87,6 +87,36 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.FullName)
             .IsRequired(false);
 
+        //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+        //public string? PlaceAddress1 { get; set; }
+        entity.Property(m => m.PlaceAddress1)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
+            .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
+        //public string? PlaceAddress2 { get; set; }
+        entity.Property(m => m.PlaceAddress2)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
+            .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
+        //public string? PlaceCity { get; set; }
+        entity.Property(m => m.PlaceCity)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
+            .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+        //public string? PlaceState { get; set; }
+        entity.Property(m => m.PlaceState)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
+            .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
+        //public string? PlacePostalCode { get; set; }
+        entity.Property(m => m.PlacePostalCode)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.ZIPCode)
+            .IsRequired(false);
+
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public OrganizationType? OrganizationType { get; set; }
