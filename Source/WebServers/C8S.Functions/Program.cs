@@ -17,6 +17,8 @@ using Serilog.Events;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Net.Http.Headers;
+using Serilog.Core;
+using Serilog.Sinks.MSSqlServer;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -32,6 +34,10 @@ try
     // check for the two variables we need immediately
     var appConfig = Environment.GetEnvironmentVariable("C8S_AppConfig");
     var configFolder = Environment.GetEnvironmentVariable("C8S_ConfigFolder");
+
+    // create a level switch for logging
+    var levelSwitch = new LoggingLevelSwitch(environmentName == SoftCrowConstants.Platforms.Development ? 
+            LogEventLevel.Verbose : LogEventLevel.Warning);
 
     host.ConfigureHostConfiguration(builder =>
     {
@@ -76,6 +82,11 @@ try
                         throw new Exception($"Missing configuration section: {Endpoints.SectionName}");
 
         /*****************************************
+         * LOG LEVEL SWITCH
+         */
+        services.AddSingleton(levelSwitch);
+
+        /*****************************************
          * AZURE CLIENTS SETUP
          */
         services.AddAzureClients(clientBuilder =>
@@ -113,19 +124,32 @@ try
         services.ConfigureFunctionsApplicationInsights();
     });
 
-    host.UseSerilog((context, services, config) => config
-        .MinimumLevel.Is(LogEventLevel.Verbose)
-        .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
-        .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
-        .Enrich.FromLogContext()
-        .WriteTo.Console(
-            outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
-            theme: AnsiConsoleTheme.Code)
-        .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
-            .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), new TraceTelemetryConverter())
-    );
+    host.UseSerilog((context, services, config) =>
+    {
+        var auditCnnString = context.Configuration.GetSection(Connections.SectionName).Get<Connections>()?.Audit ??
+                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
+        config
+            .MinimumLevel.Is(LogEventLevel.Verbose)
+            .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
+            .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .WriteTo.Console(
+                outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
+                theme: AnsiConsoleTheme.Code)
+            .WriteTo.MSSqlServer(
+                connectionString: auditCnnString,
+                sinkOptions: new MSSqlServerSinkOptions()
+                {
+                    AutoCreateSqlTable = true, 
+                    SchemaName = "dbo", 
+                    TableName = "FunctionsLog", 
+                    LevelSwitch = levelSwitch
+                })
+            .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
+                .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), new TraceTelemetryConverter());
+    });
 
     SelfLog.Enable(m => Console.Error.WriteLine(m));
 

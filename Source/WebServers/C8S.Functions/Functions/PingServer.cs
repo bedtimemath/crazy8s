@@ -7,12 +7,14 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SC.Common.Extensions;
+using Serilog.Core;
 
 namespace C8S.Functions.Functions;
 
 public class PingServer(
     ILoggerFactory loggerFactory,
-    IConfiguration configuration)
+    IConfiguration configuration,
+    LoggingLevelSwitch levelSwitch)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger _logger = loggerFactory.CreateLogger<PingServer>();
@@ -34,6 +36,7 @@ public class PingServer(
             // GENERAL
             sbOutput.Append("== General ==\r\n");
             sbOutput.AppendFormat("Environment: {0}\r\n", configuration["ENVIRONMENT"]);
+            sbOutput.AppendFormat("LogLevel: {0}\r\n", levelSwitch.MinimumLevel);
 
             // CONNECTIONS
             var connections = configuration.GetSection(Connections.SectionName).Get<Connections>() ??
