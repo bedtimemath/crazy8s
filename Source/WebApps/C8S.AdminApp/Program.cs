@@ -1,5 +1,3 @@
-using System.Text.Json;
-using Azure.Core;
 using Azure.Identity;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
@@ -10,7 +8,6 @@ using C8S.AdminApp.Hubs;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -26,8 +23,6 @@ using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
-
-const string msOidcScheme = "MicrosoftOidc";
 
 /*****************************************
  * INITIAL LOGGING
@@ -72,6 +67,8 @@ try
     // load the connections that we need
     var connections = builder.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
                       throw new Exception($"Missing configuration section: {Connections.SectionName}");
+    var oidcSecrets = builder.Configuration.GetSection(OidcSecrets.SectionName).Get<OidcSecrets>() ??
+                      throw new Exception($"Missing configuration section: {OidcSecrets.SectionName}");
 
     /*****************************************
      * LOGGING
@@ -143,8 +140,8 @@ try
     /*****************************************
      * AUTHENTICATION
      */
-    builder.Services.AddAuthentication(msOidcScheme)
-        .AddOpenIdConnect(msOidcScheme, oidcOptions =>
+    builder.Services.AddAuthentication(SoftCrowConstants.OidcSchemes.Microsoft)
+        .AddOpenIdConnect(SoftCrowConstants.OidcSchemes.Microsoft, oidcOptions =>
         {
             // For the following OIDC settings, any line that's commented out
             // represents a DEFAULT setting. If you adopt the default, you can
@@ -201,14 +198,14 @@ try
             // single-tenant apps, but it requires a custom IssuerValidator as shown 
             // in the comments below. 
 
-            oidcOptions.Authority = "https://login.microsoftonline.com/dec8a2d4-1ed2-4e13-876e-deca6ca80d71/v2.0/";
+            oidcOptions.Authority = oidcSecrets.Authority;
             // ........................................................................
 
             // ........................................................................
             // Set the Client ID for the app. Set the {CLIENT ID} placeholder to
             // the Client ID.
 
-            oidcOptions.ClientId = "60861c6d-d89a-4fe6-8876-9804fca34ebc";
+            oidcOptions.ClientId = oidcSecrets.ClientId;
             // ........................................................................
 
             // ........................................................................
@@ -262,7 +259,9 @@ try
     // new access token saved inside. If the refresh fails, the user will be signed
     // out. OIDC connect options are set for saving tokens and the offline access
     // scope.
-    builder.Services.ConfigureCookieOidcRefresh(CookieAuthenticationDefaults.AuthenticationScheme, msOidcScheme);
+    builder.Services.ConfigureCookieOidcRefresh(
+        CookieAuthenticationDefaults.AuthenticationScheme, 
+        SoftCrowConstants.OidcSchemes.Microsoft);
     builder.Services.AddAuthorization();
     builder.Services.AddCascadingAuthenticationState();
 

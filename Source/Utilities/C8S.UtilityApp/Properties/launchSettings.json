@@ -15,6 +15,10 @@
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data -p Production"
     },
+    "Load C8s Data (STAGE)": {
+      "commandName": "Project",
+      "commandLineArgs": "load-crazy8s-data -p Staging"
+    },
     "Process Applications": {
       "commandName": "Project",
       "commandLineArgs": "process-applications"
