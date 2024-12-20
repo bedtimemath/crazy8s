@@ -105,6 +105,16 @@ public class PingServer(
             //sbOutput.Append("== FunctionSettings ==\r\n");
             //sbOutput.AppendFormat("RemoteImagePrefix: {0}\r\n", functionSettings.RemoteImagePrefix);
             //sbOutput.AppendFormat("RemoteImageBatchSize: {0}\r\n", functionSettings.RemoteImageBatchSize);
+            
+            // LOGGER TESTING
+            _logger.LogWarning("MinimumLevel:{LogLevel}", levelSwitch.MinimumLevel);
+            _logger.LogTrace("Trace");
+            _logger.LogDebug("Debug");
+            _logger.LogInformation("Information");
+            _logger.LogWarning("Warning");
+            _logger.LogError("Error");
+            _logger.LogCritical("Critical");
+            //throw new Exception("Something bad happened");
 
             await response.WriteStringAsync(sbOutput.ToString());
         }

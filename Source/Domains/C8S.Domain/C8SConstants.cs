@@ -27,4 +27,10 @@ public static class C8SConstants
         public const string Sku = "barcode";
         public const string Settings = "gear";
     }
+
+    public static class LogTables
+    {
+        public const string FunctionsLog = "FunctionsLog";
+        public const string AdminLog = "AdminLog";
+    }
 }

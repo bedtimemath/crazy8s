@@ -1,10 +1,7 @@
 using System.Net;
-using System.Text;
 using System.Text.Json;
-using C8S.Domain.AppConfigs;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using SC.Common.Extensions;
 using Serilog.Core;
@@ -34,7 +31,7 @@ public class SetLogLevel(
             if (String.IsNullOrEmpty(levelString))
                 throw new ArgumentNullException(nameof(level));
             if (!Enum.TryParse(levelString, out level))
-                throw new ArgumentException($"Unrecognized LogLevel: {req.Query["level"]}", nameof(level));
+                throw new ArgumentException($"Unrecognized LogLevel: {levelString}", nameof(level));
             levelSwitch.MinimumLevel = level;
 
             response = req.CreateResponse(HttpStatusCode.OK);

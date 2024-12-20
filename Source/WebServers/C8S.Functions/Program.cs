@@ -17,19 +17,20 @@ using Serilog.Events;
 using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Net.Http.Headers;
+using C8S.Domain;
 using Serilog.Core;
 using Serilog.Sinks.MSSqlServer;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateBootstrapLogger();
-
-var environmentName = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
-Log.Logger.Information("Environment: {Environment}", environmentName);
-
 try
 {
     var host = new HostBuilder();
+
+    var environmentName = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
+    Log.Logger.Information("Environment: {Environment}", environmentName);
+
 
     // check for the two variables we need immediately
     var appConfig = Environment.GetEnvironmentVariable("C8S_AppConfig");
@@ -129,7 +130,7 @@ try
         var auditCnnString = context.Configuration.GetSection(Connections.SectionName).Get<Connections>()?.Audit ??
                               throw new Exception($"Missing configuration section: {Connections.SectionName}");
         config
-            .MinimumLevel.Is(LogEventLevel.Verbose)
+            .MinimumLevel.ControlledBy(levelSwitch)
             .MinimumLevel.Override("EntityFrameworkCore.Triggered", LogEventLevel.Warning)
             .MinimumLevel.Override("System.Net.Http", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
@@ -143,8 +144,7 @@ try
                 sinkOptions: new MSSqlServerSinkOptions()
                 {
                     AutoCreateSqlTable = true, 
-                    SchemaName = "dbo", 
-                    TableName = "FunctionsLog", 
+                    TableName = C8SConstants.LogTables.FunctionsLog, 
                     LevelSwitch = levelSwitch
                 })
             .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
@@ -152,7 +152,7 @@ try
     });
 
     SelfLog.Enable(m => Console.Error.WriteLine(m));
-
+    
     host.Build().Run();
 }
 catch (Exception ex)

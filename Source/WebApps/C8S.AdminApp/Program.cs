@@ -6,6 +6,7 @@ using C8S.AdminApp.Common.Dummies;
 using C8S.AdminApp.Common.Interfaces;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.Services;
+using C8S.Domain;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -20,8 +21,11 @@ using SC.Audit.EFCore.Extensions;
 using SC.Common;
 using SC.Common.Helpers.Extensions;
 using Serilog;
+using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
+using Serilog.Sinks.MSSqlServer;
 using Serilog.Sinks.SystemConsole.Themes;
 
 /*****************************************
@@ -34,7 +38,6 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     var builder = WebApplication.CreateBuilder(args);
-    var logLevel = builder.Environment.IsProduction() ? LogEventLevel.Information : LogEventLevel.Debug;
 
     /*****************************************
      * CONFIGURATION
@@ -73,8 +76,12 @@ try
     /*****************************************
      * LOGGING
      */
+    var levelSwitch = new LoggingLevelSwitch(builder.Environment.IsDevelopment() ? 
+        LogEventLevel.Verbose : LogEventLevel.Warning);
+    builder.Services.AddSingleton(levelSwitch);
+
     builder.Host.UseSerilog((context, services, configuration) => configuration
-        .MinimumLevel.Is(logLevel)
+        .MinimumLevel.ControlledBy(levelSwitch)
         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
         .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
@@ -84,7 +91,17 @@ try
         .WriteTo.Console(
             outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
             theme: AnsiConsoleTheme.Code)
-    );
+        .WriteTo.MSSqlServer(
+            connectionString: connections.Audit,
+            sinkOptions: new MSSqlServerSinkOptions()
+            {
+                AutoCreateSqlTable = true, 
+                TableName = C8SConstants.LogTables.AdminLog, 
+                LevelSwitch = levelSwitch
+            })
+        .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
+            .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), 
+            telemetryConverter: new TraceTelemetryConverter()));
     SelfLog.Enable(m => Console.Error.WriteLine(m));
 
     /*****************************************
