@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using C8S.Domain.Enums;
+﻿using C8S.Domain.Enums;
 using MediatR;
 using SC.Common.Interactions;
 

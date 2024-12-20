@@ -1,7 +1,5 @@
-﻿using C8S.Domain.AppConfigs;
+﻿using C8S.AdminApp.Auth;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using SC.Common.Extensions;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -9,6 +7,7 @@ namespace C8S.AdminApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[RequireAuthorizeKey]
 public class SetLogLevelController(
     ILoggerFactory loggerFactory,
     LoggingLevelSwitch levelSwitch) : ControllerBase

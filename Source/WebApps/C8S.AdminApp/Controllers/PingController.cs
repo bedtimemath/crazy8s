@@ -1,13 +1,13 @@
-﻿using C8S.Domain.AppConfigs;
+﻿using C8S.AdminApp.Auth;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using SC.Common.Extensions;
+using C8S.Domain.Extensions;
 using Serilog.Core;
 
 namespace C8S.AdminApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[RequireAuthorizeKey]
 public class PingController(
     ILoggerFactory loggerFactory,
     IConfiguration configuration,
@@ -19,42 +19,19 @@ public class PingController(
     public IActionResult Index()
     {
         try
-        {           
-            var sbOutput = new StringBuilder();
+        {
+            _logger.LogInformation("Ping controller called");
 
-            // GENERAL
-            sbOutput.Append("== General ==\r\n");
-            sbOutput.AppendFormat("Environment: {0}\r\n", configuration["ENVIRONMENT"]);
-            sbOutput.AppendFormat("LogLevel: {0}\r\n", levelSwitch.MinimumLevel);
+            var logLevel = levelSwitch.MinimumLevel;
+            _logger.LogWarning("MinimumLevel:{LogLevel}", logLevel);
+            _logger.LogAllLevels();
 
-            // CONNECTIONS
-            var connections = configuration.GetSection(Connections.SectionName).Get<Connections>() ??
-                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
-            sbOutput.Append("== Connections ==\r\n");
-            sbOutput.AppendFormat("Audit: {0}\r\n", connections.Audit?.Obscure());
-            sbOutput.AppendFormat("ApplicationInsights: {0}\r\n", connections.ApplicationInsights?.Obscure());
-            sbOutput.AppendFormat("AzureStorage: {0}\r\n", connections.AzureStorage?.Obscure());
-            sbOutput.AppendFormat("Database: {0}\r\n", connections.Database?.Obscure());
-            sbOutput.AppendFormat("OldSystem: {0}\r\n", connections.OldSystem?.Obscure());
-
-            // API KEYS
-            var apiKeys = new ApiKeys();
-            configuration.GetSection(ApiKeys.SectionName).Bind(apiKeys);
-
-            sbOutput.Append("== ApiKeys ==\r\n");
-            sbOutput.AppendFormat("FullSlate: {0}\r\n", apiKeys.FullSlate?.Obscure());
-
-            // LOGGER TESTING
-            _logger.LogWarning("MinimumLevel:{LogLevel}", levelSwitch.MinimumLevel);
-            _logger.LogTrace("Trace");
-            _logger.LogDebug("Debug");
-            _logger.LogInformation("Information");
-            _logger.LogWarning("Warning");
-            _logger.LogError("Error");
-            _logger.LogCritical("Critical");
-            //throw new Exception("Something bad happened");
-
-            return Ok(sbOutput.ToString());
+            return Ok(configuration.CreatePingOutput(
+                [
+                    new KeyValuePair<string, string>(
+                        nameof(LoggingLevelSwitch.MinimumLevel),
+                        levelSwitch.MinimumLevel.ToString())
+                ]));
         }
         catch (Exception exception)
         {
