@@ -5,5 +5,6 @@ public enum ApplicantType
     Coach,
     Supervisor,
     Student,
-    Mentor
+    Mentor,
+    Returning = 99
 }

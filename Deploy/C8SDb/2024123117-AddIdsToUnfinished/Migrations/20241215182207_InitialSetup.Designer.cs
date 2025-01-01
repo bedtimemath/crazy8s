@@ -4,6 +4,7 @@ using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,13 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241215182207_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -604,32 +607,12 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("PlaceAddress1")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PlaceAddress2")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("PlaceCity")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<int?>("PlaceId")
                         .HasColumnType("int");
 
                     b.Property<string>("PlaceName")
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");
-
-                    b.Property<string>("PlacePostalCode")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("PlaceState")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("PlaceTaxIdentifier")
                         .HasMaxLength(50)
@@ -892,9 +875,6 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset?>("ChosenTimeSlot")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int?>("ClubId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ClubsString")
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
@@ -937,9 +917,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int?>("PersonId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PersonLastName")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -967,9 +944,6 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<string>("PlaceCity")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("PlaceId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PlaceName")
                         .HasMaxLength(512)

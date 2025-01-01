@@ -102,6 +102,12 @@ public class UnfinishedDb : BaseCoreDb
     public DateTimeOffset? EndPart04On { get; set; }
 
     public DateTimeOffset? SubmittedOn { get; set; }
+
+    public int? PersonId { get; set; }
+
+    public int? PlaceId { get; set; }
+
+    public int? ClubId { get; set; }
     #endregion
 
     #region Reference Properties

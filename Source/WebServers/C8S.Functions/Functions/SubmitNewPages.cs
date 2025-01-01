@@ -15,6 +15,7 @@ using C8S.FullSlate.Abstractions;
 using C8S.FullSlate.Abstractions.Interactions;
 using C8S.FullSlate.Abstractions.Models;
 using C8S.FullSlate.Services;
+using C8S.Functions.Extensions;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -28,7 +29,7 @@ using Exception = System.Exception;
 
 namespace C8S.Functions.Functions;
 
-public class SubmitForm(
+public class SubmitNewPages(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory,
     IDateTimeHelper dateTimeHelper,
@@ -37,7 +38,7 @@ public class SubmitForm(
     FullSlateService fullSlateService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger _logger = loggerFactory.CreateLogger<SubmitForm>();
+    private readonly ILogger _logger = loggerFactory.CreateLogger<SubmitNewPages>();
 
     private const string CoachResponse = "I'm a coach";
     private const string HostedBeforeResponse = "We've hosted before";
@@ -73,22 +74,27 @@ public class SubmitForm(
     #endregion
 
     #region Function Methods
-    [Function("Submit-Page01")]
+    [Function("Submit-New01")]
     public async Task<HttpResponseData> RunPage01(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/1")] HttpRequestData req)
     {
         HttpResponseData httpResponse;
         try
         {
-            _logger.LogInformation("Submit-Page01 triggered");
+            _logger.LogInformation("Submit-New01 triggered");
             
             // setup for each page request
-            //const int pageNumber = 1;
+            const int pageNumber = 1;
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
+            // the first time through we start by creating the unfinished, which adds the guid
             var unfinished = new UnfinishedDb() { EndPart01On = dateTimeHelper.UtcNow };
             await dbContext.Unfinisheds.AddAsync(unfinished);
             await dbContext.SaveChangesAsync();
+
+            // save to storage just in case
+            var formData = await MultipartFormDataParser.ParseAsync(req.Body);
+            await SaveFormDataToBlob(formData, unfinished.Code, pageNumber);
 
             httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
             httpResponse.Headers.Add("location", $"https://crazy8sclub.org/coach-application-2/?code={unfinished.Code:N}");
@@ -104,14 +110,14 @@ public class SubmitForm(
         return httpResponse;
     }
 
-    [Function("Submit-Page02")]
+    [Function("Submit-New02")]
     public async Task<HttpResponseData> RunPage02(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/2")] HttpRequestData req)
     {
         HttpResponseData httpResponse;
         try
         {
-            _logger.LogInformation("Submit-Page02 triggered");
+            _logger.LogInformation("Submit-New02 triggered");
             
             // setup for each page request
             const int pageNumber = 2;
@@ -145,8 +151,14 @@ public class SubmitForm(
 
             // check for an existing email
             var existing = await dbContext.Persons
+                .Include(p => p.Place)
+                .Include(p => p.ClubPersons)
+                .AsSingleQuery()
                 .FirstOrDefaultAsync(c => c.Email == email);
-            if (existing != null)
+
+            // if the person doesn't have a club or place, then it's okay
+            if (existing != null &&
+                existing.ClubPersons.Any() && existing.Place != null)
             {
                 // redirect to the 'existing' page
                 httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
@@ -160,6 +172,10 @@ public class SubmitForm(
                 unfinished.PersonEmail = email;
                 unfinished.PersonType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
                 unfinished.EndPart02On = dateTimeHelper.UtcNow;
+
+                // in case we matched, but there weren't any clubs
+                unfinished.PersonId = existing?.PersonId;
+                unfinished.PlaceId = existing?.PlaceId;
 
                 await dbContext.SaveChangesAsync();
 
@@ -179,14 +195,14 @@ public class SubmitForm(
         return httpResponse;
     }
 
-    [Function("Submit-Page03")]
+    [Function("Submit-New03")]
     public async Task<HttpResponseData> RunPage03(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/3")] HttpRequestData req)
     {
         HttpResponseData httpResponse;
         try
         {
-            _logger.LogInformation("Submit-Page03 triggered");
+            _logger.LogInformation("Submit-New03 triggered");
             
             // setup for each page request
             const int pageNumber = 3;
@@ -272,14 +288,14 @@ public class SubmitForm(
         return httpResponse;
     }
 
-    [Function("Submit-Page04")]
+    [Function("Submit-New04")]
     public async Task<HttpResponseData> RunPage04(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/4")] HttpRequestData req)
     {
         HttpResponseData httpResponse;
         try
         {
-            _logger.LogInformation("Submit-Page04 triggered");
+            _logger.LogInformation("Submit-New04 triggered");
             
             // setup for each page request
             const int pageNumber = 4;
@@ -327,14 +343,14 @@ public class SubmitForm(
         return httpResponse;
     }
 
-    [Function("Submit-Page05")]
+    [Function("Submit-New05")]
     public async Task<HttpResponseData> RunPage05(
         [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "coach-app/page/5")] HttpRequestData req)
     {
         HttpResponseData httpResponse;
         try
         {
-            _logger.LogInformation("Submit-Page05 triggered");
+            _logger.LogInformation("Submit-New05 triggered");
             
             // setup for each page request
             const int pageNumber = 5;
@@ -364,7 +380,7 @@ public class SubmitForm(
             var comments = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Comments"])?.Data;
 
             // save to storage just in case
-            await SaveFormDataToBlob(formData, guidCode, 5);
+            await SaveFormDataToBlob(formData, guidCode, pageNumber);
 
             // check for errors (after saving to storage)
             if (String.IsNullOrEmpty(phone)) throw new Exception("Could not read phone.");
@@ -411,61 +427,8 @@ public class SubmitForm(
             if (String.IsNullOrEmpty(unfinished.PersonPhone)) throw new Exception("Person missing phone.");
 
             // create the application & clubs
-            var application = new RequestDb()
-            {
-                Status = RequestStatus.Received,
-                PersonType = unfinished.PersonType,
-                PersonFirstName = unfinished.PersonFirstName,
-                PersonLastName = unfinished.PersonLastName,
-                PersonEmail = unfinished.PersonEmail,
-                PersonPhone = unfinished.PersonPhone,
-                PersonTimeZone = unfinished.PersonTimeZone,
-                PlaceName = unfinished.PlaceName,
-                PlaceAddress1 = unfinished.PlaceAddress1,
-                PlaceAddress2 = unfinished.PlaceAddress2,
-                PlaceCity = unfinished.PlaceCity,
-                PlaceState = unfinished.PlaceState,
-                PlacePostalCode = unfinished.PlacePostalCode,
-                PlaceType = unfinished.PlaceType,
-                PlaceTypeOther = unfinished.PlaceTypeOther,
-                PlaceTaxIdentifier = unfinished.PlaceTaxIdentifier,
-                WorkshopCode = unfinished.WorkshopCode,
-                ReferenceSource = unfinished.ReferenceSource,
-                ReferenceSourceOther = unfinished.ReferenceSourceOther,
-                Comments = unfinished.Comments,
-                SubmittedOn = dateTimeHelper.Now
-            };
-
-            var clubStrings = unfinished.ClubsString?.Split(' ') ?? [];
-            foreach (var clubString in clubStrings)
-            {
-                var parts = clubString.Split(':');
-                if (parts.Length != 3) throw new UnreachableException($"ClubString cannot be parsed: {clubString}");
-
-                var applicationClub = new RequestedClubDb()
-                {
-                    Request = application,
-                    ClubSize = ClubSize.Size16,
-                    AgeLevel = parts[0] switch
-                    {
-                        "K2" => AgeLevel.GradesK2,
-                        "35" => AgeLevel.Grades35,
-                        _ => throw new UnreachableException($"Unrecognizable AgeLevel: {parts[0]}")
-                    },
-                    Season = parts[1] switch
-                    {
-                        "Season1" => 1,
-                        "Season2" => 2,
-                        "Season3" => 3,
-                        _ => throw new UnreachableException($"Unrecognizable Season: {parts[1]}")
-                    },
-                    StartsOn = DateOnly.Parse(parts[2])
-                };
-                application.RequestedClubs ??= new List<RequestedClubDb>();
-                application.RequestedClubs.Add(applicationClub);
-            }
-
-            await dbContext.Requests.AddAsync(application);
+            var request = unfinished.ToRequest(dateTimeHelper);
+            await dbContext.Requests.AddAsync(request);
             await dbContext.SaveChangesAsync();
 
             /*** FULL SLATE ***/
@@ -509,7 +472,7 @@ public class SubmitForm(
                 // back out the application
                 try
                 {
-                    dbContext.Requests.Remove(application);
+                    dbContext.Requests.Remove(request);
                     await dbContext.SaveChangesAsync();
                 }
                 catch (Exception exception)
@@ -531,7 +494,7 @@ public class SubmitForm(
                 var options = new JsonSerializerOptions() { Converters = { new JsonStringEnumConverter() } };
                 var dataChange = new DataChange()
                 {
-                    EntityId = application.RequestId,
+                    EntityId = request.RequestId,
                     EntityName = nameof(RequestDb),
                     EntityState = EntityState.Added
                 };

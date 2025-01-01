@@ -172,6 +172,18 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
         //public DateTimeOffset? SubmittedOn { get; set; }
         entity.Property(m => m.SubmittedOn)
             .IsRequired(false);
+
+        //public int? PersonId { get; set; }
+        entity.Property(m => m.PersonId)
+            .IsRequired(false);
+
+        //public int? PlaceId { get; set; }
+        entity.Property(m => m.PlaceId)
+            .IsRequired(false);
+
+        //public int? ClubId { get; set; }
+        entity.Property(m => m.ClubId)
+            .IsRequired(false);
         #endregion
 
         #region Reference Properties

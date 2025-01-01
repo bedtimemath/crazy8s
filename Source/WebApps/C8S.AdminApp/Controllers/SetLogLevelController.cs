@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Serilog.Core;
 using Serilog.Events;
+#pragma warning disable CA2208
 
 namespace C8S.AdminApp.Controllers;
 
