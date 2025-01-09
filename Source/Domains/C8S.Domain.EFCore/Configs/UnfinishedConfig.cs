@@ -64,6 +64,10 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
         entity.Property(m => m.HasHostedBefore)
             .IsRequired(false);
 
+        //public bool? AddressHasChanged { get; set; } = null;
+        entity.Property(m => m.AddressHasChanged)
+            .IsRequired(false);
+
         //[MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string? PlaceName { get; set; } = null;
         entity.Property(m => m.PlaceName)
@@ -179,10 +183,6 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
 
         //public int? PlaceId { get; set; }
         entity.Property(m => m.PlaceId)
-            .IsRequired(false);
-
-        //public int? ClubId { get; set; }
-        entity.Property(m => m.ClubId)
             .IsRequired(false);
         #endregion
 

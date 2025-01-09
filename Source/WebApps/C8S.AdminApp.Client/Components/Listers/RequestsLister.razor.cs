@@ -9,11 +9,11 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Components.Listers;
 
-public partial class ApplicationsLister : BaseRazorComponent
+public partial class RequestsLister : BaseRazorComponent
 {
     #region Injected Properties
     [Inject]
-    public ILogger<ApplicationsLister> Logger { get; set; } = default!;
+    public ILogger<RequestsLister> Logger { get; set; } = default!;
 
     [Inject]
     public IBlazrRenderStateService RenderStateService { get; set; } = default!;
@@ -36,7 +36,7 @@ public partial class ApplicationsLister : BaseRazorComponent
     #endregion
 
     #region Component References
-    private Virtualize<ApplicationListDisplay>? _listerComponent;
+    private Virtualize<RequestListDisplay>? _listerComponent;
     #endregion
 
     #region Public Methods
@@ -50,7 +50,7 @@ public partial class ApplicationsLister : BaseRazorComponent
     #endregion
 
     #region Private Methods
-    private async ValueTask<ItemsProviderResult<ApplicationListDisplay>>
+    private async ValueTask<ItemsProviderResult<RequestListDisplay>>
         GetRows(ItemsProviderRequest request)
     {
         // shouldn't be called before prerender, but if it is...
@@ -58,7 +58,7 @@ public partial class ApplicationsLister : BaseRazorComponent
 
         try
         {
-            var backendResponse = await Mediator.Send(new ListApplicationsQuery()
+            var backendResponse = await Mediator.Send(new ListRequestsQuery()
             {
                 StartIndex = request.StartIndex,
                 Count = request.Count,
@@ -70,7 +70,7 @@ public partial class ApplicationsLister : BaseRazorComponent
             var results = backendResponse.Result!;
             await TotalCountChanged.InvokeAsync(results.Total);
 
-            return new ItemsProviderResult<ApplicationListDisplay>(results.Items, results.Total);
+            return new ItemsProviderResult<RequestListDisplay>(results.Items, results.Total);
         }
         catch (Exception ex)
         {

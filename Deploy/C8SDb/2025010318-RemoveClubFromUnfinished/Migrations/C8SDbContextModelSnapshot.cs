@@ -889,9 +889,6 @@ namespace C8S.Domain.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnfinishedId"));
 
-                    b.Property<bool?>("AddressHasChanged")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("ChosenTimeSlot")
                         .HasColumnType("datetimeoffset");
 

@@ -48,6 +48,8 @@ public class UnfinishedDb : BaseCoreDb
 
     public bool? HasHostedBefore { get; set; }
 
+    public bool? AddressHasChanged { get; set; }
+
     [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
     public string? PlaceName { get; set; }
 
@@ -106,8 +108,6 @@ public class UnfinishedDb : BaseCoreDb
     public int? PersonId { get; set; }
 
     public int? PlaceId { get; set; }
-
-    public int? ClubId { get; set; }
     #endregion
 
     #region Reference Properties

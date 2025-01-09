@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using SC.Common;
@@ -41,7 +36,9 @@ public static class UnfinishedEx
             ReferenceSource = unfinished.ReferenceSource,
             ReferenceSourceOther = unfinished.ReferenceSourceOther,
             Comments = unfinished.Comments,
-            SubmittedOn = dateTimeHelper.Now
+            SubmittedOn = dateTimeHelper.Now,
+            PersonId = unfinished.PersonId,
+            PlaceId = unfinished.PlaceId
         };
 
         var clubStrings = unfinished.ClubsString?.Split(' ') ?? [];

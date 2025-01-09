@@ -13,15 +13,15 @@ namespace C8S.AdminApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ApplicationsController(
+public class RequestsController(
     ILoggerFactory loggerFactory,
     IDbContextFactory<C8SDbContext> dbContextFactory) : ControllerBase
 {
-    private readonly ILogger<ApplicationsController> _logger = loggerFactory.CreateLogger<ApplicationsController>();
+    private readonly ILogger<RequestsController> _logger = loggerFactory.CreateLogger<RequestsController>();
 
     [HttpPost]
-    public async Task<BackendResponse<ApplicationListResults>> GetApplications(
-        [FromBody] ListApplicationsQuery query)
+    public async Task<BackendResponse<RequestListResults>> GetRequests(
+        [FromBody] ListRequestsQuery query)
     {
         try
         {
@@ -48,21 +48,21 @@ public class ApplicationsController(
                 queryable = queryable.Where(dynamicWhere, paramObjects);
             }
             
-            var totalApplications = await queryable.CountAsync();
+            var totalRequests = await queryable.CountAsync();
 
             if (query.StartIndex != null) queryable = queryable.Skip(query.StartIndex.Value);
             if (query.Count != null) queryable = queryable.Take(query.Count.Value);
 
-            var applications = await queryable.ToListAsync();
+            var requests = await queryable.ToListAsync();
 
-            return new BackendResponse<ApplicationListResults>()
+            return new BackendResponse<RequestListResults>()
             {
-                Result = new ApplicationListResults()
+                Result = new RequestListResults()
                 {
-                    Items = applications
-                        .Select(a => new ApplicationListDisplay()
+                    Items = requests
+                        .Select(a => new RequestListDisplay()
                         {
-                            ApplicationId = a.RequestId,
+                            RequestId = a.RequestId,
                             ApplicantFirstName = a.PersonFirstName,
                             ApplicantLastName = a.PersonLastName,
                             ApplicantEmail = a.PersonEmail,
@@ -71,14 +71,14 @@ public class ApplicationsController(
                             OrganizationName = a.PlaceName
                         })
                         .ToList(),
-                    Total = totalApplications
+                    Total = totalRequests
                 }
             };
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, $"Error while executing query: {JsonSerializer.Serialize(query)}");
-            return new BackendResponse<ApplicationListResults>()
+            _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
+            return new BackendResponse<RequestListResults>()
             {
                 Exception = exception.ToSerializableException()
             };

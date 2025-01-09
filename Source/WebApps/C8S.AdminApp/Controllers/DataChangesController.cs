@@ -16,7 +16,13 @@ public class DataChangesController(
     ILoggerFactory loggerFactory,
     IHubContext<CommunicationHub> hubContext) : ControllerBase
 {
-    private readonly ILogger<ApplicationsController> _logger = loggerFactory.CreateLogger<ApplicationsController>();
+    private readonly ILogger<DataChangesController> _logger = loggerFactory.CreateLogger<DataChangesController>();
+
+    private readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
 
     [HttpPost]
     public async Task<IActionResult> PostDataChanges()
@@ -24,12 +30,7 @@ public class DataChangesController(
         try
         {
             var bodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var options = new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true,
-                Converters = { new JsonStringEnumConverter() }
-            };
-            var dataChange = JsonSerializer.Deserialize<DataChange>(bodyJson, options) ??
+            var dataChange = JsonSerializer.Deserialize<DataChange>(bodyJson, _serializerOptions) ??
                              throw new Exception($"Could not deserialize data change: {bodyJson}");
             await hubContext.Clients.All.SendAsync(AdminAppConstants.Messages.DataChange, dataChange);
 

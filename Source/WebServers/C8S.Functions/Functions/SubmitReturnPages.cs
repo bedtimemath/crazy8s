@@ -1,18 +1,11 @@
-using System;
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using System.Web;
 using Azure.Storage.Blobs;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
-using C8S.FullSlate.Abstractions;
-using C8S.FullSlate.Abstractions.Interactions;
-using C8S.FullSlate.Abstractions.Models;
-using C8S.FullSlate.Services;
 using C8S.Functions.Extensions;
 using HttpMultipartParser;
 using LZStringCSharp;
@@ -20,7 +13,6 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
 using Exception = System.Exception;
@@ -35,12 +27,19 @@ public class SubmitReturnPages(
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger _logger = loggerFactory.CreateLogger<SubmitReturnPages>();
-
+    
+    private const string ChangeAddressResponse = "Click here to change your shipping address?";
     private readonly Dictionary<string, string> _formLookup = new Dictionary<string, string>()
     {
         { "Email", "wpforms[fields][66]" },
         { "ClubsString", "wpforms[fields][66]" },
-        { "Comments", "wpforms[fields][73]" }
+        { "ChangeAddress", "wpforms[fields][74]" },
+        { "Address1", "wpforms[fields][65]" },
+        { "Address2", "wpforms[fields][70]" },
+        { "City", "wpforms[fields][67]" },
+        { "State", "wpforms[fields][68]" },
+        { "ZIPCode", "wpforms[fields][69]" },
+        { "Comments", "wpforms[fields][75]" }
     };
     #endregion
 
@@ -226,6 +225,13 @@ public class SubmitReturnPages(
             
             // read the form data
             var formData = await MultipartFormDataParser.ParseAsync(req.Body);
+            var changeAddressString = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ChangeAddress"])?.Data;
+            var changeAddress = changeAddressString == ChangeAddressResponse;
+            var address1 = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Address1"])?.Data;
+            var address2 = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Address2"])?.Data;
+            var city = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["City"])?.Data;
+            var stateFull = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["State"])?.Data;
+            var zipCode = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["ZIPCode"])?.Data;
             var comments = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["Comments"])?.Data;
 
             // save to storage just in case
@@ -239,6 +245,8 @@ public class SubmitReturnPages(
             // create the application & clubs
             var request = unfinished.ToRequest(dateTimeHelper);
             await dbContext.Requests.AddAsync(request);
+            unfinished.Request = request;
+
             await dbContext.SaveChangesAsync();
 
             // return our redirect with the code

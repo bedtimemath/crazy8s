@@ -1,13 +1,13 @@
 ﻿@inherits BaseRazorComponent
 @rendermode InteractiveWebAssembly
 
-<div class="c8s-page-lister c8s-applications-lister @CssClass">
+<div class="c8s-page-lister c8s-requests-lister @CssClass">
     <Virtualize @ref="@_listerComponent"
                 ItemsProvider="@GetRows"
-                Context="application">
+                Context="request">
         <ItemContent>
             <RadzenCard class="rz-mb-2">
-                <ApplicationDisplayer Application="@application"/>
+                <RequestDisplayer Request="@request"/>
             </RadzenCard>
         </ItemContent>
     </Virtualize>

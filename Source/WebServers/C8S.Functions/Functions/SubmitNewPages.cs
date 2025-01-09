@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
@@ -49,16 +48,16 @@ public class SubmitNewPages(
         { "LastName", "wpforms[fields][7][last]" },
         { "Email", "wpforms[fields][9]" },
         { "IsCoach", "wpforms[fields][6]" },
-        { "HostedBefore", "wpforms[fields][11]" },
+        { "HostedBefore", "wpforms[fields][77]" },
         { "PlaceName", "wpforms[fields][19]" },
         { "Address1", "wpforms[fields][65]" },
         { "Address2", "wpforms[fields][70]" },
         { "City", "wpforms[fields][67]" },
         { "State", "wpforms[fields][68]" },
         { "ZIPCode", "wpforms[fields][69]" },
-        { "PlaceType", "wpforms[fields][21]" },
-        { "PlaceTypeOther", "wpforms[fields][22]" },
-        { "TaxId", "wpforms[fields][24]" },
+        { "PlaceType", "wpforms[fields][73]" },
+        { "PlaceTypeOther", "wpforms[fields][75]" },
+        { "TaxId", "wpforms[fields][76]" },
         { "ClubsString", "wpforms[fields][66]" },
         { "HasWorkshopCodeString", "wpforms[fields][34]" },
         { "TimeZone", "wpforms[fields][66]" },
@@ -429,6 +428,8 @@ public class SubmitNewPages(
             // create the application & clubs
             var request = unfinished.ToRequest(dateTimeHelper);
             await dbContext.Requests.AddAsync(request);
+            unfinished.Request = request;
+
             await dbContext.SaveChangesAsync();
 
             /*** FULL SLATE ***/

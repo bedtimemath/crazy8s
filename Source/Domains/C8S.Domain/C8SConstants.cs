@@ -19,7 +19,7 @@ public static class C8SConstants
 
     public static class Icons
     {
-        public const string Application = "clipboard-list";
+        public const string Request = "clipboard-list";
         public const string Coach = "user-hair-long";
         public const string Order = "cart-shopping";
         public const string Organization = "school";

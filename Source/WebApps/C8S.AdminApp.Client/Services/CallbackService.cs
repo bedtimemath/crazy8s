@@ -10,25 +10,22 @@ namespace C8S.AdminApp.Client.Services;
 public class CallbackService(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : 
-        IRequestHandler<ListApplicationsQuery, BackendResponse<ApplicationListResults>>
+        IRequestHandler<ListRequestsQuery, BackendResponse<RequestListResults>>
 {
     private readonly ILogger<CallbackService> _logger = loggerFactory.CreateLogger<CallbackService>();
 
-    private readonly JsonSerializerOptions _options = new JsonSerializerOptions()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
     
-    public async Task<BackendResponse<ApplicationListResults>> Handle(
-        ListApplicationsQuery request, CancellationToken cancellationToken)
+    public async Task<BackendResponse<RequestListResults>> Handle(
+        ListRequestsQuery request, CancellationToken cancellationToken)
     {
         try
         {
             var httpClient = httpClientFactory.CreateClient(nameof(CallbackService));
-            var httpResponse = await httpClient.PostAsJsonAsync("api/applications", request, cancellationToken);
+            var httpResponse = await httpClient.PostAsJsonAsync("api/requests", request, cancellationToken);
             var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
             var backendResponse = JsonSerializer
-                .Deserialize<BackendResponse<ApplicationListResults>>(bodyJson, _options) ??
+                .Deserialize<BackendResponse<RequestListResults>>(bodyJson, _options) ??
                                   throw new Exception($"Could not deserialize: {bodyJson}");
 
             return backendResponse;
@@ -36,7 +33,7 @@ public class CallbackService(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling request: {@Request}", request);
-            return BackendResponse<ApplicationListResults>.CreateFailureResponse(exception);
+            return BackendResponse<RequestListResults>.CreateFailureResponse(exception);
         }
     }
 }

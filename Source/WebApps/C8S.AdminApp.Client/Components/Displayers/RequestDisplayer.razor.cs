@@ -4,8 +4,8 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Components.Displayers;
 
-public partial class ApplicationDisplayer: BaseRazorComponent
+public partial class RequestDisplayer: BaseRazorComponent
 {
     [Parameter]
-    public ApplicationListDisplay Application { get; set; } = default!;
+    public RequestListDisplay Request { get; set; } = default!;
 }

@@ -3,17 +3,17 @@ using C8S.Domain.Enums;
 
 namespace C8S.Domain.Models;
 
-public class ApplicationBase
+public class RequestBase
 {
     #region Id Property
-    public int ApplicationId { get; set; }
+    public int RequestId { get; set; }
     public RequestStatus Status { get; set; }
     public string ApplicantLastName { get; set; } = default!;
     public string ApplicantEmail { get; set; } = default!;
     #endregion
 }
 
-public class ApplicationListDisplay : ApplicationBase
+public class RequestListDisplay : RequestBase
 {
     public string? ApplicantFirstName { get; set; } = null;
     public DateTimeOffset SubmittedOn { get; set; }

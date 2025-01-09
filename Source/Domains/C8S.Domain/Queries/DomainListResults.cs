@@ -5,8 +5,8 @@ namespace C8S.Domain.Queries;
 public abstract class DomainListResults<TModel>
     where TModel : class
 {
-    public List<TModel> Items { get; set; } = new();
+    public List<TModel> Items { get; set; } = [];
     public int Total { get; set; }
 }
 
-public class ApplicationListResults : DomainListResults<ApplicationListDisplay>;
+public class RequestListResults : DomainListResults<RequestListDisplay>;

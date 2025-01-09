@@ -3,7 +3,7 @@
 
 @using SC.Common.Extensions
 
-<div class="c8s-application-displayer @CssClass">
+<div class="c8s-request-displayer @CssClass">
     @* OUTER *@
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
@@ -16,7 +16,7 @@
 
             <RadzenText TagName="TagName.H4"
                         TextStyle="TextStyle.DisplayH4"
-                        Text="@Application.ApplicantFullName" />
+                        Text="@Request.ApplicantFullName" />
 
             <RadzenStack Orientation="Orientation.Horizontal"
                          AlignItems="AlignItems.Start"
@@ -33,19 +33,19 @@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Application.ApplicantEmail" />
+                                Text="@Request.ApplicantEmail" />
 
                     @* SCHOOL *@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Application.OrganizationName" />
+                                Text="@Request.OrganizationName" />
 
                     @* CITY, STATE *@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Application.OrganizationCityState" />
+                                Text="@Request.OrganizationCityState" />
 
                 </RadzenStack>
                 @* COLUMN #1 *@
@@ -70,7 +70,7 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
                                     TextAlign="TextAlign.Start"
-                                    Text="@Application.Status.GetLabel()" />
+                                    Text="@Request.Status.GetLabel()" />
 
                     </RadzenStack>
 
@@ -88,7 +88,7 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
                                     TextAlign="TextAlign.Start"
-                                    Text="@Application.SubmittedOn.ToString("D")" />
+                                    Text="@Request.SubmittedOn.ToString("D")" />
 
                     </RadzenStack>
 

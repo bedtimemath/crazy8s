@@ -4,6 +4,7 @@ using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241231173015_AddIdsToUnfinished")]
+    partial class AddIdsToUnfinished
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -889,11 +892,11 @@ namespace C8S.Domain.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnfinishedId"));
 
-                    b.Property<bool?>("AddressHasChanged")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset?>("ChosenTimeSlot")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("ClubId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ClubsString")
                         .HasMaxLength(1024)

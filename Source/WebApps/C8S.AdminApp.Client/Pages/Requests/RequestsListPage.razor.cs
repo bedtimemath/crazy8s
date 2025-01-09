@@ -8,9 +8,9 @@ using Radzen.Blazor;
 using SC.Audit.Abstractions.Models;
 using SC.Common.Radzen.Base;
 
-namespace C8S.AdminApp.Client.Pages;
+namespace C8S.AdminApp.Client.Pages.Requests;
 
-public partial class Applications : BaseRazorPage, IDisposable
+public partial class RequestsListPage : BaseRazorPage, IDisposable
 {
     private readonly IList<SortDropDownOption> _sortDropDownOptions = [
         new( "Submitted (newest)", "SubmittedOn DESC" ),
@@ -22,12 +22,12 @@ public partial class Applications : BaseRazorPage, IDisposable
     ];
 
     [Inject]
-    public ILogger<Applications> Logger { get; set; } = default!;
+    public ILogger<RequestsListPage> Logger { get; set; } = null!;
 
     [Inject]
     public ICommunicationService CommunicationService { get; set; } = default!;
 
-    private ApplicationsLister _applicationsLister = default!;
+    private RequestsLister _requestsLister = default!;
     private RadzenDropDown<IList<RequestStatus>> _statusDropDown = default!;
     private RadzenDropDown<string> _sortDropDown = default!;
 
@@ -44,15 +44,52 @@ public partial class Applications : BaseRazorPage, IDisposable
         await base.OnInitializedAsync();
     }
 
+    /* Key Points:
+       
+       1. Dispose(bool disposing):
+          - This method is used to differentiate between disposing managed resources (disposing == true) and 
+            unmanaged resources (disposing == false).
+          - Managed resources are disposed only when disposing is true.
+       
+       2. GC.SuppressFinalize(this):
+          - This prevents the garbage collector from calling the finalizer (~MyClass) since the resources have 
+            already been cleaned up.
+       
+       3. Finalizer (~MyClass):
+          - The finalizer is a safety net to clean up unmanaged resources if Dispose is not called explicitly.
+       
+       This pattern ensures proper resource management and avoids unnecessary finalization overhead.
+     */
+    private bool _disposed = false;
     public void Dispose()
     {
-        CommunicationService.DataChanged -= HandleDataChanged;
+        Dispose(true);
+        GC.SuppressFinalize(this); // Prevent finalizer from being called
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources here
+                CommunicationService.DataChanged -= HandleDataChanged;
+            }
+            // Dispose unmanaged resources here
+            _disposed = true;
+        }
+    }
+    // Finalizer (destructor)
+    ~RequestsListPage()
+    {
+        Dispose(false);
     }
 
     private void HandleDataChanged(object? sender, DataChangeEventArgs args)
     {
         var dataChange = args.DataChange;
-        if (dataChange is { EntityName: "ApplicationDb", EntityState: EntityState.Added })
+        if (dataChange is { EntityName: "RequestDb", EntityState: EntityState.Added })
         {
             Task.Run(async () => await ReloadLister().ConfigureAwait(false));
         }
@@ -64,15 +101,15 @@ public partial class Applications : BaseRazorPage, IDisposable
     }
     private Task HandleStatusDropdownChange(object args)
     {
-        var statuses = args as EnumerableQuery<RequestStatus> ??
-                       throw new UnreachableException();
+        //var statuses = args as EnumerableQuery<RequestStatus> ??
+        //               throw new UnreachableException();
         return Task.CompletedTask;
     }
 
     private async Task ReloadLister()
     {
         Logger.LogInformation("Reloading lister.");
-        await _applicationsLister.Reload().ConfigureAwait(false);
+        await _requestsLister.Reload().ConfigureAwait(false);
     }
 
     private record SortDropDownOption(string Display, string Value);

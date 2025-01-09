@@ -1,4 +1,4 @@
-﻿@page "/applications"
+﻿@page "/requests"
 @inherits BaseRazorPage
 @rendermode InteractiveWebAssembly
 
@@ -25,14 +25,14 @@
                             TextStyle="TextStyle.Body1"
                             TextAlign="TextAlign.Start"
                             class="c8s-page-title">
-                    Applications
+                    Requests
                 </RadzenText>
 
                 <IconButton ButtonType="ButtonType.Button"
                             ButtonStyle="ButtonStyle.Primary"
                             IconString="@C8SConstants.Icons.Refresh"
                             Text="Refresh"
-                            Click="@(async () => await _applicationsLister.Reload())"
+                            Click="@(async () => await _requestsLister.Reload())"
                             class="flex-shrink-0" />
 
             </RadzenStack>
@@ -84,7 +84,7 @@
 
         </RadzenStack>
 
-        <ApplicationsLister @ref="_applicationsLister"
+        <RequestsLister @ref="_requestsLister"
                             SortDescription="@_selectedSort"
                             Statuses="@_selectedStatuses"
                             TotalCountChanged="@((int c) => _totalCount = c)"
