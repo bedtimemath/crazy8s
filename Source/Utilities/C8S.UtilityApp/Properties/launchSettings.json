@@ -19,14 +19,6 @@
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data -p Staging"
     },
-    "Process Applications": {
-      "commandName": "Project",
-      "commandLineArgs": "process-applications"
-    },
-    "Process Applications (PROD)": {
-      "commandName": "Project",
-      "commandLineArgs": "process-applications -p Production"
-    },
     "Show Config": {
       "commandName": "Project",
       "commandLineArgs": "show-config"

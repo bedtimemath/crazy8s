@@ -1,5 +1,4 @@
 ﻿using Azure.Identity;
-using C8S.Applications.Extensions;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
@@ -43,7 +42,6 @@ try
             AddApplicationOptions,
             LoadC8SDataOptions,
             LoadSampleDataOptions,
-            ProcessApplicationsOptions,
             ShowConfigOptions,
             TestFullSlateOptions,
             TestInterceptorsOptions>(args);
@@ -118,11 +116,6 @@ try
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, LoadC8SData>();
             })
-            .WithParsed<ProcessApplicationsOptions>(options =>
-            {
-                services.AddSingleton(options);
-                services.AddSingleton<IActionLauncher, ProcessApplications>();
-            })
             .WithParsed<ShowConfigOptions>(options =>
             {
                 services.AddSingleton(options);
@@ -160,7 +153,6 @@ try
         //services.AddSCAuditContext(connections.Audit);
         services.AddC8SDbContext(connections.Database);
         services.AddOldSystemServices(connections.OldSystem);
-        services.AddApplicationServices();
 
         var fullSlateApi = endpoints.FullSlateApi ?? throw new Exception("Missing Endpoints:FullSlateApi");
         var fullSlateToken = apiKeys.FullSlate ?? throw new Exception("Missing ApiKeys:FullSlate");
