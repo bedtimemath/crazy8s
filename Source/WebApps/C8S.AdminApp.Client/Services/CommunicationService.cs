@@ -6,7 +6,7 @@ using SC.Audit.Abstractions.Models;
 
 namespace C8S.AdminApp.Client.Services;
 
-public class CommunicationService(
+public sealed class CommunicationService(
     ILoggerFactory loggerFactory,
     NavigationManager navigationManager): IAsyncDisposable, ICommunicationService
 {
@@ -17,7 +17,7 @@ public class CommunicationService(
     private void RaiseDataChanged(DataChange dataChange) =>
         DataChanged?.Invoke(this, new DataChangeEventArgs(dataChange));
 
-    private HubConnection? _hubConnection = default!;
+    private HubConnection? _hubConnection = null;
 
     public async Task InitializeAsync()
     {

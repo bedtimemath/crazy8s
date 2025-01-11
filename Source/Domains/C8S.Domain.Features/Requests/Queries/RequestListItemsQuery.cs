@@ -1,8 +1,9 @@
-﻿using C8S.Domain.Enums;
-using MediatR;
+﻿using C8S.Domain.Features.Requests.Enums;
 using SC.Common.Interactions;
+using MediatR;
 
-namespace C8S.Domain.Queries.List;
+namespace C8S.Domain.Features.Requests.Queries;
+
 
 public class ListRequestsQuery : IRequest<BackendResponse<RequestListResults>>
 {

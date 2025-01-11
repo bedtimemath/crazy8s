@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using C8S.Domain.Queries;
-using C8S.Domain.Queries.List;
+using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using SC.Common.Interactions;
 

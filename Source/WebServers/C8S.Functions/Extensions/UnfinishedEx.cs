@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
+using C8S.Domain.Features.Requests.Enums;
 using SC.Common;
 using SC.Common.Helpers.PassThrus;
 using SC.Common.Interfaces;

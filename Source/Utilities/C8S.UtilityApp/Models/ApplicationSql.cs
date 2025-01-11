@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using C8S.Domain.Enums;
+using C8S.Domain.Features.Requests.Enums;
 using AppType = C8S.Domain.Enums.ApplicantType;
 
 namespace C8S.UtilityApp.Models;

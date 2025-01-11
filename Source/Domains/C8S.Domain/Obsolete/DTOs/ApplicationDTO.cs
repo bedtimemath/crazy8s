@@ -16,7 +16,7 @@ public class ApplicationDTO : BaseDTO
     public override IEnumerable<string> GetValidationErrors()
     {
         var errors = new List<string>();
-        if (this.Status == null) errors.Add("Status is required.");
+        //if (this.Status == null) errors.Add("Status is required.");
         if (String.IsNullOrEmpty(this.ApplicantLastName)) errors.Add("ApplicantLastName is required.");
         if (String.IsNullOrEmpty(this.ApplicantEmail)) errors.Add("ApplicantEmail is required.");
         if (String.IsNullOrEmpty(this.ApplicantTimeZone)) errors.Add("ApplicantTimeZone is required.");
@@ -37,7 +37,7 @@ public class ApplicationDTO : BaseDTO
 
     public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
 
-    public RequestStatus? Status { get; set; } = null;
+    //public RequestStatus? Status { get; set; } = null;
 
     public ApplicantType? ApplicantType { get; set; } = null;
 

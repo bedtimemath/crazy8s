@@ -1,19 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using C8S.Domain.Enums;
 
-namespace C8S.Domain.Models;
+namespace C8S.Domain.Features.Requests.Lists;
 
-public class RequestBase
-{
-    #region Id Property
-    public int RequestId { get; set; }
-    public RequestStatus Status { get; set; }
-    public string ApplicantLastName { get; set; } = default!;
-    public string ApplicantEmail { get; set; } = default!;
-    #endregion
-}
-
-public class RequestListDisplay : RequestBase
+public class RequestListItem : RequestBase
 {
     public string? ApplicantFirstName { get; set; } = null;
     public DateTimeOffset SubmittedOn { get; set; }

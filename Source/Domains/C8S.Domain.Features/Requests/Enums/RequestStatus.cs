@@ -1,6 +1,6 @@
 ﻿using SC.Common.Attributes;
 
-namespace C8S.Domain.Enums;
+namespace C8S.Domain.Features.Requests.Enums;
 
 public enum RequestStatus
 {

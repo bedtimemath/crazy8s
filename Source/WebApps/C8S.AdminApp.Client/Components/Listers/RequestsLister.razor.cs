@@ -1,7 +1,7 @@
 ﻿using Blazr.RenderState;
-using C8S.Domain.Enums;
-using C8S.Domain.Models;
-using C8S.Domain.Queries.List;
+using C8S.Domain.Features.Requests.Enums;
+using C8S.Domain.Features.Requests.Lists;
+using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
@@ -36,7 +36,7 @@ public partial class RequestsLister : BaseRazorComponent
     #endregion
 
     #region Component References
-    private Virtualize<RequestListDisplay>? _listerComponent;
+    private Virtualize<RequestListItem>? _listerComponent;
     #endregion
 
     #region Public Methods
@@ -50,7 +50,7 @@ public partial class RequestsLister : BaseRazorComponent
     #endregion
 
     #region Private Methods
-    private async ValueTask<ItemsProviderResult<RequestListDisplay>>
+    private async ValueTask<ItemsProviderResult<RequestListItem>>
         GetRows(ItemsProviderRequest request)
     {
         // shouldn't be called before prerender, but if it is...
@@ -70,7 +70,7 @@ public partial class RequestsLister : BaseRazorComponent
             var results = backendResponse.Result!;
             await TotalCountChanged.InvokeAsync(results.Total);
 
-            return new ItemsProviderResult<RequestListDisplay>(results.Items, results.Total);
+            return new ItemsProviderResult<RequestListItem>(results.Items, results.Total);
         }
         catch (Exception ex)
         {

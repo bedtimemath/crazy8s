@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using C8S.Domain.Enums;
+using C8S.Domain.Features.Requests.Enums;
 using SC.Common;
 using SC.Common.Base;
 
