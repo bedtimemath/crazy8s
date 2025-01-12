@@ -1,7 +1,8 @@
 using Blazr.RenderState.WASM;
-using C8S.AdminApp.Client;
 using C8S.AdminApp.Client.Auth;
 using C8S.AdminApp.Client.Services;
+using C8S.AdminApp.Client.Services.Apis;
+using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Common.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -9,6 +10,9 @@ using Radzen;
 using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Core;
+using _ClientImports = C8S.AdminApp.Client._Imports;
+using _UIImports = C8S.AdminApp.Client.UI._Imports;
+using _ServicesImports = C8S.AdminApp.Client.Services._Imports;
 
 /*****************************************
  * INITIAL LOGGING
@@ -46,7 +50,9 @@ try
      */
     builder.Services.AddMediatR(config =>
     {
-        config.RegisterServicesFromAssembly(typeof(_Imports).Assembly);
+        config.RegisterServicesFromAssembly(typeof(_ClientImports).Assembly);
+        config.RegisterServicesFromAssembly(typeof(_UIImports).Assembly);
+        config.RegisterServicesFromAssembly(typeof(_ServicesImports).Assembly);
     });
 
     /*****************************************
@@ -67,7 +73,7 @@ try
      * SOFT CROW & LOCAL
      */
     builder.Services.AddCommonHelpers();
-    builder.Services.AddSingleton<ICommunicationService, CommunicationService>();
+    builder.Services.AddClientServices();
 
     /*****************************************
      * APP BUILD & RUN

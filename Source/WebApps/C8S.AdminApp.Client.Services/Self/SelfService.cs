@@ -1,8 +1,9 @@
 ﻿using System.Security.Claims;
+using Microsoft.Extensions.Logging;
 using SC.Common;
 using SC.Common.Models;
 
-namespace C8S.AdminApp.Services;
+namespace C8S.AdminApp.Client.Services.Self;
 
 public class SelfService(
     ILoggerFactory loggerFactory)

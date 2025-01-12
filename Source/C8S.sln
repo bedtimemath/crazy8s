@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.AdminApp.Client.UI", "W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Domain.Features", "Domains\C8S.Domain.Features\C8S.Domain.Features.csproj", "{7D387B59-231B-4A20-8EA7-787ECE8E5AD8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.AdminApp.Client.Services", "WebApps\C8S.AdminApp.Client.Services\C8S.AdminApp.Client.Services.csproj", "{7A4AABF4-8E49-45D3-9ECF-BCCFD3DC3509}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{7D387B59-231B-4A20-8EA7-787ECE8E5AD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D387B59-231B-4A20-8EA7-787ECE8E5AD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D387B59-231B-4A20-8EA7-787ECE8E5AD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A4AABF4-8E49-45D3-9ECF-BCCFD3DC3509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A4AABF4-8E49-45D3-9ECF-BCCFD3DC3509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A4AABF4-8E49-45D3-9ECF-BCCFD3DC3509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A4AABF4-8E49-45D3-9ECF-BCCFD3DC3509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -152,6 +158,7 @@ Global
 		{3075227A-EA1D-4DB3-A9D9-21EBF2E02341} = {B9E931EE-3B4A-4B8D-9CC4-A3880383C471}
 		{3606EE7F-32BC-4035-BAA1-A75A5E752C8C} = {B9E931EE-3B4A-4B8D-9CC4-A3880383C471}
 		{7D387B59-231B-4A20-8EA7-787ECE8E5AD8} = {FAE3D83F-CDBD-4ECA-B31B-B318BC792346}
+		{7A4AABF4-8E49-45D3-9ECF-BCCFD3DC3509} = {B9E931EE-3B4A-4B8D-9CC4-A3880383C471}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}

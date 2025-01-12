@@ -2,9 +2,10 @@
 using System.Text.Json;
 using C8S.Domain.Features.Requests.Queries;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
 
-namespace C8S.AdminApp.Client.Services;
+namespace C8S.AdminApp.Client.Services.Apis;
 
 public class CallbackService(
     ILoggerFactory loggerFactory,

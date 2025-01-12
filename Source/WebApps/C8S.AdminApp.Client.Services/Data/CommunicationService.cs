@@ -2,9 +2,10 @@
 using C8S.AdminApp.Common.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using SC.Audit.Abstractions.Models;
 
-namespace C8S.AdminApp.Client.Services;
+namespace C8S.AdminApp.Client.Services.Data;
 
 public sealed class CommunicationService(
     ILoggerFactory loggerFactory,

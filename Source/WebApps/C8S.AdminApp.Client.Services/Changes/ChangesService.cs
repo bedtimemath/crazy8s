@@ -1,7 +1,8 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using SC.Audit.Abstractions.Notifications;
 
-namespace C8S.AdminApp.Services;
+namespace C8S.AdminApp.Client.Services.Changes;
 
 public class ChangesService(
     ILoggerFactory loggerFactory): INotificationHandler<DataChangeNotification>
