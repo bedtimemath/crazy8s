@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
-namespace C8S.AdminApp.Client.Components.Menu;
+namespace C8S.AdminApp.Client.UI.Menu;
 
-public partial class SidebarMenuItem: BaseRazorComponent, IDisposable
+public sealed partial class SidebarMenuItem: BaseRazorComponent, IDisposable
 {
     #region Injected Properties
     [Inject]

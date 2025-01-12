@@ -12,7 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
+    <PackageReference Include="Radzen.Blazor" Version="5.7.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +22,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Radzen\SC.Common.Radzen.csproj" />
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
+    <ProjectReference Include="..\..\Domains\C8S.Domain.Features\C8S.Domain.Features.csproj" />
+    <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj" />
   </ItemGroup>
 

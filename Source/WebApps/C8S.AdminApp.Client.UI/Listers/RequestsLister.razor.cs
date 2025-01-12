@@ -5,9 +5,10 @@ using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
+using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
-namespace C8S.AdminApp.Client.Components.Listers;
+namespace C8S.AdminApp.Client.UI.Listers;
 
 public partial class RequestsLister : BaseRazorComponent
 {

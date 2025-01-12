@@ -12,10 +12,6 @@
     <Compile Remove="Components\ProfileDisplay.razor.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Components\Common\ProfileDisplay.razor.cs" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
 		<PackageReference Include="Mediatr" Version="12.4.1" />
@@ -40,6 +36,10 @@
 		<ProjectReference Include="..\C8S.AdminApp.Client.Services\C8S.AdminApp.Client.Services.csproj" />
 		<ProjectReference Include="..\C8S.AdminApp.Client.UI\C8S.AdminApp.Client.UI.csproj" />
 		<ProjectReference Include="..\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Components\ProfileDisplay.razor.cs" />
 	</ItemGroup>
 
 </Project>
