@@ -2,11 +2,10 @@ using Azure.Identity;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
-using C8S.AdminApp.Client.Services.Changes;
-using C8S.AdminApp.Client.Services.Self;
 using C8S.AdminApp.Common.Dummies;
 using C8S.AdminApp.Common.Interfaces;
 using C8S.AdminApp.Hubs;
+using C8S.AdminApp.Services;
 using C8S.Domain;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
@@ -126,8 +125,8 @@ try
     builder.Services.AddSCAuditContext(connections.Audit);
     builder.Services.AddC8SDbContext(connections.Database);
 
-    builder.Services.AddScoped<ChangesService>();
-    builder.Services.AddScoped<SelfService>();
+    //builder.Services.AddScoped<ChangesService>();
+    //builder.Services.AddScoped<SelfService>();
 
     /*****************************************
      * DUMMY SERVICES (for server-instantiated components)

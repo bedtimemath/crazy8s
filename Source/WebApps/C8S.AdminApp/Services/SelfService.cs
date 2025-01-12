@@ -1,12 +1,12 @@
 ﻿using System.Security.Claims;
-using Microsoft.Extensions.Logging;
 using SC.Common;
 using SC.Common.Models;
 
-namespace C8S.AdminApp.Client.Services.Self;
+namespace C8S.AdminApp.Services;
 
+#if false
 public class SelfService(
-    ILoggerFactory loggerFactory)
+ILoggerFactory loggerFactory)
 {
     private readonly ILogger<SelfService> _logger = loggerFactory.CreateLogger<SelfService>();
     private readonly Guid _uniqueId = Guid.NewGuid();
@@ -34,4 +34,5 @@ public class SelfService(
 
         RaiseSelfChanged();
     }
-}
+} 
+#endif

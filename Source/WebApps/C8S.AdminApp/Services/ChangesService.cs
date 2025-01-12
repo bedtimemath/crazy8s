@@ -1,11 +1,8 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using SC.Audit.Abstractions.Notifications;
+﻿namespace C8S.AdminApp.Services;
 
-namespace C8S.AdminApp.Client.Services.Changes;
-
+#if false
 public class ChangesService(
-    ILoggerFactory loggerFactory): INotificationHandler<DataChangeNotification>
+ILoggerFactory loggerFactory) : INotificationHandler<DataChangeNotification>
 {
     private readonly ILogger<ChangesService> _logger = loggerFactory.CreateLogger<ChangesService>();
 
@@ -14,4 +11,5 @@ public class ChangesService(
         _logger.LogInformation("Notification: {@Notification}", notification);
         return Task.CompletedTask;
     }
-}
+} 
+#endif
