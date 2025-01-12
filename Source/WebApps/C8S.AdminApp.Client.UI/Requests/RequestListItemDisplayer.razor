@@ -1,6 +1,8 @@
 ﻿@inherits SC.Common.Razor.Base.BaseRazorComponent
 @rendermode InteractiveWebAssembly
 
+@using C8S.AdminApp.Client.Services.Pages
+@using C8S.AdminApp.Common
 @using SC.Common.Extensions
 
 <div class="c8s-request-displayer @CssClass">
@@ -105,7 +107,9 @@
 
             <RadzenButton ButtonType="ButtonType.Button"
                           ButtonStyle="ButtonStyle.Primary"
-                          Text="View >" />
+                          Text="View >"
+                          Click="@(() => Sender.Send(new GoToPageCommand(
+                                     AdminAppConstants.Pages.RequestDetails, Request.RequestId)))" />
 
         </RadzenStack>
     </RadzenStack>

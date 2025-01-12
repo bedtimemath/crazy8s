@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.UI.Listers;
+﻿using C8S.AdminApp.Client.UI.Requests;
 using C8S.AdminApp.Common.Interfaces;
 using C8S.Domain.Features.Requests.Enums;
 using Microsoft.AspNetCore.Components;
@@ -26,7 +26,7 @@ public partial class RequestsListPage : BaseRazorPage, IDisposable
     [Inject]
     public ICommunicationService CommunicationService { get; set; } = default!;
 
-    private RequestsLister _requestsLister = default!;
+    private RequestsListLister _requestsListLister = default!;
     private RadzenDropDown<IList<RequestStatus>> _statusDropDown = default!;
     private RadzenDropDown<string> _sortDropDown = default!;
 
@@ -108,7 +108,7 @@ public partial class RequestsListPage : BaseRazorPage, IDisposable
     private async Task ReloadLister()
     {
         Logger.LogInformation("Reloading lister.");
-        await _requestsLister.Reload().ConfigureAwait(false);
+        await _requestsListLister.Reload().ConfigureAwait(false);
     }
 
     private record SortDropDownOption(string Display, string Value);

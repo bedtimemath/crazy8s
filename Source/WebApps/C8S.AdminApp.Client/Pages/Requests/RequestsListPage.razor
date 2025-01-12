@@ -2,7 +2,7 @@
 @inherits BaseRazorPage
 @rendermode InteractiveWebAssembly
 @using C8S.AdminApp.Client.UI.Common
-@using C8S.AdminApp.Client.UI.Listers
+@using C8S.AdminApp.Client.UI.Requests
 @using C8S.Domain.Features.Requests.Enums
 @using SC.Common.Models
 
@@ -33,7 +33,7 @@
                             ButtonStyle="ButtonStyle.Primary"
                             IconString="@C8SConstants.Icons.Refresh"
                             Text="Refresh"
-                            Click="@(async () => await _requestsLister.Reload())"
+                            Click="@(async () => await _requestsListLister.Reload())"
                             class="flex-shrink-0" />
 
             </RadzenStack>
@@ -85,7 +85,7 @@
 
         </RadzenStack>
 
-        <RequestsLister @ref="_requestsLister"
+        <RequestsListLister @ref="_requestsListLister"
                             SortDescription="@_selectedSort"
                             Statuses="@_selectedStatuses"
                             TotalCountChanged="@((int c) => _totalCount = c)"

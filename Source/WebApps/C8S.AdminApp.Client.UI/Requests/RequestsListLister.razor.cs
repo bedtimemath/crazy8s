@@ -8,19 +8,19 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
-namespace C8S.AdminApp.Client.UI.Listers;
+namespace C8S.AdminApp.Client.UI.Requests;
 
-public partial class RequestsLister : BaseRazorComponent
+public partial class RequestsListLister : BaseRazorComponent
 {
     #region Injected Properties
     [Inject]
-    public ILogger<RequestsLister> Logger { get; set; } = default!;
+    public ILogger<RequestsListLister> Logger { get; set; } = null!;
 
     [Inject]
-    public IBlazrRenderStateService RenderStateService { get; set; } = default!;
+    public IBlazrRenderStateService RenderStateService { get; set; } = null!;
 
     [Inject]
-    public IMediator Mediator { get; set; } = default!;
+    public IMediator Mediator { get; set; } = null!;
     #endregion
 
     #region Component Parameters

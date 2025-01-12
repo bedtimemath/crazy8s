@@ -1,7 +1,11 @@
-﻿@page "/request"
+﻿@page "/request/{RequestId:int}"
 @inherits BaseRazorPage
 
 <h3>RequestDetailsPage</h3>
+
+<div>
+    ID = @RequestId
+</div>
 
 @code {
 

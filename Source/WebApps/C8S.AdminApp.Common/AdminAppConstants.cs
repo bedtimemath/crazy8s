@@ -6,4 +6,10 @@ public static class AdminAppConstants
     {
         public const string DataChange = "DataChange";
     }
+    
+    public static class Pages
+    {
+        public const string RequestList = "requests";
+        public const string RequestDetails = "request";
+    }
 }
