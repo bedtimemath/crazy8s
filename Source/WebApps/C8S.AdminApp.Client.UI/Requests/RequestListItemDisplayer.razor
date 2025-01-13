@@ -108,7 +108,7 @@
             <RadzenButton ButtonType="ButtonType.Button"
                           ButtonStyle="ButtonStyle.Primary"
                           Text="View >"
-                          Click="@(() => Sender.Send(new GoToPageCommand(
+                          Click="@(() => Sender.Send(new OpenPageCommand(
                                      AdminAppConstants.Pages.RequestDetails, Request.RequestId)))" />
 
         </RadzenStack>

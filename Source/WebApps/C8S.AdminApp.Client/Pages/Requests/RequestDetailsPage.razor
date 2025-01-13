@@ -1,11 +1,26 @@
 ﻿@page "/request/{RequestId:int}"
 @inherits BaseRazorPage
+@rendermode InteractiveWebAssembly
+
+@using C8S.AdminApp.Client.Services.Pages
+@using C8S.AdminApp.Common
 
 <h3>RequestDetailsPage</h3>
 
-<div>
-    ID = @RequestId
-</div>
+<RadzenStack Orientation="Orientation.Horizontal"
+             AlignItems="AlignItems.Center"
+             JustifyContent="JustifyContent.Normal">
+
+    <RadzenText TextStyle="TextStyle.Body1"
+                TextAlign="TextAlign.Left">
+        ID = @RequestId
+    </RadzenText>
+
+    <RadzenButton ButtonType="ButtonType.Reset"
+                  ButtonStyle="ButtonStyle.Warning"
+                  Text="Close"
+                  Click="@(() => Sender.Send(new ClosePageCommand(AdminAppConstants.Pages.RequestDetails, RequestId)))" />
+</RadzenStack>
 
 @code {
 
