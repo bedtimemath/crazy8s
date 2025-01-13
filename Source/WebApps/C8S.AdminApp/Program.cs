@@ -2,6 +2,7 @@ using Azure.Identity;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
+using C8S.AdminApp.Client.Services.Pages;
 using C8S.AdminApp.Common.Dummies;
 using C8S.AdminApp.Common.Interfaces;
 using C8S.AdminApp.Hubs;
@@ -128,6 +129,7 @@ try
      * DUMMY SERVICES (for server-instantiated components)
      */
     builder.Services.AddSingleton<ICommunicationService, DummyCommunicationService>();
+    builder.Services.AddSingleton<IPagesService, DummyPagesService>();
 
     /*****************************************
      * MINIMAL APIS

@@ -4,6 +4,6 @@ namespace C8S.AdminApp.Common.Interfaces;
 
 public interface ICommunicationService
 {
-    event EventHandler<DataChangeEventArgs>? DataChanged;
+    event EventHandler<DataChangedEventArgs>? DataChanged;
     Task InitializeAsync();
 }

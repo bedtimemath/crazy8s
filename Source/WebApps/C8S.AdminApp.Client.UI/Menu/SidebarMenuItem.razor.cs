@@ -62,7 +62,6 @@ public sealed partial class SidebarMenuItem: BaseRazorComponent, IDisposable
     {
         _isSelected = String.IsNullOrEmpty(PageRoute) ? NavigationManager.Uri == NavigationManager.BaseUri :
             (new Uri(NavigationManager.Uri)).PathAndQuery.StartsWith(PageRoute);
-        Logger.LogInformation("{Display} SELECTED: {Selected}", Display, _isSelected);
         StateHasChanged();
     }
     #endregion

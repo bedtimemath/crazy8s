@@ -6,7 +6,7 @@ using SC.Common.Radzen.Base;
 
 namespace C8S.AdminApp.Client.Pages;
 
-public partial class Home : BaseRazorPage, IDisposable
+public sealed partial class Home : BaseRazorPage, IDisposable
 {
     [Inject]
     public ILogger<Home> Logger { get; set; } = default!;
@@ -26,7 +26,7 @@ public partial class Home : BaseRazorPage, IDisposable
         CommunicationService.DataChanged -= HandleDataChanged;
     }
 
-    private void HandleDataChanged(object? sender, DataChangeEventArgs args)
+    private void HandleDataChanged(object? sender, DataChangedEventArgs args)
     {
         Logger.LogInformation("HandleDataChanged: {@Args}", args);
 

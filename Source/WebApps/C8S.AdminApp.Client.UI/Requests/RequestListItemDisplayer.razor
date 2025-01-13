@@ -3,6 +3,7 @@
 
 @using C8S.AdminApp.Client.Services.Pages
 @using C8S.AdminApp.Common
+@using SC.Common
 @using SC.Common.Extensions
 
 <div class="c8s-request-displayer @CssClass">
@@ -109,7 +110,9 @@
                           ButtonStyle="ButtonStyle.Primary"
                           Text="View >"
                           Click="@(() => Sender.Send(new OpenPageCommand(
-                                     AdminAppConstants.Pages.RequestDetails, Request.RequestId)))" />
+                                     AdminAppConstants.Pages.RequestDetails,
+                                     Request.ToString() ?? SoftCrowConstants.Display.NotSet,
+                                     Request.RequestId)))" />
 
         </RadzenStack>
     </RadzenStack>

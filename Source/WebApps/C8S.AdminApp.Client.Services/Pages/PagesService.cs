@@ -1,11 +1,12 @@
 ﻿using C8S.AdminApp.Common;
+using C8S.AdminApp.Common.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
 namespace C8S.AdminApp.Client.Services.Pages;
 
-public class PagesService(
+public sealed class PagesService(
     ILoggerFactory loggerFactory,
     NavigationManager navigationManager): IRequestHandler<OpenPageCommand>, IRequestHandler<ClosePageCommand>, IPagesService
 {
@@ -13,23 +14,26 @@ public class PagesService(
     
     public Task Handle(OpenPageCommand openPageCommand, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Open: {PageName} [{IdValue}]", openPageCommand.PageName, openPageCommand.IdValue);
-        
-        navigationManager.NavigateTo(GetUrlForCommand(openPageCommand));
+        _logger.LogInformation("Open: {PageName} [{IdValue}]", openPageCommand.PageUrlKey, openPageCommand.IdValue);
+
+        var pageUrl = GetUrlForCommand(openPageCommand);
+        navigationManager.NavigateTo(pageUrl);
         
         return Task.CompletedTask;
     }
     
     public Task Handle(ClosePageCommand closePageCommand, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Close: {PageName} [{IdValue}]", closePageCommand.PageName, closePageCommand.IdValue);
+        _logger.LogInformation("Close: {PageName} [{IdValue}]", closePageCommand.PageUrlKey, closePageCommand.IdValue);
 
-        // note that we need to include the root /
-        if ($"/{navigationManager.ToBaseRelativePath(navigationManager.Uri)}" == GetUrlForCommand(closePageCommand))
+        var pageUrl = GetUrlForCommand(closePageCommand);
+        
+        // note that we need to include the root / to compare
+        if ($"/{navigationManager.ToBaseRelativePath(navigationManager.Uri)}" == pageUrl)
             navigationManager.NavigateTo(AdminAppConstants.Pages.RequestList);
-            
+
         return Task.CompletedTask;
     }
 
-    private static string GetUrlForCommand(PageCommand pageCommand) => $"/{pageCommand.PageName}/{pageCommand.IdValue}";
+    private static string GetUrlForCommand(PageCommand pageCommand) => $"/{pageCommand.PageUrlKey}/{pageCommand.IdValue}";
 }

@@ -19,9 +19,8 @@
     <RadzenButton ButtonType="ButtonType.Reset"
                   ButtonStyle="ButtonStyle.Warning"
                   Text="Close"
-                  Click="@(() => Sender.Send(new ClosePageCommand(AdminAppConstants.Pages.RequestDetails, RequestId)))" />
+                  Click="@(() => Sender.Send(
+                             new ClosePageCommand(
+                                 AdminAppConstants.Pages.RequestDetails, 
+                                 RequestId)))" />
 </RadzenStack>
-
-@code {
-
-}

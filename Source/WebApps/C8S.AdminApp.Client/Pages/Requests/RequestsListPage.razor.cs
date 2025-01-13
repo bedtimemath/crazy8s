@@ -24,11 +24,11 @@ public partial class RequestsListPage : BaseRazorPage, IDisposable
     public ILogger<RequestsListPage> Logger { get; set; } = null!;
 
     [Inject]
-    public ICommunicationService CommunicationService { get; set; } = default!;
+    public ICommunicationService CommunicationService { get; set; } = null!;
 
-    private RequestsListLister _requestsListLister = default!;
-    private RadzenDropDown<IList<RequestStatus>> _statusDropDown = default!;
-    private RadzenDropDown<string> _sortDropDown = default!;
+    private RequestsListLister _requestsListLister = null!;
+    private RadzenDropDown<IList<RequestStatus>> _statusDropDown = null!;
+    private RadzenDropDown<string> _sortDropDown = null!;
 
     private string _selectedSort = "SubmittedOn DESC";
     private IList<RequestStatus> _selectedStatuses = [RequestStatus.Received];
@@ -85,7 +85,7 @@ public partial class RequestsListPage : BaseRazorPage, IDisposable
         Dispose(false);
     }
 
-    private void HandleDataChanged(object? sender, DataChangeEventArgs args)
+    private void HandleDataChanged(object? sender, DataChangedEventArgs args)
     {
         var dataChange = args.DataChange;
         if (dataChange is { EntityName: "RequestDb", EntityState: EntityState.Added })

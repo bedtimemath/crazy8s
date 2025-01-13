@@ -13,10 +13,10 @@ public sealed class CommunicationService(
 {
     private readonly ILogger<CommunicationService> _logger = loggerFactory.CreateLogger<CommunicationService>();
 
-    public event EventHandler<DataChangeEventArgs>? DataChanged;
+    public event EventHandler<DataChangedEventArgs>? DataChanged;
 
     private void RaiseDataChanged(DataChange dataChange) =>
-        DataChanged?.Invoke(this, new DataChangeEventArgs(dataChange));
+        DataChanged?.Invoke(this, new DataChangedEventArgs(dataChange));
 
     private HubConnection? _hubConnection = null;
 
