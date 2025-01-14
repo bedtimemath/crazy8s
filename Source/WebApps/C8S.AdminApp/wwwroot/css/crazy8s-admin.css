@@ -100,7 +100,8 @@ ul.rz-profile-menu {
 
 /** SIDEBAR MENU **/
 .c8s-sidebar-menu .c8s-menu-item {
-    padding: 0.75rem 0;
+    margin: 0.25rem;
+    padding: 0.5rem 0;
     cursor: pointer;
 }
 
@@ -176,16 +177,38 @@ ul.rz-profile-menu {
 }
 
 
-/** PAGE HEADER **/
-.c8s-page-header {
-    background-color: var(--c8s-primary-mid);
-    padding: 0.5rem;
-}
-
+/** PAGE CLASSES **/
 .c8s-page-title {
     color: var(--c8s-light);
     margin-bottom: 0;
     font-size: x-large;
+}
+
+.c8s-page-filter {
+    background-color: var(--c8s-primary-mid);
+    padding: 0.5rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.c8s-page-list {
+    background-color: var(--c8s-light);
+    padding: 0.5rem;
+    flex-shrink: 0;
+    flex-grow: 1;
+    max-height: 785px;
+    overflow-y: scroll;
+}
+
+.c8s-page-footer {
+    background-color: var(--c8s-primary-mid);
+    padding: 0.5rem;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.c8s-page-footer .rz-text-body1 {
+    color: var(--c8s-light);
 }
 
 /** LIST PAGES **/

@@ -59,7 +59,7 @@ public partial class RequestsListLister : BaseRazorComponent
 
         try
         {
-            var backendResponse = await Mediator.Send(new ListRequestsQuery()
+            var backendResponse = await Mediator.Send(new RequestsListQuery()
             {
                 StartIndex = request.StartIndex,
                 Count = request.Count,

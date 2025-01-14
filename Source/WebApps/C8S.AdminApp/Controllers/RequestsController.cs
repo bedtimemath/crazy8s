@@ -20,7 +20,7 @@ public class RequestsController(
 
     [HttpPost]
     public async Task<BackendResponse<RequestListResults>> GetRequests(
-        [FromBody] ListRequestsQuery query)
+        [FromBody] RequestsListQuery query)
     {
         try
         {
@@ -31,6 +31,12 @@ public class RequestsController(
                 .AsSingleQuery()
                 .AsNoTracking();
 
+            if (!String.IsNullOrEmpty(query.Query))
+            {
+                queryable = queryable.Where(r => (!String.IsNullOrEmpty(r.PersonFirstName) && r.PersonFirstName.Contains(query.Query)) ||
+                                                 r.PersonLastName.Contains(query.Query) ||
+                                                 r.PersonEmail.Contains(query.Query));
+            }
             if (!String.IsNullOrEmpty(query.SortDescription)) 
                 queryable = queryable.OrderBy(query.SortDescription);
             if (query.Statuses != null && query.Statuses.Any())

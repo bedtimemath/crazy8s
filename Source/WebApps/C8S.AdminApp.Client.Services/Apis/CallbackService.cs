@@ -10,14 +10,14 @@ namespace C8S.AdminApp.Client.Services.Apis;
 public class CallbackService(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : 
-        IRequestHandler<ListRequestsQuery, BackendResponse<RequestListResults>>
+        IRequestHandler<RequestsListQuery, BackendResponse<RequestListResults>>
 {
     private readonly ILogger<CallbackService> _logger = loggerFactory.CreateLogger<CallbackService>();
 
     private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
     
     public async Task<BackendResponse<RequestListResults>> Handle(
-        ListRequestsQuery request, CancellationToken cancellationToken)
+        RequestsListQuery request, CancellationToken cancellationToken)
     {
         try
         {

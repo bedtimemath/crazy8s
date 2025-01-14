@@ -1,32 +1,51 @@
 ﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
 using C8S.AdminApp.Client.UI.Base;
+using C8S.Domain.Features.Requests.Lists;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 
 namespace C8S.AdminApp.Client.UI.Requests;
 
-public sealed partial class RequestsList: BaseClientComponent, IDisposable
-{    
+public sealed partial class RequestsList : BaseClientComponent, IDisposable
+{
+    #region Injected Properties
     [Inject]
     public ILogger<RequestsList> Logger { get; set; } = null!;
-    
+    #endregion
+
+    #region Component Parameters
     [Parameter]
     public RequestsListController Controller { get; set; } = null!;
+    #endregion
 
+    #region Component References
+    private Virtualize<RequestListItem> _listerComponent = null!;
+    #endregion
+
+    #region Component LifeCycle
     protected override void OnInitialized()
     {
-        Controller.SearchClicked += HandleSearchClicked;
+        Controller.FilterChanged += HandleFilterChanged;
         base.OnInitialized();
     }
 
     public void Dispose()
     {
-        Controller.SearchClicked -= HandleSearchClicked;
+        Controller.FilterChanged -= HandleFilterChanged;
     }
+    #endregion
 
-    private void HandleSearchClicked(object? sender, EventArgs e)
+    #region Event Handlers
+    private void HandleFilterChanged(object? sender, EventArgs e) => 
+        Task.Run(async () => await RefreshListerData());
+    #endregion
+
+    #region Private Methods
+    private async Task RefreshListerData()
     {
-        Logger.LogInformation("Search Clicked");
-        StateHasChanged();
+        await _listerComponent.RefreshDataAsync();
+        await InvokeAsync(StateHasChanged);
     }
+    #endregion
 }

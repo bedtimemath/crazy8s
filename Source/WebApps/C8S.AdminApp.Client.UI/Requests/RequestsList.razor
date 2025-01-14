@@ -1,18 +1,15 @@
 ﻿@inherits BaseClientComponent
 
-<h3>Requests List</h3>
+<div id="@ComponentId" class="c8s-page-list c8s-requests-list @CssClass">
 
-<div>
-    <strong>Query:</strong> @Controller?.Query
+    <Virtualize @ref="@_listerComponent"
+                ItemsProvider="@Controller.GetRows"
+                Context="request">
+        <ItemContent>
+            <RadzenCard class="rz-mb-2">
+                <RequestListItemDisplayer Request="@request" />
+            </RadzenCard>
+        </ItemContent>
+    </Virtualize>
+
 </div>
-
-@*
-
-   <RequestsListLister @ref="_requestsListLister"
-                       SortDescription="@_selectedSort"
-                       Statuses="@_selectedStatuses"
-                       TotalCountChanged="@((int c) => _totalCount = c)"
-                       ExceptionRaised="@(async (ex) => await RaiseExceptionAsync(ex))"
-                       CssClass="flex-grow-1" />
-
-*@

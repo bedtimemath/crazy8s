@@ -4,8 +4,24 @@
 
 <RadzenPageContainer HideDuringPreRender="true">
     
-    <RequestsFilter Controller="@Service" @rendermode="InteractiveWebAssembly" />
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Stretch"
+                 JustifyContent="JustifyContent.Stretch"
+                 Gap="1.0rem"
+                 class="w-100 h-100">
 
-    <RequestsList Controller="@Service" @rendermode="InteractiveWebAssembly" />
+        <RequestsFilter Controller="@Service"
+                        CssClass="flex-shrink-0"
+                        @rendermode="InteractiveWebAssembly"/>
+
+        <RequestsList Controller="@Service"
+                      CssClass="flex-grow-1"
+                      @rendermode="InteractiveWebAssembly"/>
+
+        <RequestsFooter Controller="@Service"
+                        CssClass="flex-shrink-0"
+                        @rendermode="InteractiveWebAssembly" />
+
+    </RadzenStack>
 
 </RadzenPageContainer>

@@ -1,82 +1,45 @@
 ﻿@inherits BaseClientComponent
+
 @using C8S.Domain.Features.Requests.Enums
 @using SC.Common.Models
 
-<div class="c8s-requests-filter @CssClass">
-    <RadzenStack Orientation="Orientation.Vertical"
-                 AlignItems="AlignItems.Stretch"
+<div id="@ComponentId" class="c8s-page-filter c8s-requests-filter @CssClass">
+
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.Start"
-                 class="flex-shrink-0 c8s-page-header">
+                 Gap="0.25rem"
+                 class="w-100 h-100">
 
-        <RadzenStack Orientation="Orientation.Horizontal"
-                     AlignItems="AlignItems.Center"
-                     JustifyContent="JustifyContent.SpaceBetween"
-                     class="flex-shrink-0">
+        <RadzenTextBox @bind-Value="@Controller.Query"
+                       Change="@Controller.HandleQueryValueChange"
+                       class="flex-grow-1"/>
 
-            <RadzenText TagName="TagName.Div"
-                        TextStyle="TextStyle.Body1"
-                        TextAlign="TextAlign.Start"
-                        class="c8s-page-title">
-                Requests
-            </RadzenText>
+        <RadzenDropDown @bind-Value="@Controller.SelectedSort"
+                        Data="@Controller.SortDropDownOptions"
+                        TextProperty="@nameof(RequestsListController.SortDropDownOption.Display)"
+                        ValueProperty="@nameof(RequestsListController.SortDropDownOption.Value)"
+                        Multiple="false"
+                        AllowClear="false"
+                        Change="@Controller.HandleSortDropdownChange"
+                        class="flex-shrink-0"/>
 
-            <IconButton ButtonType="ButtonType.Button"
-                        ButtonStyle="ButtonStyle.Primary"
-                        IconString="@C8SConstants.Icons.Refresh"
-                        Text="Refresh"
+        <RadzenDropDown @bind-Value="@Controller.SelectedStatuses"
+                        Data="@Controller.StatusDropDownOptions"
+                        TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
+                        ValueProperty="@nameof(EnumLabel<RequestStatus>.Value)"
+                        Placeholder="Filter by Status"
+                        Multiple="true"
+                        AllowClear="true"
+                        Chips="false"
+                        Change="@Controller.HandleStatusDropdownChange"
                         class="flex-shrink-0" />
 
-        </RadzenStack>
-
-        <RadzenStack Orientation="Orientation.Horizontal"
-                     AlignItems="AlignItems.Center"
-                     JustifyContent="JustifyContent.Start"
-                     Gap="0.25rem"
-                     class="flex-shrink-0">
-
-            <RadzenTextBox @bind-Value="@Controller.Query"
-                           class="flex-grow-1" />
-            
-            <RadzenButton ButtonType="ButtonType.Button"
-                          ButtonStyle="ButtonStyle.Primary"
-                          Text="Search"
-                          Click="@Controller.RaiseSearchClicked"/>
-
-            @*
-<RadzenFieldset Text="Sort"
-       class="flex-shrink-0">
-<RadzenDropDown @ref="@_sortDropDown"
-           @bind-Value="@_selectedSort"
-           Data="@_sortDropDownOptions"
-           TextProperty="@nameof(SortDropDownOption.Display)"
-           ValueProperty="@nameof(SortDropDownOption.Value)"
-           Multiple="false"
-           AllowClear="false"
-           Change="@(async (a) => await HandleSortDropdownChange(a))" />
-</RadzenFieldset>
-
-<RadzenFieldset Text="Status"
-       class="flex-shrink-0">
-<RadzenDropDown @ref="@_statusDropDown"
-           @bind-Value="@_selectedStatuses"
-           Data="EnumLabel<RequestStatus>.GetAllEnumLabels()"
-           TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
-           ValueProperty="@nameof(EnumLabel<RequestStatus>.Value)"
-           Placeholder="Filter by Status"
-           Multiple="true"
-           AllowClear="true"
-           Chips="false"
-           Change="@(async (a) => await HandleStatusDropdownChange(a))" />
-</RadzenFieldset>
-*@
-        </RadzenStack>
-
-        <RadzenText TagName="TagName.Div"
-                    TextStyle="TextStyle.Body1"
-                    TextAlign="TextAlign.Center"
-                    class="flex-shrink-0 c8s-search-description">
-            Found: @(_totalCount?.ToString("#,##0"))
-        </RadzenText>
+        <RadzenButton ButtonType="ButtonType.Button"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Text="Clear"
+                      Click="@Controller.ClearFilter"
+                      class="flex-shrink-0"/>
 
     </RadzenStack>
 </div>
