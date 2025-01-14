@@ -1,6 +1,4 @@
-﻿using Blazr.RenderState;
-using C8S.AdminApp.Common.Interfaces;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
@@ -12,7 +10,7 @@ public sealed partial class SidebarMenu: BaseRazorComponent
     [Inject]
     public ILogger<SidebarMenu> Logger { get; set; } = null!;
 
-    [Inject]
-    public IPagesService PagesService { get; set; } = null!;
+    //[Inject]
+    //public IPagesService PagesService { get; set; } = null!;
     #endregion
 }

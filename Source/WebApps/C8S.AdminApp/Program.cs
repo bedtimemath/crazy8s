@@ -2,9 +2,7 @@ using Azure.Identity;
 using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
-using C8S.AdminApp.Client.Services.Pages;
-using C8S.AdminApp.Common.Dummies;
-using C8S.AdminApp.Common.Interfaces;
+using C8S.AdminApp.Client.Services.Data;
 using C8S.AdminApp.Hubs;
 using C8S.Domain;
 using C8S.Domain.AppConfigs;
@@ -124,12 +122,6 @@ try
     builder.Services.AddCommonHelpers();
     builder.Services.AddSCAuditContext(connections.Audit);
     builder.Services.AddC8SDbContext(connections.Database);
-
-    /*****************************************
-     * DUMMY SERVICES (for server-instantiated components)
-     */
-    builder.Services.AddSingleton<ICommunicationService, DummyCommunicationService>();
-    builder.Services.AddSingleton<IPagesService, DummyPagesService>();
 
     /*****************************************
      * MINIMAL APIS

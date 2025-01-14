@@ -1,0 +1,18 @@
+﻿@inherits BaseClientComponent
+
+<h3>Requests List</h3>
+
+<div>
+    <strong>Query:</strong> @Controller?.Query
+</div>
+
+@*
+
+   <RequestsListLister @ref="_requestsListLister"
+                       SortDescription="@_selectedSort"
+                       Statuses="@_selectedStatuses"
+                       TotalCountChanged="@((int c) => _totalCount = c)"
+                       ExceptionRaised="@(async (ex) => await RaiseExceptionAsync(ex))"
+                       CssClass="flex-grow-1" />
+
+*@

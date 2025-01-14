@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Common.Interfaces;
+﻿using C8S.AdminApp.Client.Services.Data;
 using Microsoft.AspNetCore.Components;
 using Radzen;
 using SC.Audit.Abstractions.Models;

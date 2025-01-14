@@ -3,7 +3,6 @@ using C8S.AdminApp.Client.Auth;
 using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Apis;
 using C8S.AdminApp.Client.Services.Extensions;
-using C8S.AdminApp.Common.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;

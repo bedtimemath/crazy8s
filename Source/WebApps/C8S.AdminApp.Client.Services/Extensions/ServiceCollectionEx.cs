@@ -1,6 +1,6 @@
-﻿using C8S.AdminApp.Client.Services.Data;
+﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
+using C8S.AdminApp.Client.Services.Data;
 using C8S.AdminApp.Client.Services.Pages;
-using C8S.AdminApp.Common.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace C8S.AdminApp.Client.Services.Extensions;
@@ -11,6 +11,8 @@ public static class ServiceCollectionEx
     {
         services.AddSingleton<ICommunicationService, CommunicationService>();
         services.AddSingleton<IPagesService, PagesService>();
+
+        services.AddTransient<RequestsListController>();
 
         return services;
     }
