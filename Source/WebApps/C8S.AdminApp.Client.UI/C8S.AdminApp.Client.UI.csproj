@@ -13,8 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="Blazr.RenderState.WASM" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
-    <PackageReference Include="Radzen.Blazor" Version="5.7.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.1" />
+    <PackageReference Include="Radzen.Blazor" Version="5.7.6" />
   </ItemGroup>
 
   <ItemGroup>
