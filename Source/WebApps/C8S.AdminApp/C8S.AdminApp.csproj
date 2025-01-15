@@ -15,6 +15,7 @@
     <ProjectReference Include="..\C8S.AdminApp.Client\C8S.AdminApp.Client.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj" />
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
     <PackageReference Include="Blazr.RenderState.Server" Version="1.0.0" />
     <PackageReference Include="Mediatr" Version="12.4.1" />

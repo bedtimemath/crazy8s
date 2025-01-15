@@ -1,4 +1,5 @@
-﻿using C8S.Domain.EFCore.Contexts;
+﻿using AutoMapper;
+using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.Features.Requests.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace C8S.AdminApp.Controllers;
 [ApiController]
 public class RequestController(
     ILoggerFactory loggerFactory,
+    IMapper mapper,
     IDbContextFactory<C8SDbContext> dbContextFactory) : ControllerBase
 {
     private readonly ILogger<RequestController> _logger = loggerFactory.CreateLogger<RequestController>();
@@ -31,18 +33,7 @@ public class RequestController(
 
             return new BackendResponse<RequestDetails>()
             {
-                // todo: switch to AutoMapper
-                Result = (request == null) ? null :
-                    new RequestDetails(
-                        request.RequestId,
-                        request.Status,
-                        request.PersonLastName,
-                        request.PersonEmail,
-                        request.PersonFirstName,
-                        request.SubmittedOn,
-                        request.PlaceName,
-                        request.PlaceCity,
-                        request.PlaceState)
+                Result = mapper.Map<RequestDetails?>(request)
             };
         }
         catch (Exception exception)

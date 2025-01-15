@@ -3,6 +3,7 @@ using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
 using C8S.AdminApp.Hubs;
+using C8S.AdminApp.MapProfiles;
 using C8S.Domain;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
@@ -109,6 +110,12 @@ try
         clientBuilder.AddBlobServiceClient(connections.AzureStorage);
         clientBuilder.AddQueueServiceClient(connections.AzureStorage);
     });
+
+    /*****************************************
+     * AUTOMAPPER
+     */
+    // RequestProfile is used arbitrarily here
+    builder.Services.AddAutoMapper(typeof(RequestProfile).Assembly);
 
     /*****************************************
      * MEDIATR

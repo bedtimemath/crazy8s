@@ -1,5 +1,6 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Text.Json;
+using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
@@ -14,6 +15,7 @@ namespace C8S.AdminApp.Controllers;
 [ApiController]
 public class RequestsController(
     ILoggerFactory loggerFactory,
+    IMapper mapper,
     IDbContextFactory<C8SDbContext> dbContextFactory) : ControllerBase
 {
     private readonly ILogger<RequestsController> _logger = loggerFactory.CreateLogger<RequestsController>();
@@ -64,18 +66,8 @@ public class RequestsController(
             {
                 Result = new RequestListResults()
                 {
-                    // todo: switch to AutoMapper
                     Items = requests
-                        .Select(a => new RequestListItem(
-                            a.RequestId,
-                            a.Status,
-                            a.PersonLastName,
-                            a.PersonEmail,
-                            a.PersonFirstName,
-                            a.SubmittedOn,
-                            a.PlaceName,
-                            a.PlaceCity,
-                            a.PlaceState))
+                        .Select(mapper.Map<RequestListItem>)
                         .ToList(),
                     Total = totalRequests
                 }
