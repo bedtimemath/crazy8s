@@ -1,15 +1,22 @@
-﻿using System.Text.Json.Serialization;
+﻿using C8S.Domain.Features.Requests.Enums;
+using System.Text.Json.Serialization;
 
 namespace C8S.Domain.Features.Requests.Models;
 
-public class RequestDetails : RequestBase
+public record RequestDetails(
+    // from base record
+    int RequestId,
+    RequestStatus Status,
+    string PersonLastName,
+    string PersonEmail,
+    // added for this record
+    string? PersonFirstName,
+    DateTimeOffset SubmittedOn,
+    string? PlaceName,
+    string? PlaceCity,
+    string? PlaceState
+) : RequestBase(RequestId, Status, PersonLastName, PersonEmail)
 {
-    public string? PersonFirstName { get; set; } = null;
-    public DateTimeOffset SubmittedOn { get; set; }
-    public string? PlaceName { get; set; } = null;
-    public string? PlaceCity { get; set; } = null;
-    public string? PlaceState { get; set; } = null;
-
     [JsonIgnore] 
     public string PersonFullName => 
         String.Join(" ", (new List<string?> {PersonFirstName, PersonLastName})

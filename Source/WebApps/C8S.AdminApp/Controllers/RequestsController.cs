@@ -64,17 +64,18 @@ public class RequestsController(
             {
                 Result = new RequestListResults()
                 {
+                    // todo: switch to AutoMapper
                     Items = requests
-                        .Select(a => new RequestListItem()
-                        {
-                            RequestId = a.RequestId,
-                            PersonFirstName = a.PersonFirstName,
-                            PersonLastName = a.PersonLastName,
-                            PersonEmail = a.PersonEmail,
-                            Status = a.Status,
-                            SubmittedOn = a.SubmittedOn,
-                            OrganizationName = a.PlaceName
-                        })
+                        .Select(a => new RequestListItem(
+                            a.RequestId,
+                            a.Status,
+                            a.PersonLastName,
+                            a.PersonEmail,
+                            a.PersonFirstName,
+                            a.SubmittedOn,
+                            a.PlaceName,
+                            a.PlaceCity,
+                            a.PlaceState))
                         .ToList(),
                     Total = totalRequests
                 }

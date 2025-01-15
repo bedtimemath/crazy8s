@@ -33,18 +33,16 @@ public class RequestController(
             {
                 // todo: switch to AutoMapper
                 Result = (request == null) ? null :
-                    new RequestDetails()
-                    {
-                        RequestId = request.RequestId,
-                        Status = request.Status,
-                        PersonLastName = request.PersonLastName,
-                        PersonEmail = request.PersonEmail,
-                        PersonFirstName = request.PersonFirstName,
-                        SubmittedOn = request.SubmittedOn,
-                        PlaceName = request.PlaceName,
-                        PlaceCity = request.PlaceCity,
-                        PlaceState = request.PlaceState
-                    }
+                    new RequestDetails(
+                        request.RequestId,
+                        request.Status,
+                        request.PersonLastName,
+                        request.PersonEmail,
+                        request.PersonFirstName,
+                        request.SubmittedOn,
+                        request.PlaceName,
+                        request.PlaceCity,
+                        request.PlaceState)
             };
         }
         catch (Exception exception)
