@@ -39,6 +39,12 @@ public class RequestsController(
                                                  r.PersonLastName.Contains(query.Query) ||
                                                  r.PersonEmail.Contains(query.Query));
             }
+
+            if (query.SinceWhen != null)
+            {
+                queryable = queryable.Where(r =>
+                    r.SubmittedOn >= query.SinceWhen.Value.ToDateTime(TimeOnly.MinValue));
+            }
             if (!String.IsNullOrEmpty(query.SortDescription)) 
                 queryable = queryable.OrderBy(query.SortDescription);
             if (query.Statuses != null && query.Statuses.Any())

@@ -18,8 +18,8 @@
 
         <RadzenDropDown @bind-Value="@Coordinator.SelectedSort"
                         Data="@Coordinator.SortDropDownOptions"
-                        TextProperty="@nameof(RequestsListCoordinator.SortDropDownOption.Display)"
-                        ValueProperty="@nameof(RequestsListCoordinator.SortDropDownOption.Value)"
+                        TextProperty="@nameof(RequestsListCoordinator.DropDownOption.Display)"
+                        ValueProperty="@nameof(RequestsListCoordinator.DropDownOption.Value)"
                         Multiple="false"
                         AllowClear="false"
                         Change="@Coordinator.HandleSortDropdownChange"
@@ -34,6 +34,16 @@
                         AllowClear="true"
                         Chips="false"
                         Change="@Coordinator.HandleStatusDropdownChange"
+                        class="flex-shrink-0" />
+
+        <RadzenDropDown @bind-Value="@Coordinator.SelectedSince"
+                        Data="@Coordinator.SinceDropDownOptions"
+                        TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
+                        ValueProperty="@nameof(EnumLabel<RequestStatus>.Value)"
+                        Placeholder="Submitted when"
+                        Multiple="false"
+                        AllowClear="true"
+                        Change="@Coordinator.HandleSinceDropdownChange"
                         class="flex-shrink-0" />
 
         <RadzenButton ButtonType="ButtonType.Button"

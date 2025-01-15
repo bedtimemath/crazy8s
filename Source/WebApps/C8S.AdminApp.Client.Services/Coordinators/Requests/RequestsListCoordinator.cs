@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using SC.Common.Interfaces;
 using SC.Common.Models;
 using SC.Common.Razor.Extensions;
 
@@ -13,7 +14,8 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
     IJSRuntime jsRuntime,
-    IMediator mediator)
+    IMediator mediator,
+    IDateTimeHelper dateTimeHelper)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";
@@ -27,7 +29,7 @@ public sealed class RequestsListCoordinator(
     #endregion
 
     #region ReadOnly Variables
-    public readonly IEnumerable<SortDropDownOption> SortDropDownOptions = [
+    public readonly IEnumerable<DropDownOption> SortDropDownOptions = [
         new( "Submitted (newest)", "SubmittedOn DESC" ),
         new( "Submitted (oldest)", "SubmittedOn ASC" ),
         new( "Starts On (soonest)", "RequestedClubs.Min(StartsOn) ASC" ),
@@ -36,6 +38,13 @@ public sealed class RequestsListCoordinator(
         new( "Last Name (Z-A)", "PersonLastName DESC" ),
         new( "Email (A-Z)", "PersonEmail ASC" ),
         new( "Email (Z-A)", "PersonEmail DESC" )
+    ];
+    public readonly IEnumerable<DropDownOption> SinceDropDownOptions = [
+        new( "Anytime", null ),
+        new( "In the last day", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddDays(-1)  ),
+        new( "In the last week", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddDays(-7)  ),
+        new( "In the last month", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddMonths(-1)  ),
+        new( "In the last year", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddYears(-1)  )
     ];
     public readonly IEnumerable<EnumLabel<RequestStatus>> StatusDropDownOptions = 
         EnumLabel<RequestStatus>.GetAllEnumLabels();
@@ -52,7 +61,7 @@ public sealed class RequestsListCoordinator(
 
     #region Public Properties
     public string SelectedSort { get; set; } = InitialSort;
-
+    public DateOnly? SelectedSince { get; set; } = null;
     public IList<RequestStatus> SelectedStatuses { get; set; } = [InitialStatus];
 
     public string? Query { get; set; } 
@@ -70,6 +79,7 @@ public sealed class RequestsListCoordinator(
     public void ClearFilter()
     {
         SelectedSort = InitialSort;
+        SelectedSince = null;
         SelectedStatuses = [InitialStatus];
         Query = null;
         TotalCount = null;
@@ -88,6 +98,7 @@ public sealed class RequestsListCoordinator(
                 Count = request.Count,
                 Query = Query,
                 SortDescription = SelectedSort,
+                SinceWhen = SelectedSince,
                 Statuses = SelectedStatuses
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
@@ -110,9 +121,10 @@ public sealed class RequestsListCoordinator(
     public void HandleQueryValueChange() => RaiseFilterChanged();
     public void HandleSortDropdownChange() => RaiseFilterChanged();
     public void HandleStatusDropdownChange() => RaiseFilterChanged();
+    public void HandleSinceDropdownChange() => RaiseFilterChanged();
     #endregion
 
     #region Internal Classes / Records
-    public record SortDropDownOption(string Display, string Value); 
+    public record DropDownOption(string Display, object? Value); 
     #endregion
 }
