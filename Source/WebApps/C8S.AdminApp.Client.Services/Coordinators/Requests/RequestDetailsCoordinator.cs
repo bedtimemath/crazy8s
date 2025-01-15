@@ -3,9 +3,9 @@ using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace C8S.AdminApp.Client.Services.Controllers.Requests;
+namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
-public sealed class RequestDetailsController(
+public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
     IMediator mediator)
 {
@@ -13,7 +13,7 @@ public sealed class RequestDetailsController(
     #endregion
 
     #region ReadOnly Constructor Variables
-    private readonly ILogger<RequestDetailsController> _logger = loggerFactory.CreateLogger<RequestDetailsController>();
+    private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();
     #endregion
 
     #region ReadOnly Variables

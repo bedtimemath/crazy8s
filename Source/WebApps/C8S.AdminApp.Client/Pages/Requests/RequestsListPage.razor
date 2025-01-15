@@ -1,5 +1,5 @@
 ﻿@page "/requests"
-@inherits BaseOwningRazorPage<RequestsListController>
+@inherits BaseOwningRazorPage<C8S.AdminApp.Client.Services.Coordinators.Requests.RequestsListCoordinator>
 @rendermode InteractiveWebAssembly
 
 <RadzenPageContainer HideDuringPreRender="true">
@@ -10,15 +10,15 @@
                  Gap="1.0rem"
                  class="w-100 h-100">
 
-        <RequestsFilter Controller="@Service"
+        <RequestsFilter Coordinator="@Service"
                         CssClass="flex-shrink-0"
                         @rendermode="InteractiveWebAssembly"/>
 
-        <RequestsList Controller="@Service"
+        <RequestsList Coordinator="@Service"
                       CssClass="flex-grow-1"
                       @rendermode="InteractiveWebAssembly"/>
 
-        <RequestsFooter Controller="@Service"
+        <RequestsFooter Coordinator="@Service"
                         CssClass="flex-shrink-0"
                         @rendermode="InteractiveWebAssembly" />
 

@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using C8S.AdminApp.Client.UI.Base;
 using C8S.Domain.Features.Requests.Models;
 using Microsoft.AspNetCore.Components;
@@ -16,7 +16,7 @@ public sealed partial class RequestsList : BaseClientComponent, IDisposable
 
     #region Component Parameters
     [Parameter]
-    public RequestsListController Controller { get; set; } = null!;
+    public RequestsListCoordinator Coordinator { get; set; } = null!;
     #endregion
 
     #region Component References
@@ -26,13 +26,13 @@ public sealed partial class RequestsList : BaseClientComponent, IDisposable
     #region Component LifeCycle
     protected override void OnInitialized()
     {
-        Controller.FilterChanged += HandleFilterChanged;
+        Coordinator.FilterChanged += HandleFilterChanged;
         base.OnInitialized();
     }
 
     public void Dispose()
     {
-        Controller.FilterChanged -= HandleFilterChanged;
+        Coordinator.FilterChanged -= HandleFilterChanged;
     }
     #endregion
 
@@ -46,6 +46,7 @@ public sealed partial class RequestsList : BaseClientComponent, IDisposable
     {
         await _listerComponent.RefreshDataAsync();
         await InvokeAsync(StateHasChanged);
+        await Coordinator.ScrollListToTop();
     }
     #endregion
 }

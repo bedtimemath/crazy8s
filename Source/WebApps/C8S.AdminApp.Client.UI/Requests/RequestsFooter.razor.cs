@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using C8S.AdminApp.Client.UI.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -12,17 +12,17 @@ public sealed partial class RequestsFooter: BaseClientComponent
     public ILogger<RequestsFooter> Logger { get; set; } = null!;
     
     [Parameter]
-    public RequestsListController Controller { get; set; } = null!;
+    public RequestsListCoordinator Coordinator { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        Controller.ListUpdated += HandleListUpdated;
+        Coordinator.ListUpdated += HandleListUpdated;
         base.OnInitialized();
     }
 
     public void Dispose()
     {
-        Controller.ListUpdated -= HandleListUpdated;
+        Coordinator.ListUpdated -= HandleListUpdated;
     }
 
     private void HandleListUpdated(object? sender, EventArgs e) => 

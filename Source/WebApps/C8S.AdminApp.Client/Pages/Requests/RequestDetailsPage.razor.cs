@@ -1,12 +1,12 @@
 ﻿using Blazr.RenderState;
-using C8S.AdminApp.Client.Services.Controllers.Requests;
+using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using Microsoft.AspNetCore.Components;
 using SC.Common.Radzen.Base;
 
 namespace C8S.AdminApp.Client.Pages.Requests;
 
 public sealed partial class RequestDetailsPage : 
-    BaseOwningRazorPage<RequestDetailsController>
+    BaseOwningRazorPage<RequestDetailsCoordinator>
 {
     [Inject]
     public ILogger<RequestDetailsPage> Logger { get; set; } = null!;

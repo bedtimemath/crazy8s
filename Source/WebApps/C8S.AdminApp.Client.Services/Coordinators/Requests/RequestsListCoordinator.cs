@@ -4,27 +4,34 @@ using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using SC.Common.Models;
+using SC.Common.Razor.Extensions;
 
-namespace C8S.AdminApp.Client.Services.Controllers.Requests;
+namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
-public sealed class RequestsListController(
+public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
+    IJSRuntime jsRuntime,
     IMediator mediator)
 {
     #region Constants & ReadOnlys
+    public const string ListerContainerId = "request-list-container";
+    
     private const string InitialSort = "SubmittedOn DESC";
     private const RequestStatus InitialStatus = RequestStatus.Received;
     #endregion
 
     #region ReadOnly Constructor Variables
-    private readonly ILogger<RequestsListController> _logger = loggerFactory.CreateLogger<RequestsListController>();
+    private readonly ILogger<RequestsListCoordinator> _logger = loggerFactory.CreateLogger<RequestsListCoordinator>();
     #endregion
 
     #region ReadOnly Variables
     public readonly IEnumerable<SortDropDownOption> SortDropDownOptions = [
         new( "Submitted (newest)", "SubmittedOn DESC" ),
         new( "Submitted (oldest)", "SubmittedOn ASC" ),
+        new( "Starts On (soonest)", "RequestedClubs.Min(StartsOn) ASC" ),
+        new( "Starts On (latest)", "RequestedClubs.Max(StartsOn) DESC" ),
         new( "Last Name (A-Z)", "PersonLastName ASC" ),
         new( "Last Name (Z-A)", "PersonLastName DESC" ),
         new( "Email (A-Z)", "PersonEmail ASC" ),
@@ -54,6 +61,12 @@ public sealed class RequestsListController(
     #endregion
 
     #region Public Methods
+
+    public async Task ScrollListToTop()
+    {
+        await jsRuntime.ScrollToTop(ListerContainerId);
+    }
+    
     public void ClearFilter()
     {
         SelectedSort = InitialSort;

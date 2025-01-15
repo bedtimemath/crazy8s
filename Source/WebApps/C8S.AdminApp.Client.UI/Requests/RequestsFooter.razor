@@ -1,6 +1,6 @@
 ﻿@inherits BaseClientComponent
 
-<div id="@ComponentId" class="c8s-page-footer c8s-requests-footer @CssClass">
+<div id="@ComponentId" class="c8s-listpage-footer c8s-requests-footer @CssClass">
     
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
@@ -12,7 +12,7 @@
                     TextStyle="TextStyle.Body1"
                     TextAlign="TextAlign.Center"
                     class="flex-grow-1">
-            Found: @(Controller.TotalCount?.ToString("#,##0"))
+            Found: @(Coordinator.TotalCount?.ToString("#,##0"))
         </RadzenText>
 
     </RadzenStack>

@@ -1,6 +1,6 @@
 ﻿@inherits BaseClientComponent
 
-<div id="@ComponentId" class="c8s-details-header c8s-request-header @CssClass">
+<div id="@ComponentId" class="c8s-detailspage-header c8s-request-header @CssClass">
 
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
@@ -12,7 +12,7 @@
                     TextAlign="TextAlign.Left"
                     TextStyle="TextStyle.Body1"
                     class="flex-grow-1">
-            @Controller.PageTitle
+            @Coordinator.PageTitle
         </RadzenText>
         
         <IconButton ButtonType="ButtonType.Button"

@@ -121,6 +121,13 @@ public class RequestDb : BaseCoreDb
     public SaleDb? Sale { get; set; }
     #endregion
 
+    #region Derived Properties
+    public DateOnly? FirstClubStartsOn =>
+        RequestedClubs?.OrderByDescending(rc => rc.StartsOn).Select(rc => rc.StartsOn).FirstOrDefault();
+    public DateOnly? LastClubStartsOn =>
+        RequestedClubs?.OrderBy(rc => rc.StartsOn).Select(rc => rc.StartsOn).FirstOrDefault();
+    #endregion
+
     #region Reference Collections
     public ICollection<RequestedClubDb> RequestedClubs { get; set; } = default!;
     public ICollection<RequestNoteDb> Notes { get; set; } = default!;

@@ -1,5 +1,5 @@
 ﻿@page "/request/{RequestId:int}"
-@inherits BaseOwningRazorPage<RequestDetailsController>
+@inherits BaseOwningRazorPage<C8S.AdminApp.Client.Services.Coordinators.Requests.RequestDetailsCoordinator>
 @rendermode InteractiveWebAssembly
 
 <RadzenPageContainer HideDuringPreRender="true">
@@ -10,7 +10,7 @@
                  Gap="1.0rem"
                  class="w-100 h-100">
 
-        <RequestHeader Controller="@Service"
+        <RequestHeader Coordinator="@Service"
                        CssClass="flex-shrink-0"
                        @rendermode="InteractiveWebAssembly" />
         

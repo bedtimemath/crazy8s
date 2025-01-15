@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using C8S.AdminApp.Client.UI.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -10,17 +10,17 @@ public sealed partial class RequestHeader: BaseClientComponent
     public ILogger<RequestHeader> Logger { get; set; } = null!;
     
     [Parameter]
-    public RequestDetailsController Controller { get; set; } = null!;
+    public RequestDetailsCoordinator Coordinator { get; set; } = null!;
 
     protected override void OnInitialized()
     {
-        Controller.DetailsUpdated += HandleDetailsUpdated;
+        Coordinator.DetailsUpdated += HandleDetailsUpdated;
         base.OnInitialized();
     }
 
     public void Dispose()
     {
-        Controller.DetailsUpdated -= HandleDetailsUpdated;
+        Coordinator.DetailsUpdated -= HandleDetailsUpdated;
     }
 
     private void HandleDetailsUpdated(object? sender, EventArgs e) => 

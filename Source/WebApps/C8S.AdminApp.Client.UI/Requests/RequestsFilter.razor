@@ -1,9 +1,10 @@
 ﻿@inherits BaseClientComponent
 
+@using C8S.AdminApp.Client.Services.Coordinators.Requests
 @using C8S.Domain.Features.Requests.Enums
 @using SC.Common.Models
 
-<div id="@ComponentId" class="c8s-page-filter c8s-requests-filter @CssClass">
+<div id="@ComponentId" class="c8s-listpage-filter c8s-requests-filter @CssClass">
 
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
@@ -11,34 +12,34 @@
                  Gap="0.25rem"
                  class="w-100 h-100">
 
-        <RadzenTextBox @bind-Value="@Controller.Query"
-                       Change="@Controller.HandleQueryValueChange"
+        <RadzenTextBox @bind-Value="@Coordinator.Query"
+                       Change="@Coordinator.HandleQueryValueChange"
                        class="flex-grow-1"/>
 
-        <RadzenDropDown @bind-Value="@Controller.SelectedSort"
-                        Data="@Controller.SortDropDownOptions"
-                        TextProperty="@nameof(RequestsListController.SortDropDownOption.Display)"
-                        ValueProperty="@nameof(RequestsListController.SortDropDownOption.Value)"
+        <RadzenDropDown @bind-Value="@Coordinator.SelectedSort"
+                        Data="@Coordinator.SortDropDownOptions"
+                        TextProperty="@nameof(RequestsListCoordinator.SortDropDownOption.Display)"
+                        ValueProperty="@nameof(RequestsListCoordinator.SortDropDownOption.Value)"
                         Multiple="false"
                         AllowClear="false"
-                        Change="@Controller.HandleSortDropdownChange"
+                        Change="@Coordinator.HandleSortDropdownChange"
                         class="flex-shrink-0"/>
 
-        <RadzenDropDown @bind-Value="@Controller.SelectedStatuses"
-                        Data="@Controller.StatusDropDownOptions"
+        <RadzenDropDown @bind-Value="@Coordinator.SelectedStatuses"
+                        Data="@Coordinator.StatusDropDownOptions"
                         TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
                         ValueProperty="@nameof(EnumLabel<RequestStatus>.Value)"
                         Placeholder="Filter by Status"
                         Multiple="true"
                         AllowClear="true"
                         Chips="false"
-                        Change="@Controller.HandleStatusDropdownChange"
+                        Change="@Coordinator.HandleStatusDropdownChange"
                         class="flex-shrink-0" />
 
         <RadzenButton ButtonType="ButtonType.Button"
                       ButtonStyle="ButtonStyle.Primary"
                       Text="Clear"
-                      Click="@Controller.ClearFilter"
+                      Click="@Coordinator.ClearFilter"
                       class="flex-shrink-0"/>
 
     </RadzenStack>
