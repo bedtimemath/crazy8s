@@ -5,10 +5,12 @@ namespace C8S.Domain.Features.Requests;
 public record RequestAbstract : RequestBase
 {
     public string? PersonFirstName { get; init; }
-    public DateTimeOffset SubmittedOn { get; init; }
     public string? OrganizationName { get; init; }
     public string? OrganizationCity { get; init; }
     public string? OrganizationState { get; init; }
+    public DateTimeOffset? AppointmentScheduledFor { get; init; }
+    public List<DateOnly> StartDates { get; init; } = new();
+    public DateTimeOffset SubmittedOn { get; init; }
         
     [JsonIgnore] 
     public string PersonFullName => 

@@ -18,7 +18,7 @@
 
             <RadzenText TagName="TagName.H4"
                         TextStyle="TextStyle.DisplayH4"
-                        Text="@Request.PersonFullName" />
+                        Text="@Request.PersonFullName"/>
 
             <RadzenStack Orientation="Orientation.Horizontal"
                          AlignItems="AlignItems.Start"
@@ -35,19 +35,19 @@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.PersonEmail" />
+                                Text="@Request.PersonEmail"/>
 
                     @* SCHOOL *@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.OrganizationName" />
+                                Text="@Request.OrganizationName"/>
 
                     @* CITY, STATE *@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.OrganizationCityState" />
+                                Text="@Request.OrganizationCityState"/>
 
                 </RadzenStack>
                 @* COLUMN #1 *@
@@ -67,12 +67,12 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Caption"
                                     TextAlign="TextAlign.Start"
-                                    Text="Status:" />
+                                    Text="Status:"/>
 
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
                                     TextAlign="TextAlign.Start"
-                                    Text="@Request.Status.GetLabel()" />
+                                    Text="@Request.Status.GetLabel()"/>
 
                     </RadzenStack>
 
@@ -85,17 +85,44 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Caption"
                                     TextAlign="TextAlign.Start"
-                                    Text="Submitted:" />
+                                    Text="Submitted:"/>
 
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
                                     TextAlign="TextAlign.Start"
-                                    Text="@Request.SubmittedOn.ToString("D")" />
+                                    Text="@Request.SubmittedOn.ToString("D")"/>
 
                     </RadzenStack>
 
                 </RadzenStack>
                 @* COLUMN #2 *@
+
+                @* COLUMN #3 *@
+                <RadzenStack Orientation="Orientation.Vertical"
+                             AlignItems="AlignItems.Stretch"
+                             JustifyContent="JustifyContent.Start"
+                             Gap="0">
+
+                    @* START DATES *@
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0.25rem">
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Caption"
+                                    TextAlign="TextAlign.Start"
+                                    Text="Start Dates:"/>
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Body1"
+                                    TextAlign="TextAlign.Start"
+                                    Text="@(String.Join("; ",Request.StartDates.Select(d => d.ToOptionalYearStringWithDay())))" />
+
+                    </RadzenStack>
+
+                </RadzenStack>
+                @* COLUMN #3 *@
 
             </RadzenStack>
         </RadzenStack>
@@ -111,7 +138,7 @@
                           Click="@(() => Sender.Send(new OpenPageCommand(
                                      AdminAppConstants.Pages.RequestDetails,
                                      Request.ToString() ?? SoftCrowConstants.Display.NotSet,
-                                     Request.RequestId)))" />
+                                     Request.RequestId)))"/>
 
         </RadzenStack>
     </RadzenStack>
