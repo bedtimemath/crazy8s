@@ -1,6 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
 using C8S.AdminApp.Client.UI.Base;
-using C8S.Domain.Features.Requests.Lists;
+using C8S.Domain.Features.Requests.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;

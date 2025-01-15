@@ -160,6 +160,18 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
         entity.Property(m => m.Comments)
             .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
             .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string? FullSlateClientId { get; set; }
+        entity.Property(m => m.FullSlateClientId)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .IsRequired(false);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string? FullSlateAppointmentId { get; set; }
+        entity.Property(m => m.FullSlateAppointmentId)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .IsRequired(false);
         #endregion
 
         #region Reference Properties

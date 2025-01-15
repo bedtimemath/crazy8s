@@ -3,9 +3,9 @@
     "C8S.UtilityApp": {
       "commandName": "Project"
     },
-    "Add Application": {
+    "Add Request": {
       "commandName": "Project",
-      "commandLineArgs": "add-application"
+      "commandLineArgs": "add-request"
     },
     "Load C8s Data": {
       "commandName": "Project",

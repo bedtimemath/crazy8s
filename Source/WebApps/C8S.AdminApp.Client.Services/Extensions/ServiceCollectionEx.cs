@@ -12,7 +12,8 @@ public static class ServiceCollectionEx
         services.AddSingleton<ICommunicationService, CommunicationService>();
         services.AddSingleton<IPagesService, PagesService>();
 
-        services.AddTransient<RequestsListController>();
+        services.AddScoped<RequestsListController>();
+        services.AddScoped<RequestDetailsController>();
 
         return services;
     }

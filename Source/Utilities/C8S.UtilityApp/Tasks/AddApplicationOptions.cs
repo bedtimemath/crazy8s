@@ -3,7 +3,7 @@ using CommandLine;
 
 namespace C8S.UtilityApp.Tasks;
 
-[Verb(name:"add-application", isDefault:false, HelpText = "Add an application and call the endpoint.")]
-internal class AddApplicationOptions: StandardConsoleOptions
+[Verb(name:"add-request", isDefault:false, HelpText = "Add a request and call the endpoint.")]
+internal class AddRequestOptions: StandardConsoleOptions
 {
 }

@@ -104,7 +104,7 @@ try
             .WithParsed<AddApplicationOptions>(options =>
             {
                 services.AddSingleton(options);
-                services.AddSingleton<IActionLauncher, AddApplication>();
+                services.AddSingleton<IActionLauncher, AddRequest>();
             })
             .WithParsed<LoadSampleDataOptions>(options =>
             {

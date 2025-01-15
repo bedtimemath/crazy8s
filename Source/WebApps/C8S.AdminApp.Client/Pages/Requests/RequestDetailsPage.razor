@@ -1,4 +1,44 @@
 ﻿@page "/request/{RequestId:int}"
-@inherits BaseRazorPage
+@inherits BaseOwningRazorPage<RequestDetailsController>
+@rendermode InteractiveWebAssembly
 
-<h3>Request Details Page: #@RequestId</h3>
+<RadzenPageContainer HideDuringPreRender="true">
+
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Stretch"
+                 JustifyContent="JustifyContent.Stretch"
+                 Gap="1.0rem"
+                 class="w-100 h-100">
+
+        <RequestHeader Controller="@Service"
+                       CssClass="flex-shrink-0"
+                       @rendermode="InteractiveWebAssembly" />
+        
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.Stretch">
+            
+            <RadzenCard class="flex-grow-1">
+                Details
+            </RadzenCard>
+            
+            <RadzenCard class="flex-shrink-0" style="min-width: 30%">
+                Notes
+            </RadzenCard>
+
+        </RadzenStack>
+
+        @*
+   <RequestsList Controller="@Service"
+                 CssClass="flex-grow-1"
+                 @rendermode="InteractiveWebAssembly" />
+
+   <RequestsFooter Controller="@Service"
+                   CssClass="flex-shrink-0"
+                   @rendermode="InteractiveWebAssembly" />
+        *@
+
+    </RadzenStack>
+
+
+</RadzenPageContainer>

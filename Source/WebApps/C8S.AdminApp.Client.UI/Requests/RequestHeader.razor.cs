@@ -1,0 +1,28 @@
+﻿using C8S.AdminApp.Client.Services.Controllers.Requests;
+using C8S.AdminApp.Client.UI.Base;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
+namespace C8S.AdminApp.Client.UI.Requests;
+
+public sealed partial class RequestHeader: BaseClientComponent
+{
+    [Inject]
+    public ILogger<RequestHeader> Logger { get; set; } = null!;
+    
+    [Parameter]
+    public RequestDetailsController Controller { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        Controller.DetailsUpdated += HandleDetailsUpdated;
+        base.OnInitialized();
+    }
+
+    public void Dispose()
+    {
+        Controller.DetailsUpdated -= HandleDetailsUpdated;
+    }
+
+    private void HandleDetailsUpdated(object? sender, EventArgs e) => 
+        StateHasChanged();
+}

@@ -1,5 +1,4 @@
 ﻿@inherits SC.Common.Razor.Base.BaseRazorComponent
-@rendermode InteractiveWebAssembly
 
 @using C8S.AdminApp.Client.Services.Pages
 @using C8S.AdminApp.Common
@@ -19,7 +18,7 @@
 
             <RadzenText TagName="TagName.H4"
                         TextStyle="TextStyle.DisplayH4"
-                        Text="@Request.ApplicantFullName" />
+                        Text="@Request.PersonFullName" />
 
             <RadzenStack Orientation="Orientation.Horizontal"
                          AlignItems="AlignItems.Start"
@@ -36,7 +35,7 @@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.ApplicantEmail" />
+                                Text="@Request.PersonEmail" />
 
                     @* SCHOOL *@
                     <RadzenText TagName="TagName.Div"

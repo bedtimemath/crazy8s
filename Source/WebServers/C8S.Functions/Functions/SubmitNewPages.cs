@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Web;
 using Azure.Storage.Blobs;
+using C8S.Domain;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
@@ -28,7 +29,7 @@ using Exception = System.Exception;
 
 namespace C8S.Functions.Functions;
 
-public class SubmitNewPages(
+public partial class SubmitNewPages(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory,
     IDateTimeHelper dateTimeHelper,
@@ -42,7 +43,7 @@ public class SubmitNewPages(
     private const string CoachResponse = "I'm a coach";
     private const string HostedBeforeResponse = "We've hosted before";
     private const string NoWorkshopCodeResponse = "No";
-    private readonly Dictionary<string, string> _formLookup = new Dictionary<string, string>()
+    private readonly Dictionary<string, string> _formLookup = new()
     {
         { "FirstName", "wpforms[fields][7][first]" },
         { "LastName", "wpforms[fields][7][last]" },
@@ -68,8 +69,7 @@ public class SubmitNewPages(
         { "ReferenceSourceOther", "wpforms[fields][71]" },
         { "Comments", "wpforms[fields][73]" }
     };
-
-    private readonly Regex _parseStateFull = new Regex(@".*\((?<code>[A-Z][A-Z])\)");
+    
     #endregion
 
     #region Function Methods
@@ -157,7 +157,7 @@ public class SubmitNewPages(
 
             // if the person doesn't have a club or place, then it's okay
             if (existing != null &&
-                existing.ClubPersons.Any() && existing.Place != null)
+                existing.ClubPersons.Count == 0 && existing.Place != null)
             {
                 // redirect to the 'existing' page
                 httpResponse = req.CreateResponse(HttpStatusCode.Redirect);
@@ -232,7 +232,7 @@ public class SubmitNewPages(
             var taxId = formData.Parameters.FirstOrDefault(p => p.Name == _formLookup["TaxId"])?.Data;
 
             // the full state name is too long, but in case the values get changed, we'll use the best we can
-            var stateMatch = _parseStateFull.Match(stateFull ?? String.Empty);
+            var stateMatch = AdminAppRegex.GetStateCodeMatch(stateFull ?? String.Empty);
             var state = stateMatch.Success ? stateMatch.Groups["code"].Value : 
                 (stateFull ?? String.Empty).LimitTo(SoftCrowConstants.MaxLengths.Tiny);
 
@@ -468,7 +468,7 @@ public class SubmitNewPages(
                 }
                 var errorMessages = appointmentResponse.Errors?
                     .Select(e => RemoveSupportTeamMessage(e.ErrorMessage))?
-                    .ToList() ?? new List<string>();
+                    .ToList() ?? [];
                 
                 // back out the application
                 try
@@ -482,7 +482,7 @@ public class SubmitNewPages(
                 }
 
                 // return the error messages to the user
-                if (!errorMessages.Any()) errorMessages.Add("Unknown Error");
+                if (errorMessages.Count != 0) errorMessages.Add("Unknown Error");
                 return GetPage5ErrorMessageResponse(req, guidCode,
                     $"ERROR: {String.Join("; ", errorMessages)} Please try again later.");
             }

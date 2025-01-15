@@ -176,7 +176,6 @@ ul.rz-profile-menu {
     }
 }
 
-
 /** PAGE CLASSES **/
 .c8s-page-title {
     color: var(--c8s-light);
@@ -207,9 +206,22 @@ ul.rz-profile-menu {
     flex-grow: 0;
 }
 
-.c8s-page-footer .rz-text-body1 {
-    color: var(--c8s-light);
+    .c8s-page-footer .rz-text-body1 {
+        color: var(--c8s-light);
+    }
+
+.c8s-details-header {
+    background-color: var(--c8s-primary-mid);
+    padding: 0.5rem;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
+
+    .c8s-details-header .rz-text-body1,
+    .c8s-details-header .rzi {
+        color: var(--c8s-light);
+    }
+
 
 /** LIST PAGES **/
 .c8s-search-description {

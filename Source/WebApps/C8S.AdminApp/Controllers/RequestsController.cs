@@ -1,7 +1,7 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Text.Json;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.Features.Requests.Lists;
+using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -68,9 +68,9 @@ public class RequestsController(
                         .Select(a => new RequestListItem()
                         {
                             RequestId = a.RequestId,
-                            ApplicantFirstName = a.PersonFirstName,
-                            ApplicantLastName = a.PersonLastName,
-                            ApplicantEmail = a.PersonEmail,
+                            PersonFirstName = a.PersonFirstName,
+                            PersonLastName = a.PersonLastName,
+                            PersonEmail = a.PersonEmail,
                             Status = a.Status,
                             SubmittedOn = a.SubmittedOn,
                             OrganizationName = a.PlaceName

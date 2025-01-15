@@ -7,7 +7,7 @@ public class RequestBase
     #region Id Property
     public int RequestId { get; set; }
     public RequestStatus Status { get; set; }
-    public string ApplicantLastName { get; set; } = default!;
-    public string ApplicantEmail { get; set; } = default!;
+    public string PersonLastName { get; set; } = null!;
+    public string PersonEmail { get; set; } = null!;
     #endregion
 }

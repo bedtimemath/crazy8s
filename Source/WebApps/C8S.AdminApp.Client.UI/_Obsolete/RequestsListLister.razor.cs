@@ -1,6 +1,6 @@
 ﻿using Blazr.RenderState;
 using C8S.Domain.Features.Requests.Enums;
-using C8S.Domain.Features.Requests.Lists;
+using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Components;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
-namespace C8S.AdminApp.Client.UI.Requests;
+namespace C8S.AdminApp.Client.UI._Obsolete;
 
 public partial class RequestsListLister : BaseRazorComponent
 {

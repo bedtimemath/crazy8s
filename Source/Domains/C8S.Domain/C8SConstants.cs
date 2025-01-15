@@ -19,11 +19,12 @@ public static class C8SConstants
 
     public static class Icons
     {
-        public const string Request = "clipboard-list";
+        public const string Close = "circle-xmark";
         public const string Coach = "user-hair-long";
         public const string Order = "cart-shopping";
         public const string Organization = "school";
         public const string Refresh = "arrow-rotate-right";
+        public const string Request = "clipboard-list";
         public const string Sku = "barcode";
         public const string Settings = "gear";
     }

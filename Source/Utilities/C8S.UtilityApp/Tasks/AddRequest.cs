@@ -13,8 +13,8 @@ using SC.Common.Interfaces;
 
 namespace C8S.UtilityApp.Tasks;
 
-internal class AddApplication(
-    ILogger<AddApplication> logger,
+internal class AddRequest(
+    ILogger<AddRequest> logger,
     IRandomizer randomizer,
     IDbContextFactory<C8SDbContext> dbContextFactory,
     IHttpClientFactory httpClientFactory)
@@ -22,7 +22,7 @@ internal class AddApplication(
 {
     public async Task<int> Launch()
     {
-        Console.WriteLine($"=== {nameof(AddApplication)} ===");
+        Console.WriteLine($"=== {nameof(AddRequest)} ===");
 
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var cnnString = dbContext.Database.GetConnectionString();
@@ -84,7 +84,7 @@ internal class AddApplication(
             logger.LogError(ex, "Could not post to endpoint");
         }
 
-        logger.LogInformation("{Name}: complete.", nameof(AddApplication));
+        logger.LogInformation("{Name}: complete.", nameof(AddRequest));
         return 0;
     }
 }

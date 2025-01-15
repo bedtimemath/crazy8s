@@ -1,5 +1,5 @@
 ﻿using C8S.Domain.Features.Requests.Enums;
-using C8S.Domain.Features.Requests.Lists;
+using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Components.Web.Virtualization;

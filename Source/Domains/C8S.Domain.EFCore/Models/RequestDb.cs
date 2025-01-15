@@ -97,6 +97,12 @@ public class RequestDb : BaseCoreDb
 
     [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Comments { get; set; }
+    
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    public string? FullSlateClientId { get; set; }
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    public string? FullSlateAppointmentId { get; set; }
 
     [Required]
     public DateTimeOffset SubmittedOn { get; set; } = default!;
