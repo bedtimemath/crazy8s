@@ -17,7 +17,7 @@ namespace C8S.Domain.EFCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -559,11 +559,8 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("FullSlateAppointmentId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullSlateClientId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<long?>("FullSlateAppointmentId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");

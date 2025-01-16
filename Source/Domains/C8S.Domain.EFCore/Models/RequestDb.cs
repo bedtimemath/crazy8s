@@ -89,6 +89,8 @@ public class RequestDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? WorkshopCode { get; set; }
 
+    public long? FullSlateAppointmentId { get; set; }
+
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? ReferenceSource { get; set; }
 
@@ -97,12 +99,6 @@ public class RequestDb : BaseCoreDb
 
     [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
     public string? Comments { get; set; }
-    
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? FullSlateClientId { get; set; }
-
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? FullSlateAppointmentId { get; set; }
 
     [Required]
     public DateTimeOffset SubmittedOn { get; set; } = default!;

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20241231173015_AddIdsToUnfinished")]
-    partial class AddIdsToUnfinished
+    [Migration("20250116143439_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -562,6 +562,9 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<long?>("FullSlateAppointmentId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
@@ -892,11 +895,11 @@ namespace C8S.Domain.EFCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UnfinishedId"));
 
+                    b.Property<bool?>("AddressHasChanged")
+                        .HasColumnType("bit");
+
                     b.Property<DateTimeOffset?>("ChosenTimeSlot")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("ClubId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ClubsString")
                         .HasMaxLength(1024)

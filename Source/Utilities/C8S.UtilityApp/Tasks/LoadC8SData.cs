@@ -252,6 +252,7 @@ internal class LoadC8SData(
                     WorkshopCode = sqlApplication.WorkshopCode,
                     ReferenceSource = null,
                     ReferenceSourceOther = null,
+                    FullSlateAppointmentId = sqlApplication.AppointmentId,
                     Comments = sqlApplication.Comments,
                     SubmittedOn = sqlApplication.SubmittedOn ?? throw new Exception("Missing Submitted On"),
                     CreatedOn = sqlApplication.CreatedOn

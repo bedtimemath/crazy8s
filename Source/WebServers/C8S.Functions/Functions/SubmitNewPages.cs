@@ -424,13 +424,14 @@ public partial class SubmitNewPages(
             if (String.IsNullOrEmpty(unfinished.PersonLastName)) throw new Exception("Person missing last name.");
             if (String.IsNullOrEmpty(unfinished.PersonEmail)) throw new Exception("Person missing email.");
             if (String.IsNullOrEmpty(unfinished.PersonPhone)) throw new Exception("Person missing phone.");
+            
+            // save the unfinished before making the request, since that requires the appt
+            await dbContext.SaveChangesAsync();
 
             // create the application & clubs
             var request = unfinished.ToRequest(dateTimeHelper);
             await dbContext.Requests.AddAsync(request);
             unfinished.Request = request;
-
-            await dbContext.SaveChangesAsync();
 
             /*** FULL SLATE ***/
             // convert timeslot to eastern time
@@ -470,22 +471,17 @@ public partial class SubmitNewPages(
                     .Select(e => RemoveSupportTeamMessage(e.ErrorMessage))?
                     .ToList() ?? [];
                 
-                // back out the application
-                try
-                {
-                    dbContext.Requests.Remove(request);
-                    await dbContext.SaveChangesAsync();
-                }
-                catch (Exception exception)
-                {
-                    errorMessages.Add($"Could not remove application: {exception.Message}");
-                }
+                // we don't have to worry about backing out the db, since it wasn't saved
 
                 // return the error messages to the user
                 if (errorMessages.Count != 0) errorMessages.Add("Unknown Error");
                 return GetPage5ErrorMessageResponse(req, guidCode,
                     $"ERROR: {String.Join("; ", errorMessages)} Please try again later.");
             }
+
+            /*** UPDATE W/APPT ***/
+            request.FullSlateAppointmentId = appointmentResponse.Data?.Id;
+            await dbContext.SaveChangesAsync();
 
             /*** COMPLETE ***/
             // call the admin app endpoint to let it know

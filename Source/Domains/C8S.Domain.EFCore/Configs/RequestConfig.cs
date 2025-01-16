@@ -143,6 +143,10 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
+        //public long? FullSlateAppointmentId { get; set; }
+        entity.Property(m => m.FullSlateAppointmentId)
+            .IsRequired(false);
+
         //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
         //public string? ReferenceSource { get; set; }
         entity.Property(m => m.ReferenceSource)
@@ -159,18 +163,6 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
         //public string? Comments { get; set; }
         entity.Property(m => m.Comments)
             .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
-            .IsRequired(false);
-
-        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
-        //public string? FullSlateClientId { get; set; }
-        entity.Property(m => m.FullSlateClientId)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .IsRequired(false);
-
-        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
-        //public string? FullSlateAppointmentId { get; set; }
-        entity.Property(m => m.FullSlateAppointmentId)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .IsRequired(false);
         #endregion
 
