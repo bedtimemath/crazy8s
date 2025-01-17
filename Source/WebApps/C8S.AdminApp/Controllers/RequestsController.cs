@@ -33,6 +33,7 @@ public class RequestsController(
                 .AsSingleQuery()
                 .AsNoTracking();
 
+            /*** QUERY ***/
             if (!String.IsNullOrEmpty(query.Query))
             {
                 queryable = queryable.Where(r => (!String.IsNullOrEmpty(r.PersonFirstName) && r.PersonFirstName.Contains(query.Query)) ||
@@ -40,13 +41,25 @@ public class RequestsController(
                                                  r.PersonEmail.Contains(query.Query));
             }
 
+            /*** HAS COACH CALL ***/
+            if (query.HasCoachCall != null)
+            {
+                queryable = queryable.Where(r => 
+                    (r.FullSlateAppointmentStartsOn == null ^ query.HasCoachCall.Value));
+            }
+
+            /*** SINCE WHEN ***/
             if (query.SinceWhen != null)
             {
                 queryable = queryable.Where(r =>
                     r.SubmittedOn >= query.SinceWhen.Value.ToDateTime(TimeOnly.MinValue));
             }
+
+            /*** SORT ***/
             if (!String.IsNullOrEmpty(query.SortDescription)) 
                 queryable = queryable.OrderBy(query.SortDescription);
+
+            /*** STATUS ***/
             if (query.Statuses != null && query.Statuses.Any())
             {
                 var statusClauses = new List<string>();

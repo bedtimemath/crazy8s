@@ -5,13 +5,13 @@ using C8S.Domain.Features.Requests.Models;
 
 namespace C8S.Domain.Features.Requests.Queries;
 
-
-public class RequestsListQuery : IRequest<BackendResponse<RequestListResults>>
+public record RequestsListQuery : IRequest<BackendResponse<RequestListResults>>
 {
-    public int? StartIndex { get; set; }
-    public int? Count { get; set; }
-    public string? Query { get; set; }
-    public string? SortDescription { get; set; }
-    public DateOnly? SinceWhen { get; set; }
-    public IList<RequestStatus>? Statuses { get; set; }
+    public int? StartIndex { get; init; }
+    public int? Count { get; init; }
+    public string? Query { get; init; }
+    public string? SortDescription { get; init; }
+    public DateOnly? SinceWhen { get; init; }
+    public bool? HasCoachCall { get; init; }
+    public IList<RequestStatus>? Statuses { get; init; }
 }

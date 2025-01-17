@@ -2,7 +2,7 @@
 
 namespace C8S.Domain.Features.Requests.Models;
 
-public record RequestBase
+public abstract record RequestBase
 {
     public int RequestId { get; init; }
     public RequestStatus Status { get; init; }

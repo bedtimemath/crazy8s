@@ -5,7 +5,7 @@ using MediatR;
 namespace C8S.Domain.Features.Requests.Queries;
 
 
-public class RequestDetailsQuery : IRequest<BackendResponse<RequestDetails?>>
+public record RequestDetailsQuery : IRequest<BackendResponse<RequestDetails?>>
 {
-    public int RequestId { get; set; }
+    public int RequestId { get; init; }
 }

@@ -32,8 +32,8 @@ public sealed class RequestsListCoordinator(
     public readonly IEnumerable<DropDownOption> SortDropDownOptions = [
         new( "Submitted (newest)", "SubmittedOn DESC" ),
         new( "Submitted (oldest)", "SubmittedOn ASC" ),
-        new( "Starts On (soonest)", "RequestedClubs.Min(StartsOn) ASC" ),
-        new( "Starts On (latest)", "RequestedClubs.Max(StartsOn) DESC" ),
+        new( "Coach Call (soonest)", "FullSlateAppointmentStartsOn ASC" ),
+        new( "Coach Call (latest)", "FullSlateAppointmentStartsOn DESC" ),
         new( "Last Name (A-Z)", "PersonLastName ASC" ),
         new( "Last Name (Z-A)", "PersonLastName DESC" ),
         new( "Email (A-Z)", "PersonEmail ASC" ),
@@ -90,6 +90,7 @@ public sealed class RequestsListCoordinator(
     {
         try
         {
+            var hasCoachCall = SelectedSort.StartsWith("FullSlateAppointmentStartsOn") ? true : (bool?)null;
             var backendResponse = await mediator.Send(new RequestsListQuery()
             {
                 StartIndex = request.StartIndex,
@@ -97,7 +98,8 @@ public sealed class RequestsListCoordinator(
                 Query = Query,
                 SortDescription = SelectedSort,
                 SinceWhen = SelectedSince,
-                Statuses = SelectedStatuses
+                Statuses = SelectedStatuses,
+                HasCoachCall = hasCoachCall
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
