@@ -11,7 +11,8 @@ public record RequestsListQuery : IRequest<BackendResponse<RequestListResults>>
     public int? Count { get; init; }
     public string? Query { get; init; }
     public string? SortDescription { get; init; }
-    public DateOnly? SinceWhen { get; init; }
+    public DateOnly? SubmittedAfter { get; init; }
+    public DateOnly? SubmittedBefore { get; init; }
     public bool? HasCoachCall { get; init; }
     public IList<RequestStatus>? Statuses { get; init; }
 }

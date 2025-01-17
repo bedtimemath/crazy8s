@@ -48,11 +48,16 @@ public class RequestsController(
                     (r.FullSlateAppointmentStartsOn == null ^ query.HasCoachCall.Value));
             }
 
-            /*** SINCE WHEN ***/
-            if (query.SinceWhen != null)
+            /*** SUBMITTED BEFORE / AFTER ***/
+            if (query.SubmittedAfter != null)
             {
                 queryable = queryable.Where(r =>
-                    r.SubmittedOn >= query.SinceWhen.Value.ToDateTime(TimeOnly.MinValue));
+                    r.SubmittedOn >= query.SubmittedAfter.Value.ToDateTime(TimeOnly.MinValue));
+            }
+            if (query.SubmittedBefore != null)
+            {
+                queryable = queryable.Where(r =>
+                    r.SubmittedOn <= query.SubmittedBefore.Value.ToDateTime(TimeOnly.MinValue));
             }
 
             /*** SORT ***/

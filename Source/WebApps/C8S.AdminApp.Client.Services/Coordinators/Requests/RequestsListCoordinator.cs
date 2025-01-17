@@ -60,7 +60,8 @@ public sealed class RequestsListCoordinator(
 
     #region Public Properties
     public string SelectedSort { get; set; } = InitialSort;
-    public DateOnly? SelectedSince { get; set; } = null;
+    public DateOnly? SelectedAfter { get; set; } = null;
+    public DateOnly? SelectedBefore { get; set; } = null;
     public IList<RequestStatus> SelectedStatuses { get; set; } = [InitialStatus];
 
     public string? Query { get; set; } 
@@ -77,7 +78,8 @@ public sealed class RequestsListCoordinator(
     public void ClearFilter()
     {
         SelectedSort = InitialSort;
-        SelectedSince = null;
+        SelectedAfter = null;
+        SelectedBefore = null;
         SelectedStatuses = [InitialStatus];
         Query = null;
         TotalCount = null;
@@ -97,7 +99,8 @@ public sealed class RequestsListCoordinator(
                 Count = request.Count,
                 Query = Query,
                 SortDescription = SelectedSort,
-                SinceWhen = SelectedSince,
+                SubmittedAfter = SelectedAfter,
+                SubmittedBefore = SelectedBefore,
                 Statuses = SelectedStatuses,
                 HasCoachCall = hasCoachCall
             });
@@ -121,7 +124,8 @@ public sealed class RequestsListCoordinator(
     public void HandleQueryValueChange() => RaiseFilterChanged();
     public void HandleSortDropdownChange() => RaiseFilterChanged();
     public void HandleStatusDropdownChange() => RaiseFilterChanged();
-    public void HandleSinceDropdownChange() => RaiseFilterChanged();
+    public void HandleAfterDatePickerChange() => RaiseFilterChanged();
+    public void HandleBeforeDatePickerChange() => RaiseFilterChanged();
     #endregion
 
     #region Internal Classes / Records

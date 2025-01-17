@@ -16,15 +16,6 @@
                        Change="@Coordinator.HandleQueryValueChange"
                        class="flex-grow-1"/>
 
-        <RadzenDropDown @bind-Value="@Coordinator.SelectedSort"
-                        Data="@Coordinator.SortDropDownOptions"
-                        TextProperty="@nameof(RequestsListCoordinator.DropDownOption.Display)"
-                        ValueProperty="@nameof(RequestsListCoordinator.DropDownOption.Value)"
-                        Multiple="false"
-                        AllowClear="false"
-                        Change="@Coordinator.HandleSortDropdownChange"
-                        class="flex-shrink-0"/>
-
         <RadzenDropDown @bind-Value="@Coordinator.SelectedStatuses"
                         Data="@Coordinator.StatusDropDownOptions"
                         TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
@@ -35,16 +26,16 @@
                         Chips="false"
                         Change="@Coordinator.HandleStatusDropdownChange"
                         class="flex-shrink-0" />
-
-        <RadzenDropDown @bind-Value="@Coordinator.SelectedSince"
-                        Data="@Coordinator.SinceDropDownOptions"
-                        TextProperty="@nameof(EnumLabel<RequestStatus>.Display)"
-                        ValueProperty="@nameof(EnumLabel<RequestStatus>.Value)"
-                        Placeholder="Submitted when"
-                        Multiple="false"
-                        AllowClear="true"
-                        Change="@Coordinator.HandleSinceDropdownChange"
-                        class="flex-shrink-0" />
+        
+        <RadzenDatePicker @bind-Value="@Coordinator.SelectedAfter"
+                          AllowClear="true"
+                          Change="@Coordinator.HandleAfterDatePickerChange"
+                          class="flex-shrink-0" />
+        
+        <RadzenDatePicker @bind-Value="@Coordinator.SelectedBefore"
+                          AllowClear="true"
+                          Change="@Coordinator.HandleBeforeDatePickerChange"
+                          class="flex-shrink-0" />
 
         <RadzenButton ButtonType="ButtonType.Button"
                       ButtonStyle="ButtonStyle.Primary"
@@ -52,5 +43,14 @@
                       Click="@Coordinator.ClearFilter"
                       class="flex-shrink-0"/>
 
+
+        <RadzenDropDown @bind-Value="@Coordinator.SelectedSort"
+                        Data="@Coordinator.SortDropDownOptions"
+                        TextProperty="@nameof(RequestsListCoordinator.DropDownOption.Display)"
+                        ValueProperty="@nameof(RequestsListCoordinator.DropDownOption.Value)"
+                        Multiple="false"
+                        AllowClear="false"
+                        Change="@Coordinator.HandleSortDropdownChange"
+                        class="flex-shrink-0" />
     </RadzenStack>
 </div>
