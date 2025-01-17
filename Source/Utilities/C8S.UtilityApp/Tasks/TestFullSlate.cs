@@ -28,6 +28,8 @@ internal class TestFullSlate(
         var endDate = String.IsNullOrEmpty(options.EndDate) ? DateOnly.FromDateTime(DateTime.Today.AddDays(7)) :
             DateOnly.Parse(options.EndDate);
 
+        var appointmentId = options.AppointmentId ?? 0;
+
         if (!Enum.TryParse(typeof(FullSlateAction), options.TestAction, true, out var testAction))
             throw new Exception($"Could not parse FullSlateAction: {options.TestAction}");
         switch (testAction as FullSlateAction?)
@@ -37,6 +39,9 @@ internal class TestFullSlate(
                 break;
             case FullSlateAction.AddClient:
                 await RunAddClientTest();
+                break;
+            case FullSlateAction.GetAppointment:
+                await RunGetAppointmentTest(appointmentId);
                 break;
             case FullSlateAction.GetAppointments:
                 await RunGetAppointmentsTest(startDate, endDate);
@@ -108,6 +113,12 @@ internal class TestFullSlate(
 
         var addClientsResponse = await fullSlateService.AddClient(clientCreation);
         logger.LogInformation("Response: {@Response}", addClientsResponse);
+    }
+
+    private async Task RunGetAppointmentTest(int appointmentId)
+    {
+        var result = await fullSlateService.GetAppointment(appointmentId);
+        logger.LogInformation("{AppointmentId}: {@Result}", appointmentId, result);
     }
 
     private async Task RunGetAppointmentsTest(DateOnly startDate, DateOnly endDate)

@@ -1,6 +1,8 @@
 ﻿@page "/request/{RequestId:int}"
-@inherits BaseOwningRazorPage<C8S.AdminApp.Client.Services.Coordinators.Requests.RequestDetailsCoordinator>
+@inherits BaseOwningRazorPage<RequestDetailsCoordinator>
 @rendermode InteractiveWebAssembly
+
+@using C8S.AdminApp.Client.Services.Coordinators.Requests
 
 <RadzenPageContainer HideDuringPreRender="true">
 

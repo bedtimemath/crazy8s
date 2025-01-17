@@ -1,6 +1,7 @@
 ﻿using C8S.Domain.Features.Requests.Enums;
 using SC.Common.Interactions;
 using MediatR;
+using C8S.Domain.Features.Requests.Models;
 
 namespace C8S.Domain.Features.Requests.Queries;
 

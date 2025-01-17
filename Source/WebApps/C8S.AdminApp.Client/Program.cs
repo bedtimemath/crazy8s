@@ -1,8 +1,9 @@
 using Blazr.RenderState.WASM;
 using C8S.AdminApp.Client.Auth;
 using C8S.AdminApp.Client.Services;
-using C8S.AdminApp.Client.Services.Apis;
+using C8S.AdminApp.Client.Services.Callbacks;
 using C8S.AdminApp.Client.Services.Extensions;
+using C8S.AdminApp.Common;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
@@ -57,7 +58,7 @@ try
     /*****************************************
      * BACKEND REQUESTS
      */
-    builder.Services.AddHttpClient(nameof(CallbackService), client =>
+    builder.Services.AddHttpClient(AdminAppConstants.HttpClients.BackendServer, client =>
     {
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
     });

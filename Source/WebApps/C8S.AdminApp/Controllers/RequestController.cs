@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,33 @@ public class RequestController(
                 Exception = exception.ToSerializableException()
             };
         }
+    }
 
+    [HttpPatch]
+    public async Task<BackendResponse<RequestDetails>> PatchRequest(int requestId,
+        [FromBody] RequestUpdateAppointmentCommand command)
+    {
+        try
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var request = await dbContext.Requests.FindAsync(requestId) ??
+                throw new Exception($"Request ID #{requestId} does not exist.");
+
+            request.FullSlateAppointmentStartsOn = command.FullSlateAppointmentStartsOn;
+            await dbContext.SaveChangesAsync();
+
+            return new BackendResponse<RequestDetails>()
+            {
+                Result = mapper.Map<RequestDetails?>(request)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while patching appointment starts on: {Id}", requestId);
+            return new BackendResponse<RequestDetails>()
+            {
+                Exception = exception.ToSerializableException()
+            };
+        }
     }
 }

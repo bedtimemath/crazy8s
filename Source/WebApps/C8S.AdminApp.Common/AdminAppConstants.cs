@@ -2,6 +2,11 @@
 
 public static class AdminAppConstants
 {
+    public static class HttpClients
+    {
+        public const string BackendServer = "BackendServer";
+    }
+
     public static class Messages
     {
         public const string DataChange = "DataChange";

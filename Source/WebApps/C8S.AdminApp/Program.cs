@@ -4,9 +4,9 @@ using C8S.AdminApp;
 using C8S.AdminApp.Auth;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.MapProfiles;
-using C8S.Domain;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
+using C8S.FullSlate.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -22,8 +22,6 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
-using Serilog.Sinks.MSSqlServer;
 using Serilog.Sinks.SystemConsole.Themes;
 
 /*****************************************
@@ -70,6 +68,10 @@ try
                       throw new Exception($"Missing configuration section: {Connections.SectionName}");
     var oidcSecrets = builder.Configuration.GetSection(OidcSecrets.SectionName).Get<OidcSecrets>() ??
                       throw new Exception($"Missing configuration section: {OidcSecrets.SectionName}");
+    var apiKeys = builder.Configuration.GetSection(ApiKeys.SectionName).Get<ApiKeys>() ??
+                  throw new Exception($"Missing configuration section: {ApiKeys.SectionName}");
+    var endpoints = builder.Configuration.GetSection(Endpoints.SectionName).Get<Endpoints>() ??
+                    throw new Exception($"Missing configuration section: {Endpoints.SectionName}");
 
     /*****************************************
      * LOGGING
@@ -86,9 +88,7 @@ try
         .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
         .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
         .Enrich.FromLogContext()
-        .WriteTo.Console(
-            outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
-            theme: AnsiConsoleTheme.Code)
+#if !DEBUG
         .WriteTo.MSSqlServer(
             connectionString: connections.Audit,
             sinkOptions: new MSSqlServerSinkOptions()
@@ -99,7 +99,11 @@ try
             })
         .WriteTo.ApplicationInsights(services.GetRequiredService<IConfiguration>()
             .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), 
-            telemetryConverter: new TraceTelemetryConverter()));
+            telemetryConverter: new TraceTelemetryConverter())
+#endif    
+        .WriteTo.Console(
+            outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
+            theme: AnsiConsoleTheme.Code));
     SelfLog.Enable(m => Console.Error.WriteLine(m));
 
     /*****************************************
@@ -129,6 +133,10 @@ try
     builder.Services.AddSCAuditContext(connections.Audit);
     builder.Services.AddC8SDbContext(connections.Database);
 
+    if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
+    if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
+    builder.Services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
+    
     /*****************************************
      * MINIMAL APIS
      */

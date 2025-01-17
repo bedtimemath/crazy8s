@@ -48,7 +48,6 @@ public sealed class RequestsListCoordinator(
     ];
     public readonly IEnumerable<EnumLabel<RequestStatus>> StatusDropDownOptions = 
         EnumLabel<RequestStatus>.GetAllEnumLabels();
-
     #endregion
 
     #region Public Events
@@ -70,7 +69,6 @@ public sealed class RequestsListCoordinator(
     #endregion
 
     #region Public Methods
-
     public async Task ScrollListToTop()
     {
         await jsRuntime.ScrollToTop(ListerContainerId);

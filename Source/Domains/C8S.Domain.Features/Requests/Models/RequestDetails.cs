@@ -1,5 +1,4 @@
-﻿
-namespace C8S.Domain.Features.Requests.Models;
+﻿namespace C8S.Domain.Features.Requests.Models;
 
 public record RequestDetails: RequestAbstract
 {

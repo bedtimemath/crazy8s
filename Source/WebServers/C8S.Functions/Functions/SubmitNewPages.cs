@@ -474,13 +474,14 @@ public partial class SubmitNewPages(
                 // we don't have to worry about backing out the db, since it wasn't saved
 
                 // return the error messages to the user
-                if (errorMessages.Count != 0) errorMessages.Add("Unknown Error");
+                if (errorMessages.Count == 0) errorMessages.Add("Unknown Error.");
                 return GetPage5ErrorMessageResponse(req, guidCode,
                     $"ERROR: {String.Join("; ", errorMessages)} Please try again later.");
             }
 
             /*** UPDATE W/APPT ***/
             request.FullSlateAppointmentId = appointmentResponse.Data?.Id;
+            request.FullSlateAppointmentStartsOn = appointmentResponse.Data?.AtDateTime;
             await dbContext.SaveChangesAsync();
 
             /*** COMPLETE ***/

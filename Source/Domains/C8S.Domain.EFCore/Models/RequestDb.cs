@@ -91,6 +91,8 @@ public class RequestDb : BaseCoreDb
 
     public long? FullSlateAppointmentId { get; set; }
 
+    public DateTimeOffset? FullSlateAppointmentStartsOn { get; set; }
+
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? ReferenceSource { get; set; }
 

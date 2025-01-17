@@ -9,16 +9,10 @@ public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
     IMediator mediator)
 {
-    #region Constants & ReadOnlys
-    #endregion
-
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();
     #endregion
-
-    #region ReadOnly Variables
-    #endregion
-
+    
     #region Public Events
     public event EventHandler? DetailsUpdated;
     public void RaiseDetailsUpdated() => DetailsUpdated?.Invoke(this, EventArgs.Empty);
@@ -30,7 +24,6 @@ public sealed class RequestDetailsCoordinator(
     #endregion
 
     #region Public Methods
-
     public void SetDetailsId(int id)
     {
         Task.Run(async () => await SetDetailsIdAsync(id));
@@ -54,8 +47,5 @@ public sealed class RequestDetailsCoordinator(
             throw; // todo: what happens with exception in controller?
         }
     }
-    #endregion
-
-    #region Event Handlers
     #endregion
 }

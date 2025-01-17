@@ -12,6 +12,8 @@
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.FullSlate.Abstractions\C8S.FullSlate.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.FullSlate\C8S.FullSlate.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Client\C8S.AdminApp.Client.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Common\C8S.AdminApp.Common.csproj" />
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />

@@ -1,6 +1,6 @@
 ﻿using C8S.Domain.Features.Requests.Enums;
 
-namespace C8S.Domain.Features.Requests;
+namespace C8S.Domain.Features.Requests.Models;
 
 public record RequestBase
 {

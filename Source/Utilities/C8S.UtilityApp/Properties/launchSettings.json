@@ -35,6 +35,10 @@
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a AddClient"
     },
+    "FullSlate Get Appt": {
+      "commandName": "Project",
+      "commandLineArgs": "test-fullslate -a GetAppointment -i 117451203"
+    },
     "FullSlate Get Appts": {
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a GetAppointments"

@@ -125,8 +125,26 @@
                                     TextAlign="TextAlign.Start"
                                     Text="@(String.Join("; ",
                                         Request.StartDates.OrderBy(d => d)
-                                            .Select(d => d.ToOptionalYearStringWithDay())))" />
+                                            .Select(d => d.ToString("M/d/yyyy"))))" />
 
+                    </RadzenStack>
+
+                    @* COACH CALL *@
+                    <RadzenStack Orientation="Orientation.Horizontal"
+                                 AlignItems="AlignItems.Center"
+                                 JustifyContent="JustifyContent.Start"
+                                 Gap="0.25rem">
+
+                        <RadzenText TagName="TagName.Span"
+                                    TextStyle="TextStyle.Caption"
+                                    TextAlign="TextAlign.Start"
+                                    Text="Coach Call:"/>
+
+                        <AppointmentDisplayer RequestId="@Request.RequestId"
+                                              AppointmentId="@Request.FullSlateAppointmentId"
+                                              AppointmentStartsOn="@Request.FullSlateAppointmentStartsOn"
+                                              RemoveOuterDiv="true"
+                                              @rendermode="InteractiveWebAssembly"/>
                     </RadzenStack>
 
                 </RadzenStack>

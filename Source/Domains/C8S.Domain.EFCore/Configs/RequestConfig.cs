@@ -147,6 +147,10 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
         entity.Property(m => m.FullSlateAppointmentId)
             .IsRequired(false);
 
+        //public string? FullSlateAppointmentStarts { get; set; }
+        entity.Property(m => m.FullSlateAppointmentStartsOn)
+            .IsRequired(false);
+
         //[MaxLength(SoftCrowConstants.MaxLengths.Medium)]
         //public string? ReferenceSource { get; set; }
         entity.Property(m => m.ReferenceSource)

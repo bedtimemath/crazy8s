@@ -21,7 +21,6 @@ public sealed partial class RequestDetailsPage :
     {
         base.OnParametersSet();
         
-        Logger.LogInformation("IsPreRender = {IsPreRender}", RenderStateService.IsPreRender);
         if (!RenderStateService.IsPreRender)
             Service.SetDetailsId(RequestId);
     }

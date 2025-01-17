@@ -1,0 +1,21 @@
+﻿@inherits BaseOwningComponent<AppointmentDisplayerCoordinator>
+
+@using C8S.AdminApp.Client.Services.Coordinators.Appointments
+@using SC.Common
+
+@if (RemoveOuterDiv)
+{
+    <RadzenText TagName="TagName.Span"
+                TextStyle="TextStyle.Body1">
+        @(Service.StartsOn?.ToLocalTime().ToString("g") ?? SoftCrowConstants.Display.NotSet)
+    </RadzenText>
+}
+else
+{
+    <div id="@ComponentId" class="c8s-appointment-displayer @CssClass">
+        <RadzenText TagName="TagName.Span"
+                    TextStyle="TextStyle.Body1">
+            @(Service.StartsOn?.ToLocalTime().ToString("g") ?? SoftCrowConstants.Display.NotSet)
+        </RadzenText>
+    </div>
+}

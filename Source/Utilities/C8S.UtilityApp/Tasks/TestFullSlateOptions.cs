@@ -7,6 +7,7 @@ internal enum FullSlateAction
 {
     AddAppointment,
     AddClient,
+    GetAppointment,
     GetAppointments,
     GetOpeningsList
 }
@@ -19,8 +20,12 @@ internal class TestFullSlateOptions: StandardConsoleOptions
     private const FullSlateAction DefaultTestAction = FullSlateAction.GetAppointments;
 
     [Option(shortName:'a', longName:"test-action", Default = DefaultTestAction )]
-    public string TestAction { get; set; } = default!;
+    public string TestAction { get; set; } = null!;
 
     [Option(shortName:'e', longName:"end-date", Default = null)]
-    public string? EndDate { get; set; } = default!;
+    public string? EndDate { get; set; } = null;
+
+    [Option(shortName:'i', longName:"appointment-id", Default = DefaultTestAction )]
+    public int? AppointmentId { get; set; } = null;
+
 }

@@ -241,6 +241,65 @@ public class FullSlateService(
                     }]);
         }
     }
+    
+    public async Task<ServiceResponse<FullSlateAppointment>> GetAppointment(
+        int appointmentId)
+    {
+        try
+        {
+            using var httpClient = httpClientFactory.CreateClient(FullSlateService.HttpAuthName);
+
+            // set up the query string
+            var url = FullSlateConstants.Endpoints.Appointments + "/" + appointmentId;
+
+            // make the call
+            var retrieved = await httpClient.GetAsync(url);
+
+            // get the results; used for success or failure
+            var success = retrieved.IsSuccessStatusCode;
+            var responseBody = await retrieved.Content.ReadAsStringAsync();
+
+            // *** FAILURE (Network) ***
+            if (!success)
+            {
+                if (retrieved.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    try
+                    {
+                        return CreateFullSlateBadRequestResponse<FullSlateAppointment>(responseBody);
+                    }
+                    catch
+                    {
+                        // if this fails, the fallthrough is the best choice anyway
+                    }
+                }
+                return CreateNetworkErrorResponse<FullSlateAppointment>(retrieved, responseBody);
+            }
+
+            // *** FAILURE (FullSlate) ***
+            var deserialized = JsonSerializer.Deserialize<JsonNode>(responseBody);
+            var errorCode = deserialized?["code"]?.GetValue<string?>();
+            if (!String.IsNullOrEmpty(errorCode))
+                return CreateFullSlateErrorResponse<FullSlateAppointment>(responseBody);
+
+            // *** SUCCESS ***
+            // on success, the response body is of the TData type
+            return ServiceResponse<FullSlateAppointment>
+                .CreateSuccess(retrieved.StatusCode, responseBody);
+        }
+        catch (Exception ex)
+        {
+            // *** EXCEPTION ***
+            // fake a failure, using the serialized exception as the details
+            return ServiceResponse<FullSlateAppointment>
+                .CreateFailure(HttpStatusCode.InternalServerError,
+                [new ServiceError()
+                {
+                    ErrorMessage = ex.Message,
+                    Details = JsonSerializer.Serialize(new SerializableException(ex))
+                }]);
+        }
+    }
 
     #endregion
 

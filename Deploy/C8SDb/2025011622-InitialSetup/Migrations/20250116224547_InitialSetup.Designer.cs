@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20250116143439_InitialSetup")]
+    [Migration("20250116224547_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />
