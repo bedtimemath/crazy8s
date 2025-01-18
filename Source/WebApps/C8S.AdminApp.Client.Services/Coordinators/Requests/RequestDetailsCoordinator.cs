@@ -1,13 +1,17 @@
-﻿using C8S.Domain.Features.Requests.Models;
+﻿using C8S.AdminApp.Client.Services.Pages;
+using C8S.AdminApp.Common;
+using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using MediatR;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
-    IMediator mediator)
+    IMediator mediator,
+    NavigationManager navigationManager)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();
@@ -36,6 +40,11 @@ public sealed class RequestDetailsCoordinator(
                 new RequestDetailsQuery() { RequestId = id });
             if (!backendResponse.Success) 
                 throw backendResponse.Exception!.ToException();
+
+            if (backendResponse.Result == null)
+            {
+                navigationManager.NavigateTo(AdminAppConstants.Pages.RequestsList);
+            }
             
             Details = backendResponse.Result;
             PageTitle = Details?.PersonFullName;
@@ -44,8 +53,16 @@ public sealed class RequestDetailsCoordinator(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while setting details id.");
-            throw; // todo: what happens with exception in controller?
+            throw; // todo: what happens with exception in coordinator?
         }
     }
+
+    public async Task ClosePage()
+        => await mediator.Send(new ClosePageCommand()
+        {
+            PageUrlKey = AdminAppConstants.Pages.RequestDetails,
+            IdValue = Details?.RequestId
+        });
+
     #endregion
 }

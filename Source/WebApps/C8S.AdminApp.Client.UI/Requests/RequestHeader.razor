@@ -10,7 +10,7 @@
 
         <RadzenText TagName="TagName.Div"
                     TextAlign="TextAlign.Left"
-                    TextStyle="TextStyle.Body1"
+                    TextStyle="TextStyle.DisplayH4"
                     class="flex-grow-1">
             @Coordinator.PageTitle
         </RadzenText>
@@ -19,6 +19,7 @@
                     ButtonStyle="ButtonStyle.Primary"
                     Variant="Variant.Text"
                     IconString="@C8SConstants.Icons.Close"
+                    Click="@Coordinator.ClosePage"
                     class="flex-shrink-0"/>
 
     </RadzenStack>

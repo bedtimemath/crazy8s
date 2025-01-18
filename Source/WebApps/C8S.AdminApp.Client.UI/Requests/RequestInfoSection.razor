@@ -1,0 +1,50 @@
+﻿@using SC.Common
+@using SC.Common.Extensions
+@inherits BaseClientComponent
+
+<div id="@ComponentId" class="c8s-detailspage-info c8s-request-info @CssClass">
+
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Start"
+                 Gap="0.25rem"
+                 class="w-100 h-100">
+                 
+        @* STATUS *@
+        <RadzenStack Orientation="Orientation.Vertical"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.Start"
+                     Gap="0"
+                     class="flex-grow-1">
+
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Caption"
+                        Text="Status"
+                        class="flex-shrink-0" />
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body1"
+                        class="flex-grow-1">
+                @(Coordinator.Details?.Status.GetLabel() ?? SoftCrowConstants.Display.NotSet)
+            </RadzenText>
+        </RadzenStack>
+                 
+        @* SUBMITTED *@
+        <RadzenStack Orientation="Orientation.Vertical"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.Start"
+                     Gap="0"
+                     class="flex-grow-1">
+
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Caption"
+                        Text="Submitted"
+                        class="flex-shrink-0" />
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body1"
+                        class="flex-grow-1">
+                @(Coordinator.Details?.SubmittedOn.ToString("g") ?? SoftCrowConstants.Display.NotSet)
+            </RadzenText>
+        </RadzenStack>
+
+    </RadzenStack>
+</div>

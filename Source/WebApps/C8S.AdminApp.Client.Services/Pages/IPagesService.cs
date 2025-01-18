@@ -2,4 +2,5 @@
 
 public interface IPagesService
 {
+    event EventHandler<PageChangedEventArgs>? PageChanged;
 }

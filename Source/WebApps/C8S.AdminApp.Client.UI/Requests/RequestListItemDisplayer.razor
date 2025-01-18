@@ -162,10 +162,12 @@
             <RadzenButton ButtonType="ButtonType.Button"
                           ButtonStyle="ButtonStyle.Primary"
                           Text="View >"
-                          Click="@(() => Sender.Send(new OpenPageCommand(
-                                     AdminAppConstants.Pages.RequestDetails,
-                                     Request.ToString() ?? SoftCrowConstants.Display.NotSet,
-                                     Request.RequestId)))"/>
+                          Click="@(() => Sender.Send(new OpenPageCommand()
+                                 {
+                                     PageUrlKey = AdminAppConstants.Pages.RequestDetails,
+                                     PageTitle = Request.ToString() ?? SoftCrowConstants.Display.NotSet,
+                                     IdValue = Request.RequestId
+                                 }))" />
 
         </RadzenStack>
     </RadzenStack>

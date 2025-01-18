@@ -2,16 +2,14 @@
 
 namespace C8S.AdminApp.Client.Services.Pages;
 
-public abstract record PageCommand(
-    string PageUrlKey,
-    int? IdValue = null): IRequest
+public abstract record PageCommand: IRequest
 {
+    public string PageUrlKey { get; init; } = null!;
+    public int? IdValue { get; init; }
 }
 
-public record OpenPageCommand(
-    string PageUrlKey, 
-    string PageTitle, 
-    int? IdValue = null) : PageCommand(PageUrlKey, IdValue);
-public record ClosePageCommand(
-    string PageUrlKey, 
-    int? IdValue = null) : PageCommand(PageUrlKey, IdValue);
+public record OpenPageCommand : PageCommand
+{
+    public string PageTitle { get; init; } = null!;
+}
+public record ClosePageCommand : PageCommand;

@@ -222,7 +222,7 @@ ul.rz-profile-menu {
     flex-grow: 0;
 }
 
-    .c8s-detailspage-header .rz-text-body1,
+    .c8s-detailspage-header .rz-text-display-h4,
     .c8s-detailspage-header .rzi {
         color: var(--c8s-light);
     }
