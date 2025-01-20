@@ -327,13 +327,13 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseStaticFiles();
     app.UseAntiforgery();
 
     app.MapHub<CommunicationHub>("/communication");
 
     app.MapControllers();
 
+    app.MapStaticAssets();
     app.MapRazorComponents<AppRoot>()
         .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
