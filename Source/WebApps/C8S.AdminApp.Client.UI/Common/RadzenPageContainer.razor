@@ -1,4 +1,4 @@
-﻿@if (HideDuringPreRender && IsPreRender)
+﻿@if (HideDuringPreRender && !RendererInfo.IsInteractive)
 {
     <div class="c8s-page-loading">
         <div class="c8s-spinner"></div>

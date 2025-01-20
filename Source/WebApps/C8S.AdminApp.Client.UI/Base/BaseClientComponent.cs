@@ -1,5 +1,4 @@
-﻿using Blazr.RenderState;
-using C8S.AdminApp.Client.Services.Data;
+﻿using C8S.AdminApp.Client.Services.Data;
 using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,9 +12,6 @@ public abstract class BaseClientComponent: BaseRazorComponent
     #region Injected Properties
     [Inject]
     public ILogger<BaseClientComponent> BaseLogger { get; set; } = null!;
-
-    [Inject]
-    public IBlazrRenderStateService RenderStateService { get; set; } = null!;
 
     [Inject]
     public IServiceProvider ServiceProvider { get; set; } = null!; 

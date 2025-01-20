@@ -1,5 +1,4 @@
-﻿using Blazr.RenderState;
-using C8S.AdminApp.Client.Services.Coordinators.Appointments;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Appointments;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
@@ -12,9 +11,6 @@ public partial class AppointmentDisplayer :
     #region Injected Properties
     [Inject]
     public ILogger<AppointmentDisplayer> Logger { get; set; } = null!;
-
-    [Inject]
-    public IBlazrRenderStateService RenderStateService { get; set; } = null!;
     #endregion
 
     #region Component Parameters
@@ -48,7 +44,7 @@ public partial class AppointmentDisplayer :
         Logger.LogDebug("OnParametersSet");
         base.OnParametersSet();
         
-        if (!RenderStateService.IsPreRender)
+        if (RendererInfo.IsInteractive)
             Service.SetDetailsId(RequestId, AppointmentId, AppointmentStartsOn);
     }
     #endregion

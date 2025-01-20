@@ -1,13 +1,14 @@
-using Blazr.RenderState.WASM;
 using C8S.AdminApp.Client.Auth;
 using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Common;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
+using SC.Common;
 using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Core;
+using Serilog.Events;
 using _ClientImports = C8S.AdminApp.Client._Imports;
 using _UIImports = C8S.AdminApp.Client.UI._Imports;
 using _ServicesImports = C8S.AdminApp.Client.Services._Imports;
@@ -19,7 +20,10 @@ using _ServicesImports = C8S.AdminApp.Client.Services._Imports;
 var levelSwitch = new LoggingLevelSwitch();
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.ControlledBy(levelSwitch)
-    .WriteTo.BrowserConsole()
+    .MinimumLevel.Override("System.Net.Http.HttpClient.LogicalHandler", LogEventLevel.Warning)
+    .MinimumLevel.Override("System.Net.Http.HttpClient.ClientHandler", LogEventLevel.Warning)
+    .WriteTo.BrowserConsole(
+        outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog)
     .CreateBootstrapLogger();
 
 try
@@ -65,7 +69,6 @@ try
      * BLAZOR & RADZEN SERVICES
      */
     builder.Services.AddRadzenComponents();
-    builder.AddBlazrRenderStateWASMServices();
     
     /*****************************************
      * SOFT CROW & LOCAL

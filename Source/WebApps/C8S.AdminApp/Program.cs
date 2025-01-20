@@ -1,5 +1,4 @@
 using Azure.Identity;
-using Blazr.RenderState.Server;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
 using C8S.AdminApp.Hubs;
@@ -302,9 +301,6 @@ try
         .AddInteractiveWebAssemblyComponents();
 
     builder.Services.AddRazorPages();
-
-    // for checking the render state
-    builder.AddBlazrRenderStateServerServices();
 
     /*****************************************
      * APP

@@ -1,5 +1,4 @@
-﻿using Blazr.RenderState;
-using C8S.AdminApp.Client.Services.Coordinators.Requests;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using Microsoft.AspNetCore.Components;
 using SC.Common.Radzen.Base;
 
@@ -11,9 +10,6 @@ public sealed partial class RequestDetailsPage :
     [Inject]
     public ILogger<RequestDetailsPage> Logger { get; set; } = null!;
     
-    [Inject]
-    public IBlazrRenderStateService RenderStateService { get; set; } = null!;
-    
     [Parameter]
     public int RequestId { get; set; }
 
@@ -21,7 +17,7 @@ public sealed partial class RequestDetailsPage :
     {
         base.OnParametersSet();
         
-        if (!RenderStateService.IsPreRender)
+        if (RendererInfo.IsInteractive)
             Service.SetDetailsId(RequestId);
     }
 }
