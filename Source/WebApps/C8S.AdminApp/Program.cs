@@ -283,9 +283,7 @@ try
         CookieAuthenticationDefaults.AuthenticationScheme, 
         SoftCrowConstants.OidcSchemes.Microsoft);
     builder.Services.AddAuthorization();
-    builder.Services.AddCascadingAuthenticationState();
 
-    builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
     builder.Services.AddHttpContextAccessor();
 
     /*****************************************
@@ -298,9 +296,10 @@ try
      */
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents()
-        .AddInteractiveWebAssemblyComponents();
+        .AddInteractiveWebAssemblyComponents()
+        .AddAuthenticationStateSerialization();
 
-    builder.Services.AddRazorPages();
+    //builder.Services.AddRazorPages();
 
     /*****************************************
      * APP
@@ -339,7 +338,7 @@ try
 
     app.MapGroup("/authentication").MapLoginAndLogout();
 
-    app.MapRazorPages();
+    //app.MapRazorPages();
 
     app.Run();
 

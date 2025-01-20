@@ -77,6 +77,8 @@ public sealed class RequestsListCoordinator(
     
     public void ClearFilter()
     {
+        _logger.LogDebug("We have cleared filters!");
+
         SelectedSort = InitialSort;
         SelectedAfter = null;
         SelectedBefore = null;

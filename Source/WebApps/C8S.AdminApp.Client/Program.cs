@@ -1,7 +1,5 @@
-using C8S.AdminApp.Client.Auth;
 using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Common;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
@@ -16,14 +14,8 @@ using _ServicesImports = C8S.AdminApp.Client.Services._Imports;
 /*****************************************
  * INITIAL LOGGING
  */
-// for WASM see: https://stackoverflow.com/questions/71220619/use-serilog-as-logging-provider-in-blazor-webassembly-client-app?rq=1
-var levelSwitch = new LoggingLevelSwitch();
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.ControlledBy(levelSwitch)
-    .MinimumLevel.Override("System.Net.Http.HttpClient.LogicalHandler", LogEventLevel.Warning)
-    .MinimumLevel.Override("System.Net.Http.HttpClient.ClientHandler", LogEventLevel.Warning)
-    .WriteTo.BrowserConsole(
-        outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog)
+    .WriteTo.Console()
     .CreateBootstrapLogger();
 
 try
@@ -38,14 +30,27 @@ try
     /*****************************************
      * LOGGING
      */
-    // Not applicable on client
+    var levelSwitch = new LoggingLevelSwitch(builder.HostEnvironment.IsDevelopment() ? 
+        LogEventLevel.Verbose : LogEventLevel.Warning);
+    builder.Services.AddSingleton(levelSwitch);
+    
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.ControlledBy(levelSwitch)
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+        .MinimumLevel.Override("System.Net.Http.HttpClient.BackendServer.ClientHandler", LogEventLevel.Warning)
+        .MinimumLevel.Override("System.Net.Http.HttpClient.BackendServer.LogicalHandler", LogEventLevel.Warning)
+        .WriteTo.BrowserConsole(
+            outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog)
+        .CreateLogger();
+    builder.Logging.AddSerilog(Log.Logger);
 
     /*****************************************
      * AUTHENTICATION
      */
     builder.Services.AddAuthorizationCore();
     builder.Services.AddCascadingAuthenticationState();
-    builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+    builder.Services.AddAuthenticationStateDeserialization();
     
     /*****************************************
      * MEDIATR
@@ -63,7 +68,7 @@ try
     builder.Services.AddHttpClient(AdminAppConstants.HttpClients.BackendServer, client =>
     {
         client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-    });
+    }).RemoveAllLoggers();
 
     /*****************************************
      * BLAZOR & RADZEN SERVICES

@@ -2,8 +2,10 @@
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Requests.Commands;
+using C8S.Domain.Features.Requests.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SC.Common.Interactions;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Appointments;
 
@@ -24,6 +26,8 @@ public class AppointmentDisplayerCoordinator(
     private int _requestId;
     private int? _appointmentId;
     private DateTimeOffset? _startsOn;
+
+    private CancellationTokenSource? _cancellationTokenSource = null;
     #endregion
 
     #region Public Properties
@@ -38,20 +42,29 @@ public class AppointmentDisplayerCoordinator(
         _startsOn = startsOn;
 
         if (_startsOn == null && _appointmentId.HasValue)
+        {
             Task.Run(CheckAndUpdateAppointment);
+        }
     }
-    public async Task SetDetailsIdAsync(int requestId, int? appointmentId, DateTimeOffset? startsOn)
-    {
-        _requestId = requestId;
-        _appointmentId = appointmentId;
-        _startsOn = startsOn;
+    #endregion
 
-        if (_startsOn == null && _appointmentId.HasValue)
-            await CheckAndUpdateAppointment().ConfigureAwait(false);
+    #region Constructors Destructors
+    ~AppointmentDisplayerCoordinator()
+    {
+        if (_cancellationTokenSource == null) return;
+
+        try { _cancellationTokenSource.Cancel(); }
+        catch
+        {
+            // we don't want this to break us
+        }
     }
     #endregion
 
     #region Private Methods
+    // todo: this should either wait or have user interaction required
+    //  reason - when scrolling quickly, the coordinator may be disposed before the result returns
+    //  unfortunately, including a cancel token doesn't always work.
     private async Task CheckAndUpdateAppointment()
     {
         try
@@ -59,29 +72,37 @@ public class AppointmentDisplayerCoordinator(
             if (!_appointmentId.HasValue)
                 throw new UnreachableException("CheckAndUpdateAppointment called with null appointment id");
 
-            var backendResponse = await mediator.Send(
-                new AppointmentDetailsQuery() { AppointmentId = _appointmentId.Value });
-            if (!backendResponse.Success)
-                throw backendResponse.Exception!.ToException();
+            var appointmentResponse = await SendCancellable
+                <AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>> (
+                    new AppointmentDetailsQuery()
+                    {
+                        AppointmentId = _appointmentId.Value
+                    });
 
-            var details = backendResponse.Result;
+            if (!appointmentResponse.Success)
+                throw appointmentResponse.Exception!.ToException();
+
+            var details = appointmentResponse.Result;
             _startsOn = details?.StartsOn;
 
+            // attempt to update the database so we don't have to always check
             try
             {
-                // attempt to update the database so we don't have to always check
-                var response = await mediator.Send(new RequestUpdateAppointmentCommand()
-                {
-                    RequestId = _requestId,
-                    FullSlateAppointmentStartsOn = _startsOn
-                });
-                if (!response.Success)
-                    throw response.Exception!.ToException();
+                var databaseResponse = await SendCancellable
+                    <RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>> (
+                        new RequestUpdateAppointmentCommand()
+                        {
+                            RequestId = _requestId,
+                            FullSlateAppointmentStartsOn = _startsOn
+                        });
+
+                if (!databaseResponse.Success)
+                    throw databaseResponse.Exception!.ToException();
             }
             catch (Exception exception)
             {
                 // we will log the error, but it doesn't really matter if we can't update
-                _logger.LogError(exception, 
+                _logger.LogError(exception,
                     "Could not update appointment starts on to {StartsOn} for request #{RequestId}", _startsOn, _requestId);
             }
 
@@ -92,6 +113,20 @@ public class AppointmentDisplayerCoordinator(
             _logger.LogError(ex, "Error occurred while setting details id.");
             throw; // todo: what happens with exception in controller?
         }
+    }
+
+    private async Task<TResult> SendCancellable<TQuery, TResult>(TQuery query)
+        where TResult: class
+        where TQuery: class
+    {
+        TResult result;
+        using (_cancellationTokenSource = new CancellationTokenSource())
+        {
+            result = (await mediator.Send(query, _cancellationTokenSource.Token)) as TResult ??
+                     throw new UnreachableException("Could not convert to TResult");
+        }
+        _cancellationTokenSource = null;
+        return result!;
     }
     #endregion
 

@@ -2,6 +2,7 @@
 
 @using C8S.AdminApp.Client.Services.Pages
 @using C8S.AdminApp.Common
+@using C8S.Domain.Features.Requests.Enums
 @using SC.Common
 @using SC.Common.Extensions
 
@@ -20,7 +21,7 @@
 
             <RadzenText TagName="TagName.H4"
                         TextStyle="TextStyle.DisplayH4"
-                        Text="@Request.PersonFullName"/>
+                        Text="@Request.PersonFullName" />
 
             <RadzenStack Orientation="Orientation.Horizontal"
                          AlignItems="AlignItems.Start"
@@ -39,19 +40,19 @@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.PersonEmail"/>
+                                Text="@Request.PersonEmail" />
 
                     @* SCHOOL *@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.OrganizationName"/>
+                                Text="@Request.OrganizationName" />
 
                     @* CITY, STATE *@
                     <RadzenText TagName="TagName.Div"
                                 TextStyle="TextStyle.Body1"
                                 TextAlign="TextAlign.Start"
-                                Text="@Request.OrganizationCityState"/>
+                                Text="@Request.OrganizationCityState" />
 
                 </RadzenStack>
                 @* COLUMN #1 *@
@@ -72,12 +73,12 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Caption"
                                     TextAlign="TextAlign.Start"
-                                    Text="Status:"/>
+                                    Text="Status:" />
 
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
                                     TextAlign="TextAlign.Start"
-                                    Text="@Request.Status.GetLabel()"/>
+                                    Text="@Request.Status.GetLabel()" />
 
                     </RadzenStack>
 
@@ -90,12 +91,12 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Caption"
                                     TextAlign="TextAlign.Start"
-                                    Text="Submitted:"/>
+                                    Text="Submitted:" />
 
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
                                     TextAlign="TextAlign.Start"
-                                    Text="@Request.SubmittedOn.ToString("D")"/>
+                                    Text="@Request.SubmittedOn.ToString("D")" />
 
                     </RadzenStack>
 
@@ -118,7 +119,7 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Caption"
                                     TextAlign="TextAlign.Start"
-                                    Text="Start Dates:"/>
+                                    Text="Start Dates:" />
 
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Body1"
@@ -138,13 +139,14 @@
                         <RadzenText TagName="TagName.Span"
                                     TextStyle="TextStyle.Caption"
                                     TextAlign="TextAlign.Start"
-                                    Text="Coach Call:"/>
+                                    Text="Coach Call:" />
 
                         <AppointmentDisplayer RequestId="@Request.RequestId"
                                               AppointmentId="@Request.FullSlateAppointmentId"
                                               AppointmentStartsOn="@Request.FullSlateAppointmentStartsOn"
                                               RemoveOuterDiv="true"
-                                              @rendermode="InteractiveWebAssembly"/>
+                                              @rendermode="InteractiveWebAssembly" />
+
                     </RadzenStack>
 
                 </RadzenStack>

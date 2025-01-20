@@ -19,15 +19,14 @@
     <link rel="stylesheet" href="@Assets["./_content/SC.Common.Razor/css/blazor-default.css"]" />
     <link rel="stylesheet" href="@Assets["_content/Radzen.Blazor/css/material-base.css"]" />
     <link rel="stylesheet" href="@Assets["css/crazy8s-admin.css"]" />
-    <link rel="stylesheet" href="@Assets["C8S.AdminApp.styles.css"]" />
 
     <link rel="icon" type="image/png" href="favicon.png" />
 
-    <HeadOutlet />
+    <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="InteractiveWebAssembly" />
     <ImportMap />
 
     <!-- REMOTE, DON'T USE VERSIONING; ISN'T MAPPED -->

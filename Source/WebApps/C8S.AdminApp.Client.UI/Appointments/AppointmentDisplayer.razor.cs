@@ -41,7 +41,6 @@ public partial class AppointmentDisplayer :
 
     protected override void OnParametersSet()
     {
-        Logger.LogDebug("OnParametersSet");
         base.OnParametersSet();
         
         if (RendererInfo.IsInteractive)
