@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+    <ProjectReference Include="..\C8S.Domain\C8S.Domain.csproj" />
   </ItemGroup>
 
 </Project>

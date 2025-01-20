@@ -21,8 +21,9 @@
                      JustifyContent="JustifyContent.Stretch">
 
             <RadzenCard class="flex-grow-1">
-                <RequestInfoSection Coordinator="@Service"
-                                    @rendermode="InteractiveWebAssembly" />
+                <RequestInfoSection Coordinator="@Service" />
+                <hr/>
+                <RequestCallSection Coordinator="@Service" />
             </RadzenCard>
 
             <RadzenCard class="flex-shrink-0" style="min-width: 30%">
