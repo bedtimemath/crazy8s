@@ -6,10 +6,10 @@ using SC.Common.Extensions;
 
 namespace C8S.AdminApp.Client.UI.Requests;
 
-public sealed partial class RequestCallSection: BaseClientComponent
+public sealed partial class RequestPlaceSection: BaseClientComponent
 {
     [Inject]
-    public ILogger<RequestCallSection> Logger { get; set; } = null!;
+    public ILogger<RequestPlaceSection> Logger { get; set; } = null!;
     
     [Parameter]
     public RequestDetailsCoordinator Coordinator { get; set; } = null!;
@@ -19,6 +19,10 @@ public sealed partial class RequestCallSection: BaseClientComponent
         Coordinator.DetailsUpdated += HandleDetailsUpdated;
         base.OnInitialized();
     }
+
+    private void LogPhone(string input, bool good) =>
+        Logger.LogDebug("{Result}: {Input} => {Number}", good ? "GOOD" : "BAD", input,  input.DisplayPhone());
+
     public void Dispose()
     {
         Coordinator.DetailsUpdated -= HandleDetailsUpdated;

@@ -64,5 +64,15 @@ public sealed class RequestDetailsCoordinator(
             IdValue = Details?.RequestId
         });
 
+    public Task LinkPlace()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UnlinkPlace()
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 }

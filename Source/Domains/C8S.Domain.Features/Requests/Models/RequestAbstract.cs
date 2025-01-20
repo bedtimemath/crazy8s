@@ -5,11 +5,15 @@ namespace C8S.Domain.Features.Requests.Models;
 public record RequestAbstract : RequestBase
 {
     public string? PersonFirstName { get; init; }
-    public string? OrganizationName { get; init; }
-    public string? OrganizationCity { get; init; }
-    public string? OrganizationState { get; init; }
+
+    public string? PlaceName { get; init; }
+    public string? PlaceCity { get; init; }
+    public string? PlaceState { get; init; }
+
     public int? FullSlateAppointmentId { get; init; }
+
     public DateTimeOffset? FullSlateAppointmentStartsOn { get; init; }
+
     public List<DateOnly> StartDates { get; init; } = [];
     public DateTimeOffset SubmittedOn { get; init; }
 
@@ -19,7 +23,7 @@ public record RequestAbstract : RequestBase
             .Where(s => !string.IsNullOrEmpty(s)));
 
     [JsonIgnore]
-    public string OrganizationCityState =>
-        string.Join(", ", new List<string?> { OrganizationCity, OrganizationState }
+    public string PlaceCityState =>
+        string.Join(", ", new List<string?> { PlaceCity, PlaceState }
             .Where(s => !string.IsNullOrEmpty(s)));
 }
