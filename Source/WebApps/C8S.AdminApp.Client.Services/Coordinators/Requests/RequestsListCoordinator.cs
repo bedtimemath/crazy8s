@@ -39,13 +39,6 @@ public sealed class RequestsListCoordinator(
         new( "Email (A-Z)", "PersonEmail ASC" ),
         new( "Email (Z-A)", "PersonEmail DESC" )
     ];
-    public readonly IEnumerable<DropDownOption> SinceDropDownOptions = [
-        new( "Anytime", null ),
-        new( "In the last day", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddDays(-1)  ),
-        new( "In the last week", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddDays(-7)  ),
-        new( "In the last month", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddMonths(-1)  ),
-        new( "In the last year", DateOnly.FromDateTime(dateTimeHelper.Now.DateTime).AddYears(-1)  )
-    ];
     public readonly IEnumerable<EnumLabel<RequestStatus>> StatusDropDownOptions = 
         EnumLabel<RequestStatus>.GetAllEnumLabels();
     #endregion

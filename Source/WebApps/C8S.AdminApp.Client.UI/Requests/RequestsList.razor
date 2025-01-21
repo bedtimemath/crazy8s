@@ -1,14 +1,17 @@
 ﻿@inherits BaseClientComponent
-    
-<div id="@RequestsListCoordinator.ListerContainerId" class="c8s-listpage-list c8s-requests-list @CssClass">
+
+<div id="@RequestsListCoordinator.ListerContainerId"
+     class="c8s-listpage-list c8s-requests-list @CssClass"
+     style="position: relative;">
+
+    <BusyCover IsBusy="@_isBusy" />
 
     <Virtualize @ref="@_listerComponent"
                 ItemsProvider="@Coordinator.GetRows"
                 Context="request">
         <ItemContent>
             <RadzenCard class="rz-mb-2">
-                <RequestListItemDisplayer Request="@request"
-                                          @rendermode="InteractiveWebAssembly"/>
+                <RequestListItemDisplayer Request="@request" />
             </RadzenCard>
         </ItemContent>
     </Virtualize>
