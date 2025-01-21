@@ -6,8 +6,8 @@ namespace C8S.Domain.EFCore.Models;
 public class ClubNoteDb: NoteDb
 {
     [ForeignKey(nameof(Club))]
-    public int? ClubId { get; set; } = default!;
-    public ClubDb Club { get; set; } = default!;
+    public int? ClubId { get; set; } = null!;
+    public ClubDb Club { get; set; } = null!;
 
     public ClubNoteDb() { Reference = NoteReference.Club; }
 }
@@ -15,8 +15,8 @@ public class ClubNoteDb: NoteDb
 public class InvoiceNoteDb: NoteDb
 {
     [ForeignKey(nameof(Invoice))]
-    public int? InvoiceId { get; set; } = default!;
-    public InvoiceDb Invoice { get; set; } = default!;
+    public int? InvoiceId { get; set; } = null!;
+    public InvoiceDb Invoice { get; set; } = null!;
 
     public InvoiceNoteDb() { Reference = NoteReference.Invoice; }
 }
@@ -24,8 +24,8 @@ public class InvoiceNoteDb: NoteDb
 public class PersonNoteDb: NoteDb
 {
     [ForeignKey(nameof(Person))]
-    public int? PersonId { get; set; } = default!;
-    public PersonDb Person { get; set; } = default!;
+    public int? PersonId { get; set; } = null!;
+    public PersonDb Person { get; set; } = null!;
 
     public PersonNoteDb() { Reference = NoteReference.Person; }
 }
@@ -33,8 +33,8 @@ public class PersonNoteDb: NoteDb
 public class PlaceNoteDb: NoteDb
 {
     [ForeignKey(nameof(Place))]
-    public int? PlaceId { get; set; } = default!;
-    public PlaceDb Place { get; set; } = default!;
+    public int? PlaceId { get; set; } = null!;
+    public PlaceDb Place { get; set; } = null!;
 
     public PlaceNoteDb() { Reference = NoteReference.Place; }
 }
@@ -42,8 +42,8 @@ public class PlaceNoteDb: NoteDb
 public class RequestNoteDb: NoteDb
 {
     [ForeignKey(nameof(Request))]
-    public int? RequestId { get; set; } = default!;
-    public RequestDb Request { get; set; } = default!;
+    public int? RequestId { get; set; } = null!;
+    public RequestDb Request { get; set; } = null!;
 
     public RequestNoteDb() { Reference = NoteReference.Request; }
 }
@@ -51,8 +51,8 @@ public class RequestNoteDb: NoteDb
 public class SaleNoteDb: NoteDb
 {
     [ForeignKey(nameof(Sale))]
-    public int? SaleId { get; set; } = default!;
-    public SaleDb Sale { get; set; } = default!;
+    public int? SaleId { get; set; } = null!;
+    public SaleDb Sale { get; set; } = null!;
 
     public SaleNoteDb() { Reference = NoteReference.Sale; }
 }
@@ -60,8 +60,8 @@ public class SaleNoteDb: NoteDb
 public class OrderNoteDb: NoteDb
 {
     [ForeignKey(nameof(Order))]
-    public int? OrderId { get; set; } = default!;
-    public OrderDb Order { get; set; } = default!;
+    public int? OrderId { get; set; } = null!;
+    public OrderDb Order { get; set; } = null!;
 
     public OrderNoteDb() { Reference = NoteReference.Order; }
 }

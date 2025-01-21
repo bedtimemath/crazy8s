@@ -10,6 +10,25 @@
                  Gap="0.25rem"
                  class="w-100 h-100">
                  
+        @* ID *@
+        <RadzenStack Orientation="Orientation.Vertical"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.Start"
+                     Gap="0"
+                     class="flex-grow-1">
+
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Caption"
+                        Text="Id"
+                        class="flex-shrink-0" />
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body1"
+                        class="flex-grow-1">
+                @(Coordinator.Details?.RequestId)
+            </RadzenText>
+        </RadzenStack>
+                 
+                 
         @* STATUS *@
         <RadzenStack Orientation="Orientation.Vertical"
                      AlignItems="AlignItems.Start"

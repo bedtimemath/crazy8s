@@ -19,18 +19,25 @@ public class C8SDbContext(
 
     #region DbSet Properties
     public DbSet<ClubDb> Clubs { get; set; }
+    public DbSet<ClubNoteDb> ClubNotes { get; set; }
     public DbSet<ClubPersonDb> ClubPersons { get; set; }
     public DbSet<InvoiceDb> Invoices { get; set; }
+    public DbSet<InvoiceNoteDb> InvoiceNotes { get; set; }
     public DbSet<InvoicePersonDb> InvoicePersons { get; set; }
     public DbSet<NoteDb> Notes { get; set; }
     public DbSet<OrderDb> Orders { get; set; }
+    public DbSet<OrderNoteDb> OrderNotes { get; set; }
     public DbSet<OrderSkuDb> OrderSkus { get; set; }
     public DbSet<PermissionDb> Permissions { get; set; }
     public DbSet<PersonDb> Persons { get; set; }
+    public DbSet<PersonNoteDb> PersonNotes { get; set; }
     public DbSet<PlaceDb> Places { get; set; }
+    public DbSet<PlaceNoteDb> PlaceNotes { get; set; }
     public DbSet<RequestedClubDb> RequestedClubs { get; set; }
     public DbSet<RequestDb> Requests { get; set; }
+    public DbSet<RequestNoteDb> RequestNotes { get; set; }
     public DbSet<SaleDb> Sales { get; set; }
+    public DbSet<SaleNoteDb> SaleNotes { get; set; }
     public DbSet<SalePersonDb> SalePersons { get; set; }
     public DbSet<ShipmentDb> Shipments { get; set; }
     public DbSet<SkuDb> Skus { get; set; }

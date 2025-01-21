@@ -77,8 +77,6 @@ public sealed class RequestsListCoordinator(
     
     public void ClearFilter()
     {
-        _logger.LogDebug("We have cleared filters!");
-
         SelectedSort = InitialSort;
         SelectedAfter = null;
         SelectedBefore = null;
@@ -116,8 +114,8 @@ public sealed class RequestsListCoordinator(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error Getting Rows");
-            return default;
+            _logger.LogError(ex, "Error requesting requests list");
+            throw;
         }
     }
     #endregion

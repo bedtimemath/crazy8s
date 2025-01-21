@@ -1,0 +1,31 @@
+﻿@inherits BaseOwningComponent<NoteEditorCoordinator>
+
+<div class="c8s-note-editor @CssClass">
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Stretch"
+                 JustifyContent="JustifyContent.Normal"
+                 Gap="1rem"
+                 class="w-100">
+        
+        <RadzenHtmlEditor @bind-Value="@Service.ContentHtml" />
+
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween">
+
+            <IconButton ButtonType="ButtonType.Button" 
+                        ButtonStyle="ButtonStyle.Danger"
+                        IconString="@C8SConstants.Icons.Clear"
+                        Text="Clear"
+                        class="flex-shrink-0 flex-grow-1"/>
+
+            <IconButton ButtonType="ButtonType.Button"
+                        ButtonStyle="ButtonStyle.Primary"
+                        IconString="@C8SConstants.Icons.Add"
+                        Text="Add"
+                        class="flex-shrink-0 flex-grow-1" />
+
+        </RadzenStack>
+
+    </RadzenStack>
+</div>

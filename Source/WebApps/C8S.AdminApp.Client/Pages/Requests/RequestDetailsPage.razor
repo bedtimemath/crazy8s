@@ -3,6 +3,7 @@
 @rendermode InteractiveWebAssembly
 
 @using C8S.AdminApp.Client.Services.Coordinators.Requests
+@using C8S.Domain.Enums
 
 <WaitingPageContainer HideDuringPreRender="true">
 
@@ -22,15 +23,35 @@
 
             <RadzenCard class="flex-grow-1">
                 <RequestInfoSection Coordinator="@Service" />
-                <hr/>
+                <hr />
                 <RequestCallSection Coordinator="@Service" />
-                <hr/>
+                <hr />
                 <RequestPlaceSection Coordinator="@Service" />
             </RadzenCard>
 
-            <RadzenCard class="flex-shrink-0" style="min-width: 30%">
-                Notes
-            </RadzenCard>
+            <div class="flex-shrink-0" style="width: 30%">
+
+                <RadzenStack Orientation="Orientation.Horizontal"
+                             AlignItems="AlignItems.Start"
+                             JustifyContent="JustifyContent.SpaceBetween">
+
+                    <RadzenText TagName="TagName.Div"
+                                TextStyle="TextStyle.DisplayH5"
+                                TextAlign="TextAlign.Center"
+                                Text="Notes"
+                                class="flex-grow-1"/>
+
+                    <IconButton ButtonType="ButtonType.Button"
+                                ButtonStyle="ButtonStyle.Primary"
+                                IconString="@C8SConstants.Icons.Add"
+                                Text="Add Note"/>
+
+                </RadzenStack>
+                
+                <hr />
+
+                <NotesList RequestCoordinator="@Service" />
+            </div>
 
         </RadzenStack>
 

@@ -1,10 +1,7 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 using C8S.AdminApp.Common;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
-using C8S.Domain.Features.Requests.Models;
-using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;

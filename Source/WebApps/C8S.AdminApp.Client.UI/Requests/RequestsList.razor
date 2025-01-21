@@ -1,7 +1,7 @@
-﻿@using C8S.AdminApp.Client.Services.Coordinators.Requests
-@inherits BaseClientComponent
+﻿@inherits BaseClientComponent
     
 <div id="@RequestsListCoordinator.ListerContainerId" class="c8s-listpage-list c8s-requests-list @CssClass">
+
     <Virtualize @ref="@_listerComponent"
                 ItemsProvider="@Coordinator.GetRows"
                 Context="request">

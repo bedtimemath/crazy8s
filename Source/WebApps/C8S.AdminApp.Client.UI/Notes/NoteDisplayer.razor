@@ -1,0 +1,41 @@
+﻿@using SC.Common.Extensions
+@inherits SC.Common.Razor.Base.BaseRazorComponent
+
+<div class="c8s-listitem-displayer c8s-note-displayer @CssClass">
+
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Start"
+                 JustifyContent="JustifyContent.Stretch"
+                 class="w-100">
+                 
+        @* CONTENT *@
+        <RadzenText TagName="TagName.Div"
+                    TextStyle="TextStyle.Body1"
+                    Text="@Note.Content"
+                    class="w-100" />
+                    
+        @* INFO *@
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     class="w-100">
+                     
+            @* DATE/TIME *@
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body2"
+                        class="flex-shrink-0">
+                @Note.CreatedOn.ToLocalTime().Date.ToOptionalYearString()
+                @Note.CreatedOn.ToLocalTime().ToString("h:mm tt")
+            </RadzenText>
+            
+            @* AUTHOR *@
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body2"
+                        class="flex-shrink-0">
+                @Note.Author
+            </RadzenText>
+
+        </RadzenStack>
+
+    </RadzenStack>
+</div>

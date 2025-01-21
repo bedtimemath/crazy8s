@@ -1,0 +1,12 @@
+﻿@inherits BaseOwningComponent<NotesListCoordinator>
+
+<div class="c8s-notes-list c8s-request-notes-list @CssClass">
+
+    @foreach (var note in Service.Notes)
+    {
+        <RadzenCard>
+            <NoteDisplayer Note="note" />
+        </RadzenCard>
+    }
+
+</div>

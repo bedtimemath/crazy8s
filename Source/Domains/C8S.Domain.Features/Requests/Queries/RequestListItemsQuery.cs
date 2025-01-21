@@ -5,7 +5,7 @@ using C8S.Domain.Features.Requests.Models;
 
 namespace C8S.Domain.Features.Requests.Queries;
 
-public record RequestsListQuery : IRequest<BackendResponse<RequestListResults>>
+public record RequestsListQuery : IRequest<BackendResponse<RequestsListResults>>
 {
     public int? StartIndex { get; init; }
     public int? Count { get; init; }
