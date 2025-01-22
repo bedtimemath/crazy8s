@@ -2,7 +2,6 @@
 using C8S.Domain.Features.Notes.Commands;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SC.Common.Extensions;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
@@ -14,19 +13,29 @@ public sealed class NoteAdderCoordinator(
     private readonly ILogger<NoteAdderCoordinator> _logger = loggerFactory.CreateLogger<NoteAdderCoordinator>();
     #endregion
 
+    #region Public Properties
+    public NoteReference NotesSource { get; set; } = default;
+    public int SourceId { get; set; }
+    #endregion
+
+    #region Public Properties
+    public string Content { get; set; } = null!;
+    #endregion
+
     #region Public Methods
     public async Task AddNote()
     {
         try
         {
-            // todo: use real note
             var backendResponse = await mediator.Send(new NoteAddCommand()
             {
-                Reference = NoteReference.Request,
-                ParentId = 36232,
-                Content = String.Empty.AppendRandomAlphaOnly(15)
+                Reference = NotesSource,
+                ParentId = SourceId,
+                Content = Content
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+
+            Content = String.Empty;
         }
         catch (Exception ex)
         {

@@ -47,7 +47,6 @@ public sealed partial class NotesList : BaseOwningComponent<NotesListCoordinator
 
         PubSubService.Unsubscribe<DataChange>(HandleDataChangeNotification);
     }
-
     #endregion
     
     #region Event Handlers
