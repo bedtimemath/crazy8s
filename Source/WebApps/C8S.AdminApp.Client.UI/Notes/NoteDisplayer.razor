@@ -20,6 +20,13 @@
                         Text="@Note.Content"
                         class="flex-grow-1"/>
             
+            @* EDIT *@
+            <IconButton ButtonType="ButtonType.Button"
+                        ButtonStyle="ButtonStyle.Info"
+                        IconString="@C8SConstants.Icons.Edit"
+                        Text=""
+                        Click="@(async () => await EditNote(Note.NoteId))"/>
+            
             @* DELETE *@
             <IconButton ButtonType="ButtonType.Button"
                         ButtonStyle="ButtonStyle.Danger"

@@ -48,6 +48,26 @@ public sealed class NotesListCoordinator(
             throw;
         }
     }
+    
+    public async Task EditNote(int noteId)
+    {
+        try
+        {
+            //var backendResponse = await mediator.Send(new NoteEditCommand()
+            //{
+            //    NoteId = noteId
+            //});
+            //if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+
+            //// todo: do I need this if the notification is coming from the backend later?
+            //RaiseListUpdated();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error requesting notes list");
+            throw;
+        }
+    }
 
     public async Task Refresh()
     {

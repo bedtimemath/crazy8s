@@ -21,4 +21,8 @@ public partial class NoteDisplayer : BaseRazorComponent
     {
         await Coordinator.DeleteNote(noteId);
     }
+    private async Task EditNote(int noteId)
+    {
+        await Coordinator.EditNote(noteId);
+    }
 }

@@ -2,7 +2,6 @@
 using C8S.AdminApp.Client.UI.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using SC.Common.Extensions;
 
 namespace C8S.AdminApp.Client.UI.Requests;
 

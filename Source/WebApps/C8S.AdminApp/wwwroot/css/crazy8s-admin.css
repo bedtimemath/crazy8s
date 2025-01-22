@@ -82,6 +82,7 @@ ul.rz-profile-menu {
     min-width: 2rem;
 }
 
+.rz-button-icon-only .rzi,
 .rz-radiobutton-box .rzi,
 .rz-chkbox-box .rzi {
     min-width: 0;
