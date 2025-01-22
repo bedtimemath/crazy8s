@@ -1,5 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Data;
-using C8S.AdminApp.Client.Services.Pages;
+﻿using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,7 +18,6 @@ public abstract class BaseClientComponent: BaseRazorComponent
     
     #region Protected Properties
     protected IPagesService? PagesService { get; set; } = null;
-    protected ICommunicationService? CommunicationService { get; set; } = null;
     #endregion
     
     #region Component LifeCycle
@@ -29,7 +27,6 @@ public abstract class BaseClientComponent: BaseRazorComponent
         base.OnInitialized();
 
         PagesService = ServiceProvider.GetService<IPagesService>();
-        CommunicationService = ServiceProvider.GetService<ICommunicationService>();
     }
     #endregion
 }

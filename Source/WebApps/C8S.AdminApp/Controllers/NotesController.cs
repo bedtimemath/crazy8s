@@ -1,5 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using System.Text.Json;
+﻿using System.Text.Json;
 using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
@@ -41,6 +40,9 @@ public class NotesController(
                 NoteReference.Order => dbContext.OrderNotes.Where(n => n.OrderId == query.SourceId).AsNoTracking(),
                 _ => throw new ArgumentOutOfRangeException(nameof(query.NotesSource))
             };
+
+            // sorting is always the same
+            queryable = queryable.OrderByDescending(n => n.CreatedOn);
 
             var totalNotes = await queryable.CountAsync();
             var notes = await queryable.ToListAsync();

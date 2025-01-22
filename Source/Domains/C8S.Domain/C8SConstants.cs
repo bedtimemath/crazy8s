@@ -17,6 +17,11 @@ public static class C8SConstants
         public const string DefaultAdminEmails = "development@bedtimemath.org";
     }
 
+    public static class Entities
+    {
+        public const string Note = "Note";
+    }
+
     public static class Icons
     {
         public const string Add = "plus";

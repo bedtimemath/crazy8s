@@ -41,13 +41,12 @@
                                 Text="Notes"
                                 class="flex-grow-1"/>
 
-                    <IconButton ButtonType="ButtonType.Button"
-                                ButtonStyle="ButtonStyle.Primary"
-                                IconString="@C8SConstants.Icons.Add"
-                                Text="Add Note"/>
-
                 </RadzenStack>
                 
+                <hr />
+                
+                <NoteAdder RequestCoordinator="@Service" />
+
                 <hr />
 
                 <NotesList RequestCoordinator="@Service" />

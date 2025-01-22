@@ -1,5 +1,21 @@
-﻿namespace C8S.AdminApp.Client.Layout;
+﻿using C8S.AdminApp.Common.Interfaces;
 
-public partial class MainLayout
+namespace C8S.AdminApp.Client.Layout;
+
+public partial class MainLayout(
+    ILoggerFactory loggerFactory,
+    IServiceProvider serviceProvider)
 {
+    private readonly ILogger<MainLayout> _logger = loggerFactory.CreateLogger<MainLayout>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (RendererInfo.IsInteractive)
+        {
+            var communicationService = serviceProvider.GetRequiredService<IPubSubService>();
+            await communicationService.InitializeAsync();
+        }
+    }
 }

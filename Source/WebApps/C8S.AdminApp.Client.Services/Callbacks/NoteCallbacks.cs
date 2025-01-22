@@ -1,10 +1,9 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using C8S.AdminApp.Common;
+using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
-using C8S.Domain.Features.Requests.Models;
-using C8S.Domain.Features.Requests.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
@@ -13,14 +12,36 @@ namespace C8S.AdminApp.Client.Services.Callbacks;
 
 public class NoteCallbacks(
     ILoggerFactory loggerFactory,
-    IHttpClientFactory httpClientFactory) : 
+    IHttpClientFactory httpClientFactory) :
+        IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
         IRequestHandler<NotesListQuery, BackendResponse<NotesListResults>>,
         IRequestHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>
 {
     private readonly ILogger<NoteCallbacks> _logger = loggerFactory.CreateLogger<NoteCallbacks>();
 
     private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
-    
+
+    public async Task<BackendResponse<NoteDetails>> Handle(
+        NoteAddCommand command, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+            var httpResponse = await httpClient.PutAsJsonAsync("api/note", command, cancellationToken);
+            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+            var backendResponse = JsonSerializer
+                                      .Deserialize<BackendResponse<NoteDetails>>(bodyJson, _options) ??
+                                  throw new Exception($"Could not deserialize: {bodyJson}");
+            
+            return backendResponse;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling note add command: {@Note}", command);
+            return BackendResponse<NoteDetails>.CreateFailureResponse(exception);
+        }
+    }
+
     public async Task<BackendResponse<NotesListResults>> Handle(
         NotesListQuery query, CancellationToken cancellationToken)
     {
@@ -41,7 +62,7 @@ public class NoteCallbacks(
             return BackendResponse<NotesListResults>.CreateFailureResponse(exception);
         }
     }
-    
+
     public async Task<BackendResponse<NoteDetails?>> Handle(
         NoteDetailsQuery query, CancellationToken cancellationToken)
     {

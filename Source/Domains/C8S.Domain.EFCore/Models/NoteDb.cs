@@ -27,9 +27,9 @@ public abstract class NoteDb: BaseCoreDb
     public NoteReference Reference { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
-    public string Content { get; set; } = default!;
+    public string Content { get; set; } = null!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.FullName)]
-    public string Author { get; set; } = default!;
+    public string Author { get; set; } = null!;
     #endregion
 }

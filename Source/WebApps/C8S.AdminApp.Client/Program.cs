@@ -1,5 +1,8 @@
 using C8S.AdminApp.Client.Services.Extensions;
+using C8S.AdminApp.Client.Services.Pages;
+using C8S.AdminApp.Client.Services.PubSubs;
 using C8S.AdminApp.Common;
+using C8S.AdminApp.Common.Interfaces;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
@@ -10,6 +13,7 @@ using Serilog.Events;
 using _ClientImports = C8S.AdminApp.Client._Imports;
 using _UIImports = C8S.AdminApp.Client.UI._Imports;
 using _ServicesImports = C8S.AdminApp.Client.Services._Imports;
+using MediatR;
 
 /*****************************************
  * INITIAL LOGGING
@@ -79,7 +83,15 @@ try
      * SOFT CROW & LOCAL
      */
     builder.Services.AddCommonHelpers();
-    builder.Services.AddClientServices();
+    builder.Services.AddClientCoordinators();
+    
+    builder.Services.AddScoped<IPagesService, PagesService>();
+    builder.Services.AddScoped<IPubSubService>(services =>
+    {
+        var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+        var busUrl = builder.HostEnvironment.BaseAddress + "communication";
+        return new ClientPubSubService(loggerFactory, busUrl);
+    });
 
     /*****************************************
      * APP BUILD & RUN

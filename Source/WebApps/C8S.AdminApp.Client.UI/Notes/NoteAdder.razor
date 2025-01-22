@@ -1,0 +1,11 @@
+﻿@inherits BaseOwningComponent<NoteAdderCoordinator>
+
+<div class="c8s-note-adder @CssClass">
+
+    <IconButton ButtonType="ButtonType.Button"
+                ButtonStyle="ButtonStyle.Primary"
+                IconString="@C8SConstants.Icons.Add"
+                Text="Add Note"
+                Click="@Service.AddNote" />
+
+</div>

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 namespace C8S.AdminApp.Client.UI.Requests;
 
-public sealed partial class RequestHeader: BaseClientComponent
+public sealed partial class RequestHeader: BaseClientComponent, IDisposable
 {
     [Inject]
     public ILogger<RequestHeader> Logger { get; set; } = null!;

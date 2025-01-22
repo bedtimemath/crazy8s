@@ -1,13 +1,14 @@
 using Azure.Identity;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
+using C8S.AdminApp.Common.Interfaces;
+using C8S.AdminApp.Common.Services;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.MapProfiles;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
@@ -75,7 +76,7 @@ try
     /*****************************************
      * LOGGING
      */
-    var levelSwitch = new LoggingLevelSwitch(builder.Environment.IsDevelopment() ? 
+    var levelSwitch = new LoggingLevelSwitch(builder.Environment.IsDevelopment() ?
         LogEventLevel.Verbose : LogEventLevel.Warning);
     builder.Services.AddSingleton(levelSwitch);
 
@@ -135,7 +136,10 @@ try
     if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
     if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
     builder.Services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
-    
+
+    builder.Services.AddScoped<ISelfService, SelfService>();
+    builder.Services.AddScoped<IPubSubService, PubSubService>();
+
     /*****************************************
      * MINIMAL APIS
      */
@@ -280,7 +284,7 @@ try
     // out. OIDC connect options are set for saving tokens and the offline access
     // scope.
     builder.Services.ConfigureCookieOidcRefresh(
-        CookieAuthenticationDefaults.AuthenticationScheme, 
+        CookieAuthenticationDefaults.AuthenticationScheme,
         SoftCrowConstants.OidcSchemes.Microsoft);
     builder.Services.AddAuthorization();
 
@@ -299,7 +303,8 @@ try
         .AddInteractiveWebAssemblyComponents()
         .AddAuthenticationStateSerialization();
 
-    //builder.Services.AddRazorPages();
+    // currently required for login / logout
+    builder.Services.AddRazorPages();
 
     /*****************************************
      * APP
@@ -338,7 +343,9 @@ try
 
     app.MapGroup("/authentication").MapLoginAndLogout();
 
-    //app.MapRazorPages();
+    // currently required for login / logout
+    app.MapRazorPages();
+
 
     app.Run();
 

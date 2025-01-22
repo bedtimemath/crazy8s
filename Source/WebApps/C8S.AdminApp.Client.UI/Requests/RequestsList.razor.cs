@@ -45,22 +45,29 @@ public sealed partial class RequestsList : BaseClientComponent, IDisposable
     #region Event Handlers
     private void HandleFilterChanged(object? sender, EventArgs e) => 
         Task.Run(RefreshListerData);
-    private void HandleListUpdated(object? sender, EventArgs e)
-    {
-        _isBusy = false;
-        StateHasChanged();
-    }
+
+    private void HandleListUpdated(object? sender, EventArgs e) =>
+        Task.Run(SetNotBusy);
     #endregion
 
     #region Private Methods
     private async Task RefreshListerData()
     {
-        _isBusy = true;
-        await InvokeAsync(StateHasChanged);
-
+        await SetBusy();
         await _listerComponent.RefreshDataAsync();
         await InvokeAsync(StateHasChanged);
         await Coordinator.ScrollListToTop();
+    }
+
+    private async Task SetBusy() => await SetBusy(true);
+    private async Task SetNotBusy() => await SetBusy(false);
+    private async Task SetBusy(bool isBusy)
+    {
+        await InvokeAsync(() =>
+        {
+            _isBusy = isBusy;
+            StateHasChanged();
+        });
     }
     #endregion
 }
