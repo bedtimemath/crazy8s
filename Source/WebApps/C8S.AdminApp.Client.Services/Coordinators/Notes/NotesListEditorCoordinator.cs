@@ -18,6 +18,9 @@ public sealed class NotesListEditorCoordinator(
     #region Public Events
     public event EventHandler? ListUpdated;
     public void RaiseListUpdated() => ListUpdated?.Invoke(this, EventArgs.Empty);
+
+    public event EventHandler? IsBusyChanged;
+    public void RaiseIsBusyChanged() => IsBusyChanged?.Invoke(this, EventArgs.Empty);
     #endregion
 
     #region Public Properties
@@ -30,9 +33,26 @@ public sealed class NotesListEditorCoordinator(
     public string Content { get; set; } = null!;
     #endregion
 
+    #region Public Properties (IsBusy)
+    public bool IsBusy
+    {
+        get => _isBusy;
+        private set
+        {
+            if (value == _isBusy) return;
+
+            _isBusy = value; 
+            RaiseIsBusyChanged();
+        }
+    }
+    private bool _isBusy = false;
+    #endregion
+
     #region Public Methods
     public async Task AddNote()
     {
+        IsBusy = true;
+
         try
         {
             var backendResponse = await mediator.Send(new NoteAddCommand()
@@ -50,10 +70,16 @@ public sealed class NotesListEditorCoordinator(
             _logger.LogError(ex, "Could not add note.");
             throw;
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     public async Task DeleteNote(int noteId)
     {
+        IsBusy = true;
+
         try
         {
             var backendResponse = await mediator.Send(new NoteDeleteCommand()
@@ -70,10 +96,16 @@ public sealed class NotesListEditorCoordinator(
             _logger.LogError(ex, "Error requesting notes list");
             throw;
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
     
     public async Task EditNote(int noteId)
     {
+        IsBusy = true;
+
         try
         {
             //var backendResponse = await mediator.Send(new NoteEditCommand()
@@ -90,10 +122,16 @@ public sealed class NotesListEditorCoordinator(
             _logger.LogError(ex, "Error requesting notes list");
             throw;
         }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
-    public async Task Refresh()
+    public async Task RefreshNotesList()
     {
+        IsBusy = true;
+
         try
         {
             var backendResponse = await mediator.Send(new NotesListQuery()
@@ -114,6 +152,10 @@ public sealed class NotesListEditorCoordinator(
         {
             _logger.LogError(ex, "Error requesting notes list");
             throw;
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
     #endregion

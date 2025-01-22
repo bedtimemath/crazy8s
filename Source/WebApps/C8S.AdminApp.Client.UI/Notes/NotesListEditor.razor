@@ -6,9 +6,9 @@
                  AlignItems="AlignItems.Stretch"
                  JustifyContent="JustifyContent.Normal"
                  Gap="0.5rem"
-                 style="position: relative">
+                 Style="position: relative">
 
-        <BusyCover IsBusy="@_isBusy" />
+        <BusyCover IsBusy="@Service.IsBusy" />
 
         <RadzenTextArea @bind-Value="@Service.Content" />
 
@@ -16,17 +16,23 @@
                     ButtonStyle="ButtonStyle.Primary"
                     IconString="@C8SConstants.Icons.Add"
                     Text="Add Note"
-                    Click="@AddNoteAsync" />
+                    Click="@Service.AddNote" />
 
     </RadzenStack>
 
     <hr />
+    
+    <div style="position: relative">
 
-    @foreach (var note in Service.Notes)
-    {
-        <RadzenCard class="rz-mb-2">
-            <NoteDisplayer Details="note" Coordinator="@Service" />
-        </RadzenCard>
-    }
+        <BusyCover IsBusy="@Service.IsBusy" />
+        
+        @foreach (var note in Service.Notes)
+        {
+            <RadzenCard class="rz-mb-2">
+                <NoteDisplayer Details="note" Coordinator="@Service" />
+            </RadzenCard>
+        }
+
+    </div>
 
 </div>

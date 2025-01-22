@@ -13,12 +13,8 @@ public static class ServiceCollectionEx
         services.AddScoped<AppointmentDisplayerCoordinator>();
         
         services.AddScoped<RequestsListCoordinator>();
-
         services.AddScoped<RequestDetailsCoordinator>();
 
-        services.AddScoped<NotesListCoordinator>();
-
-        services.AddScoped<NoteAdderCoordinator>();
         services.AddScoped<NotesListEditorCoordinator>();
 
         return services;
