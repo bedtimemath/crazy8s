@@ -28,11 +28,7 @@ public sealed class RequestDetailsCoordinator(
     #endregion
 
     #region Public Methods
-    public void SetDetailsId(int id)
-    {
-        Task.Run(async () => await SetDetailsIdAsync(id));
-    }
-    public async Task SetDetailsIdAsync(int id)
+    public async Task SetIdAsync(int id)
     {
         try
         {

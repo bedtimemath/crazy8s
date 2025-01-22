@@ -17,7 +17,7 @@
             @* CONTENT *@
             <RadzenText TagName="TagName.Div"
                         TextStyle="TextStyle.Body1"
-                        Text="@Note.Content"
+                        Text="@Details.Content"
                         class="flex-grow-1"/>
             
             @* EDIT *@
@@ -25,14 +25,14 @@
                         ButtonStyle="ButtonStyle.Info"
                         IconString="@C8SConstants.Icons.Edit"
                         Text=""
-                        Click="@(async () => await EditNote(Note.NoteId))"/>
+                        Click="@(async () => await EditNote(Details.NoteId))"/>
             
             @* DELETE *@
             <IconButton ButtonType="ButtonType.Button"
                         ButtonStyle="ButtonStyle.Danger"
                         IconString="@C8SConstants.Icons.Delete"
                         Text=""
-                        Click="@(async () => await DeleteNote(Note.NoteId))"/>
+                        Click="@(async () => await DeleteNote(Details.NoteId))"/>
 
         </RadzenStack>
 
@@ -46,15 +46,15 @@
             <RadzenText TagName="TagName.Div"
                         TextStyle="TextStyle.Body2"
                         class="flex-shrink-0">
-                @Note.CreatedOn.ToLocalTime().Date.ToOptionalYearString()
-                @Note.CreatedOn.ToLocalTime().ToString("h:mm tt")
+                @Details.CreatedOn.ToLocalTime().Date.ToOptionalYearString()
+                @Details.CreatedOn.ToLocalTime().ToString("h:mm tt")
             </RadzenText>
 
             @* AUTHOR *@
             <RadzenText TagName="TagName.Div"
                         TextStyle="TextStyle.Body2"
                         class="flex-shrink-0">
-                @Note.Author
+                @Details.Author
             </RadzenText>
 
         </RadzenStack>

@@ -1,0 +1,32 @@
+﻿@inherits BaseOwningComponent<NotesListEditorCoordinator>
+
+<div class="c8s-notes-list-editor @CssClass">
+
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Stretch"
+                 JustifyContent="JustifyContent.Normal"
+                 Gap="0.5rem"
+                 style="position: relative">
+
+        <BusyCover IsBusy="@_isBusy" />
+
+        <RadzenTextArea @bind-Value="@Service.Content" />
+
+        <IconButton ButtonType="ButtonType.Button"
+                    ButtonStyle="ButtonStyle.Primary"
+                    IconString="@C8SConstants.Icons.Add"
+                    Text="Add Note"
+                    Click="@AddNoteAsync" />
+
+    </RadzenStack>
+
+    <hr />
+
+    @foreach (var note in Service.Notes)
+    {
+        <RadzenCard class="rz-mb-2">
+            <NoteDisplayer Details="note" Coordinator="@Service" />
+        </RadzenCard>
+    }
+
+</div>

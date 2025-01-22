@@ -15,30 +15,32 @@
         <RequestHeader Coordinator="@Service"
                        CssClass="flex-shrink-0"
                        @rendermode="InteractiveWebAssembly" />
+        
+        <RadzenSplitter Orientation="Orientation.Horizontal">
+            <RadzenSplitterPane Size="70%">
 
-        <RadzenStack Orientation="Orientation.Horizontal"
-                     AlignItems="AlignItems.Start"
-                     JustifyContent="JustifyContent.Stretch">
+                <RadzenCard Style="position: relative" class="flex-grow-1">
+                    <BusyCover IsBusy="_isBusy" />
 
-            <RadzenCard class="flex-grow-1">
-                <RequestInfoSection Coordinator="@Service" />
-                <hr />
-                <RequestCallSection Coordinator="@Service" />
-                <hr />
-                <RequestPersonSection Coordinator="@Service" />
-                <hr />
-                <RequestPlaceSection Coordinator="@Service" />
-                <hr />
-                <RequestClubsSection Coordinator="@Service" />
-            </RadzenCard>
+                    <RequestInfoSection Coordinator="@Service"/>
+                    <hr/>
+                    <RequestCallSection Coordinator="@Service"/>
+                    <hr/>
+                    <RequestPersonSection Coordinator="@Service"/>
+                    <hr/>
+                    <RequestPlaceSection Coordinator="@Service"/>
+                    <hr/>
+                    <RequestClubsSection Coordinator="@Service"/>
 
-            <div class="flex-shrink-0" style="width: 30%">
-                <NoteAdder RequestCoordinator="@Service" />
-                <hr />
-                <NotesList RequestCoordinator="@Service" />
-            </div>
+                </RadzenCard>
 
-        </RadzenStack>
+            </RadzenSplitterPane>
+            <RadzenSplitterPane Size="30%">
+                
+                <NotesListEditor RequestCoordinator="@Service" />
+
+            </RadzenSplitterPane>
+        </RadzenSplitter>
 
     </RadzenStack>
 </WaitingPageContainer>

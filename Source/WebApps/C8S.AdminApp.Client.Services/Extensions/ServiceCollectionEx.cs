@@ -19,7 +19,7 @@ public static class ServiceCollectionEx
         services.AddScoped<NotesListCoordinator>();
 
         services.AddScoped<NoteAdderCoordinator>();
-        services.AddScoped<NoteEditorCoordinator>();
+        services.AddScoped<NotesListEditorCoordinator>();
 
         return services;
     }

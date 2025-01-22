@@ -52,8 +52,6 @@ public sealed partial class NotesList : BaseOwningComponent<NotesListCoordinator
     #region Event Handlers
     private async Task HandleDataChangeNotification(DataChange dataChange)
     {
-        Logger.LogDebug("DataChange = {@DataChange}", dataChange);
-
         if (dataChange is not
             {
                 EntityName: C8SConstants.Entities.Note,
