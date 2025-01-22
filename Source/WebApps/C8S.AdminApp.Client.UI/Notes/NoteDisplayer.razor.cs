@@ -1,4 +1,5 @@
-﻿using C8S.Domain.Features.Notes.Models;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Notes;
+using C8S.Domain.Features.Notes.Models;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using SC.Common.Razor.Base;
@@ -12,4 +13,12 @@ public partial class NoteDisplayer : BaseRazorComponent
 
     [Parameter]
     public NoteDetails Note { get; set; } = null!;
+
+    [Parameter]
+    public NotesListCoordinator Coordinator { get; set; } = null!;
+
+    private async Task DeleteNote(int noteId)
+    {
+        await Coordinator.DeleteNote(noteId);
+    }
 }

@@ -5,7 +5,7 @@
     @foreach (var note in Service.Notes)
     {
         <RadzenCard class="rz-mb-2">
-            <NoteDisplayer Note="note" />
+            <NoteDisplayer Note="note" Coordinator="@Service" />
         </RadzenCard>
     }
 

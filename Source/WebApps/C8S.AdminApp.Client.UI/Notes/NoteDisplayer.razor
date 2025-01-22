@@ -1,5 +1,5 @@
-﻿@using SC.Common.Extensions
-@inherits SC.Common.Razor.Base.BaseRazorComponent
+﻿@inherits SC.Common.Razor.Base.BaseRazorComponent
+@using SC.Common.Extensions
 
 <div class="c8s-listitem-displayer c8s-note-displayer @CssClass">
 
@@ -7,19 +7,34 @@
                  AlignItems="AlignItems.Start"
                  JustifyContent="JustifyContent.Stretch"
                  class="w-100">
-                 
-        @* CONTENT *@
-        <RadzenText TagName="TagName.Div"
-                    TextStyle="TextStyle.Body1"
-                    Text="@Note.Content"
-                    class="w-100" />
-                    
+
+        @* CONTENT & DELETE *@
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     class="w-100">
+
+            @* CONTENT *@
+            <RadzenText TagName="TagName.Div"
+                        TextStyle="TextStyle.Body1"
+                        Text="@Note.Content"
+                        class="flex-grow-1"/>
+            
+            @* DELETE *@
+            <IconButton ButtonType="ButtonType.Button"
+                        ButtonStyle="ButtonStyle.Danger"
+                        IconString="@C8SConstants.Icons.Delete"
+                        Text=""
+                        Click="@(async () => await DeleteNote(Note.NoteId))"/>
+
+        </RadzenStack>
+
         @* INFO *@
         <RadzenStack Orientation="Orientation.Horizontal"
                      AlignItems="AlignItems.Center"
                      JustifyContent="JustifyContent.SpaceBetween"
                      class="w-100">
-                     
+
             @* DATE/TIME *@
             <RadzenText TagName="TagName.Div"
                         TextStyle="TextStyle.Body2"
@@ -27,7 +42,7 @@
                 @Note.CreatedOn.ToLocalTime().Date.ToOptionalYearString()
                 @Note.CreatedOn.ToLocalTime().ToString("h:mm tt")
             </RadzenText>
-            
+
             @* AUTHOR *@
             <RadzenText TagName="TagName.Div"
                         TextStyle="TextStyle.Body2"

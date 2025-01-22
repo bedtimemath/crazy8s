@@ -14,6 +14,7 @@ public class NoteCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) :
         IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
+        IRequestHandler<NoteDeleteCommand, BackendResponse>,
         IRequestHandler<NotesListQuery, BackendResponse<NotesListResults>>,
         IRequestHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>
 {
@@ -39,6 +40,27 @@ public class NoteCallbacks(
         {
             _logger.LogError(exception, "Error handling note add command: {@Note}", command);
             return BackendResponse<NoteDetails>.CreateFailureResponse(exception);
+        }
+    }
+
+    public async Task<BackendResponse> Handle(
+        NoteDeleteCommand command, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+            var httpResponse = await httpClient.DeleteAsync($"api/note/{command.NoteId}", cancellationToken);
+            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+            var backendResponse = JsonSerializer
+                                      .Deserialize<BackendResponse>(bodyJson, _options) ??
+                                  throw new Exception($"Could not deserialize: {bodyJson}");
+            
+            return backendResponse;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling note delete command: {@Note}", command);
+            return BackendResponse.CreateFailureResponse(exception);
         }
     }
 

@@ -102,6 +102,42 @@ public class NoteController(
             };
         }
     }
+
+    [HttpDelete]
+    public async Task<BackendResponse> DeleteNote(int noteId)
+    {
+        try
+        {
+            // find the existing note
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var note = await dbContext.Notes.FirstOrDefaultAsync(r => r.NoteId == noteId) ??
+                       throw new Exception("Entity not found");
+
+            // get the note as details, to return in JsonDetails
+            var removedDetails = mapper.Map<NoteDetails>(note);
+
+            // remove the note
+            dbContext.Notes.Remove(note);
+            await dbContext.SaveChangesAsync();
+
+            var dataChange = new DataChange()
+            {
+                EntityId = noteId,
+                EntityName = C8SConstants.Entities.Note,
+                EntityState = EntityState.Deleted,
+                JsonDetails = JsonSerializer.Serialize(removedDetails)
+            };
+            await hubContext.Clients.All.SendAsync(AdminAppConstants.Messages.DataChange, dataChange);
+
+            return BackendResponse.CreateSuccessResponse();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while getting details: {Id}", noteId);
+            return BackendResponse.CreateFailureResponse(exception);
+        }
+    }
+
     #endregion
 
     #region Private Helper Methods

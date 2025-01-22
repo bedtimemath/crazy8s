@@ -1,4 +1,5 @@
 ﻿using C8S.Domain.Enums;
+using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using MediatR;
@@ -28,6 +29,26 @@ public sealed class NotesListCoordinator(
     #endregion
 
     #region Public Methods
+    public async Task DeleteNote(int noteId)
+    {
+        try
+        {
+            var backendResponse = await mediator.Send(new NoteDeleteCommand()
+            {
+                NoteId = noteId
+            });
+            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+
+            // todo: do I need this if the notification is coming from the backend later?
+            RaiseListUpdated();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error requesting notes list");
+            throw;
+        }
+    }
+
     public async Task Refresh()
     {
         try
@@ -43,6 +64,7 @@ public sealed class NotesListCoordinator(
             Notes = results.Items;
             TotalCount = results.Total;
 
+            // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated();
         }
         catch (Exception ex)
