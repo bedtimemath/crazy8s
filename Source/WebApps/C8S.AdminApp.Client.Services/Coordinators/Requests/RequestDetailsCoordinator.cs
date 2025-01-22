@@ -74,5 +74,15 @@ public sealed class RequestDetailsCoordinator(
         throw new NotImplementedException();
     }
 
+    public Task LinkPerson()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UnlinkPerson()
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 }

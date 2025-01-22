@@ -7,6 +7,7 @@ public record RequestDetails: RequestAbstract
 {
     public ApplicantType? PersonType { get; init; }
     public string? PersonPhone { get; init; }
+    public string? PersonTimeZone { get; init; }
     
     public string? PlaceAddress1 { get; init; }
     public string? PlaceAddress2 { get; init; }

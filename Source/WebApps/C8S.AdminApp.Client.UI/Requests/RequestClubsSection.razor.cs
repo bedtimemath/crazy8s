@@ -2,14 +2,13 @@
 using C8S.AdminApp.Client.UI.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using SC.Common.Extensions;
 
 namespace C8S.AdminApp.Client.UI.Requests;
 
-public sealed partial class RequestPlaceSection: BaseClientComponent
+public sealed partial class RequestClubsSection: BaseClientComponent
 {
     [Inject]
-    public ILogger<RequestPlaceSection> Logger { get; set; } = null!;
+    public ILogger<RequestClubsSection> Logger { get; set; } = null!;
     
     [Parameter]
     public RequestDetailsCoordinator Coordinator { get; set; } = null!;
@@ -19,7 +18,6 @@ public sealed partial class RequestPlaceSection: BaseClientComponent
         Coordinator.DetailsUpdated += HandleDetailsUpdated;
         base.OnInitialized();
     }
-
     public void Dispose()
     {
         Coordinator.DetailsUpdated -= HandleDetailsUpdated;
