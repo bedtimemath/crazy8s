@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 using C8S.AdminApp.Common;
 using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
@@ -12,29 +11,62 @@ namespace C8S.AdminApp.Client.Services.Callbacks;
 
 public class NoteCallbacks(
     ILoggerFactory loggerFactory,
-    IHttpClientFactory httpClientFactory) :
-        IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
-        IRequestHandler<NoteDeleteCommand, BackendResponse>,
+    IHttpClientFactory httpClientFactory) : BaseCallbacks,
+        // NOTES
         IRequestHandler<NotesListQuery, BackendResponse<NotesListResults>>,
-        IRequestHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>
+        IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
+        // NOTE
+        IRequestHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>,
+        IRequestHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
+        IRequestHandler<NoteDeleteCommand, BackendResponse>
 {
+    #region ReadOnly Constructor Variables
     private readonly ILogger<NoteCallbacks> _logger = loggerFactory.CreateLogger<NoteCallbacks>();
-
     private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
+    #endregion
 
-    public async Task<BackendResponse<NoteDetails>> Handle(
-        NoteAddCommand command, CancellationToken cancellationToken)
+    #region Queries
+    public async Task<BackendResponse<NotesListResults>> Handle(
+        NotesListQuery query, CancellationToken token)
     {
         try
         {
             var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.PutAsJsonAsync("api/note", command, cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                                      .Deserialize<BackendResponse<NoteDetails>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-            
-            return backendResponse;
+            return await CallBackendServer<NotesListResults>(httpClient, "POST", "notes", 
+                payload:query, token:token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling notes list request: {@Note}", query);
+            return BackendResponse<NotesListResults>.CreateFailureResponse(exception);
+        }
+    }
+    
+    public async Task<BackendResponse<NoteDetails?>> Handle(
+        NoteDetailsQuery query, CancellationToken token)
+    {
+        try
+        {
+            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+            return await CallBackendServer<NoteDetails?>(httpClient, "GET", "note", query.NoteId, token:token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling note details request: {@Note}", query);
+            return BackendResponse<NoteDetails?>.CreateFailureResponse(exception);
+        }
+    }
+    #endregion
+
+    #region Commands
+    public async Task<BackendResponse<NoteDetails>> Handle(
+        NoteAddCommand command, CancellationToken token)
+    {
+        try
+        {
+            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+            return await CallBackendServer<NoteDetails>(httpClient, "PUT", "notes", 
+                payload:command, token:token);
         }
         catch (Exception exception)
         {
@@ -43,19 +75,29 @@ public class NoteCallbacks(
         }
     }
 
-    public async Task<BackendResponse> Handle(
-        NoteDeleteCommand command, CancellationToken cancellationToken)
+    public async Task<BackendResponse<NoteDetails>> Handle(
+        NoteUpdateCommand command, CancellationToken token)
     {
         try
         {
             var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.DeleteAsync($"api/note/{command.NoteId}", cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                                      .Deserialize<BackendResponse>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-            
-            return backendResponse;
+            return await CallBackendServer<NoteDetails>(httpClient, "PATCH", "note", command.NoteId, 
+                payload:command, token:token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling note update command: {@Note}", command);
+            return BackendResponse<NoteDetails>.CreateFailureResponse(exception);
+        }
+    }
+
+    public async Task<BackendResponse> Handle(
+        NoteDeleteCommand command, CancellationToken token)
+    {
+        try
+        {
+            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+            return await CallBackendServer(httpClient, "DELETE", "note", command.NoteId, token:token);
         }
         catch (Exception exception)
         {
@@ -63,46 +105,5 @@ public class NoteCallbacks(
             return BackendResponse.CreateFailureResponse(exception);
         }
     }
-
-    public async Task<BackendResponse<NotesListResults>> Handle(
-        NotesListQuery query, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.PostAsJsonAsync("api/notes", query, cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                                      .Deserialize<BackendResponse<NotesListResults>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-
-            return backendResponse;
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Error handling notes list request: {@Note}", query);
-            return BackendResponse<NotesListResults>.CreateFailureResponse(exception);
-        }
-    }
-
-    public async Task<BackendResponse<NoteDetails?>> Handle(
-        NoteDetailsQuery query, CancellationToken cancellationToken)
-    {
-        try
-        {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.GetAsync($"api/note/{query.NoteId}", cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                .Deserialize<BackendResponse<NoteDetails?>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-
-            return backendResponse;
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Error handling note details request: {@Note}", query);
-            return BackendResponse<NoteDetails?>.CreateFailureResponse(exception);
-        }
-    }
+    #endregion
 }

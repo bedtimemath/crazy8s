@@ -1,27 +1,49 @@
-﻿@inherits BaseCoordinatedDialog<NoteEditorCoordinator>
+﻿@inherits BaseRazorDialog
 
 <div id="@ComponentId" class="c8s-dialog c8s-note-editor-dialog @CssClass">
-    
-    <RadzenRow>
-        <RadzenColumn Size="12">
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Stretch"
+                 JustifyContent="JustifyContent.Normal"
+                 Gap="1rem"
+                 class="w-100">
 
-            <RadzenStack Orientation="Orientation.Horizontal"
-                         AlignItems="AlignItems.Center"
-                         JustifyContent="JustifyContent.SpaceAround">
+        @* HTML EDITOR *@
+        <RadzenHtmlEditor @bind-Value="@_htmlContent"
+                          class="w-100">
+            <RadzenHtmlEditorUndo />
+            <RadzenHtmlEditorRedo />
+            <RadzenHtmlEditorSeparator />
+            <RadzenHtmlEditorBold />
+            <RadzenHtmlEditorItalic />
+            <RadzenHtmlEditorUnderline />
+            <RadzenHtmlEditorStrikeThrough />
+            <RadzenHtmlEditorSeparator />
+            <RadzenHtmlEditorColor />
+            <RadzenHtmlEditorBackground />
+            <RadzenHtmlEditorRemoveFormat />
+            <RadzenHtmlEditorSeparator />
+            <RadzenHtmlEditorLink />
+            <RadzenHtmlEditorUnlink />
+        </RadzenHtmlEditor>
+        
+        @* CANCEL / SUBMIT *@
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceAround"
+                     class="w-100">
 
-                <RadzenButton ButtonType="ButtonType.Button"
-                              ButtonStyle="ButtonStyle.Danger"
-                              Text="Cancel"
-                              Click="@(() => DialogService.Close())" />
+            <RadzenButton ButtonType="ButtonType.Button"
+                          ButtonStyle="ButtonStyle.Danger"
+                          Text="Cancel"
+                          Click="@(() => DialogService.Close(false))"/>
 
-                <RadzenButton ButtonType="ButtonType.Button"
-                              ButtonStyle="ButtonStyle.Primary"
-                              Text="Submit"
-                              Click="@Service.Submit" />
+            <RadzenButton ButtonType="ButtonType.Button"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Text="Submit"
+                          Click="@(() => DialogService.Close(_htmlContent))" />
 
-            </RadzenStack>
+        </RadzenStack>
 
-        </RadzenColumn>
-    </RadzenRow>
+    </RadzenStack>
 
 </div>

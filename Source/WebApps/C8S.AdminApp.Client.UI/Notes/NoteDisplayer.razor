@@ -17,22 +17,23 @@
             @* CONTENT *@
             <RadzenText TagName="TagName.Div"
                         TextStyle="TextStyle.Body1"
-                        Text="@Details.Content"
-                        class="flex-grow-1"/>
+                        class="flex-grow-1">
+                @((MarkupString)Details.Content)
+            </RadzenText>
             
             @* EDIT *@
             <IconButton ButtonType="ButtonType.Button"
                         ButtonStyle="ButtonStyle.Info"
                         IconString="@C8SConstants.Icons.Edit"
                         Text=""
-                        Click="@(async () => await EditNote(Details.NoteId))"/>
+                        Click="@(async () => await HandleEditClicked(Details))"/>
             
             @* DELETE *@
             <IconButton ButtonType="ButtonType.Button"
                         ButtonStyle="ButtonStyle.Danger"
                         IconString="@C8SConstants.Icons.Delete"
                         Text=""
-                        Click="@(async () => await DeleteNote(Details.NoteId))"/>
+                        Click="@(async () => await HandleDeleteClicked(Details))"/>
 
         </RadzenStack>
 

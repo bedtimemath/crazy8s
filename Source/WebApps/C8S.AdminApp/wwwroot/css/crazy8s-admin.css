@@ -199,3 +199,9 @@ ul.rz-profile-menu {
     .c8s-detailspage-header .rzi {
         color: var(--c8s-light);
     }
+
+
+/** DIALOG CLASSES **/
+.c8s-dialog .rz-html-editor {
+    min-height: 250px;
+}

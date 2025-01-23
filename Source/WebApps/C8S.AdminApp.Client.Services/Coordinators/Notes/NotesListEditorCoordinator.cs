@@ -4,7 +4,6 @@ using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SC.Common.Extensions;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
@@ -30,8 +29,6 @@ public sealed class NotesListEditorCoordinator(
 
     public List<NoteDetails> Notes { get; private set; } = [];
     public int TotalCount { get; set; } 
-        
-    public string Content { get; set; } = null!;
     #endregion
 
     #region Public Properties (IsBusy)
@@ -50,7 +47,7 @@ public sealed class NotesListEditorCoordinator(
     #endregion
 
     #region Public Methods
-    public async Task AddNote()
+    public async Task AddNote(string content)
     {
         IsBusy = true;
 
@@ -60,11 +57,9 @@ public sealed class NotesListEditorCoordinator(
             {
                 Reference = NotesSource,
                 ParentId = SourceId,
-                Content = String.Empty.AppendRandomAlphaOnly(12) // todo
+                Content = content
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
-
-            Content = String.Empty;
         }
         catch (Exception ex)
         {
@@ -75,6 +70,30 @@ public sealed class NotesListEditorCoordinator(
         {
             IsBusy = false;
         } 
+    }
+
+    public async Task UpdateNote(NoteDetails note)
+    {
+        IsBusy = true;
+
+        try
+        {
+            var backendResponse = await mediator.Send(new NoteUpdateCommand()
+            {
+                NoteId = note.NoteId,
+                Content = note.Content
+            });
+            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating note");
+            throw;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     public async Task DeleteNote(int noteId)
@@ -95,32 +114,6 @@ public sealed class NotesListEditorCoordinator(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error deleting note");
-            throw;
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    public async Task EditNote(int noteId)
-    {
-        IsBusy = true;
-
-        try
-        {
-            //var backendResponse = await mediator.Send(new NoteEditCommand()
-            //{
-            //    NoteId = noteId
-            //});
-            //if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
-
-            //// todo: do I need this if the notification is coming from the backend later?
-            //RaiseListUpdated();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error editing note");
             throw;
         }
         finally

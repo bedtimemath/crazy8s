@@ -2,6 +2,7 @@
 using System.Text.Json;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Requests;
+using C8S.AdminApp.Client.UI.Common;
 using C8S.AdminApp.Common.Interfaces;
 using C8S.Domain;
 using C8S.Domain.Enums;
@@ -9,6 +10,7 @@ using C8S.Domain.Features.Notes.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Radzen;
 using SC.Audit.Abstractions.Models;
 using SC.Common.Razor.Base;
 
@@ -22,6 +24,9 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
 
     [Inject]
     public IPubSubService PubSubService { get; set; } = null!;
+
+    [Inject]
+    public DialogService DialogService { get; set; } = null!;
     #endregion
 
     #region Component Parameters
@@ -50,6 +55,17 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
     #endregion
     
     #region Event Handlers
+
+    private async Task HandleAddNoteClicked()
+    {
+        var dialogResponse = await DialogService.OpenAsync<NoteEditorDialog>("Add Note",
+            new Dictionary<string, object>() { { "InitialContent", String.Empty } },
+            RadzenDialogOptions.Standard);
+        if (dialogResponse is not string htmlContent) return;
+
+        await Service.AddNote(htmlContent);
+    }
+
     private void HandleDetailsLoaded(object? sender, EventArgs e)
     {
         var requestId = RequestCoordinator.Details?.RequestId ?? 0;
