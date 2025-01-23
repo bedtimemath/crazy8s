@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using C8S.AdminApp.Common;
-using C8S.Domain.Features.Notes.Commands;
+﻿using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using MediatR;
@@ -11,18 +9,17 @@ namespace C8S.AdminApp.Client.Services.Callbacks;
 
 public class NoteCallbacks(
     ILoggerFactory loggerFactory,
-    IHttpClientFactory httpClientFactory) : BaseCallbacks,
-        // NOTES
+    IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
+        // QUERIES
         IRequestHandler<NotesListQuery, BackendResponse<NotesListResults>>,
-        IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
-        // NOTE
         IRequestHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>,
+        // COMMANDS
+        IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
         IRequestHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
         IRequestHandler<NoteDeleteCommand, BackendResponse>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NoteCallbacks> _logger = loggerFactory.CreateLogger<NoteCallbacks>();
-    private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
     #endregion
 
     #region Queries
@@ -31,9 +28,7 @@ public class NoteCallbacks(
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            return await CallBackendServer<NotesListResults>(httpClient, "POST", "notes", 
-                payload:query, token:token);
+            return await CallBackendServer<NotesListResults>("POST", "notes", payload:query, token:token);
         }
         catch (Exception exception)
         {
@@ -47,8 +42,7 @@ public class NoteCallbacks(
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            return await CallBackendServer<NoteDetails?>(httpClient, "GET", "note", query.NoteId, token:token);
+            return await CallBackendServer<NoteDetails?>("GET", "note", query.NoteId, token:token);
         }
         catch (Exception exception)
         {
@@ -64,9 +58,7 @@ public class NoteCallbacks(
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            return await CallBackendServer<NoteDetails>(httpClient, "PUT", "notes", 
-                payload:command, token:token);
+            return await CallBackendServer<NoteDetails>("PUT", "notes", payload:command, token:token);
         }
         catch (Exception exception)
         {
@@ -80,8 +72,7 @@ public class NoteCallbacks(
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            return await CallBackendServer<NoteDetails>(httpClient, "PATCH", "note", command.NoteId, 
+            return await CallBackendServer<NoteDetails>("PATCH", "note", command.NoteId, 
                 payload:command, token:token);
         }
         catch (Exception exception)
@@ -96,8 +87,7 @@ public class NoteCallbacks(
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            return await CallBackendServer(httpClient, "DELETE", "note", command.NoteId, token:token);
+            return await CallBackendServer("DELETE", "note", command.NoteId, token:token);
         }
         catch (Exception exception)
         {

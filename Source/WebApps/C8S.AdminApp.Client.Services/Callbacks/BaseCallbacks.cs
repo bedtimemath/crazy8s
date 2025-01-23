@@ -1,18 +1,24 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
+using C8S.AdminApp.Common;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 
-public abstract class BaseCallbacks
+public abstract class BaseCallbacks(
+    IHttpClientFactory httpClientFactory)
 {
     private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
     protected async Task<BackendResponse<TResult>> CallBackendServer<TResult>(
-        HttpClient httpClient, string httpMethod, string endpoint, int? id = null,
+        string httpMethod, string endpoint, int? id = null,
         object? payload = null, CancellationToken token = default)
         where TResult: class?
     {
+        var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+
         var url = $"api/{endpoint}" + ((id != null) ? $"/{id}" : null);
         var httpResponse = httpMethod switch
         {
@@ -35,9 +41,11 @@ public abstract class BaseCallbacks
     }
 
     protected async Task<BackendResponse> CallBackendServer(
-        HttpClient httpClient, string httpMethod, string endpoint, int? id = null,
+        string httpMethod, string endpoint, int? id = null,
         object? payload = null, CancellationToken token = default)
     {
+        var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+
         var url = $"api/{endpoint}" + ((id != null) ? $"/{id}" : null);
         var httpResponse = httpMethod switch
         {

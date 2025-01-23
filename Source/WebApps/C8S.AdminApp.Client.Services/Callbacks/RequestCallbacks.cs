@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
 using C8S.AdminApp.Common;
+using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
@@ -12,28 +13,24 @@ namespace C8S.AdminApp.Client.Services.Callbacks;
 
 public class RequestCallbacks(
     ILoggerFactory loggerFactory,
-    IHttpClientFactory httpClientFactory) : 
+    IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
+        // QUERIES
         IRequestHandler<RequestsListQuery, BackendResponse<RequestsListResults>>,
         IRequestHandler<RequestDetailsQuery, BackendResponse<RequestDetails?>>,
+        // COMMANDS
         IRequestHandler<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>
 {
+    #region ReadOnly Constructor Variables
     private readonly ILogger<RequestCallbacks> _logger = loggerFactory.CreateLogger<RequestCallbacks>();
+    #endregion
 
-    private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
-    
+    #region Queries
     public async Task<BackendResponse<RequestsListResults>> Handle(
-        RequestsListQuery query, CancellationToken cancellationToken)
+        RequestsListQuery query, CancellationToken token)
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.PostAsJsonAsync("api/requests", query, cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                                      .Deserialize<BackendResponse<RequestsListResults>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-
-            return backendResponse;
+            return await CallBackendServer<RequestsListResults>("POST", "requests", payload:query, token:token);
         }
         catch (Exception exception)
         {
@@ -41,20 +38,13 @@ public class RequestCallbacks(
             return BackendResponse<RequestsListResults>.CreateFailureResponse(exception);
         }
     }
-    
+
     public async Task<BackendResponse<RequestDetails?>> Handle(
-        RequestDetailsQuery query, CancellationToken cancellationToken)
+        RequestDetailsQuery query, CancellationToken token)
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.GetAsync($"api/request/{query.RequestId}", cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                                      .Deserialize<BackendResponse<RequestDetails?>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-
-            return backendResponse;
+            return await CallBackendServer<RequestDetails?>("GET", "request", query.RequestId, token:token);
         }
         catch (Exception exception)
         {
@@ -62,20 +52,16 @@ public class RequestCallbacks(
             return BackendResponse<RequestDetails?>.CreateFailureResponse(exception);
         }
     }
-    
+    #endregion
+
+    #region Commands
     public async Task<BackendResponse<RequestDetails>> Handle(
-        RequestUpdateAppointmentCommand command, CancellationToken cancellationToken)
+        RequestUpdateAppointmentCommand command, CancellationToken token)
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.PatchAsJsonAsync($"api/request/{command.RequestId}", command, cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                                      .Deserialize<BackendResponse<RequestDetails>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-
-            return backendResponse;
+            return await CallBackendServer<RequestDetails>("PATCH", "request", command.RequestId, 
+                payload:command, token:token);
         }
         catch (Exception exception)
         {
@@ -83,4 +69,5 @@ public class RequestCallbacks(
             return BackendResponse<RequestDetails>.CreateFailureResponse(exception);
         }
     }
+    #endregion
 }

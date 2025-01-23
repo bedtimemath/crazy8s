@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-using C8S.AdminApp.Common;
-using C8S.Domain.Features.Appointments.Models;
+﻿using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -10,26 +8,21 @@ namespace C8S.AdminApp.Client.Services.Callbacks;
 
 public class AppointmentCallbacks(
     ILoggerFactory loggerFactory,
-    IHttpClientFactory httpClientFactory) : 
+    IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
+        // QUERIES
         IRequestHandler<AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>>
 {
+    #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentCallbacks> _logger = loggerFactory.CreateLogger<AppointmentCallbacks>();
+    #endregion
 
-    private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
-    
+    #region Queries
     public async Task<BackendResponse<AppointmentDetails?>> Handle(
-        AppointmentDetailsQuery query, CancellationToken cancellationToken)
+        AppointmentDetailsQuery query, CancellationToken token)
     {
         try
         {
-            var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-            var httpResponse = await httpClient.GetAsync($"api/appointment/{query.AppointmentId}", cancellationToken);
-            var bodyJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
-            var backendResponse = JsonSerializer
-                .Deserialize<BackendResponse<AppointmentDetails?>>(bodyJson, _options) ??
-                                  throw new Exception($"Could not deserialize: {bodyJson}");
-
-            return backendResponse;
+            return await CallBackendServer<AppointmentDetails?>("GET", "appointment", query.AppointmentId, token: token);
         }
         catch (Exception exception)
         {
@@ -37,4 +30,5 @@ public class AppointmentCallbacks(
             return BackendResponse<AppointmentDetails?>.CreateFailureResponse(exception);
         }
     }
+    #endregion
 }
