@@ -4,6 +4,6 @@ using SC.Common.Radzen.Base;
 namespace C8S.AdminApp.Client.Pages.Requests;
 
 public sealed partial class RequestsListPage :
-    BaseOwningRazorPage<RequestsListCoordinator>
+    BaseCoordinatedPage<RequestsListCoordinator>
 {
 }

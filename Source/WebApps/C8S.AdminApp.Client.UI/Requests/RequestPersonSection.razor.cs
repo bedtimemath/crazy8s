@@ -15,14 +15,14 @@ public sealed partial class RequestPersonSection: BaseClientComponent
 
     protected override void OnInitialized()
     {
-        Coordinator.IdSet += HandleIdSet;
+        Coordinator.DetailsLoaded += HandleDetailsLoaded;
         base.OnInitialized();
     }
     public void Dispose()
     {
-        Coordinator.IdSet -= HandleIdSet;
+        Coordinator.DetailsLoaded -= HandleDetailsLoaded;
     }
 
-    private void HandleIdSet(object? sender, EventArgs e) => 
+    private void HandleDetailsLoaded(object? sender, EventArgs e) => 
         StateHasChanged();
 }

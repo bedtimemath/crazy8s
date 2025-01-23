@@ -4,6 +4,7 @@ using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using SC.Common.Extensions;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
@@ -59,7 +60,7 @@ public sealed class NotesListEditorCoordinator(
             {
                 Reference = NotesSource,
                 ParentId = SourceId,
-                Content = Content
+                Content = String.Empty.AppendRandomAlphaOnly(12) // todo
             });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
@@ -73,7 +74,7 @@ public sealed class NotesListEditorCoordinator(
         finally
         {
             IsBusy = false;
-        }
+        } 
     }
 
     public async Task DeleteNote(int noteId)
@@ -93,7 +94,7 @@ public sealed class NotesListEditorCoordinator(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting notes list");
+            _logger.LogError(ex, "Error deleting note");
             throw;
         }
         finally
@@ -101,7 +102,7 @@ public sealed class NotesListEditorCoordinator(
             IsBusy = false;
         }
     }
-    
+
     public async Task EditNote(int noteId)
     {
         IsBusy = true;
@@ -119,7 +120,7 @@ public sealed class NotesListEditorCoordinator(
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error requesting notes list");
+            _logger.LogError(ex, "Error editing note");
             throw;
         }
         finally

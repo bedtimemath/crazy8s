@@ -14,7 +14,7 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Notes;
 
-public sealed partial class NotesListEditor: BaseOwningComponent<NotesListEditorCoordinator>
+public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListEditorCoordinator>
 {
     #region Injected Properties
     [Inject]
@@ -32,7 +32,7 @@ public sealed partial class NotesListEditor: BaseOwningComponent<NotesListEditor
     #region Component LifeCycle
     protected override void OnInitialized()
     {
-        RequestCoordinator.IdSet += HandleIdSet;
+        RequestCoordinator.DetailsLoaded += HandleDetailsLoaded;
         Service.ListUpdated += HandleListUpdated;
         Service.IsBusyChanged += HandleIsBusyChanged;
 
@@ -43,14 +43,14 @@ public sealed partial class NotesListEditor: BaseOwningComponent<NotesListEditor
 
     public void Dispose()
     {
-        RequestCoordinator.IdSet -= HandleIdSet;
+        RequestCoordinator.DetailsLoaded -= HandleDetailsLoaded;
         Service.ListUpdated -= HandleListUpdated;
         Service.IsBusyChanged -= HandleIsBusyChanged;
     }
     #endregion
     
     #region Event Handlers
-    private void HandleIdSet(object? sender, EventArgs e)
+    private void HandleDetailsLoaded(object? sender, EventArgs e)
     {
         var requestId = RequestCoordinator.Details?.RequestId ?? 0;
         if (requestId <= 0) return;

@@ -6,7 +6,7 @@ using SC.Common.Razor.Base;
 namespace C8S.AdminApp.Client.UI.Appointments;
 
 public partial class AppointmentDisplayer : 
-    BaseOwningComponent<AppointmentDisplayerCoordinator>
+    BaseCoordinatedComponent<AppointmentDisplayerCoordinator>
 {
     #region Injected Properties
     [Inject]

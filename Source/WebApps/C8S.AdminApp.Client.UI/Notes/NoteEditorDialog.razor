@@ -1,0 +1,27 @@
+﻿@inherits BaseCoordinatedDialog<NoteEditorCoordinator>
+
+<div id="@ComponentId" class="c8s-dialog c8s-note-editor-dialog @CssClass">
+    
+    <RadzenRow>
+        <RadzenColumn Size="12">
+
+            <RadzenStack Orientation="Orientation.Horizontal"
+                         AlignItems="AlignItems.Center"
+                         JustifyContent="JustifyContent.SpaceAround">
+
+                <RadzenButton ButtonType="ButtonType.Button"
+                              ButtonStyle="ButtonStyle.Danger"
+                              Text="Cancel"
+                              Click="@(() => DialogService.Close())" />
+
+                <RadzenButton ButtonType="ButtonType.Button"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Text="Submit"
+                              Click="@Service.Submit" />
+
+            </RadzenStack>
+
+        </RadzenColumn>
+    </RadzenRow>
+
+</div>

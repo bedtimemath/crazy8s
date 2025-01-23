@@ -1,4 +1,4 @@
-﻿@inherits BaseOwningComponent<NotesListEditorCoordinator>
+﻿@inherits BaseCoordinatedComponent<NotesListEditorCoordinator>
 
 <div class="c8s-notes-list-editor @CssClass">
 
@@ -10,22 +10,12 @@
 
         <BusyCover IsBusy="@Service.IsBusy" />
 
-        <RadzenTextArea @bind-Value="@Service.Content" />
-
         <IconButton ButtonType="ButtonType.Button"
                     ButtonStyle="ButtonStyle.Primary"
                     IconString="@C8SConstants.Icons.Add"
                     Text="Add Note"
                     Click="@Service.AddNote" />
 
-    </RadzenStack>
-
-    <hr />
-    
-    <div style="position: relative">
-
-        <BusyCover IsBusy="@Service.IsBusy" />
-        
         @foreach (var note in Service.Notes)
         {
             <RadzenCard class="rz-mb-2">
@@ -33,6 +23,6 @@
             </RadzenCard>
         }
 
-    </div>
+    </RadzenStack>
 
 </div>

@@ -18,12 +18,11 @@ public sealed class RequestDetailsCoordinator(
     #endregion
     
     #region Public Events
-    public event EventHandler? IdSet;
-    public void RaiseIdSet() => IdSet?.Invoke(this, EventArgs.Empty);
+    public event EventHandler? DetailsLoaded;
+    public void RaiseDetailsLoaded() => DetailsLoaded?.Invoke(this, EventArgs.Empty);
     #endregion
 
     #region Public Properties
-    public string? PageTitle { get; set; }
     public RequestDetails? Details { get; private set; } 
     #endregion
 
@@ -43,9 +42,9 @@ public sealed class RequestDetailsCoordinator(
             }
             
             Details = backendResponse.Result;
-            PageTitle = Details?.PersonFullName;
 
-            RaiseIdSet();
+            RaiseDetailsLoaded();
+
         }
         catch (Exception ex)
         {
