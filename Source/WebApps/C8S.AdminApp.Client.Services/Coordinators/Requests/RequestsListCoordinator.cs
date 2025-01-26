@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using SC.Common.Interfaces;
 using SC.Common.Models;
 using SC.Common.Razor.Extensions;
 
@@ -14,8 +13,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
     IJSRuntime jsRuntime,
-    IMediator mediator,
-    IDateTimeHelper dateTimeHelper)
+    IMediator mediator)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";

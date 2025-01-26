@@ -17,18 +17,7 @@ public abstract class BaseCallbacks(
         object? payload = null, CancellationToken token = default)
         where TResult: class?
     {
-        var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-
-        var url = $"api/{endpoint}" + ((id != null) ? $"/{id}" : null);
-        var httpResponse = httpMethod switch
-        {
-            "GET" => await httpClient.GetAsync(url, token),
-            "POST" => await httpClient.PostAsJsonAsync(url, payload, token),
-            "PUT" => await httpClient.PutAsJsonAsync(url, payload, token),
-            "PATCH" => await httpClient.PatchAsJsonAsync(url, payload, token),
-            "DELETE" => await httpClient.DeleteAsync(url, token),
-            _ => throw new ArgumentOutOfRangeException(nameof(httpMethod))
-        };
+        var httpResponse = await CallBackendInternal(httpMethod, endpoint, id, payload, token);
         if (!httpResponse.IsSuccessStatusCode)
             throw new Exception($"Network error: [{(int)httpResponse.StatusCode}] {httpResponse.ReasonPhrase}");
 
@@ -44,18 +33,7 @@ public abstract class BaseCallbacks(
         string httpMethod, string endpoint, int? id = null,
         object? payload = null, CancellationToken token = default)
     {
-        var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
-
-        var url = $"api/{endpoint}" + ((id != null) ? $"/{id}" : null);
-        var httpResponse = httpMethod switch
-        {
-            "GET" => await httpClient.GetAsync(url, token),
-            "POST" => await httpClient.PostAsJsonAsync(url, payload, token),
-            "PUT" => await httpClient.PutAsJsonAsync(url, payload, token),
-            "PATCH" => await httpClient.PatchAsJsonAsync(url, payload, token),
-            "DELETE" => await httpClient.DeleteAsync(url, token),
-            _ => throw new ArgumentOutOfRangeException(nameof(httpMethod))
-        };
+        var httpResponse = await CallBackendInternal(httpMethod, endpoint, id, payload, token);
         if (!httpResponse.IsSuccessStatusCode)
             throw new Exception($"Network error: [{(int)httpResponse.StatusCode}] {httpResponse.ReasonPhrase}");
 
@@ -65,5 +43,23 @@ public abstract class BaseCallbacks(
                               throw new Exception($"Could not deserialize: {bodyJson}");
 
         return backendResponse;
+    }
+
+    private async Task<HttpResponseMessage> CallBackendInternal(
+        string httpMethod, string endpoint, int? id = null,
+        object? payload = null, CancellationToken token = default)
+    {
+        var httpClient = httpClientFactory.CreateClient(AdminAppConstants.HttpClients.BackendServer);
+
+        var url = $"api/{endpoint}" + ((id != null) ? $"/{id}" : null);
+        return httpMethod switch
+        {
+            "GET" => await httpClient.GetAsync(url, token),
+            "POST" => await httpClient.PostAsJsonAsync(url, payload, token),
+            "PUT" => await httpClient.PutAsJsonAsync(url, payload, token),
+            "PATCH" => await httpClient.PatchAsJsonAsync(url, payload, token),
+            "DELETE" => await httpClient.DeleteAsync(url, token),
+            _ => throw new ArgumentOutOfRangeException(nameof(httpMethod))
+        };
     }
 }
