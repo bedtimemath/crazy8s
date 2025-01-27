@@ -9,8 +9,5 @@ public sealed partial class SidebarMenu: BaseRazorComponent
     #region Injected Properties
     [Inject]
     public ILogger<SidebarMenu> Logger { get; set; } = null!;
-
-    //[Inject]
-    //public IPagesService PagesService { get; set; } = null!;
     #endregion
 }

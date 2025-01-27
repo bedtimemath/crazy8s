@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Client.Services;
-using SC.Common.Helpers.Interfaces;
 using SC.Common.PubSub;
 
 namespace C8S.AdminApp.Client.Services.Pages;
@@ -29,7 +28,8 @@ public sealed class PagesService(
         {
             CurrentUrl = GetCurrentUrl(),
             NewUrl = newUrl,
-            Action = PageChangeAction.Open
+            Action = PageChangeAction.Open,
+            IdValue = openPageCommand.IdValue
         });
 
         navigationManager.NavigateTo(newUrl);
@@ -50,7 +50,8 @@ public sealed class PagesService(
         {
             CurrentUrl = currentUrl,
             NewUrl = pageUrl,
-            Action = PageChangeAction.Close
+            Action = PageChangeAction.Close,
+            IdValue = closePageCommand.IdValue
         });
 
         navigationManager.NavigateTo(newUrl);
