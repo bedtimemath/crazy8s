@@ -1,13 +1,8 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
-using C8S.AdminApp.Client.Services.Coordinators.Notes;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using C8S.AdminApp.Client.UI.Common;
-using C8S.Domain;
 using C8S.Domain.Enums;
-using C8S.Domain.Features.Notes.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Radzen;
 using SC.Audit.Abstractions.Models;
@@ -41,7 +36,7 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
         Service.ListUpdated += HandleListUpdated;
         Service.IsBusyChanged += HandleIsBusyChanged;
 
-        PubSubService.Subscribe<DataChange>(HandleDataChangeNotification);
+        PubSubService.Subscribe<DataChange>(Service.HandleDataChangeNotification);
 
         base.OnInitialized();
     }
@@ -51,6 +46,8 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
         RequestCoordinator.DetailsLoaded -= HandleDetailsLoaded;
         Service.ListUpdated -= HandleListUpdated;
         Service.IsBusyChanged -= HandleIsBusyChanged;
+
+        PubSubService.Unsubscribe<DataChange>(Service.HandleDataChangeNotification);
     }
     #endregion
     
@@ -75,24 +72,6 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
         Service.SourceId = requestId;
 
         Task.Run(Service.RefreshNotesList);
-    }
-
-    private async Task HandleDataChangeNotification(DataChange dataChange)
-    {
-        if (dataChange is not
-            {
-                EntityName: C8SConstants.Entities.Note,
-                EntityState: EntityState.Added or EntityState.Deleted,
-                JsonDetails: not null
-            }) 
-            return;
-
-        var noteDetails = 
-            JsonSerializer.Deserialize<NoteDetails>(dataChange.JsonDetails) ??
-            throw new UnreachableException($"Could not deserialize JsonDetails to NoteDetails: {dataChange.JsonDetails}");
-        if (noteDetails.ParentId != Service.SourceId) return;
-
-        await Service.RefreshNotesList();
     }
     
     private void HandleListUpdated(object? sender, EventArgs e) => 

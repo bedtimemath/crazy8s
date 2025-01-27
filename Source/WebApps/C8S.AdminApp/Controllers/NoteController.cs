@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using C8S.AdminApp.Client.UI;
 using C8S.AdminApp.Hubs;
 using C8S.Domain;
 using C8S.Domain.EFCore.Contexts;
@@ -62,6 +61,7 @@ public class NoteController(
     {
         try
         {
+            // find the existing note
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var note = await dbContext.Notes.FindAsync(noteId) ??
                        throw new Exception($"Note ID #{noteId} does not exist.");
@@ -70,6 +70,16 @@ public class NoteController(
             //  is the content
             note.Content = command.Content;
             await dbContext.SaveChangesAsync();
+            
+            // tell the world
+            var dataChange = new DataChange()
+            {
+                EntityId = noteId,
+                EntityName = C8SConstants.Entities.Note,
+                EntityState = EntityState.Modified,
+                JsonDetails = JsonSerializer.Serialize(mapper.Map<NoteDetails>(note))
+            };
+            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
             return new BackendResponse<NoteDetails>()
             {
@@ -103,6 +113,7 @@ public class NoteController(
             dbContext.Notes.Remove(note);
             await dbContext.SaveChangesAsync();
 
+            // tell the world
             var dataChange = new DataChange()
             {
                 EntityId = noteId,

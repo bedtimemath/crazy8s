@@ -1,9 +1,15 @@
-﻿using C8S.Domain.Enums;
+﻿using C8S.Domain;
+using C8S.Domain.Enums;
 using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Audit.Abstractions.Models;
+using Serilog.Core;
+using System.Diagnostics;
+using System.Text.Json;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
@@ -44,6 +50,50 @@ public sealed class NotesListEditorCoordinator(
         }
     }
     private bool _isBusy = false;
+    #endregion
+
+    #region Event Handlers
+
+    public async Task HandleDataChangeNotification(DataChange dataChange)
+    {
+        _logger.LogDebug("DataChange={@DataChange}", dataChange);
+
+        // don't bother if not a note or missing details
+        if (dataChange is not {
+                EntityName: C8SConstants.Entities.Note,
+                JsonDetails: not null
+            }) return;
+
+        switch (dataChange)
+        {
+            case { EntityState: EntityState.Added or EntityState.Deleted }:
+                await HandleAddDeleteNotification(dataChange);
+                break;
+            case { EntityState: EntityState.Modified }:
+                await HandleModifyNotification(dataChange);
+                break;
+        }
+    }
+
+    private async Task HandleAddDeleteNotification(DataChange dataChange)
+    {
+        if (String.IsNullOrWhiteSpace(dataChange.JsonDetails))
+            throw new UnreachableException("JsonDetails missing.");
+
+        var noteDetails = 
+            JsonSerializer.Deserialize<NoteDetails>(dataChange.JsonDetails) ??
+            throw new UnreachableException($"Could not deserialize JsonDetails to NoteDetails: {dataChange.JsonDetails}");
+        if (noteDetails.ParentId != SourceId) return;
+
+        await RefreshNotesList();
+    }
+
+    private async Task HandleModifyNotification(DataChange dataChange)
+    {
+        if (Notes.All(n => n.NoteId != dataChange.EntityId)) return;
+
+        await RefreshNotesList();
+    }
     #endregion
 
     #region Public Methods
