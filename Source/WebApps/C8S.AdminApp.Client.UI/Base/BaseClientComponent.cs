@@ -17,7 +17,7 @@ public abstract class BaseClientComponent: BaseRazorComponent
     #endregion
     
     #region Protected Properties
-    protected IPagesService? PagesService { get; set; } = null;
+    protected PagesService? PagesService { get; set; } = null;
     #endregion
     
     #region Component LifeCycle
@@ -26,7 +26,7 @@ public abstract class BaseClientComponent: BaseRazorComponent
     {
         base.OnInitialized();
 
-        PagesService = ServiceProvider.GetService<IPagesService>();
+        PagesService = ServiceProvider.GetService<PagesService>();
     }
     #endregion
 }

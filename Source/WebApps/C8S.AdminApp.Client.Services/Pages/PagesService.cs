@@ -1,39 +1,41 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Common.Client.Services;
+using SC.Common.Helpers.Interfaces;
+using SC.Common.PubSub;
 
 namespace C8S.AdminApp.Client.Services.Pages;
 
 public sealed class PagesService(
     ILoggerFactory loggerFactory,
+    PubSubService pubSubService,
     NavigationManager navigationManager) : 
     IRequestHandler<OpenPageCommand>, 
-    IRequestHandler<ClosePageCommand>, 
-    IPagesService
+    IRequestHandler<ClosePageCommand>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<PagesService> _logger = loggerFactory.CreateLogger<PagesService>();
     #endregion
 
-    #region Public Events
-    public event EventHandler<PageChangedEventArgs>? PageChanged;
-    private void RaisePageChanged(PageChangedAction action, string oldUrl, string newUrl) =>
-        PageChanged?.Invoke(this, new PageChangedEventArgs() { Action = action, OldUrl = oldUrl, NewUrl = newUrl});
-    #endregion
-
     #region Command Handlers
-    public Task Handle(OpenPageCommand openPageCommand, CancellationToken cancellationToken)
+    public async Task Handle(OpenPageCommand openPageCommand, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Open: {PageName} [{IdValue}]", openPageCommand.PageUrlKey, openPageCommand.IdValue);
 
-        var pageUrl = GetUrlForCommand(openPageCommand);
-        RaisePageChanged(PageChangedAction.Opened, GetCurrentUrl(), pageUrl);
-        navigationManager.NavigateTo(pageUrl);
+        var newUrl = GetUrlForCommand(openPageCommand);
 
-        return Task.CompletedTask;
+        await pubSubService.Publish(new PageChange()
+        {
+            CurrentUrl = GetCurrentUrl(),
+            NewUrl = newUrl,
+            Action = PageChangeAction.Open
+        });
+
+        navigationManager.NavigateTo(newUrl);
     }
 
-    public Task Handle(ClosePageCommand closePageCommand, CancellationToken cancellationToken)
+    public async Task Handle(ClosePageCommand closePageCommand, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Close: {PageName} [{IdValue}]", closePageCommand.PageUrlKey, closePageCommand.IdValue);
 
@@ -42,13 +44,16 @@ public sealed class PagesService(
         // note that we need to include the root / to compare
         var currentUrl = GetCurrentUrl();
         var newUrl = AdminAppConstants.Pages.RequestsList;
-        if (currentUrl == pageUrl)
-        {
-            RaisePageChanged(PageChangedAction.Closed, currentUrl, newUrl);
-            navigationManager.NavigateTo(newUrl);
-        }
+        if (currentUrl != pageUrl) return;
 
-        return Task.CompletedTask;
+        await pubSubService.Publish(new PageChange()
+        {
+            CurrentUrl = currentUrl,
+            NewUrl = pageUrl,
+            Action = PageChangeAction.Close
+        });
+
+        navigationManager.NavigateTo(newUrl);
     }
     #endregion
 

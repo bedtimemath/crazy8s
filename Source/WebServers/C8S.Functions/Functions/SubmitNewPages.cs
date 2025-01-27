@@ -25,6 +25,7 @@ using SC.Audit.Abstractions.Models;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
+using SC.Common.PubSub;
 using Exception = System.Exception;
 
 namespace C8S.Functions.Functions;
@@ -494,7 +495,7 @@ public partial class SubmitNewPages(
                 {
                     EntityId = request.RequestId,
                     EntityName = nameof(RequestDb),
-                    EntityState = EntityState.Added
+                    EntityAction = EntityAction.Added
                 };
                 var response = await httpClient.PostAsJsonAsync("/api/datachanges", dataChange, options);
                 if (!response.IsSuccessStatusCode)

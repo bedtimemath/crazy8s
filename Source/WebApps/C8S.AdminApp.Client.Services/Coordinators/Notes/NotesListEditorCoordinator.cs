@@ -4,12 +4,10 @@ using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SC.Audit.Abstractions.Models;
-using Serilog.Core;
 using System.Diagnostics;
 using System.Text.Json;
+using SC.Common.PubSub;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
@@ -56,8 +54,6 @@ public sealed class NotesListEditorCoordinator(
 
     public async Task HandleDataChangeNotification(DataChange dataChange)
     {
-        _logger.LogDebug("DataChange={@DataChange}", dataChange);
-
         // don't bother if not a note or missing details
         if (dataChange is not {
                 EntityName: C8SConstants.Entities.Note,
@@ -66,10 +62,10 @@ public sealed class NotesListEditorCoordinator(
 
         switch (dataChange)
         {
-            case { EntityState: EntityState.Added or EntityState.Deleted }:
+            case { EntityAction: EntityAction.Added or EntityAction.Deleted }:
                 await HandleAddDeleteNotification(dataChange);
                 break;
-            case { EntityState: EntityState.Modified }:
+            case { EntityAction: EntityAction.Modified }:
                 await HandleModifyNotification(dataChange);
                 break;
         }

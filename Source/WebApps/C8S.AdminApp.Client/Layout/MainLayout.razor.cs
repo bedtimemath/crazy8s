@@ -1,4 +1,4 @@
-﻿using SC.Common.Helpers.Interfaces;
+﻿using SC.Common.Client.Services;
 
 namespace C8S.AdminApp.Client.Layout;
 
@@ -14,7 +14,7 @@ public partial class MainLayout(
 
         if (RendererInfo.IsInteractive)
         {
-            var communicationService = serviceProvider.GetRequiredService<IPubSubService>();
+            var communicationService = serviceProvider.GetRequiredService<PubSubService>();
             await communicationService.InitializeAsync();
         }
     }

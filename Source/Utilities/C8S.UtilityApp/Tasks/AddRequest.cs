@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using SC.Audit.Abstractions.Models;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
+using SC.Common.PubSub;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -70,7 +71,7 @@ internal class AddRequest(
         {
             EntityId = request.RequestId,
             EntityName = nameof(RequestDb),
-            EntityState = EntityState.Added
+            EntityAction = EntityAction.Added
         };
 
         try

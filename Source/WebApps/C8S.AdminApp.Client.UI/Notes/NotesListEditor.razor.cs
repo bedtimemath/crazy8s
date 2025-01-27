@@ -5,8 +5,8 @@ using C8S.Domain.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Radzen;
-using SC.Audit.Abstractions.Models;
-using SC.Common.Helpers.Interfaces;
+using SC.Common.Client.Services;
+using SC.Common.PubSub;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Notes;
@@ -18,7 +18,7 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
     public ILogger<NotesListEditor> Logger { get; set; } = null!; 
 
     [Inject]
-    public IPubSubService PubSubService { get; set; } = null!;
+    public PubSubService PubSubService { get; set; } = null!;
 
     [Inject]
     public DialogService DialogService { get; set; } = null!;

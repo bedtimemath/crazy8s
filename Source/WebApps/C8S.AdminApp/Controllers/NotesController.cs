@@ -17,6 +17,7 @@ using SC.Audit.Abstractions.Models;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interactions;
+using SC.Common.PubSub;
 
 namespace C8S.AdminApp.Controllers;
 
@@ -106,7 +107,7 @@ public class NotesController(
             {
                 EntityId = addedDetails.NoteId,
                 EntityName = C8SConstants.Entities.Note,
-                EntityState = EntityState.Added,
+                EntityAction = EntityAction.Added,
                 JsonDetails = JsonSerializer.Serialize(addedDetails)
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);

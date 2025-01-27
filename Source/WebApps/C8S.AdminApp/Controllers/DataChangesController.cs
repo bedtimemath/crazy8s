@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.SignalR;
 using SC.Common;
+using SC.Common.PubSub;
 
 namespace C8S.AdminApp.Controllers;
 
