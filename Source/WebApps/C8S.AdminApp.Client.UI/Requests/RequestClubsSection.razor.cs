@@ -1,11 +1,11 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
-using C8S.AdminApp.Client.UI.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Requests;
 
-public sealed partial class RequestClubsSection: BaseClientComponent
+public sealed partial class RequestClubsSection: BaseRazorComponent
 {
     [Inject]
     public ILogger<RequestClubsSection> Logger { get; set; } = null!;

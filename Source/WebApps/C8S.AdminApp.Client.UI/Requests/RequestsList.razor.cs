@@ -1,13 +1,13 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
-using C8S.AdminApp.Client.UI.Base;
 using C8S.Domain.Features.Requests.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
+using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Requests;
 
-public sealed partial class RequestsList : BaseClientComponent, IDisposable
+public sealed partial class RequestsList : BaseRazorComponent, IDisposable
 {
     #region Injected Properties
     [Inject]

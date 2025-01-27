@@ -17,49 +17,57 @@ public sealed class PagesService(
     private readonly ILogger<PagesService> _logger = loggerFactory.CreateLogger<PagesService>();
     #endregion
 
+    #region Public Properties
+    public string CurrentUrl
+    {
+        get
+        {
+            if (String.IsNullOrWhiteSpace(_currentUrl))
+            {
+                _logger.LogDebug("Reading from navigation manager");
+                _currentUrl =  $"/{navigationManager.ToBaseRelativePath(navigationManager.Uri)}";
+            }
+            return _currentUrl;
+        }
+    }
+    private string? _currentUrl;
+    #endregion
+
     #region Command Handlers
     public async Task Handle(OpenPageCommand openPageCommand, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Open: {PageName} [{IdValue}]", openPageCommand.PageUrlKey, openPageCommand.IdValue);
+        _logger.LogInformation("Open: {PageName} [{IdValue}]", openPageCommand.PageUrl, openPageCommand.IdValue);
 
-        var newUrl = GetUrlForCommand(openPageCommand);
+        _currentUrl = openPageCommand.PageUrl;
+        navigationManager.NavigateTo(_currentUrl);
 
         await pubSubService.Publish(new PageChange()
         {
-            CurrentUrl = GetCurrentUrl(),
-            NewUrl = newUrl,
+            CurrentUrl = CurrentUrl,
+            NewUrl = openPageCommand.PageUrl,
             Action = PageChangeAction.Open,
             IdValue = openPageCommand.IdValue
-        });
-
-        navigationManager.NavigateTo(newUrl);
+        }).ConfigureAwait(false);
     }
 
     public async Task Handle(ClosePageCommand closePageCommand, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Close: {PageName} [{IdValue}]", closePageCommand.PageUrlKey, closePageCommand.IdValue);
+        _logger.LogInformation("Close: {PageName} [{IdValue}]", closePageCommand.PageUrl, closePageCommand.IdValue);
 
-        var pageUrl = GetUrlForCommand(closePageCommand);
-
-        // note that we need to include the root / to compare
-        var currentUrl = GetCurrentUrl();
+        // todo: drop back correctly
         var newUrl = AdminAppConstants.Pages.RequestsList;
-        if (currentUrl != pageUrl) return;
+        if (CurrentUrl != closePageCommand.PageUrl) return;
+
+        _currentUrl = newUrl;
+        navigationManager.NavigateTo(_currentUrl);
 
         await pubSubService.Publish(new PageChange()
         {
-            CurrentUrl = currentUrl,
-            NewUrl = pageUrl,
+            CurrentUrl = CurrentUrl,
+            NewUrl = closePageCommand.PageUrl,
             Action = PageChangeAction.Close,
             IdValue = closePageCommand.IdValue
-        });
-
-        navigationManager.NavigateTo(newUrl);
+        }).ConfigureAwait(false);
     }
-    #endregion
-
-    #region Private Methods
-    private string GetCurrentUrl() => $"/{navigationManager.ToBaseRelativePath(navigationManager.Uri)}";
-    private static string GetUrlForCommand(PageCommand pageCommand) => $"/{pageCommand.PageUrlKey}/{pageCommand.IdValue}"; 
     #endregion
 }

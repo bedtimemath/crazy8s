@@ -1,42 +1,12 @@
-﻿@inherits BaseRazorComponent
-@rendermode InteractiveWebAssembly
+﻿@using SC.Common.Extensions
+@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
 
 <div class="c8s-sidebar-menu @CssClass">
-    <RadzenRow>
-            <RadzenColumn>
-                <SidebarMenuItem Display="Requests"
-                                 Icon="@C8SConstants.Icons.Request"
-                                 PageRoute="/requests" />
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn>
-                <SidebarMenuItem Display="Organizations"
-                                 Icon="@C8SConstants.Icons.Organization"
-                                 PageRoute="/organizations" />
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn>
-                <SidebarMenuItem Display="Coaches"
-                                 Icon="@C8SConstants.Icons.Coach"
-                                 PageRoute="/coaches" />
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn>
-                <SidebarMenuItem Display="Orders"
-                                 Icon="@C8SConstants.Icons.Order"
-                                 PageRoute="/orders" />
-            </RadzenColumn>
-        </RadzenRow>
-        <RadzenRow>
-            <RadzenColumn>
-                <SidebarMenuItem Display="SKUs"
-                                 Icon="@C8SConstants.Icons.Sku"
-                                 PageRoute="/skus" />
-            </RadzenColumn>
-        </RadzenRow>
+    @foreach (var pageGroup in Service.PageGroups)
+    {
+        <SidebarGroup Group="pageGroup.Key"
+                      Clicked="@(async (args) => await Service.HandleSidebarGroupClicked(args))"/>
 
-
+        <div>@String.Empty.AppendUniqueDateTime()</div>
+    }
 </div>

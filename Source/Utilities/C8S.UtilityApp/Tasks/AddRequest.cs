@@ -71,7 +71,7 @@ internal class AddRequest(
         {
             EntityId = request.RequestId,
             EntityName = nameof(RequestDb),
-            EntityAction = EntityAction.Added
+            DataChangeAction = DataChangeAction.Added
         };
 
         try

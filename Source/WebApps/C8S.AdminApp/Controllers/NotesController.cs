@@ -107,7 +107,7 @@ public class NotesController(
             {
                 EntityId = addedDetails.NoteId,
                 EntityName = C8SConstants.Entities.Note,
-                EntityAction = EntityAction.Added,
+                DataChangeAction = DataChangeAction.Added,
                 JsonDetails = JsonSerializer.Serialize(addedDetails)
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);

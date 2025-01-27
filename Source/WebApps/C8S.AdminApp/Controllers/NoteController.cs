@@ -77,7 +77,7 @@ public class NoteController(
             {
                 EntityId = noteId,
                 EntityName = C8SConstants.Entities.Note,
-                EntityAction = EntityAction.Modified,
+                DataChangeAction = DataChangeAction.Modified,
                 JsonDetails = JsonSerializer.Serialize(mapper.Map<NoteDetails>(note))
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
@@ -119,7 +119,7 @@ public class NoteController(
             {
                 EntityId = noteId,
                 EntityName = C8SConstants.Entities.Note,
-                EntityAction = EntityAction.Deleted,
+                DataChangeAction = DataChangeAction.Deleted,
                 JsonDetails = JsonSerializer.Serialize(removedDetails)
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);

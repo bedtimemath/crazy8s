@@ -4,7 +4,7 @@ namespace C8S.AdminApp.Client.Services.Pages;
 
 public abstract record PageCommand: IRequest
 {
-    public string PageUrlKey { get; init; } = null!;
+    public string PageUrl { get; init; } = null!;
     public int? IdValue { get; init; }
 }
 

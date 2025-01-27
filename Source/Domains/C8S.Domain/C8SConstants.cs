@@ -27,14 +27,15 @@ public static class C8SConstants
         public const string Add = "plus";
         public const string Clear = "broom-wide";
         public const string Close = "circle-xmark";
-        public const string Coach = "user-hair-long";
+        public const string Contact = "user-hair-long";
         public const string Delete = "trash";
         public const string Edit = "pencil";
         public const string Link = "link";
         public const string Order = "cart-shopping";
-        public const string Organization = "school";
+        public const string Organization = "buildings";
         public const string Refresh = "arrow-rotate-right";
         public const string Request = "clipboard-list";
+        public const string Site = "school";
         public const string Sku = "barcode";
         public const string Settings = "gear";
         public const string Unlink = "link-slash";

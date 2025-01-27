@@ -55,7 +55,7 @@ public sealed class RequestDetailsCoordinator(
     public async Task ClosePage()
         => await mediator.Send(new ClosePageCommand()
         {
-            PageUrlKey = AdminAppConstants.Pages.RequestDetails,
+            PageUrl = AdminAppConstants.Pages.RequestDetails,
             IdValue = Details?.RequestId
         });
 

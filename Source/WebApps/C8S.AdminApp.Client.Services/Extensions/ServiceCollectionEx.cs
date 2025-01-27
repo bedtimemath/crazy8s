@@ -1,4 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Appointments;
+using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,8 @@ public static class ServiceCollectionEx
     public static IServiceCollection AddClientCoordinators(
         this IServiceCollection services)
     {
+        services.AddScoped<SidebarMenuCoordinator>();
+
         services.AddScoped<AppointmentDisplayerCoordinator>();
         
         services.AddScoped<RequestsListCoordinator>();

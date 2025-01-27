@@ -62,10 +62,10 @@ public sealed class NotesListEditorCoordinator(
 
         switch (dataChange)
         {
-            case { EntityAction: EntityAction.Added or EntityAction.Deleted }:
+            case { DataChangeAction: DataChangeAction.Added or DataChangeAction.Deleted }:
                 await HandleAddDeleteNotification(dataChange);
                 break;
-            case { EntityAction: EntityAction.Modified }:
+            case { DataChangeAction: DataChangeAction.Modified }:
                 await HandleModifyNotification(dataChange);
                 break;
         }
