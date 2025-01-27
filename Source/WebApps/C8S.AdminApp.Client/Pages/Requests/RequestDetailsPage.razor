@@ -4,44 +4,41 @@
 
 @using C8S.AdminApp.Client.Services.Coordinators.Requests
 
-<WaitingPageContainer HideDuringPreRender="true">
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.Stretch"
+             Gap="1.0rem"
+             class="w-100 h-100">
 
-    <RadzenStack Orientation="Orientation.Vertical"
-                 AlignItems="AlignItems.Stretch"
-                 JustifyContent="JustifyContent.Stretch"
-                 Gap="1.0rem"
-                 class="w-100 h-100">
-
-        <RequestHeader Coordinator="@Service"
-                       CssClass="flex-shrink-0"
-                       @rendermode="InteractiveWebAssembly" />
+    <RequestHeader Coordinator="@Service"
+                   CssClass="flex-shrink-0"
+                   @rendermode="InteractiveWebAssembly" />
         
-        <RadzenSplitter Orientation="Orientation.Horizontal">
-            <RadzenSplitterPane Size="70%">
+    <RadzenSplitter Orientation="Orientation.Horizontal">
+        <RadzenSplitterPane Size="70%">
 
-                <RadzenCard Style="position: relative" class="flex-grow-1">
+            <RadzenCard Style="position: relative" class="flex-grow-1">
 
-                    <BusyCover IsBusy="_isBusy"/>
+                <BusyCover IsBusy="_isBusy"/>
 
-                    <RequestInfoSection Coordinator="@Service"/>
-                    <hr/>
-                    <RequestCallSection Coordinator="@Service"/>
-                    <hr/>
-                    <RequestPersonSection Coordinator="@Service"/>
-                    <hr/>
-                    <RequestPlaceSection Coordinator="@Service"/>
-                    <hr/>
-                    <RequestClubsSection Coordinator="@Service"/>
+                <RequestInfoSection Coordinator="@Service"/>
+                <hr/>
+                <RequestCallSection Coordinator="@Service"/>
+                <hr/>
+                <RequestPersonSection Coordinator="@Service"/>
+                <hr/>
+                <RequestPlaceSection Coordinator="@Service"/>
+                <hr/>
+                <RequestClubsSection Coordinator="@Service"/>
 
-                </RadzenCard>
+            </RadzenCard>
 
-            </RadzenSplitterPane>
-            <RadzenSplitterPane Size="30%">
+        </RadzenSplitterPane>
+        <RadzenSplitterPane Size="30%">
                 
-                <NotesListEditor RequestCoordinator="@Service" />
+            <NotesListEditor RequestCoordinator="@Service" />
 
-            </RadzenSplitterPane>
-        </RadzenSplitter>
+        </RadzenSplitterPane>
+    </RadzenSplitter>
 
-    </RadzenStack>
-</WaitingPageContainer>
+</RadzenStack>

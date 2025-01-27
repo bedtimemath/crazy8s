@@ -299,7 +299,6 @@ try
      * BLAZOR SERVICES
      */
     builder.Services.AddRazorComponents()
-        .AddInteractiveServerComponents()
         .AddInteractiveWebAssemblyComponents()
         .AddAuthenticationStateSerialization();
 
@@ -335,7 +334,6 @@ try
 
     app.MapStaticAssets();
     app.MapRazorComponents<AppRoot>()
-        .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
         .AddAdditionalAssemblies(
             typeof(C8S.AdminApp.Client._Imports).Assembly,

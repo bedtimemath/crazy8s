@@ -14,7 +14,7 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/a8314919ac.js" crossorigin="anonymous"></script>
 
-    <RadzenTheme Theme="material" @rendermode="InteractiveWebAssembly" />
+    <RadzenTheme Theme="material" @rendermode="@(new InteractiveWebAssemblyRenderMode(prerender:false))" />
 
     <link rel="stylesheet" href="@Assets["_content/Radzen.Blazor/css/material-base.css"]" />
     <link rel="stylesheet" href="@Assets["./_content/SC.Common.Razor/css/blazor-default.css"]" />
@@ -23,11 +23,16 @@
 
     <link rel="icon" type="image/png" href="favicon.png" />
 
-    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+    <HeadOutlet @rendermode="@(new InteractiveWebAssemblyRenderMode(prerender:false))" />
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveWebAssembly" />
+    <div id="preload" class="sc-preload-container">
+        <img src="images/Crazy-8s-math-club_LOGO-600-x-200.png" alt="TGP Library Logo" />
+        <div class="sc-preload-spinner"></div>
+    </div>
+
+    <Routes @rendermode="@(new InteractiveWebAssemblyRenderMode(prerender:false))" />
     <ImportMap />
 
     <!-- REMOTE, DON'T USE VERSIONING; ISN'T MAPPED -->
@@ -36,7 +41,7 @@
 
     <!-- DO NOT USE Assets[] FOR THIS -->
     <script src="_framework/blazor.web.js"></script>
-    
+
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>
 

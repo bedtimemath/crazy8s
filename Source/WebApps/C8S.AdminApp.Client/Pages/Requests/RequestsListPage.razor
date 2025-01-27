@@ -2,26 +2,22 @@
 @inherits BaseCoordinatedPage<C8S.AdminApp.Client.Services.Coordinators.Requests.RequestsListCoordinator>
 @rendermode InteractiveWebAssembly
 
-<WaitingPageContainer HideDuringPreRender="true">
-    
-    <RadzenStack Orientation="Orientation.Vertical"
-                 AlignItems="AlignItems.Stretch"
-                 JustifyContent="JustifyContent.Stretch"
-                 Gap="1.0rem"
-                 class="w-100 h-100">
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.Stretch"
+             Gap="1.0rem"
+             class="w-100 h-100">
 
-        <RequestsFilter Coordinator="@Service"
-                        CssClass="flex-shrink-0"
-                        @rendermode="InteractiveWebAssembly"/>
+    <RequestsFilter Coordinator="@Service"
+                    CssClass="flex-shrink-0"
+                    @rendermode="InteractiveWebAssembly"/>
 
-        <RequestsList Coordinator="@Service"
-                      CssClass="flex-grow-1"
-                      @rendermode="InteractiveWebAssembly"/>
+    <RequestsList Coordinator="@Service"
+                  CssClass="flex-grow-1"
+                  @rendermode="InteractiveWebAssembly"/>
 
-        <RequestsFooter Coordinator="@Service"
-                        CssClass="flex-shrink-0"
-                        @rendermode="InteractiveWebAssembly" />
+    <RequestsFooter Coordinator="@Service"
+                    CssClass="flex-shrink-0"
+                    @rendermode="InteractiveWebAssembly" />
 
-    </RadzenStack>
-
-</WaitingPageContainer>
+</RadzenStack>
