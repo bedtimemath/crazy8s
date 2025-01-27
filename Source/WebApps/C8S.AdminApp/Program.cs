@@ -1,10 +1,9 @@
 using Azure.Identity;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
-using C8S.AdminApp.Common.Interfaces;
-using C8S.AdminApp.Common.Services;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.MapProfiles;
+using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
@@ -138,7 +137,7 @@ try
     builder.Services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
 
     builder.Services.AddScoped<ISelfService, SelfService>();
-    builder.Services.AddScoped<IPubSubService, PubSubService>();
+    //builder.Services.AddScoped<IPubSubService, PubSubService>();
 
     /*****************************************
      * MINIMAL APIS
@@ -344,9 +343,7 @@ try
     // currently required for login / logout
     app.MapRazorPages();
 
-
     app.Run();
-
 }
 catch (Exception ex)
 {

@@ -1,5 +1,4 @@
-﻿using C8S.AdminApp.Common;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 

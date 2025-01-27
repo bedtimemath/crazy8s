@@ -1,13 +1,18 @@
-﻿using C8S.AdminApp.Common.Interfaces;
+﻿using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
+using SC.Audit.Abstractions.Models;
+using SC.Common;
+using SC.Common.Helpers.Interfaces;
 
-namespace C8S.AdminApp.Common.Services;
+namespace C8S.AdminApp.Client.Services.PubSubs;
 
 public class PubSubService(
-    ILoggerFactory loggerFactory) : IPubSubService
+    ILoggerFactory loggerFactory,
+    string busUrl): IPubSubService
 {
-    protected readonly ILogger<PubSubService> Logger = loggerFactory.CreateLogger<PubSubService>();
-
+    private readonly ILogger<PubSubService> _logger = loggerFactory.CreateLogger<PubSubService>();
+    private HubConnection? _hubConnection = null;
+    
     protected readonly Dictionary<Type, List<Delegate>> Handlers = [];
 
     private bool _hasBeenDisposed = false;
@@ -17,7 +22,23 @@ public class PubSubService(
         Dispose(false);
     }
 
-    public virtual ValueTask InitializeAsync() => default;
+    public async ValueTask InitializeAsync()
+    {
+        if (_hubConnection != null) return;
+
+        try
+        {
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl(busUrl)
+                .Build();
+            _hubConnection.On<DataChange>(SoftCrowConstants.Messages.DataChange, HandleDataChangeMessage);
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Could not initialize communication hub.");
+        }
+    }
 
     public async ValueTask DisposeAsync()
     {
@@ -55,7 +76,12 @@ public class PubSubService(
     }
 
     protected virtual void PerformDisposal() {}
-    protected virtual ValueTask PerformDisposalAsync() => default;
+
+    protected virtual async ValueTask PerformDisposalAsync()
+    {
+        if (_hubConnection != null)
+            await _hubConnection.DisposeAsync();
+    }
     
     private void Dispose(bool isDisposing)
     {
@@ -71,4 +97,6 @@ public class PubSubService(
         _hasBeenDisposed = true;
     }
 
+    private void HandleDataChangeMessage(DataChange dataChange) =>
+        Task.Run(async () => await Publish(dataChange));
 }

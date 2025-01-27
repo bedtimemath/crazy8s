@@ -1,8 +1,5 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using C8S.AdminApp.Common;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;

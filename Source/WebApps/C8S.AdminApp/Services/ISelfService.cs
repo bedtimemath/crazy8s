@@ -1,4 +1,4 @@
-﻿namespace C8S.AdminApp.Auth;
+﻿namespace C8S.AdminApp.Services;
 
 public interface ISelfService
 {

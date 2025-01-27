@@ -1,8 +1,8 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using C8S.AdminApp.Auth;
-using C8S.AdminApp.Common;
+using C8S.AdminApp.Client.UI;
 using C8S.AdminApp.Hubs;
+using C8S.AdminApp.Services;
 using C8S.Domain;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SC.Audit.Abstractions.Models;
+using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interactions;
 
@@ -108,7 +109,7 @@ public class NotesController(
                 EntityState = EntityState.Added,
                 JsonDetails = JsonSerializer.Serialize(addedDetails)
             };
-            await hubContext.Clients.All.SendAsync(AdminAppConstants.Messages.DataChange, dataChange);
+            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
             return new BackendResponse<NoteDetails>()
             {

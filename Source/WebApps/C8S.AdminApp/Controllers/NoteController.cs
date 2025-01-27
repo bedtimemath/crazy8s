@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using C8S.AdminApp.Common;
+using C8S.AdminApp.Client.UI;
 using C8S.AdminApp.Hubs;
 using C8S.Domain;
 using C8S.Domain.EFCore.Contexts;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SC.Audit.Abstractions.Models;
+using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interactions;
 
@@ -109,7 +110,7 @@ public class NoteController(
                 EntityState = EntityState.Deleted,
                 JsonDetails = JsonSerializer.Serialize(removedDetails)
             };
-            await hubContext.Clients.All.SendAsync(AdminAppConstants.Messages.DataChange, dataChange);
+            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
             return BackendResponse.CreateSuccessResponse();
         }

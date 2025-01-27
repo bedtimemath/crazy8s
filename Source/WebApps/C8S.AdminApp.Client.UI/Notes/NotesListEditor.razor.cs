@@ -3,7 +3,6 @@ using System.Text.Json;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using C8S.AdminApp.Client.UI.Common;
-using C8S.AdminApp.Common.Interfaces;
 using C8S.Domain;
 using C8S.Domain.Enums;
 using C8S.Domain.Features.Notes.Models;
@@ -12,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Radzen;
 using SC.Audit.Abstractions.Models;
+using SC.Common.Helpers.Interfaces;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Notes;

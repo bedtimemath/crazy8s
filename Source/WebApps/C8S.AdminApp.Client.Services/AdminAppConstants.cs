@@ -1,15 +1,10 @@
-﻿namespace C8S.AdminApp.Common;
+﻿namespace C8S.AdminApp.Client.Services;
 
 public static class AdminAppConstants
 {
     public static class HttpClients
     {
         public const string BackendServer = "BackendServer";
-    }
-
-    public static class Messages
-    {
-        public const string DataChange = "DataChange";
     }
     
     public static class Pages

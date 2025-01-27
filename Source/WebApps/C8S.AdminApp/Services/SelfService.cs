@@ -1,6 +1,6 @@
 ﻿using SC.Common;
 
-namespace C8S.AdminApp.Auth;
+namespace C8S.AdminApp.Services;
 
 public class SelfService(
     ILoggerFactory loggerFactory,
@@ -13,7 +13,7 @@ public class SelfService(
         get
         {
             var user = contextAccessor.HttpContext?.User;
-            return (!String.IsNullOrEmpty(user?.Identity?.Name)) ?
+            return !string.IsNullOrEmpty(user?.Identity?.Name) ?
                 user.Identity.Name : SoftCrowConstants.Display.None;
         }
     }

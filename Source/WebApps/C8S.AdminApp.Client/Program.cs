@@ -1,12 +1,12 @@
+using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Client.Services.Pages;
 using C8S.AdminApp.Client.Services.PubSubs;
-using C8S.AdminApp.Common;
-using C8S.AdminApp.Common.Interfaces;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
 using SC.Common.Helpers.Extensions;
+using SC.Common.Helpers.Interfaces;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -89,7 +89,7 @@ try
     {
         var loggerFactory = services.GetRequiredService<ILoggerFactory>();
         var busUrl = builder.HostEnvironment.BaseAddress + "communication";
-        return new ClientPubSubService(loggerFactory, busUrl);
+        return new PubSubService(loggerFactory, busUrl);
     });
 
     /*****************************************

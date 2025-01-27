@@ -5,7 +5,7 @@ using SC.Audit.Abstractions.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.SignalR;
-using C8S.AdminApp.Common;
+using SC.Common;
 
 namespace C8S.AdminApp.Controllers;
 
@@ -32,7 +32,7 @@ public class DataChangesController(
             var bodyJson = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             var dataChange = JsonSerializer.Deserialize<DataChange>(bodyJson, _serializerOptions) ??
                              throw new Exception($"Could not deserialize data change: {bodyJson}");
-            await hubContext.Clients.All.SendAsync(AdminAppConstants.Messages.DataChange, dataChange);
+            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
             return Accepted();
         }

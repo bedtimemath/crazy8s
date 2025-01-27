@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Common.Interfaces;
+﻿using SC.Common.Helpers.Interfaces;
 
 namespace C8S.AdminApp.Client.Layout;
 
