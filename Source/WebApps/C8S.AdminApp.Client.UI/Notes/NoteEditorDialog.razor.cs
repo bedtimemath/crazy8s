@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using SC.Common.Radzen.Base;
+using SC.Common.Client.Base;
 
 namespace C8S.AdminApp.Client.UI.Notes;
 

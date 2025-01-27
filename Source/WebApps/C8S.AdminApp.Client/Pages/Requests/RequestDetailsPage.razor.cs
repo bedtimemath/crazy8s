@@ -1,6 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using Microsoft.AspNetCore.Components;
-using SC.Common.Radzen.Base;
+using SC.Common.Client.Base;
 
 namespace C8S.AdminApp.Client.Pages.Requests;
 
