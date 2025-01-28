@@ -6,11 +6,11 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarGroup: BaseRazorComponent, IDisposable
+public sealed partial class SidebarItem: BaseRazorComponent, IDisposable
 {
     #region Injected Properties
     [Inject]
-    public ILogger<SidebarGroup> Logger { get; set; } = null!;
+    public ILogger<SidebarItem> Logger { get; set; } = null!;
 
     [Inject]
     public NavigationManager NavigationManager { get; set; } = null!;
@@ -60,5 +60,4 @@ public sealed partial class SidebarGroup: BaseRazorComponent, IDisposable
         StateHasChanged();
     }
     #endregion
-
 }

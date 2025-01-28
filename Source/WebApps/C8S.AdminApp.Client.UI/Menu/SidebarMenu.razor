@@ -1,5 +1,4 @@
-﻿@using SC.Common.Extensions
-@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
+﻿@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
 
 <div class="c8s-sidebar-menu @CssClass">
     @foreach (var pageGroup in Service.PageGroups)
@@ -7,6 +6,9 @@
         <SidebarGroup Group="pageGroup.Key"
                       Clicked="@(async (args) => await Service.HandleSidebarGroupClicked(args))"/>
 
-        <div>@String.Empty.AppendUniqueDateTime()</div>
+        @foreach (var pageItem in pageGroup.Value)
+        {
+
+        }
     }
 </div>

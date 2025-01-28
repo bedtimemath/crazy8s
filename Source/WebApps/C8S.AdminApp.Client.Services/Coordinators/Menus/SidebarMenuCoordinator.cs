@@ -33,9 +33,7 @@ public class SidebarMenuCoordinator(
     }
     public async Task HandleSidebarGroupClicked(PageGroup pageGroup)
     {
-        _logger.LogDebug("PageGroup={@PageGroup}", pageGroup);
         await mediator.Send(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
     }
     #endregion
-
 }

@@ -24,22 +24,24 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
     #region Component LifeCycle
     protected override void OnInitialized()
     {
-        PubSubService.Subscribe<PageChange>(HandlePageChangeNotification);
+        PubSubService.Subscribe<PageChange>(Service.HandlePageChangeNotification);
 
         base.OnInitialized();
     }
 
     public void Dispose()
     {
-        PubSubService.Unsubscribe<PageChange>(HandlePageChangeNotification);
+        PubSubService.Unsubscribe<PageChange>(Service.HandlePageChangeNotification);
     }
     #endregion
 
+#if false
     #region Event Handlers
     public async Task HandlePageChangeNotification(PageChange pageChange)
     {
         Logger.LogDebug("PageChange={@PageChange}", pageChange);
         await InvokeAsync(StateHasChanged);
     }
-    #endregion
+    #endregion  
+#endif
 }
