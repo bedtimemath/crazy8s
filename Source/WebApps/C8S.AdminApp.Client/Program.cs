@@ -1,10 +1,9 @@
+using C8S.AdminApp.Client.Extensions;
 using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Extensions;
-using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
-using SC.Common.Client.Services;
 using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Core;
@@ -82,14 +81,7 @@ try
      */
     builder.Services.AddCommonHelpers();
     builder.Services.AddClientCoordinators();
-    
-    builder.Services.AddScoped<PagesService>();
-    builder.Services.AddScoped<PubSubService>(services =>
-    {
-        var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-        var busUrl = builder.HostEnvironment.BaseAddress + "communication";
-        return new PubSubService(loggerFactory, busUrl);
-    });
+    builder.Services.AddLocalServices();
 
     /*****************************************
      * APP BUILD & RUN

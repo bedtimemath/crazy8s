@@ -1,6 +1,6 @@
-﻿using C8S.AdminApp.Client.Services.Pages;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
+using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
@@ -11,17 +11,17 @@ public sealed partial class SidebarItem: BaseRazorComponent, IDisposable
     #region Injected Properties
     [Inject]
     public ILogger<SidebarItem> Logger { get; set; } = null!;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = null!;
     #endregion
 
     #region Component Parameters
     [Parameter]
-    public PageGroup Group { get; set; } = null!;
+    public PageItem Item { get; set; } = null!;
+    
+    [Parameter]
+    public SidebarMenuCoordinator Coordinator { get; set; } = null!;
 
     [Parameter]
-    public EventCallback<PageGroup> Clicked { get; set; }
+    public EventCallback<PageItem> Clicked { get; set; }
     #endregion
 
     #region Private Variables
@@ -31,33 +31,29 @@ public sealed partial class SidebarItem: BaseRazorComponent, IDisposable
     #region Component LifeCycle
     protected override void OnInitialized()
     {
-        NavigationManager.LocationChanged += HandleLocationChanged;
-        CheckIsSelected();
-
+        Coordinator.RegisterComponent(Item.Url, this.SetSelected);
         base.OnInitialized();
     }
-
     public void Dispose()
     {
-        NavigationManager.LocationChanged -= HandleLocationChanged;
+        Coordinator.UnregisterComponent(Item.Url);
+    }
+    #endregion
+
+    #region Public Methods
+    public void SetSelected(bool isSelected)
+    {
+        if (_isSelected == isSelected) return;
+
+        _isSelected = isSelected;
+        StateHasChanged();
     }
     #endregion
 
     #region Event Handlers
-    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e) => CheckIsSelected();
-    #endregion
-
-    #region Private Methods
-
-    private void CheckIsSelected()
+    private void HandleCloseButtonClicked()
     {
-        var currentUrl = "/" + NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        var shouldBeSelected = Group.Url == currentUrl;
-
-        if (_isSelected == shouldBeSelected) return;
-
-        _isSelected = shouldBeSelected;
-        StateHasChanged();
+        Logger.LogDebug("Close: {@Item}", Item);
     }
     #endregion
 }

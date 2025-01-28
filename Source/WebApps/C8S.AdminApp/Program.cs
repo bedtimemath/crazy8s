@@ -137,7 +137,6 @@ try
     builder.Services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
 
     builder.Services.AddScoped<ISelfService, SelfService>();
-    //builder.Services.AddScoped<IPubSubService, PubSubService>();
 
     /*****************************************
      * MINIMAL APIS

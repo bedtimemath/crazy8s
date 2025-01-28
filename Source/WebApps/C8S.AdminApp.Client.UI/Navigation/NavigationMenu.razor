@@ -1,7 +1,7 @@
-﻿@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
+﻿@inherits BaseRazorComponent
 
 <div class="c8s-sidebar-menu @CssClass">
-    @foreach (var pageGroup in Service.PageGroups)
+    @* foreach (var pageGroup in Service.PageGroups)
     {
         <SidebarGroup Group="pageGroup.Key"
                       Coordinator="@Service"
@@ -13,5 +13,5 @@
                          Coordinator="@Service"
                          Clicked="@(async (args) => await Service.HandleSidebarItemClicked(args))" />
         }
-    }
+    } *@
 </div>

@@ -8,7 +8,7 @@ namespace C8S.AdminApp.Client.Services.Pages;
 
 public sealed class PagesService(
     ILoggerFactory loggerFactory,
-    PubSubService pubSubService,
+    IPubSubService pubSubService,
     NavigationManager navigationManager) :
     IRequestHandler<OpenPageCommand>,
     IRequestHandler<ClosePageCommand>
@@ -22,28 +22,30 @@ public sealed class PagesService(
     {
         _logger.LogInformation("Open: {PageName} [{IdValue}]", openPageCommand.PageUrl, openPageCommand.IdValue);
 
-        var currentUrl = openPageCommand.PageUrl;
-        navigationManager.NavigateTo(currentUrl);
+        var newUrl = openPageCommand.PageUrl;
+        if (openPageCommand.IdValue != null) newUrl += $"/{openPageCommand.IdValue}";
+        var currentUrl = GetCurrentUrl();
 
         await pubSubService.Publish(new PageChange()
         {
             CurrentUrl = currentUrl,
-            NewUrl = openPageCommand.PageUrl,
+            NewUrl = newUrl,
             Action = PageChangeAction.Open,
             IdValue = openPageCommand.IdValue
-        }).ConfigureAwait(false);
+        });
+
+        await Task.Run(() => navigationManager.NavigateTo(newUrl), cancellationToken);
     }
 
     public async Task Handle(ClosePageCommand closePageCommand, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Close: {PageName} [{IdValue}]", closePageCommand.PageUrl, closePageCommand.IdValue);
 
-        // todo: drop back correctly
-        var newUrl = AdminAppConstants.Pages.RequestsList;
         var currentUrl = GetCurrentUrl();
         if (currentUrl != closePageCommand.PageUrl) return;
-
-        navigationManager.NavigateTo(newUrl);
+        
+        // todo: drop back correctly
+        var newUrl = AdminAppConstants.Pages.RequestsList;
 
         await pubSubService.Publish(new PageChange()
         {
@@ -51,7 +53,9 @@ public sealed class PagesService(
             NewUrl = newUrl,
             Action = PageChangeAction.Close,
             IdValue = closePageCommand.IdValue
-        }).ConfigureAwait(false);
+        });
+
+        await Task.Run(() => navigationManager.NavigateTo(newUrl), cancellationToken);
     }
     #endregion
 

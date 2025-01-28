@@ -1,20 +1,23 @@
 ﻿@inherits BaseRazorComponent
 
-<div id="@ComponentId" class="c8s-sidebar-group @(_isSelected ? "selected" : null) @CssClass">
+<div id="@ComponentId" class="c8s-sidebar-item @(_isSelected ? "selected" : null) @CssClass">
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.Left"
-                 onclick="@(async () => await Clicked.InvokeAsync(Group))"
+                 onclick="@(async () => await Clicked.InvokeAsync(Item))"
                  class="w-100">
-
-        <IconDisplay Icon="@Group.Icon"
-                     CssClass="c8s-sidebar-group-icon" />
 
         <RadzenText TagName="TagName.Div"
                     TextStyle="TextStyle.Body1"
                     TextAlign="TextAlign.Left"
-                    Text="@Group.Display"
-                    class="c8s-sidebar-group-display" />
+                    Text="@Item.Display"
+                    class="c8s-sidebar-item-display" />
+        
+        <IconButton ButtonType="ButtonType.Button"
+                    ButtonStyle="ButtonStyle.Warning"
+                    Variant="Variant.Text"
+                    IconString="@C8SConstants.Icons.Close"
+                    Click="@HandleCloseButtonClicked" />
 
     </RadzenStack>
 </div>

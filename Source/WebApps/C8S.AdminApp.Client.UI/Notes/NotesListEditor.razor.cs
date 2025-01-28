@@ -18,7 +18,7 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
     public ILogger<NotesListEditor> Logger { get; set; } = null!; 
 
     [Inject]
-    public PubSubService PubSubService { get; set; } = null!;
+    public IPubSubService PubSubService { get; set; } = null!;
 
     [Inject]
     public DialogService DialogService { get; set; } = null!;

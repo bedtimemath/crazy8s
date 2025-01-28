@@ -1,62 +1,52 @@
-﻿using C8S.AdminApp.Client.Services.Pages;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
+using C8S.AdminApp.Client.Services.Interfaces;
+using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarGroup: BaseRazorComponent, IDisposable
+public sealed partial class SidebarGroup: BaseRazorComponent, IDisposable, ISetSelectable
 {
     #region Injected Properties
     [Inject]
     public ILogger<SidebarGroup> Logger { get; set; } = null!;
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; } = null!;
     #endregion
 
     #region Component Parameters
     [Parameter]
     public PageGroup Group { get; set; } = null!;
+    
+    [Parameter]
+    public SidebarMenuCoordinator Coordinator { get; set; } = null!;
 
     [Parameter]
     public EventCallback<PageGroup> Clicked { get; set; }
     #endregion
 
     #region Private Variables
-    private bool _isSelected;
+    private bool _isSelected = false;
     #endregion
 
     #region Component LifeCycle
     protected override void OnInitialized()
     {
-        NavigationManager.LocationChanged += HandleLocationChanged;
-        CheckIsSelected();
-
+        Coordinator.RegisterComponent(Group.Url, this.SetSelected);
         base.OnInitialized();
     }
-
     public void Dispose()
     {
-        NavigationManager.LocationChanged -= HandleLocationChanged;
+        Coordinator.UnregisterComponent(Group.Url);
     }
     #endregion
 
-    #region Event Handlers
-    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e) => CheckIsSelected();
-    #endregion
-
-    #region Private Methods
-
-    private void CheckIsSelected()
+    #region Public Methods
+    public void SetSelected(bool isSelected)
     {
-        var currentUrl = "/" + NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        var shouldBeSelected = Group.Url == currentUrl;
+        if (_isSelected == isSelected) return;
 
-        if (_isSelected == shouldBeSelected) return;
-
-        _isSelected = shouldBeSelected;
+        _isSelected = isSelected;
         StateHasChanged();
     }
     #endregion
