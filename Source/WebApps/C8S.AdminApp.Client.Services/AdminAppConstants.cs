@@ -7,6 +7,11 @@ public static class AdminAppConstants
         public const string BackendServer = "BackendServer";
     }
     
+    public static class HubEndpoints
+    {
+        public const string Communication = "communication";
+    }
+    
     public static class Pages
     {
         public const string RequestsList = "requests";

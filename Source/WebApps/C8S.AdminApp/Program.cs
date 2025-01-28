@@ -1,6 +1,7 @@
 using Azure.Identity;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
+using C8S.AdminApp.Extensions;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.MapProfiles;
 using C8S.AdminApp.Services;
@@ -147,12 +148,7 @@ try
     /*****************************************
      * SIGNAL-R
      */
-    builder.Services.AddSignalR();
-    builder.Services.AddResponseCompression(opts =>
-    {
-        opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-            ["application/octet-stream"]);
-    });
+    builder.Services.AddSignalRServices();
 
     /*****************************************
      * API CONTROLLERS
@@ -320,13 +316,9 @@ try
         app.UseHsts();
     }
 
-    app.UseResponseCompression();
-
     app.UseHttpsRedirection();
-
     app.UseAntiforgery();
-
-    app.MapHub<CommunicationHub>("/communication");
+    app.UseSignalRServices();
 
     app.MapControllers();
 

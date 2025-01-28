@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using SC.Common;
 using SC.Common.Client.Services;
 using SC.Common.Interfaces;
 using SC.Common.PubSub;
 
-namespace C8S.AdminApp.Client.Services.Services;
+namespace C8S.AdminApp.Client.Services;
 
 public sealed class AdminPubSubService(
     ILoggerFactory loggerFactory): PubSubService(loggerFactory), IAsyncInitializable, IAsyncDisposable

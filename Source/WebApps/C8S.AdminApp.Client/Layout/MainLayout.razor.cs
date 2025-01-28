@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using C8S.AdminApp.Client.Services.Navigation;
-using C8S.AdminApp.Client.Services.Services;
+﻿using C8S.AdminApp.Client.Services.Navigation;
 using SC.Common.Client.Services;
+using SC.Common.Interfaces;
 
 namespace C8S.AdminApp.Client.Layout;
 
@@ -14,12 +13,12 @@ public partial class MainLayout(
 
         if (!RendererInfo.IsInteractive) return;
 
-        var pubSubService = serviceProvider.GetRequiredService<IPubSubService>() as AdminPubSubService ??
-                            throw new UnreachableException(
-                                "Injected IPubSubService must be of type AdminPubSubService");
-        await pubSubService.InitializeAsync(serviceProvider);
+        var pubSubService = serviceProvider.GetRequiredService<IPubSubService>();
+        if (pubSubService is IAsyncInitializable initializablePubSub)
+            await initializablePubSub.InitializeAsync(serviceProvider);
 
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-        await navigationService.InitializeAsync(serviceProvider);
+        if (navigationService is IAsyncInitializable initializableNavigation)
+            await initializableNavigation.InitializeAsync(serviceProvider);
     }
 }
