@@ -75,7 +75,6 @@ try
     
     /*****************************************
      * MEDIATR
-     */
     builder.Services.AddMediatR(config =>
     {
         config.Lifetime = ServiceLifetime.Singleton;
@@ -83,6 +82,7 @@ try
         config.RegisterServicesFromAssembly(typeof(_UIImports).Assembly);
         config.RegisterServicesFromAssembly(typeof(_ServicesImports).Assembly);
     });
+     */
 
     /*****************************************
      * APP BUILD & RUN

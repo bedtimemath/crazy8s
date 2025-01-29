@@ -1,10 +1,10 @@
 ﻿using C8S.Domain.Features.Appointments.Models;
-using MediatR;
 using SC.Common.Interactions;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Appointments.Queries;
 
-public record AppointmentDetailsQuery : IRequest<BackendResponse<AppointmentDetails?>>
+public record AppointmentDetailsQuery : ICQRSQuery<BackendResponse<AppointmentDetails?>>
 {
     public int AppointmentId { get; init; }
 }

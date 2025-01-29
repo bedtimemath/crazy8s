@@ -1,19 +1,19 @@
 ﻿using C8S.Domain.Features.Requests.Enums;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
-using MediatR;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using SC.Common.Models;
 using SC.Common.Razor.Extensions;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
     IJSRuntime jsRuntime,
-    IMediator mediator)
+    ICQRSService mediator)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";

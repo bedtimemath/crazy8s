@@ -1,15 +1,15 @@
 ﻿using C8S.AdminApp.Client.Services.Pages;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
-using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
-    IMediator mediator,
+    ICQRSService mediator,
     NavigationManager navigationManager)
 {
     #region ReadOnly Constructor Variables

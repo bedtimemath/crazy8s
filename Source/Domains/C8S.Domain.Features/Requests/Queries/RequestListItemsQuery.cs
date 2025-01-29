@@ -1,11 +1,11 @@
 ﻿using C8S.Domain.Features.Requests.Enums;
 using SC.Common.Interactions;
-using MediatR;
 using C8S.Domain.Features.Requests.Models;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Requests.Queries;
 
-public record RequestsListQuery : IRequest<BackendResponse<RequestsListResults>>
+public record RequestsListQuery : ICQRSQuery<BackendResponse<RequestsListResults>>
 {
     public int? StartIndex { get; init; }
     public int? Count { get; init; }

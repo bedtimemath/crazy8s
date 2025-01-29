@@ -3,15 +3,15 @@ using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Appointments;
 
 public class AppointmentDisplayerCoordinator(
     ILoggerFactory loggerFactory,
-    IMediator mediator)
+    ICQRSService mediator)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentDisplayerCoordinator> _logger = loggerFactory.CreateLogger<AppointmentDisplayerCoordinator>();
@@ -116,9 +116,9 @@ public class AppointmentDisplayerCoordinator(
     }
 
     private async Task<TResult> SendCancellable<TQuery, TResult>(TQuery query)
+        where TQuery: class, ICQRSQuery<TResult>
         where TResult: class
-        where TQuery: class
-    {
+   {
         TResult result;
         using (_cancellationTokenSource = new CancellationTokenSource())
         {

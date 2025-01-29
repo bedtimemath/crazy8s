@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Pages;
 
-public abstract record PageCommand: IRequest
+public abstract record PageCommand: ICQRSCommand
 {
     public string PageUrl { get; init; } = null!;
     public int? IdValue { get; init; }

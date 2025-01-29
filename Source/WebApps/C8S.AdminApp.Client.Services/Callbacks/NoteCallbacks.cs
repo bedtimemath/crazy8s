@@ -1,9 +1,9 @@
 ﻿using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 
@@ -11,12 +11,12 @@ public class NoteCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
         // QUERIES
-        IRequestHandler<NotesListQuery, BackendResponse<NotesListResults>>,
-        IRequestHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>,
+        ICQRSQueryHandler<NotesListQuery, BackendResponse<NotesListResults>>,
+        ICQRSQueryHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>,
         // COMMANDS
-        IRequestHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
-        IRequestHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
-        IRequestHandler<NoteDeleteCommand, BackendResponse>
+        ICQRSQueryHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
+        ICQRSQueryHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
+        ICQRSQueryHandler<NoteDeleteCommand, BackendResponse>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NoteCallbacks> _logger = loggerFactory.CreateLogger<NoteCallbacks>();

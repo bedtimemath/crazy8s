@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mediatr" Version="12.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Messaging.Abstractions\SC.Messaging.Abstractions.csproj" />
     <ProjectReference Include="..\C8S.Domain\C8S.Domain.csproj" />
   </ItemGroup>
 

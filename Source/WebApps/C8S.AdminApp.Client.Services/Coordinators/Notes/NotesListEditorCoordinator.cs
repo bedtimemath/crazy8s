@@ -3,17 +3,17 @@ using C8S.Domain.Enums;
 using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.Json;
 using SC.Common.PubSub;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
 public sealed class NotesListEditorCoordinator(
     ILoggerFactory loggerFactory,
-    IMediator mediator)
+    ICQRSService mediator)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NotesListEditorCoordinator> _logger = loggerFactory.CreateLogger<NotesListEditorCoordinator>();

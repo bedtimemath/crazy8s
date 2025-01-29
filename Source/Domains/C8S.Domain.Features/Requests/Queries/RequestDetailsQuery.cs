@@ -1,11 +1,11 @@
 ﻿using C8S.Domain.Features.Requests.Models;
 using SC.Common.Interactions;
-using MediatR;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Requests.Queries;
 
 
-public record RequestDetailsQuery : IRequest<BackendResponse<RequestDetails?>>
+public record RequestDetailsQuery : ICQRSQuery<BackendResponse<RequestDetails?>>
 {
     public int RequestId { get; init; }
 }

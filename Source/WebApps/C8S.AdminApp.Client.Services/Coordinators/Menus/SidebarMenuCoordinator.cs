@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using C8S.AdminApp.Client.Services.Pages;
 using C8S.Domain;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using SC.Common.PubSub;
 using SC.Messaging.Abstractions.Interfaces;
@@ -12,7 +11,7 @@ public sealed class SidebarMenuCoordinator : IDisposable
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<SidebarMenuCoordinator> _logger;
-    private readonly IMediator _mediator;
+    private readonly ICQRSService _mediator;
     private readonly IPubSubService _pubSubService;
     #endregion
 
@@ -36,7 +35,7 @@ public sealed class SidebarMenuCoordinator : IDisposable
     #region Constructors / Destructor
     public SidebarMenuCoordinator(
         ILoggerFactory loggerFactory,
-        IMediator mediator,
+        ICQRSService mediator,
         IPubSubService pubSubService)
     {
         _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();

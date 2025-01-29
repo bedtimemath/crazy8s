@@ -1,9 +1,9 @@
 ﻿using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 
@@ -11,10 +11,10 @@ public class RequestCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
         // QUERIES
-        IRequestHandler<RequestsListQuery, BackendResponse<RequestsListResults>>,
-        IRequestHandler<RequestDetailsQuery, BackendResponse<RequestDetails?>>,
+        ICQRSQueryHandler<RequestsListQuery, BackendResponse<RequestsListResults>>,
+        ICQRSQueryHandler<RequestDetailsQuery, BackendResponse<RequestDetails?>>,
         // COMMANDS
-        IRequestHandler<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>
+        ICQRSQueryHandler<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestCallbacks> _logger = loggerFactory.CreateLogger<RequestCallbacks>();

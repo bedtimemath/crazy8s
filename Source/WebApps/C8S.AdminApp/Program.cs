@@ -133,8 +133,8 @@ try
 
     /*****************************************
      * MEDIATR
-     */
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
+     */
 
     /*****************************************
      * MINIMAL APIS
