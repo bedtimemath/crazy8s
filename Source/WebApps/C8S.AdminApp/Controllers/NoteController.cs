@@ -8,7 +8,6 @@ using C8S.Domain.Features.Notes.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using SC.Audit.Abstractions.Models;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interactions;

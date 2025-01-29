@@ -20,6 +20,7 @@ public sealed class AdminPubSubService(
     #region Initialize / Dispose Methods
     public async ValueTask InitializeAsync(IServiceProvider provider)
     {
+        _logger.LogDebug("[{Guid:D}] Initializing", UniqueIdentifier);
         if (_hubConnection != null) return;
 
         try

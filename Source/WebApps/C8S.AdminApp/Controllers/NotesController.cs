@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using AutoMapper;
-using C8S.AdminApp.Client.UI;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.Services;
 using C8S.Domain;
@@ -13,7 +12,6 @@ using C8S.Domain.Features.Notes.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using SC.Audit.Abstractions.Models;
 using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Interactions;

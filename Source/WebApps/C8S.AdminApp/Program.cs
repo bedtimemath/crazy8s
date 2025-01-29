@@ -2,14 +2,12 @@ using Azure.Identity;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
 using C8S.AdminApp.Extensions;
-using C8S.AdminApp.Hubs;
 using C8S.AdminApp.MapProfiles;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -120,12 +118,6 @@ try
      */
     // RequestProfile is used arbitrarily here
     builder.Services.AddAutoMapper(typeof(RequestProfile).Assembly);
-
-    /*****************************************
-     * MEDIATR
-     */
-    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
-
     /*****************************************
      * SOFT CROW & LOCAL
      */
@@ -138,6 +130,11 @@ try
     builder.Services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
 
     builder.Services.AddScoped<ISelfService, SelfService>();
+
+    /*****************************************
+     * MEDIATR
+     */
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
 
     /*****************************************
      * MINIMAL APIS

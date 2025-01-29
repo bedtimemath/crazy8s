@@ -7,7 +7,6 @@ using C8S.Domain.Features.Requests.Enums;
 using C8S.UtilityApp.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SC.Audit.Abstractions.Models;
 using SC.Common.Extensions;
 using SC.Common.Interfaces;
 using SC.Common.PubSub;

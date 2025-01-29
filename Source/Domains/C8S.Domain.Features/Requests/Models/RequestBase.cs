@@ -1,5 +1,4 @@
 ﻿using C8S.Domain.Features.Requests.Enums;
-using System.Text.Json.Serialization;
 
 namespace C8S.Domain.Features.Requests.Models;
 

@@ -52,16 +52,6 @@ try
     builder.Services.AddAuthorizationCore();
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddAuthenticationStateDeserialization();
-    
-    /*****************************************
-     * MEDIATR
-     */
-    builder.Services.AddMediatR(config =>
-    {
-        config.RegisterServicesFromAssembly(typeof(_ClientImports).Assembly);
-        config.RegisterServicesFromAssembly(typeof(_UIImports).Assembly);
-        config.RegisterServicesFromAssembly(typeof(_ServicesImports).Assembly);
-    });
 
     /*****************************************
      * BACKEND REQUESTS
@@ -82,6 +72,17 @@ try
     builder.Services.AddCommonHelpers();
     builder.Services.AddClientCoordinators();
     builder.Services.AddLocalServices();
+    
+    /*****************************************
+     * MEDIATR
+     */
+    builder.Services.AddMediatR(config =>
+    {
+        config.Lifetime = ServiceLifetime.Singleton;
+        config.RegisterServicesFromAssembly(typeof(_ClientImports).Assembly);
+        config.RegisterServicesFromAssembly(typeof(_UIImports).Assembly);
+        config.RegisterServicesFromAssembly(typeof(_ServicesImports).Assembly);
+    });
 
     /*****************************************
      * APP BUILD & RUN
