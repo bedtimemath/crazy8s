@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using SC.Common;
-using SC.Common.Client.Services;
 using SC.Common.Interfaces;
 using SC.Common.PubSub;
+using SC.Messaging.Services;
 
 namespace C8S.AdminApp.Client.Services;
 

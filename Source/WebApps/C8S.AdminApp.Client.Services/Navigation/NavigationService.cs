@@ -1,11 +1,10 @@
 ﻿using C8S.AdminApp.Client.Services.Pages;
-using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SC.Common.Client.Services;
 using SC.Common.PubSub;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Navigation;
 

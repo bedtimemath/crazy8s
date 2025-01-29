@@ -3,8 +3,8 @@ using C8S.AdminApp.Client.Services.Pages;
 using C8S.Domain;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using SC.Common.Client.Services;
 using SC.Common.PubSub;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 

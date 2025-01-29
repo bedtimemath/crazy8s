@@ -5,9 +5,9 @@ using C8S.Domain.Enums;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Radzen;
-using SC.Common.Client.Services;
 using SC.Common.PubSub;
 using SC.Common.Razor.Base;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.UI.Notes;
 

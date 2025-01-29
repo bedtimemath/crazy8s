@@ -1,6 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Navigation;
-using SC.Common.Client.Services;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Extensions;
 
