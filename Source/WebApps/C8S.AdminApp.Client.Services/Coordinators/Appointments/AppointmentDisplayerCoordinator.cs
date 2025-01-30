@@ -11,7 +11,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Appointments;
 
 public class AppointmentDisplayerCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentDisplayerCoordinator> _logger = loggerFactory.CreateLogger<AppointmentDisplayerCoordinator>();
@@ -26,8 +26,6 @@ public class AppointmentDisplayerCoordinator(
     private int _requestId;
     private int? _appointmentId;
     private DateTimeOffset? _startsOn;
-
-    private CancellationTokenSource? _cancellationTokenSource = null;
     #endregion
 
     #region Public Properties
@@ -48,19 +46,6 @@ public class AppointmentDisplayerCoordinator(
     }
     #endregion
 
-    #region Constructors Destructors
-    ~AppointmentDisplayerCoordinator()
-    {
-        if (_cancellationTokenSource == null) return;
-
-        try { _cancellationTokenSource.Cancel(); }
-        catch
-        {
-            // we don't want this to break us
-        }
-    }
-    #endregion
-
     #region Private Methods
     // todo: this should either wait or have user interaction required
     //  reason - when scrolling quickly, the coordinator may be disposed before the result returns
@@ -72,8 +57,8 @@ public class AppointmentDisplayerCoordinator(
             if (!_appointmentId.HasValue)
                 throw new UnreachableException("CheckAndUpdateAppointment called with null appointment id");
 
-            var appointmentResponse = await SendCancellable
-                <AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>> (
+            var appointmentResponse = await GetQueryResults
+                <AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>>(
                     new AppointmentDetailsQuery()
                     {
                         AppointmentId = _appointmentId.Value
@@ -88,8 +73,7 @@ public class AppointmentDisplayerCoordinator(
             // attempt to update the database so we don't have to always check
             try
             {
-                var databaseResponse = await SendCancellable
-                    <RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>> (
+                var databaseResponse = await GetCommandResults<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>(
                         new RequestUpdateAppointmentCommand()
                         {
                             RequestId = _requestId,
@@ -114,20 +98,5 @@ public class AppointmentDisplayerCoordinator(
             throw; // todo: what happens with exception in controller?
         }
     }
-
-    private async Task<TResult> SendCancellable<TQuery, TResult>(TQuery query)
-        where TQuery: class, ICQRSQuery<TResult>
-        where TResult : class, new()
-   {
-        TResult result;
-        using (_cancellationTokenSource = new CancellationTokenSource())
-        {
-            result = (await cqrsService.ExecuteQuery<TQuery, TResult>(query, _cancellationTokenSource.Token)) ??
-                     throw new UnreachableException("Could not convert to TResult");
-        }
-        _cancellationTokenSource = null;
-        return result!;
-    }
     #endregion
-
 }

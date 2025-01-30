@@ -9,14 +9,13 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 
 public sealed class SidebarMenuCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService)
+    ICQRSService cqrsService): BaseCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<SidebarMenuCoordinator> _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();
     #endregion
 
     #region Public Properties
-    public string? CQRSUniqueIdentifier => cqrsService.UniqueIdentifier.ToString("D");
     public Dictionary<PageGroup, List<PageItem>> PageGroups = new()
     {
         { new PageGroup() { Display = "Requests", Icon = C8SConstants.Icons.Request, Url = "/requests" },  [] },
@@ -53,7 +52,7 @@ public sealed class SidebarMenuCoordinator(
     {
         _logger.LogDebug("PageChange={@PageChange}", pageChange);
         return Task.CompletedTask;
-#if false
+#if false // todo
         // add or remove from groups
         if (pageChange.IdValue != null)
         {
@@ -91,12 +90,11 @@ public sealed class SidebarMenuCoordinator(
     }
     public async Task HandleSidebarGroupClicked(PageGroup pageGroup)
     {
-        _logger.LogDebug("CQRSService:{Identifier}", cqrsService.UniqueIdentifier);
-        await cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
+        await ExecuteCommand(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
     }
     public async Task HandleSidebarItemClicked(PageItem pageItem)
     {
-        await cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
+        await ExecuteCommand(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
     }
     #endregion
 }

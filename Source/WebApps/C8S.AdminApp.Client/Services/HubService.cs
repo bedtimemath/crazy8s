@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using SC.Common;
-using SC.Common.Interfaces;
 using SC.Common.PubSub;
-using SC.Messaging.Services;
+using SC.Common;
+using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services;
 
-public sealed class AdminPubSubService(
-    ILoggerFactory loggerFactory): PubSubService(loggerFactory), IAsyncInitializable, IAsyncDisposable
+public class HubService(
+    ILoggerFactory loggerFactory,
+    IPubSubService pubSubService) : IHubService
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<AdminPubSubService> _logger = loggerFactory.CreateLogger<AdminPubSubService>();
+    private readonly ILogger<HubService> _logger = loggerFactory.CreateLogger<HubService>();
     #endregion
 
     #region Private Variables
@@ -20,8 +20,9 @@ public sealed class AdminPubSubService(
     #region Initialize / Dispose Methods
     public async ValueTask InitializeAsync(IServiceProvider provider)
     {
-        _logger.LogDebug("[{Guid:D}] Initializing", UniqueIdentifier);
         if (_hubConnection != null) return;
+
+        _logger.LogDebug("Initializing Hub Service");
 
         try
         {
@@ -50,6 +51,7 @@ public sealed class AdminPubSubService(
 
     #region Event Handlers
     private void HandleDataChangeMessage(DataChange dataChange) =>
-        Task.Run(async () => await Publish(dataChange));
+        Task.Run(async () => await pubSubService.Publish(dataChange));
     #endregion
+
 }

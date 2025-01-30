@@ -11,7 +11,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
     ICQRSService cqrsService,
-    NavigationManager navigationManager)
+    NavigationManager navigationManager): BaseCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();
@@ -31,9 +31,8 @@ public sealed class RequestDetailsCoordinator(
     {
         try
         {
-            var backendResponse = await cqrsService
-                .ExecuteQuery<RequestDetailsQuery, BackendResponse<RequestDetails?>>(
-                    new RequestDetailsQuery() { RequestId = id });
+            var backendResponse = await GetQueryResults<RequestDetailsQuery, BackendResponse<RequestDetails?>>
+                (new RequestDetailsQuery() { RequestId = id });
             if (!backendResponse.Success)
                 throw backendResponse.Exception!.ToException();
 
@@ -54,7 +53,7 @@ public sealed class RequestDetailsCoordinator(
     }
 
     public async Task ClosePage()
-        => await cqrsService.ExecuteCommand(new ClosePageCommand()
+        => await ExecuteCommand(new ClosePageCommand()
         {
             PageUrl = AdminAppConstants.Pages.RequestDetails,
             IdValue = Details?.RequestId

@@ -14,9 +14,9 @@ public class NoteCallbacks(
         ICQRSQueryHandler<NotesListQuery, BackendResponse<NotesListResults>>,
         ICQRSQueryHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>,
         // COMMANDS
-        ICQRSQueryHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
-        ICQRSQueryHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
-        ICQRSQueryHandler<NoteDeleteCommand, BackendResponse>
+        ICQRSCommandHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
+        ICQRSCommandHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
+        ICQRSCommandHandler<NoteDeleteCommand, BackendResponse>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NoteCallbacks> _logger = loggerFactory.CreateLogger<NoteCallbacks>();

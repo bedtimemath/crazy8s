@@ -4,7 +4,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Requests.Commands;
 
-public record RequestUpdateAppointmentCommand: ICQRSQuery<BackendResponse<RequestDetails>>
+public record RequestUpdateAppointmentCommand: ICQRSCommand<BackendResponse<RequestDetails>>
 {
     public int RequestId { get; init; }
     public DateTimeOffset? FullSlateAppointmentStartsOn { get; init; }

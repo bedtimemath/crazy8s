@@ -1,4 +1,5 @@
-﻿using C8S.AdminApp.Client.Services.Callbacks;
+﻿using C8S.AdminApp.Client.Services;
+using C8S.AdminApp.Client.Services.Callbacks;
 using C8S.AdminApp.Client.Services.Navigation;
 using C8S.AdminApp.Client.Services.Pages;
 using C8S.Domain.Features.Appointments.Models;
@@ -17,7 +18,16 @@ namespace C8S.AdminApp.Client.Extensions;
 
 public static class WebAssemblyHostEx
 {
-    public static WebAssemblyHost SetUpCQRSService(this WebAssemblyHost host)
+    public static async Task<WebAssemblyHost> UseHubServiceAsync(this WebAssemblyHost host)
+    {
+        var serviceProvider = host.Services;
+
+        var hubService = serviceProvider.GetRequiredService<IHubService>();
+        await hubService.InitializeAsync(serviceProvider);
+
+        return host;
+    }
+    public static WebAssemblyHost UseCQRSService(this WebAssemblyHost host)
     {
         var serviceProvider = host.Services;
 
@@ -30,7 +40,7 @@ public static class WebAssemblyHostEx
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
         cqrsService.RegisterQuery<RequestsListQuery, BackendResponse<RequestsListResults>>(requestsCallbacks.Handle);
         cqrsService.RegisterQuery<RequestDetailsQuery, BackendResponse<RequestDetails?>>(requestsCallbacks.Handle);
-        cqrsService.RegisterQuery<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>(requestsCallbacks.Handle);
+        cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>(requestsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
         cqrsService.RegisterQuery<AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
@@ -38,9 +48,11 @@ public static class WebAssemblyHostEx
         var noteCallbacks = serviceProvider.GetRequiredService<NoteCallbacks>();
         cqrsService.RegisterQuery<NotesListQuery, BackendResponse<NotesListResults>>(noteCallbacks.Handle);
         cqrsService.RegisterQuery<NoteDetailsQuery, BackendResponse<NoteDetails?>>(noteCallbacks.Handle);
-        cqrsService.RegisterQuery<NoteAddCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
-        cqrsService.RegisterQuery<NoteUpdateCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
-        cqrsService.RegisterQuery<NoteDeleteCommand, BackendResponse>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteAddCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteUpdateCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteDeleteCommand, BackendResponse>(noteCallbacks.Handle);
+
+
         return host;
     }
 }

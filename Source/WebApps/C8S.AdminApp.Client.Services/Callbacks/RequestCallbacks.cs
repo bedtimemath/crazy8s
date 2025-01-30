@@ -14,7 +14,7 @@ public class RequestCallbacks(
         ICQRSQueryHandler<RequestsListQuery, BackendResponse<RequestsListResults>>,
         ICQRSQueryHandler<RequestDetailsQuery, BackendResponse<RequestDetails?>>,
         // COMMANDS
-        ICQRSQueryHandler<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>
+        ICQRSCommandHandler<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestCallbacks> _logger = loggerFactory.CreateLogger<RequestCallbacks>();

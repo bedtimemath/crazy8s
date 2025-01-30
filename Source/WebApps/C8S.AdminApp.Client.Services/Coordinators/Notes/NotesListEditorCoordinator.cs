@@ -14,7 +14,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
 public sealed class NotesListEditorCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService mediator)
+    ICQRSService cqrsService): BaseCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NotesListEditorCoordinator> _logger = loggerFactory.CreateLogger<NotesListEditorCoordinator>();
@@ -55,6 +55,8 @@ public sealed class NotesListEditorCoordinator(
 
     public async Task HandleDataChangeNotification(DataChange dataChange)
     {
+        _logger.LogDebug("DataChange={@DataChange}", dataChange);
+
         // don't bother if not a note or missing details
         if (dataChange is not {
                 EntityName: C8SConstants.Entities.Note,
@@ -100,8 +102,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator
-                .ExecuteQuery<NoteAddCommand, BackendResponse<NoteDetails>>(
+            var backendResponse = await GetCommandResults<NoteAddCommand, BackendResponse<NoteDetails>>(
                     new NoteAddCommand()
                     {
                         Reference = NotesSource,
@@ -127,8 +128,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator
-                .ExecuteQuery<NoteUpdateCommand, BackendResponse<NoteDetails>>(
+            var backendResponse = await GetCommandResults<NoteUpdateCommand, BackendResponse<NoteDetails>>(
                     new NoteUpdateCommand()
                     {
                         NoteId = note.NoteId,
@@ -153,8 +153,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator
-                .ExecuteQuery<NoteDeleteCommand, BackendResponse>(
+            var backendResponse = await GetCommandResults<NoteDeleteCommand, BackendResponse>(
                     new NoteDeleteCommand()
                     {
                         NoteId = noteId
@@ -177,12 +176,13 @@ public sealed class NotesListEditorCoordinator(
 
     public async Task RefreshNotesList()
     {
+        _logger.LogDebug("Refreshing notes list");
+
         IsBusy = true;
 
         try
         {
-            var backendResponse = await mediator
-                .ExecuteQuery<NotesListQuery, BackendResponse<NotesListResults>>(
+            var backendResponse = await GetQueryResults<NotesListQuery, BackendResponse<NotesListResults>>(
                     new NotesListQuery()
                     {
                         NotesSource = NotesSource,
@@ -193,6 +193,9 @@ public sealed class NotesListEditorCoordinator(
             var results = backendResponse.Result!;
             Notes = results.Items;
             TotalCount = results.Total;
+
+            foreach (var note in Notes)
+                _logger.LogDebug("{@Note}", note);
 
             // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated(); 

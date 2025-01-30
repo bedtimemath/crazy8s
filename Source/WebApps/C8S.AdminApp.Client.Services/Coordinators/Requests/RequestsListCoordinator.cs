@@ -14,7 +14,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
     IJSRuntime jsRuntime,
-    ICQRSService mediator)
+    ICQRSService cqrsService) : BaseCoordinator(cqrsService)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";
@@ -85,8 +85,7 @@ public sealed class RequestsListCoordinator(
         try
         {
             var hasCoachCall = SelectedSort.StartsWith("FullSlateAppointmentStartsOn") ? true : (bool?)null;
-            var backendResponse = await mediator
-                .ExecuteQuery<RequestsListQuery, BackendResponse<RequestsListResults>>(
+            var backendResponse = await GetQueryResults<RequestsListQuery, BackendResponse<RequestsListResults>>(
                     new RequestsListQuery()
                     {
                         StartIndex = request.StartIndex,
