@@ -30,20 +30,21 @@ public sealed class RequestDetailsCoordinator(
     {
         try
         {
+#if false // todo
             var backendResponse = await mediator.ExecuteQuery(
-                new RequestDetailsQuery() { RequestId = id });
-            if (!backendResponse.Success) 
+                    new RequestDetailsQuery() { RequestId = id });
+            if (!backendResponse.Success)
                 throw backendResponse.Exception!.ToException();
 
             if (backendResponse.Result == null)
             {
                 navigationManager.NavigateTo(AdminAppConstants.Pages.RequestsList);
             }
-            
+
             Details = backendResponse.Result;
 
-            RaiseDetailsLoaded();
-
+            RaiseDetailsLoaded(); 
+#endif
         }
         catch (Exception ex)
         {

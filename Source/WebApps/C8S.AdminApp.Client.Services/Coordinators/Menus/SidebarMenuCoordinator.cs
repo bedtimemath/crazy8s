@@ -29,7 +29,7 @@ public sealed class SidebarMenuCoordinator(
     #endregion
 
     #region Private Variables
-    private readonly Dictionary<string, Action<bool>> _selectedFunctions = new();
+    private readonly Dictionary<string, Action<bool>> _selectedFunctions = [];
     private Func<Task>? _refreshMenuAsync = null;
     #endregion
 

@@ -122,7 +122,7 @@ public class AppointmentDisplayerCoordinator(
         TResult result;
         using (_cancellationTokenSource = new CancellationTokenSource())
         {
-            result = (await cqrsService.ExecuteQuery(query, _cancellationTokenSource.Token)) as TResult ??
+            result = (await cqrsService.ExecuteQuery<TQuery, TResult>(query, _cancellationTokenSource.Token)) ??
                      throw new UnreachableException("Could not convert to TResult");
         }
         _cancellationTokenSource = null;

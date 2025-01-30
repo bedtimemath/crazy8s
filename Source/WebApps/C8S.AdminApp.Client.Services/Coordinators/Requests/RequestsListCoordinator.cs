@@ -4,6 +4,7 @@ using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using SC.Common.Interactions;
 using SC.Common.Models;
 using SC.Common.Razor.Extensions;
 using SC.Messaging.Abstractions.Interfaces;
@@ -84,17 +85,19 @@ public sealed class RequestsListCoordinator(
         try
         {
             var hasCoachCall = SelectedSort.StartsWith("FullSlateAppointmentStartsOn") ? true : (bool?)null;
-            var backendResponse = await mediator.ExecuteQuery(new RequestsListQuery()
-            {
-                StartIndex = request.StartIndex,
-                Count = request.Count,
-                Query = Query,
-                SortDescription = SelectedSort,
-                SubmittedAfter = SelectedAfter,
-                SubmittedBefore = SelectedBefore,
-                Statuses = SelectedStatuses,
-                HasCoachCall = hasCoachCall
-            });
+            var backendResponse = await mediator
+                .ExecuteQuery<RequestsListQuery, BackendResponse<RequestsListResults>>(
+                    new RequestsListQuery()
+                    {
+                        StartIndex = request.StartIndex,
+                        Count = request.Count,
+                        Query = Query,
+                        SortDescription = SelectedSort,
+                        SubmittedAfter = SelectedAfter,
+                        SubmittedBefore = SelectedBefore,
+                        Statuses = SelectedStatuses,
+                        HasCoachCall = hasCoachCall
+                    });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
             var results = backendResponse.Result!;

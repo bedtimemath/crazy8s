@@ -99,13 +99,15 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
+#if false // todo
             var backendResponse = await mediator.ExecuteQuery(new NoteAddCommand()
             {
                 Reference = NotesSource,
                 ParentId = SourceId,
                 Content = content
             });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+            if (!backendResponse.Success) throw backendResponse.Exception!.ToException(); 
+#endif
         }
         catch (Exception ex)
         {
@@ -124,12 +126,14 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
+#if false // todo
             var backendResponse = await mediator.ExecuteQuery(new NoteUpdateCommand()
             {
                 NoteId = note.NoteId,
                 Content = note.Content
             });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+            if (!backendResponse.Success) throw backendResponse.Exception!.ToException(); 
+#endif
         }
         catch (Exception ex)
         {
@@ -148,6 +152,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
+#if false // todo
             var backendResponse = await mediator.ExecuteQuery(new NoteDeleteCommand()
             {
                 NoteId = noteId
@@ -155,7 +160,8 @@ public sealed class NotesListEditorCoordinator(
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
             // todo: do I need this if the notification is coming from the backend later?
-            RaiseListUpdated();
+            RaiseListUpdated(); 
+#endif
         }
         catch (Exception ex)
         {
@@ -174,6 +180,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
+#if false // todo
             var backendResponse = await mediator.ExecuteQuery(new NotesListQuery()
             {
                 NotesSource = NotesSource,
@@ -186,7 +193,8 @@ public sealed class NotesListEditorCoordinator(
             TotalCount = results.Total;
 
             // todo: do I need this if the notification is coming from the backend later?
-            RaiseListUpdated();
+            RaiseListUpdated(); 
+#endif
         }
         catch (Exception ex)
         {

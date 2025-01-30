@@ -1,4 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services;
+using C8S.AdminApp.Client.Services.Callbacks;
 using C8S.AdminApp.Client.Services.Navigation;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Services;
@@ -13,5 +14,9 @@ public static class ServiceCollectionEx
         services.AddSingleton<ICQRSService, CQRSService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IPubSubService, PubSubService>();
+
+        services.AddSingleton<AppointmentCallbacks>();
+        services.AddSingleton<NoteCallbacks>();
+        services.AddSingleton<RequestCallbacks>();
     }
 }
