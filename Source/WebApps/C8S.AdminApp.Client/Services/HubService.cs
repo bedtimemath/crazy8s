@@ -5,7 +5,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services;
 
-public class HubService(
+public sealed class HubService(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService) : IHubService
 {

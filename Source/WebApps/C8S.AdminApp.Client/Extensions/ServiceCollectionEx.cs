@@ -15,6 +15,7 @@ public static class ServiceCollectionEx
         services.AddSingleton<ICQRSService, CQRSService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IPubSubService, PubSubService>();
+        services.AddSingleton<INotifierService, NotifierService>();
 
         // Initializable
         services.AddSingleton<IHubService, HubService>();

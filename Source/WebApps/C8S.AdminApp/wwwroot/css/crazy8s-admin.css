@@ -180,6 +180,21 @@ ul.rz-profile-menu {
         color: revert;
     }
 
+/** NOTIFICATIONS **/
+.rz-notification {
+    position: absolute !important;
+    bottom: 0px;
+    left: calc(50vw - 300px);
+    width: 600px;
+    inset-block-start: revert !important;
+    inset-inline-end: revert !important;
+}
+
+.rz-notification .rz-notification-item-wrapper {
+    position: revert !important;
+    width: auto !important;
+}
+
 /** LIST PAGE CLASSES **/
 .c8s-page-title {
     color: var(--c8s-light);

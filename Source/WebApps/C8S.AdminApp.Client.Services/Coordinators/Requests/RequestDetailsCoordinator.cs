@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
+using SC.Messaging.Abstractions.Models;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
     ICQRSService cqrsService,
+    IPubSubService pubSubService,
     NavigationManager navigationManager): BaseCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
@@ -38,6 +40,7 @@ public sealed class RequestDetailsCoordinator(
 
             if (backendResponse.Result == null)
             {
+                // todo - change once we've got a better page management set up
                 navigationManager.NavigateTo(AdminAppConstants.Pages.RequestsList);
             }
 
@@ -59,9 +62,14 @@ public sealed class RequestDetailsCoordinator(
             IdValue = Details?.RequestId
         });
 
-    public Task LinkPlace()
+    public async Task LinkPlace()
     {
-        throw new NotImplementedException();
+        await pubSubService.Publish(new Notification()
+        {
+            Level = NotificationLevel.Success,
+            Detail = "You clicked the link button! Good job."
+        })
+        .ConfigureAwait(false);
     }
 
     public Task UnlinkPlace()
@@ -69,9 +77,15 @@ public sealed class RequestDetailsCoordinator(
         throw new NotImplementedException();
     }
 
-    public Task LinkPerson()
+    public async Task LinkPerson()
     {
-        throw new NotImplementedException();
+        await pubSubService.Publish(new Notification()
+            {
+                Level = NotificationLevel.Error,
+                Summary = "Oops! You did that wrong.",
+                Detail = "Never click the link person button!!!!"
+            })
+            .ConfigureAwait(false);
     }
 
     public Task UnlinkPerson()
