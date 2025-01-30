@@ -3,13 +3,14 @@ using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService mediator,
+    ICQRSService cqrsService,
     NavigationManager navigationManager)
 {
     #region ReadOnly Constructor Variables
@@ -30,8 +31,8 @@ public sealed class RequestDetailsCoordinator(
     {
         try
         {
-#if false // todo
-            var backendResponse = await mediator.ExecuteQuery(
+            var backendResponse = await cqrsService
+                .ExecuteQuery<RequestDetailsQuery, BackendResponse<RequestDetails?>>(
                     new RequestDetailsQuery() { RequestId = id });
             if (!backendResponse.Success)
                 throw backendResponse.Exception!.ToException();
@@ -44,7 +45,6 @@ public sealed class RequestDetailsCoordinator(
             Details = backendResponse.Result;
 
             RaiseDetailsLoaded(); 
-#endif
         }
         catch (Exception ex)
         {
@@ -54,7 +54,7 @@ public sealed class RequestDetailsCoordinator(
     }
 
     public async Task ClosePage()
-        => await mediator.ExecuteCommand(new ClosePageCommand()
+        => await cqrsService.ExecuteCommand(new ClosePageCommand()
         {
             PageUrl = AdminAppConstants.Pages.RequestDetails,
             IdValue = Details?.RequestId

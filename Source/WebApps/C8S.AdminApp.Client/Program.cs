@@ -1,13 +1,10 @@
 using C8S.AdminApp.Client.Extensions;
 using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Extensions;
-using C8S.AdminApp.Client.Services.Navigation;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
 using SC.Common.Helpers.Extensions;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Services;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
