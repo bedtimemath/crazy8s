@@ -7,5 +7,5 @@ namespace C8S.AdminApp.Client.Services.Navigation;
 public interface INavigationService: IInitializable, IDisposable,
     ICQRSCommandHandler<OpenPageCommand>,
     ICQRSCommandHandler<ClosePageCommand>
-{
+{ 
 }

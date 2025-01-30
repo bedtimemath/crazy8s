@@ -1,7 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SC.Common.PubSub;
 using SC.Messaging.Abstractions.Interfaces;
@@ -9,25 +8,20 @@ using SC.Messaging.Abstractions.Interfaces;
 namespace C8S.AdminApp.Client.Services.Navigation;
 
 public sealed class NavigationService(
-    ILoggerFactory loggerFactory) : INavigationService
+    ILoggerFactory loggerFactory,
+    IPubSubService pubSubService,
+    NavigationManager navigationManager) : INavigationService
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NavigationService> _logger = loggerFactory.CreateLogger<NavigationService>();
     public readonly Guid UniqueIdentifier = Guid.NewGuid();
     #endregion
 
-    #region Private Variables
-    private IPubSubService _pubSubService = null!;
-    private NavigationManager _navigationManager = null!;
-    #endregion
-
     public void Initialize(IServiceProvider provider)
     {
-        _logger.LogDebug("[{Guid:D}] Initializing", UniqueIdentifier);
-        _pubSubService = provider.GetRequiredService<IPubSubService>();
-        _logger.LogDebug("[{Guid:D}] Loading PubSubService: {PSGuid:D}", UniqueIdentifier, _pubSubService.UniqueIdentifier );
-        _navigationManager = provider.GetRequiredService<NavigationManager>();
-        _logger.LogDebug("[{Guid:D}] Loading NavigationManager: {Class}", UniqueIdentifier, _navigationManager );
+        //_logger.LogDebug("[{Guid:D}] Initializing", UniqueIdentifier);
+        //_pubSubService = provider.GetRequiredService<IPubSubService>();
+        //_logger.LogDebug("[{Guid:D}] Loading PubSubService: {PSGuid:D}", UniqueIdentifier, _pubSubService.UniqueIdentifier );
 
         //_navigationManager.RegisterLocationChangingHandler(HandleLocationChanging);
     }
@@ -45,15 +39,15 @@ public sealed class NavigationService(
         if (openPageCommand.IdValue != null) newUrl += $"/{openPageCommand.IdValue}";
         var currentUrl = GetCurrentUrl();
 
-        await _pubSubService.Publish(new PageChange()
+        await pubSubService.Publish(new PageChange()
         {
             CurrentUrl = currentUrl,
             NewUrl = newUrl,
             Action = PageChangeAction.Open,
             IdValue = openPageCommand.IdValue
-        });
+        }); 
 
-        await Task.Run(() => _navigationManager.NavigateTo(newUrl), cancellationToken);
+        await Task.Run(() => navigationManager.NavigateTo(newUrl), cancellationToken);
     }
 
     public async Task Handle(ClosePageCommand closePageCommand, CancellationToken cancellationToken)
@@ -66,7 +60,7 @@ public sealed class NavigationService(
         // todo: drop back correctly
         var newUrl = AdminAppConstants.Pages.RequestsList;
 
-        await _pubSubService.Publish(new PageChange()
+        await pubSubService.Publish(new PageChange()
         {
             CurrentUrl = currentUrl,
             NewUrl = newUrl,
@@ -74,12 +68,12 @@ public sealed class NavigationService(
             IdValue = closePageCommand.IdValue
         });
 
-        await Task.Run(() => _navigationManager.NavigateTo(newUrl), cancellationToken);
+        await Task.Run(() => navigationManager.NavigateTo(newUrl), cancellationToken);
     }
     #endregion
 
     #region Private Methods
-    private string GetCurrentUrl() => _navigationManager.ToBaseRelativePath(_navigationManager.Uri);
+    private string GetCurrentUrl() => navigationManager.ToBaseRelativePath(navigationManager.Uri);
     #endregion
 
     public ValueTask HandleLocationChanging(LocationChangingContext context)

@@ -72,24 +72,18 @@ try
     builder.Services.AddCommonHelpers();
     builder.Services.AddClientCoordinators();
     builder.Services.AddLocalServices();
-    
-    /*****************************************
-     * MEDIATR
-    builder.Services.AddMediatR(config =>
-    {
-        config.Lifetime = ServiceLifetime.Singleton;
-        config.RegisterServicesFromAssembly(typeof(_ClientImports).Assembly);
-        config.RegisterServicesFromAssembly(typeof(_UIImports).Assembly);
-        config.RegisterServicesFromAssembly(typeof(_ServicesImports).Assembly);
-    });
-     */
-    builder.Services.AddSingleton<INavigationService, NavigationService>();
-    builder.Services.AddSingleton<ICQRSService, CQRSService>();
 
     /*****************************************
      * APP BUILD & RUN
      */
-    await builder.Build().RunAsync();
+    var host = builder.Build();
+    
+    /*****************************************
+     * SOFT CROW & LOCAL
+     */
+    host.SetUpCQRSService();
+
+    await host.RunAsync();
 }
 catch (Exception ex)
 {

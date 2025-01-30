@@ -12,8 +12,10 @@ public static class WebAssemblyHostEx
         var serviceProvider = host.Services;
 
         var cqrsService = serviceProvider.GetRequiredService<ICQRSService>();
+        var navigationService = serviceProvider.GetRequiredService<INavigationService>();
 
-        cqrsService.RegisterCommand(typeof(OpenPageCommand), typeof(INavigationService));
+        cqrsService.RegisterCommand<OpenPageCommand>(navigationService.Handle);
+        cqrsService.RegisterCommand<ClosePageCommand>(navigationService.Handle);
 
         return host;
     }

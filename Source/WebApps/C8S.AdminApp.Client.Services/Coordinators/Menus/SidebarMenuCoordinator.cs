@@ -7,17 +7,16 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 
-public sealed class SidebarMenuCoordinator : IDisposable
+public sealed class SidebarMenuCoordinator(
+    ILoggerFactory loggerFactory,
+    ICQRSService cqrsService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<SidebarMenuCoordinator> _logger;
-    private readonly ICQRSService _cqrsService;
-    //private readonly IPubSubService _pubSubService;
+    private readonly ILogger<SidebarMenuCoordinator> _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();
     #endregion
 
     #region Public Properties
-
-    public string? CQRSUniqueIdentifier => _cqrsService.UniqueIdentifier.ToString("D");
+    public string? CQRSUniqueIdentifier => cqrsService.UniqueIdentifier.ToString("D");
     public Dictionary<PageGroup, List<PageItem>> PageGroups = new()
     {
         { new PageGroup() { Display = "Requests", Icon = C8SConstants.Icons.Request, Url = "/requests" },  [] },
@@ -34,26 +33,7 @@ public sealed class SidebarMenuCoordinator : IDisposable
     private Func<Task>? _refreshMenuAsync = null;
     #endregion
 
-    #region Constructors / Destructor
-    public SidebarMenuCoordinator(
-        ILoggerFactory loggerFactory,
-        ICQRSService cqrsService)
-    {
-        _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();
-        _cqrsService = cqrsService;
-
-        //_pubSubService.Subscribe<PageChange>(HandlePageChangeNotification);
-    }
-
-    public void Dispose()
-    {
-        //_pubSubService.Unsubscribe<PageChange>(HandlePageChangeNotification);
-        _selectedFunctions.Clear();
-    }
-    #endregion
-
     #region Public Methods
-
     public void SetRefreshMenu(Func<Task> refreshMenuAsync) => _refreshMenuAsync = refreshMenuAsync;
     public void ClearRefreshMenu() => _refreshMenuAsync = null;
 
@@ -69,8 +49,11 @@ public sealed class SidebarMenuCoordinator : IDisposable
     #endregion
 
     #region Event Handlers
-    public async Task HandlePageChangeNotification(PageChange pageChange)
+    public Task HandlePageChangeNotification(PageChange pageChange)
     {
+        _logger.LogDebug("PageChange={@PageChange}", pageChange);
+        return Task.CompletedTask;
+#if false
         // add or remove from groups
         if (pageChange.IdValue != null)
         {
@@ -103,16 +86,17 @@ public sealed class SidebarMenuCoordinator : IDisposable
             selectedFunction.Value(selectedFunction.Key == pageChange.NewUrl);
 
         if (_refreshMenuAsync != null)
-            await _refreshMenuAsync.Invoke();
+            await _refreshMenuAsync.Invoke(); 
+#endif
     }
     public async Task HandleSidebarGroupClicked(PageGroup pageGroup)
     {
-        _logger.LogDebug("CQRSService:{Identifier}", _cqrsService.UniqueIdentifier);
-        await _cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
+        _logger.LogDebug("CQRSService:{Identifier}", cqrsService.UniqueIdentifier);
+        await cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
     }
     public async Task HandleSidebarItemClicked(PageItem pageItem)
     {
-        await _cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
+        await cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
     }
     #endregion
 }
