@@ -6,6 +6,7 @@ using C8S.Domain.Features.Notes.Queries;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.Json;
+using SC.Common.Interactions;
 using SC.Common.PubSub;
 using SC.Messaging.Abstractions.Interfaces;
 
@@ -47,7 +48,7 @@ public sealed class NotesListEditorCoordinator(
             RaiseIsBusyChanged();
         }
     }
-    private bool _isBusy = false;
+    private bool _isBusy;
     #endregion
 
     #region Event Handlers
@@ -99,15 +100,15 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-#if false // todo
-            var backendResponse = await mediator.ExecuteQuery(new NoteAddCommand()
-            {
-                Reference = NotesSource,
-                ParentId = SourceId,
-                Content = content
-            });
+            var backendResponse = await mediator
+                .ExecuteQuery<NoteAddCommand, BackendResponse<NoteDetails>>(
+                    new NoteAddCommand()
+                    {
+                        Reference = NotesSource,
+                        ParentId = SourceId,
+                        Content = content
+                    });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException(); 
-#endif
         }
         catch (Exception ex)
         {
@@ -126,14 +127,14 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-#if false // todo
-            var backendResponse = await mediator.ExecuteQuery(new NoteUpdateCommand()
-            {
-                NoteId = note.NoteId,
-                Content = note.Content
-            });
+            var backendResponse = await mediator
+                .ExecuteQuery<NoteUpdateCommand, BackendResponse<NoteDetails>>(
+                    new NoteUpdateCommand()
+                    {
+                        NoteId = note.NoteId,
+                        Content = note.Content
+                    });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException(); 
-#endif
         }
         catch (Exception ex)
         {
@@ -152,16 +153,16 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-#if false // todo
-            var backendResponse = await mediator.ExecuteQuery(new NoteDeleteCommand()
-            {
-                NoteId = noteId
-            });
+            var backendResponse = await mediator
+                .ExecuteQuery<NoteDeleteCommand, BackendResponse>(
+                    new NoteDeleteCommand()
+                    {
+                        NoteId = noteId
+                    });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
             // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated(); 
-#endif
         }
         catch (Exception ex)
         {
@@ -180,12 +181,13 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-#if false // todo
-            var backendResponse = await mediator.ExecuteQuery(new NotesListQuery()
-            {
-                NotesSource = NotesSource,
-                SourceId = SourceId
-            });
+            var backendResponse = await mediator
+                .ExecuteQuery<NotesListQuery, BackendResponse<NotesListResults>>(
+                    new NotesListQuery()
+                    {
+                        NotesSource = NotesSource,
+                        SourceId = SourceId
+                    });
             if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
 
             var results = backendResponse.Result!;
@@ -194,7 +196,6 @@ public sealed class NotesListEditorCoordinator(
 
             // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated(); 
-#endif
         }
         catch (Exception ex)
         {

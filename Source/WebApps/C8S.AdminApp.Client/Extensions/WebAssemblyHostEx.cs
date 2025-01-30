@@ -1,6 +1,12 @@
 ﻿using C8S.AdminApp.Client.Services.Callbacks;
 using C8S.AdminApp.Client.Services.Navigation;
 using C8S.AdminApp.Client.Services.Pages;
+using C8S.Domain.Features.Appointments.Models;
+using C8S.Domain.Features.Appointments.Queries;
+using C8S.Domain.Features.Notes.Commands;
+using C8S.Domain.Features.Notes.Models;
+using C8S.Domain.Features.Notes.Queries;
+using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -24,7 +30,17 @@ public static class WebAssemblyHostEx
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
         cqrsService.RegisterQuery<RequestsListQuery, BackendResponse<RequestsListResults>>(requestsCallbacks.Handle);
         cqrsService.RegisterQuery<RequestDetailsQuery, BackendResponse<RequestDetails?>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>(requestsCallbacks.Handle);
 
+        var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
+        cqrsService.RegisterQuery<AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
+
+        var noteCallbacks = serviceProvider.GetRequiredService<NoteCallbacks>();
+        cqrsService.RegisterQuery<NotesListQuery, BackendResponse<NotesListResults>>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NoteDetailsQuery, BackendResponse<NoteDetails?>>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NoteAddCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NoteUpdateCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NoteDeleteCommand, BackendResponse>(noteCallbacks.Handle);
         return host;
     }
 }
