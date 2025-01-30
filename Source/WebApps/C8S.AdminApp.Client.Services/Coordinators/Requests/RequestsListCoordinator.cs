@@ -84,7 +84,7 @@ public sealed class RequestsListCoordinator(
         try
         {
             var hasCoachCall = SelectedSort.StartsWith("FullSlateAppointmentStartsOn") ? true : (bool?)null;
-            var backendResponse = await mediator.Send(new RequestsListQuery()
+            var backendResponse = await mediator.ExecuteQuery(new RequestsListQuery()
             {
                 StartIndex = request.StartIndex,
                 Count = request.Count,

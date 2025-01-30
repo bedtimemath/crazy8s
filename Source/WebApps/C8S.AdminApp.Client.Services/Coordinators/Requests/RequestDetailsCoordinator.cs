@@ -30,7 +30,7 @@ public sealed class RequestDetailsCoordinator(
     {
         try
         {
-            var backendResponse = await mediator.Send(
+            var backendResponse = await mediator.ExecuteQuery(
                 new RequestDetailsQuery() { RequestId = id });
             if (!backendResponse.Success) 
                 throw backendResponse.Exception!.ToException();
@@ -53,7 +53,7 @@ public sealed class RequestDetailsCoordinator(
     }
 
     public async Task ClosePage()
-        => await mediator.Send(new ClosePageCommand()
+        => await mediator.ExecuteCommand(new ClosePageCommand()
         {
             PageUrl = AdminAppConstants.Pages.RequestDetails,
             IdValue = Details?.RequestId

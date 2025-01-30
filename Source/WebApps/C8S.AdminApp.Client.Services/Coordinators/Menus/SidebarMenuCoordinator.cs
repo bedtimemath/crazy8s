@@ -11,11 +11,13 @@ public sealed class SidebarMenuCoordinator : IDisposable
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<SidebarMenuCoordinator> _logger;
-    private readonly ICQRSService _mediator;
-    private readonly IPubSubService _pubSubService;
+    private readonly ICQRSService _cqrsService;
+    //private readonly IPubSubService _pubSubService;
     #endregion
 
     #region Public Properties
+
+    public string? CQRSUniqueIdentifier => _cqrsService.UniqueIdentifier.ToString("D");
     public Dictionary<PageGroup, List<PageItem>> PageGroups = new()
     {
         { new PageGroup() { Display = "Requests", Icon = C8SConstants.Icons.Request, Url = "/requests" },  [] },
@@ -35,19 +37,17 @@ public sealed class SidebarMenuCoordinator : IDisposable
     #region Constructors / Destructor
     public SidebarMenuCoordinator(
         ILoggerFactory loggerFactory,
-        ICQRSService mediator,
-        IPubSubService pubSubService)
+        ICQRSService cqrsService)
     {
         _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();
-        _mediator = mediator;
-        _pubSubService = pubSubService;
+        _cqrsService = cqrsService;
 
-        _pubSubService.Subscribe<PageChange>(HandlePageChangeNotification);
+        //_pubSubService.Subscribe<PageChange>(HandlePageChangeNotification);
     }
 
     public void Dispose()
     {
-        _pubSubService.Unsubscribe<PageChange>(HandlePageChangeNotification);
+        //_pubSubService.Unsubscribe<PageChange>(HandlePageChangeNotification);
         _selectedFunctions.Clear();
     }
     #endregion
@@ -107,11 +107,12 @@ public sealed class SidebarMenuCoordinator : IDisposable
     }
     public async Task HandleSidebarGroupClicked(PageGroup pageGroup)
     {
-        await _mediator.Send(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
+        _logger.LogDebug("CQRSService:{Identifier}", _cqrsService.UniqueIdentifier);
+        await _cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
     }
     public async Task HandleSidebarItemClicked(PageItem pageItem)
     {
-        await _mediator.Send(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
+        await _cqrsService.ExecuteCommand(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
     }
     #endregion
 }

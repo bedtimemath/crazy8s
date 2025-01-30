@@ -1,17 +1,18 @@
 ﻿@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
 
 <div class="c8s-sidebar-menu @CssClass">
+    <div><strong>ID:</strong> @Service.CQRSUniqueIdentifier</div>
     @foreach (var pageGroup in Service.PageGroups)
     {
         <SidebarGroup Group="pageGroup.Key"
                       Coordinator="@Service"
-                      Clicked="@(async (args) => await Service.HandleSidebarGroupClicked(args))" />
+                      Clicked="@(async (args) => await Service.HandleSidebarGroupClicked(args))"/>
 
         @foreach (var pageItem in pageGroup.Value)
         {
             <SidebarItem Item="pageItem"
                          Coordinator="@Service"
-                         Clicked="@(async (args) => await Service.HandleSidebarItemClicked(args))" />
+                         Clicked="@(async (args) => await Service.HandleSidebarItemClicked(args))"/>
         }
     }
 </div>

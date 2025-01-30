@@ -162,7 +162,7 @@
             <RadzenButton ButtonType="ButtonType.Button"
                           ButtonStyle="ButtonStyle.Primary"
                           Text="View >"
-                          Click="@(() => Sender.Send(new OpenPageCommand()
+                          Click="@(() => CQRSService.ExecuteCommand(new OpenPageCommand()
                                  {
                                      PageUrl = AdminAppConstants.Pages.RequestDetails,
                                      PageTitle = Request.ToString() ?? SoftCrowConstants.Display.NotSet,

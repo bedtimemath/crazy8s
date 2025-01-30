@@ -99,7 +99,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator.Send(new NoteAddCommand()
+            var backendResponse = await mediator.ExecuteQuery(new NoteAddCommand()
             {
                 Reference = NotesSource,
                 ParentId = SourceId,
@@ -124,7 +124,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator.Send(new NoteUpdateCommand()
+            var backendResponse = await mediator.ExecuteQuery(new NoteUpdateCommand()
             {
                 NoteId = note.NoteId,
                 Content = note.Content
@@ -148,7 +148,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator.Send(new NoteDeleteCommand()
+            var backendResponse = await mediator.ExecuteQuery(new NoteDeleteCommand()
             {
                 NoteId = noteId
             });
@@ -174,7 +174,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await mediator.Send(new NotesListQuery()
+            var backendResponse = await mediator.ExecuteQuery(new NotesListQuery()
             {
                 NotesSource = NotesSource,
                 SourceId = SourceId

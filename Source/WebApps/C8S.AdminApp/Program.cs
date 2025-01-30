@@ -132,11 +132,6 @@ try
     builder.Services.AddScoped<ISelfService, SelfService>();
 
     /*****************************************
-     * MEDIATR
-    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(_Imports).Assembly));
-     */
-
-    /*****************************************
      * MINIMAL APIS
      */
     //builder.Services.AddEndpointsApiExplorer();

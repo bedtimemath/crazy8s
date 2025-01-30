@@ -1,8 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Navigation;
-using SC.Common.Interfaces;
-using SC.Messaging.Abstractions.Interfaces;
-
-namespace C8S.AdminApp.Client.Layout;
+﻿namespace C8S.AdminApp.Client.Layout;
 
 public partial class MainLayout(
     IServiceProvider serviceProvider)
@@ -13,12 +9,12 @@ public partial class MainLayout(
 
         if (!RendererInfo.IsInteractive) return;
 
-        var pubSubService = serviceProvider.GetRequiredService<IPubSubService>();
-        if (pubSubService is IAsyncInitializable initializablePubSub)
-            await initializablePubSub.InitializeAsync(serviceProvider);
+        //var pubSubService = serviceProvider.GetRequiredService<IPubSubService>();
+        //if (pubSubService is IAsyncInitializable initializablePubSub)
+        //    await initializablePubSub.InitializeAsync(serviceProvider);
 
-        var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-        if (navigationService is IAsyncInitializable initializableNavigation)
-            await initializableNavigation.InitializeAsync(serviceProvider);
+        //var navigationService = serviceProvider.GetRequiredService<INavigationService>();
+        //if (navigationService is IAsyncInitializable initializableNavigation)
+        //    await initializableNavigation.InitializeAsync(serviceProvider);
     }
 }

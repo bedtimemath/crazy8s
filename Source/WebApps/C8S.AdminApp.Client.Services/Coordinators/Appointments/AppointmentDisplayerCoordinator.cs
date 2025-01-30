@@ -11,7 +11,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Appointments;
 
 public class AppointmentDisplayerCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService mediator)
+    ICQRSService cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentDisplayerCoordinator> _logger = loggerFactory.CreateLogger<AppointmentDisplayerCoordinator>();
@@ -117,12 +117,12 @@ public class AppointmentDisplayerCoordinator(
 
     private async Task<TResult> SendCancellable<TQuery, TResult>(TQuery query)
         where TQuery: class, ICQRSQuery<TResult>
-        where TResult: class
+        where TResult : class, new()
    {
         TResult result;
         using (_cancellationTokenSource = new CancellationTokenSource())
         {
-            result = (await mediator.Send(query, _cancellationTokenSource.Token)) as TResult ??
+            result = (await cqrsService.ExecuteQuery(query, _cancellationTokenSource.Token)) as TResult ??
                      throw new UnreachableException("Could not convert to TResult");
         }
         _cancellationTokenSource = null;

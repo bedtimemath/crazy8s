@@ -9,7 +9,7 @@ namespace C8S.AdminApp.Client.UI.Requests;
 public partial class RequestListItemDisplayer : BaseRazorComponent
 {
     [Inject]
-    public ICQRSService Sender { get; set; } = null!;
+    public ICQRSService CQRSService { get; set; } = null!;
 
     [Parameter]
     public RequestListItem Request { get; set; } = null!;

@@ -1,16 +1,16 @@
 using C8S.AdminApp.Client.Extensions;
 using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Extensions;
+using C8S.AdminApp.Client.Services.Navigation;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
 using SC.Common.Helpers.Extensions;
+using SC.Messaging.Abstractions.Interfaces;
+using SC.Messaging.Services;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
-using _ClientImports = C8S.AdminApp.Client._Imports;
-using _UIImports = C8S.AdminApp.Client.UI._Imports;
-using _ServicesImports = C8S.AdminApp.Client.Services._Imports;
 
 /*****************************************
  * INITIAL LOGGING
@@ -83,6 +83,8 @@ try
         config.RegisterServicesFromAssembly(typeof(_ServicesImports).Assembly);
     });
      */
+    builder.Services.AddSingleton<INavigationService, NavigationService>();
+    builder.Services.AddSingleton<ICQRSService, CQRSService>();
 
     /*****************************************
      * APP BUILD & RUN
