@@ -6,7 +6,7 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarItem: BaseRazorComponent, IDisposable
+public sealed partial class SidebarItem: BaseRazorComponent
 {
     #region Injected Properties
     [Inject]
@@ -28,6 +28,7 @@ public sealed partial class SidebarItem: BaseRazorComponent, IDisposable
     private bool _isSelected;
     #endregion
 
+#if false // todo remove
     #region Component LifeCycle
     protected override void OnInitialized()
     {
@@ -38,7 +39,8 @@ public sealed partial class SidebarItem: BaseRazorComponent, IDisposable
     {
         Coordinator.UnregisterComponent(Item.Url);
     }
-    #endregion
+    #endregion  
+#endif
 
     #region Public Methods
     public void SetSelected(bool isSelected)

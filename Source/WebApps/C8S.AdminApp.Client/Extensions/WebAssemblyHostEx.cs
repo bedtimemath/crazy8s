@@ -1,7 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Callbacks;
 using C8S.AdminApp.Client.Services.Navigation;
-using C8S.AdminApp.Client.Services.Pages;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Notes.Commands;
@@ -34,8 +33,7 @@ public static class WebAssemblyHostEx
         var cqrsService = serviceProvider.GetRequiredService<ICQRSService>();
 
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-        cqrsService.RegisterCommand<OpenPageCommand>(navigationService.Handle);
-        cqrsService.RegisterCommand<ClosePageCommand>(navigationService.Handle);
+        cqrsService.RegisterCommand<NavigationCommand>(navigationService.Handle);
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
         cqrsService.RegisterQuery<RequestsListQuery, BackendResponse<RequestsListResults>>(requestsCallbacks.Handle);

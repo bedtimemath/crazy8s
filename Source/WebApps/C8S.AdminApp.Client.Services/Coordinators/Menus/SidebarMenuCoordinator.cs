@@ -1,6 +1,5 @@
-﻿using System.Diagnostics;
+﻿using C8S.AdminApp.Client.Services.Navigation;
 using C8S.AdminApp.Client.Services.Pages;
-using C8S.Domain;
 using Microsoft.Extensions.Logging;
 using SC.Common.PubSub;
 using SC.Messaging.Abstractions.Interfaces;
@@ -16,6 +15,7 @@ public sealed class SidebarMenuCoordinator(
     private readonly ILogger<SidebarMenuCoordinator> _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();
     #endregion
 
+#if false // todo remove
     #region Public Properties
     public Dictionary<PageGroup, List<PageItem>> PageGroups = new()
     {
@@ -26,8 +26,10 @@ public sealed class SidebarMenuCoordinator(
         { new PageGroup() { Display = "Orders", Icon = C8SConstants.Icons.Order, Url = "/orders" },  [] },
         { new PageGroup() { Display = "Skus", Icon = C8SConstants.Icons.Sku, Url = "/skus" },  [] }
     };
-    #endregion
+    #endregion  
+#endif
 
+#if false // todo remove
     #region Private Variables
     private readonly Dictionary<string, Action<bool>> _selectedFunctions = [];
     private Func<Task>? _refreshMenuAsync = null;
@@ -47,11 +49,12 @@ public sealed class SidebarMenuCoordinator(
         _selectedFunctions.Remove(url);
     }
     #endregion
+#endif
 
     #region Event Handlers
-    public Task HandlePageChangeNotification(PageChange pageChange)
+    public Task HandlePageChangeNotification(NavigationChange navigationChange)
     {
-        _logger.LogDebug("PageChange={@PageChange}", pageChange);
+        _logger.LogDebug("PageChange={@PageChange}", navigationChange);
         return Task.CompletedTask;
 #if false // todo
         // add or remove from groups
@@ -89,13 +92,12 @@ public sealed class SidebarMenuCoordinator(
             await _refreshMenuAsync.Invoke(); 
 #endif
     }
-    public async Task HandleSidebarGroupClicked(PageGroup pageGroup)
-    {
-        await ExecuteCommand(new OpenPageCommand() { PageUrl = pageGroup.Url, PageTitle = pageGroup.Display });
-    }
+    public async Task HandleSidebarGroupClicked(NavigationGroup group, string pageUrl) =>
+        await ExecuteCommand(new NavigationCommand() { Action = NavigationAction.Open, Group = group, PageUrl = pageUrl });
+
     public async Task HandleSidebarItemClicked(PageItem pageItem)
     {
-        await ExecuteCommand(new OpenPageCommand() { PageUrl = pageItem.Url, PageTitle = pageItem.Display });
+        //await ExecuteCommand(new OpenNavigationCommand() { Group = NavigationGroup.Requests });
     }
     #endregion
 }

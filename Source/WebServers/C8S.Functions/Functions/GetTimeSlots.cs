@@ -6,7 +6,7 @@ using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using SC.Common.Extensions;
 
-namespace C8S.Functions.Functions.Deprecated;
+namespace C8S.Functions.Functions;
 
 public class GetOpenTimeSlots(
     ILoggerFactory loggerFactory,

@@ -4,16 +4,16 @@
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.Left"
-                 onclick="@(async () => await Clicked.InvokeAsync(Group))"
+                 onclick="@(async () => await Clicked.InvokeAsync())"
                  class="w-100">
 
-        <IconDisplay Icon="@Group.Icon"
+        <IconDisplay IconString="@IconString"
                      CssClass="c8s-sidebar-group-icon" />
 
         <RadzenText TagName="TagName.Div"
                     TextStyle="TextStyle.Body1"
                     TextAlign="TextAlign.Left"
-                    Text="@Group.Display"
+                    Text="@Display"
                     class="c8s-sidebar-group-display" />
 
     </RadzenStack>

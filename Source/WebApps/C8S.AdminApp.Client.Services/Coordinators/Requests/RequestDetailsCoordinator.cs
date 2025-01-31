@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Pages;
+﻿using C8S.AdminApp.Client.Services.Navigation;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components;
@@ -57,10 +57,11 @@ public sealed class RequestDetailsCoordinator(
     }
 
     public async Task ClosePage()
-        => await ExecuteCommand(new ClosePageCommand()
+        => await ExecuteCommand(new NavigationCommand()
         {
-            PageUrl = AdminAppConstants.Pages.RequestDetails,
-            IdValue = Details?.RequestId
+            Action = NavigationAction.Close
+            //PageUrl = AdminAppConstants.Pages.RequestDetails,
+            //IdValue = Details?.RequestId
         });
 
     public async Task LinkPlace()

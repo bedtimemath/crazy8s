@@ -1,17 +1,29 @@
-﻿@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
+﻿@using C8S.AdminApp.Client.Services.Navigation
+@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
 
 <div class="c8s-sidebar-menu @CssClass">
-    @foreach (var pageGroup in Service.PageGroups)
-    {
-        <SidebarGroup Group="pageGroup.Key"
-                      Coordinator="@Service"
-                      Clicked="@(async (args) => await Service.HandleSidebarGroupClicked(args))"/>
-
-        @foreach (var pageItem in pageGroup.Value)
-        {
-            <SidebarItem Item="pageItem"
-                         Coordinator="@Service"
-                         Clicked="@(async (args) => await Service.HandleSidebarItemClicked(args))"/>
-        }
-    }
+    <SidebarGroup @ref="@_requestsGroup" 
+                  Display="Requests"
+                  IconString="@C8SConstants.Icons.Request"
+                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationGroup.Requests))"/>
+    <SidebarGroup @ref="@_contactsGroup" 
+                  Display="Contacts"
+                  IconString="@C8SConstants.Icons.Contact"
+                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationGroup.Contacts))"/>
+    <SidebarGroup @ref="@_organizationsGroup" 
+                  Display="Organizations"
+                  IconString="@C8SConstants.Icons.Organization"
+                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationGroup.Organizations))"/>
+    <SidebarGroup @ref="@_sitesGroup" 
+                  Display="Sites"
+                  IconString="@C8SConstants.Icons.Site"
+                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationGroup.Sites))"/>
+    <SidebarGroup @ref="@_ordersGroup" 
+                  Display="Orders"
+                  IconString="@C8SConstants.Icons.Order"
+                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationGroup.Orders))"/>
+    <SidebarGroup @ref="@_skusGroup" 
+                  Display="Skus"
+                  IconString="@C8SConstants.Icons.Sku"
+                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationGroup.Skus))"/>
 </div>
