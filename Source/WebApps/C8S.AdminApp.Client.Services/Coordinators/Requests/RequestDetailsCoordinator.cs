@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Abstractions.Models;
+using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
@@ -13,7 +14,7 @@ public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
     ICQRSService cqrsService,
     IPubSubService pubSubService,
-    NavigationManager navigationManager): BaseCoordinator(cqrsService)
+    NavigationManager navigationManager): BaseCQRSCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();

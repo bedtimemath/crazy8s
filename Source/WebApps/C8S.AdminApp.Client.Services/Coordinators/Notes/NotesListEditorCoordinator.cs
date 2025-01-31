@@ -9,12 +9,13 @@ using System.Text.Json;
 using SC.Common.Interactions;
 using SC.Common.PubSub;
 using SC.Messaging.Abstractions.Interfaces;
+using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
 public sealed class NotesListEditorCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService): BaseCoordinator(cqrsService)
+    ICQRSService cqrsService): BaseCQRSCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NotesListEditorCoordinator> _logger = loggerFactory.CreateLogger<NotesListEditorCoordinator>();

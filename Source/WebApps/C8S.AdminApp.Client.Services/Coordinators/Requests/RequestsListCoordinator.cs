@@ -8,13 +8,14 @@ using SC.Common.Interactions;
 using SC.Common.Models;
 using SC.Common.Razor.Extensions;
 using SC.Messaging.Abstractions.Interfaces;
+using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
     IJSRuntime jsRuntime,
-    ICQRSService cqrsService) : BaseCoordinator(cqrsService)
+    ICQRSService cqrsService) : BaseCQRSCoordinator(cqrsService)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";
