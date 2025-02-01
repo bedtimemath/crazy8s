@@ -1,20 +1,8 @@
 ﻿@inherits BaseCoordinatedComponent<SidebarItemListCoordinator>
 
-<div id="@ComponentId" class="c8s-sidebar-itemlist @(_isSelected ? "selected" : null) @CssClass">
-    <RadzenStack Orientation="Orientation.Horizontal"
-                 AlignItems="AlignItems.Center"
-                 JustifyContent="JustifyContent.Left"
-                 onclick="@(async () => await Clicked.InvokeAsync())"
-                 class="w-100">
-                 
-        <IconDisplay IconString="@IconString"
-                     CssClass="c8s-sidebar-itemlist-icon" />
-
-        <RadzenText TagName="TagName.Div"
-                    TextStyle="TextStyle.Body1"
-                    TextAlign="TextAlign.Left"
-                    Text="@Display"
-                    class="c8s-sidebar-itemlist-display" />
-
-    </RadzenStack>
+<div id="@ComponentId" class="c8s-sidebar-item-list @CssClass">
+    @foreach (var item in _items)
+    {
+        <SidebarItem Item="item" />
+    }
 </div>

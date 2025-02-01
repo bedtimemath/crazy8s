@@ -17,7 +17,7 @@ public sealed class SidebarMenuCoordinator(
     #endregion
 
     #region Public Methods
-    public async Task<IEnumerable<MenuGroup>> GetNavigationGroups()
+    public async Task<IEnumerable<MenuGroup>> GetMenuGroups()
     {
         var response = await GetQueryResults<MenuGroupsQuery, DomainResponse<IEnumerable<MenuGroup>>>(
             new MenuGroupsQuery());

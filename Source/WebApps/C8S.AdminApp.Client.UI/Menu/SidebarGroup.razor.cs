@@ -36,6 +36,7 @@ public sealed partial class SidebarGroup: BaseCoordinatedComponent<SidebarGroupC
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+
         Service.Group = Group;
     }
     #endregion

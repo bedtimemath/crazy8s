@@ -1,10 +1,10 @@
 ﻿@inherits BaseCoordinatedComponent<SidebarItemCoordinator>
 
-<div id="@ComponentId" class="c8s-sidebar-item @(_isSelected ? "selected" : null) @CssClass">
+<div id="@ComponentId" class="c8s-sidebar-item @(Service.IsSelected ? "selected" : null) @CssClass">
     <RadzenStack Orientation="Orientation.Horizontal"
                  AlignItems="AlignItems.Center"
                  JustifyContent="JustifyContent.Left"
-                 onclick="@(async () => await Clicked.InvokeAsync(Item))"
+                 onclick="@(async () => await Service.HandleClicked())"
                  class="w-100">
 
         <RadzenText TagName="TagName.Div"

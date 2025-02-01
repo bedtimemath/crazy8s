@@ -1,6 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Menu.Models;
-using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
@@ -29,7 +28,7 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        _groups = await Service.GetNavigationGroups();
+        _groups = await Service.GetMenuGroups();
     }
     #endregion
 }

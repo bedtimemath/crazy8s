@@ -11,7 +11,7 @@ public sealed class SidebarMenuService(
     ILoggerFactory loggerFactory) : ISidebarMenuService
 {
     #region ReadOnly Constructor Variables
-    //private readonly ILogger<SidebarMenuService> _logger = loggerFactory.CreateLogger<SidebarMenuService>();
+    private readonly ILogger<SidebarMenuService> _logger = loggerFactory.CreateLogger<SidebarMenuService>();
     #endregion
 
     #region Constants & ReadOnlys
@@ -30,10 +30,21 @@ public sealed class SidebarMenuService(
     public Task<DomainResponse<IEnumerable<MenuGroup>>> Handle(MenuGroupsQuery query, CancellationToken cancellationToken = default) =>
         Task.FromResult(DomainResponse<IEnumerable<MenuGroup>>.CreateSuccessResponse(NavigationGroups));
 
-    public Task<DomainResponse<IEnumerable<MenuItem>>> Handle(MenuItemsQuery query,
-        CancellationToken cancellationToken = default)
+    public Task<DomainResponse<IEnumerable<MenuItem>>> Handle(MenuItemsQuery query, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _logger.LogDebug("Query: {@Query}", query);
+
+        IEnumerable<MenuItem> returnList = query.Entity switch
+        {
+            DomainEntity.Request =>
+            [
+                new MenuItem()
+                    { Display = "Blah D. Blah", Entity = DomainEntity.Request, Url = "request/36232", IdValue = 36232 }
+            ],
+            _ => []
+        };
+
+        return Task.FromResult(DomainResponse<IEnumerable<MenuItem>>.CreateSuccessResponse(returnList));
     }
     #endregion
 

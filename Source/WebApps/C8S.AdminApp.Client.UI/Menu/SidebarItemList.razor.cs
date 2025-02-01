@@ -1,39 +1,42 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
+using C8S.AdminApp.Client.Services.Menu.Models;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
 public sealed partial class SidebarItemList: BaseCoordinatedComponent<SidebarItemListCoordinator>
 {
-    #region Injected Properties
-    [Inject]
-    public ILogger<SidebarItemList> Logger { get; set; } = null!;
-    #endregion
-
     #region Component Parameters
     [Parameter]
-    public string Display { get; set; } = null!;
-    
-    [Parameter]
-    public string IconString { get; set; } = null!;
-
-    [Parameter]
-    public EventCallback Clicked { get; set; }
+    public MenuGroup Group { get; set; } = null!;
     #endregion
 
     #region Private Variables
-    private bool _isSelected = false;
+    //private ILogger<SidebarMenu> _logger = null!;
+    private IEnumerable<MenuItem> _items = null!;
     #endregion
 
-    #region Public Methods
-    public async Task SetSelected(bool isSelected)
+    #region Component LifeCycle
+    protected override void OnInitialized()
     {
-        if (_isSelected == isSelected)  return;
+        base.OnInitialized();
 
-        _isSelected = isSelected;
-        await InvokeAsync(StateHasChanged);
+        //_logger = Service.LoggerFactory.CreateLogger<SidebarMenu>();
+        Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Service.ComponentRefresh = null;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Service.Group = Group;
+        _items = await Service.GetMenuItems();
     }
     #endregion
 }
