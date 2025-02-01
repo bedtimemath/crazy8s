@@ -3,6 +3,7 @@
 @using System.Text.Json
 @using C8S.AdminApp.Client.Services.Navigation.Commands
 @using C8S.AdminApp.Client.Services.Navigation.Enums
+@using C8S.Domain.Features
 @using SC.Common.Extensions
 
 <div class="c8s-listitem-displayer c8s-request-displayer @CssClass">
@@ -165,7 +166,7 @@
                           Click="@(() => CQRSService.ExecuteCommand(new NavigationCommand()
                                  {
                                      Action = NavigationAction.Open,
-                                     Entity = NavigationEntity.Requests,
+                                     Entity = DomainEntity.Request,
                                      PageUrl = $"/request/{Request.RequestId}",
                                      IdValue = Request.RequestId,
                                      JsonDetails = JsonSerializer.Serialize(Request)

@@ -21,12 +21,14 @@ public sealed class NavigationService(
     {
         _logger.LogInformation("[{Action}]: {Group} [{IdValue}]", command.Action, command.Entity, command.IdValue);
 
+        var oldUrl = navigationManager.GetRelativeUrl();
         await Task.Run(() => navigationManager.NavigateTo(command.PageUrl), cancellationToken);
         await pubSubService.Publish(new NavigationChange()
         {
-            CurrentUrl = navigationManager.GetRelativeUrl(),
             Action = command.Action,
             Entity = command.Entity,
+            OldUrl = oldUrl,
+            NewUrl = command.PageUrl,
             IdValue = command.IdValue,
             JsonDetails = command.JsonDetails
         });

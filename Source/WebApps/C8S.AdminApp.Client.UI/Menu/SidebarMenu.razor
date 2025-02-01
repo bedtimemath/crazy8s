@@ -1,40 +1,10 @@
-﻿@using C8S.AdminApp.Client.Services.Navigation.Enums
-@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
+﻿@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
 
 <div class="c8s-sidebar-menu @CssClass">
     @foreach (var group in _groups)
     {
-        <SidebarGroup Display="@group.Display"
-                      IconString="@group.IconString"
-                      Clicked="@(async () => await HandleSidebarGroupClicked(group.Entity))"/>
+        <SidebarGroup Group="@group" />
     }
     
 </div>
-@*
-
-    <SidebarGroup @ref="@_requestsGroup"
-                  Display="Requests"
-                  IconString="@C8SConstants.Icons.Request"
-                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationEntity.Requests))"/>
-    <SidebarGroup @ref="@_contactsGroup"
-                  Display="Contacts"
-                  IconString="@C8SConstants.Icons.Contact"
-                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationEntity.Contacts))"/>
-    <SidebarGroup @ref="@_organizationsGroup"
-                  Display="Organizations"
-                  IconString="@C8SConstants.Icons.Organization"
-                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationEntity.Organizations))"/>
-    <SidebarGroup @ref="@_sitesGroup"
-                  Display="Sites"
-                  IconString="@C8SConstants.Icons.Site"
-                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationEntity.Sites))"/>
-    <SidebarGroup @ref="@_ordersGroup"
-                  Display="Orders"
-                  IconString="@C8SConstants.Icons.Order"
-                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationEntity.Orders))"/>
-    <SidebarGroup @ref="@_skusGroup"
-                  Display="Skus"
-                  IconString="@C8SConstants.Icons.Sku"
-                  Clicked="@(async () => await HandleSidebarGroupClicked(NavigationEntity.Skus))"/>
-*@
    

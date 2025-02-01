@@ -13,9 +13,9 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService,
     IPubSubService pubSubService,
-    NavigationManager navigationManager): BaseCQRSCoordinator(cqrsService)
+    ICQRSService cqrsService,
+    NavigationManager navigationManager) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();

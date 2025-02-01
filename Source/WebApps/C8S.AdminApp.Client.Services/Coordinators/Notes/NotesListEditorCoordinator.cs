@@ -15,7 +15,8 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Notes;
 
 public sealed class NotesListEditorCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService): BaseCQRSCoordinator(cqrsService)
+    IPubSubService pubSubService,
+    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NotesListEditorCoordinator> _logger = loggerFactory.CreateLogger<NotesListEditorCoordinator>();

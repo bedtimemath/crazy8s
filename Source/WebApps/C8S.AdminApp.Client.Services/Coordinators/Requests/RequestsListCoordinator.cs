@@ -14,8 +14,9 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
 public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
-    IJSRuntime jsRuntime,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(cqrsService)
+    IPubSubService pubSubService,
+    ICQRSService cqrsService,
+    IJSRuntime jsRuntime) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";

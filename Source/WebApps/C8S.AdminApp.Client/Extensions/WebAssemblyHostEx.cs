@@ -1,8 +1,9 @@
 ﻿using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Callbacks;
+using C8S.AdminApp.Client.Services.Menu.Models;
+using C8S.AdminApp.Client.Services.Menu.Queries;
+using C8S.AdminApp.Client.Services.Menu.Services;
 using C8S.AdminApp.Client.Services.Navigation.Commands;
-using C8S.AdminApp.Client.Services.Navigation.Models;
-using C8S.AdminApp.Client.Services.Navigation.Queries;
 using C8S.AdminApp.Client.Services.Navigation.Services;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
@@ -39,7 +40,7 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterCommand<NavigationCommand>(navigationService.Handle);
 
         var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
-        cqrsService.RegisterQuery<NavigationGroupsQuery, DomainResponse<IEnumerable<NavigationGroup>>>(sidebarMenuService.Handle);
+        cqrsService.RegisterQuery<MenuGroupsQuery, DomainResponse<IEnumerable<MenuGroup>>>(sidebarMenuService.Handle);
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
         cqrsService.RegisterQuery<RequestsListQuery, DomainResponse<RequestsListResults>>(requestsCallbacks.Handle);

@@ -6,9 +6,10 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Contacts;
 
 public sealed class ContactsListCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService): BaseCQRSCoordinator(cqrsService)
+    IPubSubService pubSubService,
+    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<ContactsListCoordinator> _logger = loggerFactory.CreateLogger<ContactsListCoordinator>();
+    //private readonly ILogger<ContactsListCoordinator> _logger = loggerFactory.CreateLogger<ContactsListCoordinator>();
     #endregion
 }

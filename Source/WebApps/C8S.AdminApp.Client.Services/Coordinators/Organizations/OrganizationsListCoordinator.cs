@@ -6,9 +6,10 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Organizations;
 
 public sealed class OrganizationsListCoordinator(
     ILoggerFactory loggerFactory,
-    ICQRSService cqrsService): BaseCQRSCoordinator(cqrsService)
+    IPubSubService pubSubService,
+    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<OrganizationsListCoordinator> _logger = loggerFactory.CreateLogger<OrganizationsListCoordinator>();
+    //private readonly ILogger<OrganizationsListCoordinator> _logger = loggerFactory.CreateLogger<OrganizationsListCoordinator>();
     #endregion
 }
