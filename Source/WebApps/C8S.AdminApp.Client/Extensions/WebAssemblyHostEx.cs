@@ -37,7 +37,9 @@ public static class WebAssemblyHostEx
 
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
         cqrsService.RegisterCommand<NavigationCommand>(navigationService.Handle);
-        cqrsService.RegisterQuery<NavigationGroupsQuery, DomainResponse<IEnumerable<NavigationGroup>>>(navigationService.Handle);
+
+        var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
+        cqrsService.RegisterQuery<NavigationGroupsQuery, DomainResponse<IEnumerable<NavigationGroup>>>(sidebarMenuService.Handle);
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
         cqrsService.RegisterQuery<RequestsListQuery, DomainResponse<RequestsListResults>>(requestsCallbacks.Handle);

@@ -13,9 +13,12 @@ public static class ServiceCollectionEx
     {
         // SoftCrow Standard
         services.AddSingleton<ICQRSService, CQRSService>();
-        services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IPubSubService, PubSubService>();
         services.AddSingleton<INotifierService, NotifierService>();
+
+        // Local Services
+        services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<ISidebarMenuService, SidebarMenuService>();
 
         // Initializable
         services.AddSingleton<IHubService, HubService>();
