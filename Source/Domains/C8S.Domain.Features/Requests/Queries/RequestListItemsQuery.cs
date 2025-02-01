@@ -5,7 +5,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Requests.Queries;
 
-public record RequestsListQuery : ICQRSQuery<BackendResponse<RequestsListResults>>
+public record RequestsListQuery : ICQRSQuery<DomainResponse<RequestsListResults>>
 {
     public int? StartIndex { get; init; }
     public int? Count { get; init; }

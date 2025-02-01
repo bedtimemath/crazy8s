@@ -29,7 +29,7 @@ public class NoteController(
 
     #region Public Methods
     [HttpGet]
-    public async Task<BackendResponse<NoteDetails?>> GetNote(int noteId)
+    public async Task<DomainResponse<NoteDetails?>> GetNote(int noteId)
     {
         try
         {
@@ -40,7 +40,7 @@ public class NoteController(
 
             var note = await queryable.FirstOrDefaultAsync(r => r.NoteId == noteId);
 
-            return new BackendResponse<NoteDetails?>()
+            return new DomainResponse<NoteDetails?>()
             {
                 Result = mapper.Map<NoteDetails?>(note)
             };
@@ -48,7 +48,7 @@ public class NoteController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", noteId);
-            return new BackendResponse<NoteDetails?>()
+            return new DomainResponse<NoteDetails?>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -56,7 +56,7 @@ public class NoteController(
     }
     
     [HttpPatch]
-    public async Task<BackendResponse<NoteDetails>> PatchNote(int noteId,
+    public async Task<DomainResponse<NoteDetails>> PatchNote(int noteId,
         [FromBody] NoteUpdateCommand command)
     {
         try
@@ -81,7 +81,7 @@ public class NoteController(
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return new BackendResponse<NoteDetails>()
+            return new DomainResponse<NoteDetails>()
             {
                 Result = mapper.Map<NoteDetails?>(note)
             };
@@ -89,7 +89,7 @@ public class NoteController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while patching note: {Id}", noteId);
-            return new BackendResponse<NoteDetails>()
+            return new DomainResponse<NoteDetails>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -97,7 +97,7 @@ public class NoteController(
     } 
 
     [HttpDelete]
-    public async Task<BackendResponse> DeleteNote(int noteId)
+    public async Task<DomainResponse> DeleteNote(int noteId)
     {
         try
         {
@@ -123,12 +123,12 @@ public class NoteController(
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return BackendResponse.CreateSuccessResponse();
+            return DomainResponse.CreateSuccessResponse();
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", noteId);
-            return BackendResponse.CreateFailureResponse(exception);
+            return DomainResponse.CreateFailureResponse(exception);
         }
     }
 

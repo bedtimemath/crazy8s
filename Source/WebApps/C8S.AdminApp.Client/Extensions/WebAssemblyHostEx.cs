@@ -1,6 +1,9 @@
 ﻿using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Callbacks;
-using C8S.AdminApp.Client.Services.Navigation;
+using C8S.AdminApp.Client.Services.Navigation.Commands;
+using C8S.AdminApp.Client.Services.Navigation.Models;
+using C8S.AdminApp.Client.Services.Navigation.Queries;
+using C8S.AdminApp.Client.Services.Navigation.Services;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Notes.Commands;
@@ -34,21 +37,22 @@ public static class WebAssemblyHostEx
 
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
         cqrsService.RegisterCommand<NavigationCommand>(navigationService.Handle);
+        cqrsService.RegisterQuery<NavigationGroupsQuery, DomainResponse<IEnumerable<NavigationGroup>>>(navigationService.Handle);
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
-        cqrsService.RegisterQuery<RequestsListQuery, BackendResponse<RequestsListResults>>(requestsCallbacks.Handle);
-        cqrsService.RegisterQuery<RequestDetailsQuery, BackendResponse<RequestDetails?>>(requestsCallbacks.Handle);
-        cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestsListQuery, DomainResponse<RequestsListResults>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestDetailsQuery, DomainResponse<RequestDetails?>>(requestsCallbacks.Handle);
+        cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>(requestsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
-        cqrsService.RegisterQuery<AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
+        cqrsService.RegisterQuery<AppointmentDetailsQuery, DomainResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
 
         var noteCallbacks = serviceProvider.GetRequiredService<NoteCallbacks>();
-        cqrsService.RegisterQuery<NotesListQuery, BackendResponse<NotesListResults>>(noteCallbacks.Handle);
-        cqrsService.RegisterQuery<NoteDetailsQuery, BackendResponse<NoteDetails?>>(noteCallbacks.Handle);
-        cqrsService.RegisterCommand<NoteAddCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
-        cqrsService.RegisterCommand<NoteUpdateCommand, BackendResponse<NoteDetails>>(noteCallbacks.Handle);
-        cqrsService.RegisterCommand<NoteDeleteCommand, BackendResponse>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NotesListQuery, DomainResponse<NotesListResults>>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NoteDetailsQuery, DomainResponse<NoteDetails?>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteAddCommand, DomainResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteUpdateCommand, DomainResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteDeleteCommand, DomainResponse>(noteCallbacks.Handle);
 
 
         return host;

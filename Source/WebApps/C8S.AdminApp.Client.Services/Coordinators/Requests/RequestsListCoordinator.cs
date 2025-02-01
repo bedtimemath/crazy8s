@@ -86,7 +86,7 @@ public sealed class RequestsListCoordinator(
         try
         {
             var hasCoachCall = SelectedSort.StartsWith("FullSlateAppointmentStartsOn") ? true : (bool?)null;
-            var backendResponse = await GetQueryResults<RequestsListQuery, BackendResponse<RequestsListResults>>(
+            var backendResponse = await GetQueryResults<RequestsListQuery, DomainResponse<RequestsListResults>>(
                     new RequestsListQuery()
                     {
                         StartIndex = request.StartIndex,

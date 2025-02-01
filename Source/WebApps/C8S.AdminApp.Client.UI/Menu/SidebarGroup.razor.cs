@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarGroup: BaseRazorComponent
+public sealed partial class SidebarGroup: BaseCoordinatedComponent<SidebarGroupCoordinator>
 {
     #region Injected Properties
     [Inject]

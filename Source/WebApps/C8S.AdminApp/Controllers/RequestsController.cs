@@ -21,7 +21,7 @@ public class RequestsController(
     private readonly ILogger<RequestsController> _logger = loggerFactory.CreateLogger<RequestsController>();
 
     [HttpPost]
-    public async Task<BackendResponse<RequestsListResults>> GetRequests(
+    public async Task<DomainResponse<RequestsListResults>> GetRequests(
         [FromBody] RequestsListQuery query)
     {
         try
@@ -86,7 +86,7 @@ public class RequestsController(
 
             var requests = await queryable.ToListAsync();
 
-            return new BackendResponse<RequestsListResults>()
+            return new DomainResponse<RequestsListResults>()
             {
                 Result = new RequestsListResults()
                 {
@@ -100,7 +100,7 @@ public class RequestsController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return new BackendResponse<RequestsListResults>()
+            return new DomainResponse<RequestsListResults>()
             {
                 Exception = exception.ToSerializableException()
             };

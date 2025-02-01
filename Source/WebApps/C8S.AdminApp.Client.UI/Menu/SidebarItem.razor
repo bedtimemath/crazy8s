@@ -1,4 +1,4 @@
-﻿@inherits BaseRazorComponent
+﻿@inherits BaseCoordinatedComponent<SidebarItemCoordinator>
 
 <div id="@ComponentId" class="c8s-sidebar-item @(_isSelected ? "selected" : null) @CssClass">
     <RadzenStack Orientation="Orientation.Horizontal"

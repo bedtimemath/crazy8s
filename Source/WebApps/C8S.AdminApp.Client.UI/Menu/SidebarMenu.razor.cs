@@ -1,6 +1,7 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Extensions;
-using C8S.AdminApp.Client.Services.Navigation;
+using C8S.AdminApp.Client.Services.Navigation.Enums;
+using C8S.AdminApp.Client.Services.Navigation.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;
@@ -22,16 +23,17 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
     #endregion
     
     #region Component References
-    private SidebarGroup _requestsGroup = null!;
-    private SidebarGroup _contactsGroup = null!;
-    private SidebarGroup _organizationsGroup = null!;
-    private SidebarGroup _sitesGroup = null!;
-    private SidebarGroup _ordersGroup = null!;
-    private SidebarGroup _skusGroup = null!;
+    //private SidebarGroup _requestsGroup = null!;
+    //private SidebarGroup _contactsGroup = null!;
+    //private SidebarGroup _organizationsGroup = null!;
+    //private SidebarGroup _sitesGroup = null!;
+    //private SidebarGroup _ordersGroup = null!;
+    //private SidebarGroup _skusGroup = null!;
     #endregion
     
     #region Private Variables
     private ILogger<SidebarMenu> _logger = null!;
+    private IEnumerable<NavigationGroup> _groups = null!;
     #endregion
     
     #region Component LifeCycle
@@ -46,6 +48,12 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
         _ = UpdateSelecteds();
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        _groups = await Service.GetNavigationGroups();
+    }
+
     public void Dispose()
     {
         PubSubService.Unsubscribe<NavigationChange>(HandlePageChangeNotification);
@@ -58,19 +66,19 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
         _logger.LogDebug("PageChange={@PageChange}", navigationChange);
         await UpdateSelecteds();
     }
-    private async Task HandleSidebarGroupClicked(NavigationGroup group)
+    private async Task HandleSidebarGroupClicked(NavigationEntity entity)
     {
-        var pageUrl = group switch
+        var pageUrl = entity switch
         {
-            NavigationGroup.Requests => "/requests",
-            NavigationGroup.Contacts => "/contacts",
-            NavigationGroup.Sites => "/sites",
-            NavigationGroup.Organizations => "/organizations",
-            NavigationGroup.Orders => "/orders",
-            NavigationGroup.Skus => "/skus",
-            _ => throw new ArgumentOutOfRangeException(nameof(group), group, null)
+            NavigationEntity.Requests => "/requests",
+            NavigationEntity.Contacts => "/contacts",
+            NavigationEntity.Sites => "/sites",
+            NavigationEntity.Organizations => "/organizations",
+            NavigationEntity.Orders => "/orders",
+            NavigationEntity.Skus => "/skus",
+            _ => throw new ArgumentOutOfRangeException(nameof(entity), entity, null)
         };
-        await Service.HandleSidebarGroupClicked(group, pageUrl);
+        await Service.HandleSidebarGroupClicked(entity, pageUrl);
     }
     #endregion
     
@@ -81,12 +89,12 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
 
         _logger.LogDebug("UpdateSelected: {Group}", group);
 
-        await _requestsGroup.SetSelected(group == NavigationGroup.Requests);
-        await _contactsGroup.SetSelected(group == NavigationGroup.Contacts);
-        await _sitesGroup.SetSelected(group == NavigationGroup.Sites);
-        await _organizationsGroup.SetSelected(group == NavigationGroup.Organizations);
-        await _ordersGroup.SetSelected(group == NavigationGroup.Orders);
-        await _skusGroup.SetSelected(group == NavigationGroup.Skus);
+        //await _requestsGroup.SetSelected(group == NavigationEntity.Requests);
+        //await _contactsGroup.SetSelected(group == NavigationEntity.Contacts);
+        //await _sitesGroup.SetSelected(group == NavigationEntity.Sites);
+        //await _organizationsGroup.SetSelected(group == NavigationEntity.Organizations);
+        //await _ordersGroup.SetSelected(group == NavigationEntity.Orders);
+        //await _skusGroup.SetSelected(group == NavigationEntity.Skus);
     }
     #endregion
 }

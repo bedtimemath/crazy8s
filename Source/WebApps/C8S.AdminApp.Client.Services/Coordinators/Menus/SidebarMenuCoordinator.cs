@@ -1,7 +1,10 @@
-﻿using C8S.AdminApp.Client.Services.Navigation;
+﻿using C8S.AdminApp.Client.Services.Navigation.Commands;
+using C8S.AdminApp.Client.Services.Navigation.Enums;
+using C8S.AdminApp.Client.Services.Navigation.Models;
+using C8S.AdminApp.Client.Services.Navigation.Queries;
 using C8S.AdminApp.Client.Services.Pages;
 using Microsoft.Extensions.Logging;
-using SC.Common.PubSub;
+using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -9,91 +12,31 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 
 public sealed class SidebarMenuCoordinator(
     ILoggerFactory loggerFactory,
+    IPubSubService pubSubService,
     ICQRSService cqrsService): BaseCQRSCoordinator(cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<SidebarMenuCoordinator> _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();
     #endregion
 
-#if false // todo remove
-    #region Public Properties
-    public Dictionary<PageGroup, List<PageItem>> PageGroups = new()
-    {
-        { new PageGroup() { Display = "Requests", Icon = C8SConstants.Icons.Request, Url = "/requests" },  [] },
-        { new PageGroup() { Display = "Contacts", Icon = C8SConstants.Icons.Contact, Url = "/contacts" },  [] },
-        { new PageGroup() { Display = "Sites", Icon = C8SConstants.Icons.Site, Url = "/sites" },  [] },
-        { new PageGroup() { Display = "Organizations", Icon = C8SConstants.Icons.Organization, Url = "/organizations" },  [] },
-        { new PageGroup() { Display = "Orders", Icon = C8SConstants.Icons.Order, Url = "/orders" },  [] },
-        { new PageGroup() { Display = "Skus", Icon = C8SConstants.Icons.Sku, Url = "/skus" },  [] }
-    };
-    #endregion  
-#endif
-
-#if false // todo remove
-    #region Private Variables
-    private readonly Dictionary<string, Action<bool>> _selectedFunctions = [];
-    private Func<Task>? _refreshMenuAsync = null;
-    #endregion
-
     #region Public Methods
-    public void SetRefreshMenu(Func<Task> refreshMenuAsync) => _refreshMenuAsync = refreshMenuAsync;
-    public void ClearRefreshMenu() => _refreshMenuAsync = null;
+    public async Task<IEnumerable<NavigationGroup>> GetNavigationGroups()
+    {
+        var response = await GetQueryResults<NavigationGroupsQuery, DomainResponse<IEnumerable<NavigationGroup>>>(
+            new NavigationGroupsQuery());
+        return response.Success ? response.Result! : [];
+    }
 
-    public void RegisterComponent(string url, Action<bool> setSelected)
-    {
-        if (!_selectedFunctions.TryAdd(url, setSelected))
-            throw new UnreachableException($"SetSelected function for url already exists: {url}");
-    }
-    public void UnregisterComponent(string url)
-    {
-        _selectedFunctions.Remove(url);
-    }
     #endregion
-#endif
 
     #region Event Handlers
     public Task HandlePageChangeNotification(NavigationChange navigationChange)
     {
         _logger.LogDebug("PageChange={@PageChange}", navigationChange);
         return Task.CompletedTask;
-#if false // todo
-        // add or remove from groups
-        if (pageChange.IdValue != null)
-        {
-            var groupKey = PageGroups.Keys.FirstOrDefault(k => k.Url == "/requests") ??
-                           throw new UnreachableException($"Could not find group key: /requests");
-
-            switch (pageChange.Action)
-            {
-                case PageChangeAction.Open:
-                    PageGroups[groupKey].Add(new PageItem()
-                    {
-                        Display = "NAME HERE",
-                        IdValue = pageChange.IdValue,
-                        Url = pageChange.NewUrl
-                    });
-                    break;
-                case PageChangeAction.Close:
-                    var toRemove = PageGroups[groupKey]
-                        .FirstOrDefault(i => i.Url == pageChange.CurrentUrl) ??
-                                   throw new UnreachableException($"Could not find item: {pageChange.CurrentUrl}");
-                    PageGroups[groupKey].Remove(toRemove);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(pageChange));
-            }
-        }
-
-        // update selected menu items
-        foreach (var selectedFunction in _selectedFunctions)
-            selectedFunction.Value(selectedFunction.Key == pageChange.NewUrl);
-
-        if (_refreshMenuAsync != null)
-            await _refreshMenuAsync.Invoke(); 
-#endif
     }
-    public async Task HandleSidebarGroupClicked(NavigationGroup group, string pageUrl) =>
-        await ExecuteCommand(new NavigationCommand() { Action = NavigationAction.Open, Group = group, PageUrl = pageUrl });
+    public async Task HandleSidebarGroupClicked(NavigationEntity entity, string pageUrl) =>
+        await ExecuteCommand(new NavigationCommand() { Action = NavigationAction.Open, Entity = entity, PageUrl = pageUrl });
 
     public async Task HandleSidebarItemClicked(PageItem pageItem)
     {

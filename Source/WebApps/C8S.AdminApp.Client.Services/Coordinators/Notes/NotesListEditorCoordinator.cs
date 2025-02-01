@@ -103,7 +103,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetCommandResults<NoteAddCommand, BackendResponse<NoteDetails>>(
+            var backendResponse = await GetCommandResults<NoteAddCommand, DomainResponse<NoteDetails>>(
                     new NoteAddCommand()
                     {
                         Reference = NotesSource,
@@ -129,7 +129,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetCommandResults<NoteUpdateCommand, BackendResponse<NoteDetails>>(
+            var backendResponse = await GetCommandResults<NoteUpdateCommand, DomainResponse<NoteDetails>>(
                     new NoteUpdateCommand()
                     {
                         NoteId = note.NoteId,
@@ -154,7 +154,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetCommandResults<NoteDeleteCommand, BackendResponse>(
+            var backendResponse = await GetCommandResults<NoteDeleteCommand, DomainResponse>(
                     new NoteDeleteCommand()
                     {
                         NoteId = noteId
@@ -183,7 +183,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetQueryResults<NotesListQuery, BackendResponse<NotesListResults>>(
+            var backendResponse = await GetQueryResults<NotesListQuery, DomainResponse<NotesListResults>>(
                     new NotesListQuery()
                     {
                         NotesSource = NotesSource,

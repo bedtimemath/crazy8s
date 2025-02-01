@@ -19,7 +19,7 @@ public class RequestController(
     private readonly ILogger<RequestController> _logger = loggerFactory.CreateLogger<RequestController>();
 
     [HttpGet]
-    public async Task<BackendResponse<RequestDetails>> GetRequest(int requestId)
+    public async Task<DomainResponse<RequestDetails>> GetRequest(int requestId)
     {
         try
         {
@@ -32,7 +32,7 @@ public class RequestController(
 
             var request = await queryable.FirstOrDefaultAsync(r => r.RequestId == requestId);
 
-            return new BackendResponse<RequestDetails>()
+            return new DomainResponse<RequestDetails>()
             {
                 Result = mapper.Map<RequestDetails?>(request)
             };
@@ -40,7 +40,7 @@ public class RequestController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", requestId);
-            return new BackendResponse<RequestDetails>()
+            return new DomainResponse<RequestDetails>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -48,7 +48,7 @@ public class RequestController(
     }
 
     [HttpPatch]
-    public async Task<BackendResponse<RequestDetails>> PatchRequest(int requestId,
+    public async Task<DomainResponse<RequestDetails>> PatchRequest(int requestId,
         [FromBody] RequestUpdateAppointmentCommand command)
     {
         try
@@ -60,7 +60,7 @@ public class RequestController(
             request.FullSlateAppointmentStartsOn = command.FullSlateAppointmentStartsOn;
             await dbContext.SaveChangesAsync();
 
-            return new BackendResponse<RequestDetails>()
+            return new DomainResponse<RequestDetails>()
             {
                 Result = mapper.Map<RequestDetails?>(request)
             };
@@ -68,7 +68,7 @@ public class RequestController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while patching appointment starts on: {Id}", requestId);
-            return new BackendResponse<RequestDetails>()
+            return new DomainResponse<RequestDetails>()
             {
                 Exception = exception.ToSerializableException()
             };

@@ -1,4 +1,4 @@
-﻿@inherits BaseRazorComponent
+﻿@inherits BaseCoordinatedComponent<SidebarGroupCoordinator>
 
 <div id="@ComponentId" class="c8s-sidebar-group @(_isSelected ? "selected" : null) @CssClass">
     <RadzenStack Orientation="Orientation.Horizontal"
@@ -6,7 +6,7 @@
                  JustifyContent="JustifyContent.Left"
                  onclick="@(async () => await Clicked.InvokeAsync())"
                  class="w-100">
-
+                 
         <IconDisplay IconString="@IconString"
                      CssClass="c8s-sidebar-group-icon" />
 

@@ -5,7 +5,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Notes.Queries;
 
-public record NotesListQuery : ICQRSQuery<BackendResponse<NotesListResults>>
+public record NotesListQuery : ICQRSQuery<DomainResponse<NotesListResults>>
 {
     public NoteReference NotesSource { get; init; }
     public int? SourceId { get; init; }

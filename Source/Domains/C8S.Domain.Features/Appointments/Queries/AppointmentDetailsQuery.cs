@@ -4,7 +4,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Appointments.Queries;
 
-public record AppointmentDetailsQuery : ICQRSQuery<BackendResponse<AppointmentDetails?>>
+public record AppointmentDetailsQuery : ICQRSQuery<DomainResponse<AppointmentDetails?>>
 {
     public int AppointmentId { get; init; }
 }

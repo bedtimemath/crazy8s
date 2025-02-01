@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Navigation;
+﻿using C8S.AdminApp.Client.Services.Navigation.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Razor.Base;

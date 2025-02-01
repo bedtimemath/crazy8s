@@ -59,7 +59,7 @@ public class AppointmentDisplayerCoordinator(
                 throw new UnreachableException("CheckAndUpdateAppointment called with null appointment id");
 
             var appointmentResponse = await GetQueryResults
-                <AppointmentDetailsQuery, BackendResponse<AppointmentDetails?>>(
+                <AppointmentDetailsQuery, DomainResponse<AppointmentDetails?>>(
                     new AppointmentDetailsQuery()
                     {
                         AppointmentId = _appointmentId.Value
@@ -74,7 +74,7 @@ public class AppointmentDisplayerCoordinator(
             // attempt to update the database so we don't have to always check
             try
             {
-                var databaseResponse = await GetCommandResults<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>(
+                var databaseResponse = await GetCommandResults<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>(
                         new RequestUpdateAppointmentCommand()
                         {
                             RequestId = _requestId,

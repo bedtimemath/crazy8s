@@ -1,10 +1,8 @@
 ﻿@inherits SC.Common.Razor.Base.BaseRazorComponent
 
 @using System.Text.Json
-@using C8S.AdminApp.Client.Services
-@using C8S.AdminApp.Client.Services.Navigation
-@using C8S.AdminApp.Client.Services.Pages
-@using SC.Common
+@using C8S.AdminApp.Client.Services.Navigation.Commands
+@using C8S.AdminApp.Client.Services.Navigation.Enums
 @using SC.Common.Extensions
 
 <div class="c8s-listitem-displayer c8s-request-displayer @CssClass">
@@ -167,7 +165,8 @@
                           Click="@(() => CQRSService.ExecuteCommand(new NavigationCommand()
                                  {
                                      Action = NavigationAction.Open,
-                                     Group = NavigationGroup.Requests,
+                                     Entity = NavigationEntity.Requests,
+                                     PageUrl = $"/request/{Request.RequestId}",
                                      IdValue = Request.RequestId,
                                      JsonDetails = JsonSerializer.Serialize(Request)
                                  }))" />

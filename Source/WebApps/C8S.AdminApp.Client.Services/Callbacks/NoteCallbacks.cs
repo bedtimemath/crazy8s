@@ -11,19 +11,19 @@ public class NoteCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
         // QUERIES
-        ICQRSQueryHandler<NotesListQuery, BackendResponse<NotesListResults>>,
-        ICQRSQueryHandler<NoteDetailsQuery, BackendResponse<NoteDetails?>>,
+        ICQRSQueryHandler<NotesListQuery, DomainResponse<NotesListResults>>,
+        ICQRSQueryHandler<NoteDetailsQuery, DomainResponse<NoteDetails?>>,
         // COMMANDS
-        ICQRSCommandHandler<NoteAddCommand, BackendResponse<NoteDetails>>,
-        ICQRSCommandHandler<NoteUpdateCommand, BackendResponse<NoteDetails>>,
-        ICQRSCommandHandler<NoteDeleteCommand, BackendResponse>
+        ICQRSCommandHandler<NoteAddCommand, DomainResponse<NoteDetails>>,
+        ICQRSCommandHandler<NoteUpdateCommand, DomainResponse<NoteDetails>>,
+        ICQRSCommandHandler<NoteDeleteCommand, DomainResponse>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<NoteCallbacks> _logger = loggerFactory.CreateLogger<NoteCallbacks>();
     #endregion
 
     #region Queries
-    public async Task<BackendResponse<NotesListResults>> Handle(
+    public async Task<DomainResponse<NotesListResults>> Handle(
         NotesListQuery query, CancellationToken token)
     {
         try
@@ -33,11 +33,11 @@ public class NoteCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling notes list request: {@Note}", query);
-            return BackendResponse<NotesListResults>.CreateFailureResponse(exception);
+            return DomainResponse<NotesListResults>.CreateFailureResponse(exception);
         }
     }
     
-    public async Task<BackendResponse<NoteDetails?>> Handle(
+    public async Task<DomainResponse<NoteDetails?>> Handle(
         NoteDetailsQuery query, CancellationToken token)
     {
         try
@@ -47,13 +47,13 @@ public class NoteCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling note details request: {@Note}", query);
-            return BackendResponse<NoteDetails?>.CreateFailureResponse(exception);
+            return DomainResponse<NoteDetails?>.CreateFailureResponse(exception);
         }
     }
     #endregion
 
     #region Commands
-    public async Task<BackendResponse<NoteDetails>> Handle(
+    public async Task<DomainResponse<NoteDetails>> Handle(
         NoteAddCommand command, CancellationToken token)
     {
         try
@@ -63,11 +63,11 @@ public class NoteCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling note add command: {@Note}", command);
-            return BackendResponse<NoteDetails>.CreateFailureResponse(exception);
+            return DomainResponse<NoteDetails>.CreateFailureResponse(exception);
         }
     }
 
-    public async Task<BackendResponse<NoteDetails>> Handle(
+    public async Task<DomainResponse<NoteDetails>> Handle(
         NoteUpdateCommand command, CancellationToken token)
     {
         try
@@ -78,11 +78,11 @@ public class NoteCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling note update command: {@Note}", command);
-            return BackendResponse<NoteDetails>.CreateFailureResponse(exception);
+            return DomainResponse<NoteDetails>.CreateFailureResponse(exception);
         }
     }
 
-    public async Task<BackendResponse> Handle(
+    public async Task<DomainResponse> Handle(
         NoteDeleteCommand command, CancellationToken token)
     {
         try
@@ -92,7 +92,7 @@ public class NoteCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling note delete command: {@Note}", command);
-            return BackendResponse.CreateFailureResponse(exception);
+            return DomainResponse.CreateFailureResponse(exception);
         }
     }
     #endregion

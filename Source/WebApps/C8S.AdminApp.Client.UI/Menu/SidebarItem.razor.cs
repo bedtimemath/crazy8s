@@ -6,7 +6,7 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarItem: BaseRazorComponent
+public sealed partial class SidebarItem: BaseCoordinatedComponent<SidebarItemCoordinator>
 {
     #region Injected Properties
     [Inject]

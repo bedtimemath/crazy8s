@@ -34,7 +34,7 @@ public class NotesController(
 
     #region Public Methods
     [HttpPost]
-    public async Task<BackendResponse<NotesListResults>> GetNotes(
+    public async Task<DomainResponse<NotesListResults>> GetNotes(
         [FromBody] NotesListQuery query)
     {
         try
@@ -59,7 +59,7 @@ public class NotesController(
             var totalNotes = await queryable.CountAsync();
             var notes = await queryable.ToListAsync();
 
-            return new BackendResponse<NotesListResults>()
+            return new DomainResponse<NotesListResults>()
             {
                 Result = new NotesListResults()
                 {
@@ -73,7 +73,7 @@ public class NotesController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return new BackendResponse<NotesListResults>()
+            return new DomainResponse<NotesListResults>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -82,7 +82,7 @@ public class NotesController(
     }
 
     [HttpPut]
-    public async Task<BackendResponse<NoteDetails>> PutNote(
+    public async Task<DomainResponse<NoteDetails>> PutNote(
         [FromBody] NoteAddCommand command)
     {
         try
@@ -110,7 +110,7 @@ public class NotesController(
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return new BackendResponse<NoteDetails>()
+            return new DomainResponse<NoteDetails>()
             {
                 Result = addedDetails
             };
@@ -118,7 +118,7 @@ public class NotesController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while adding note: {Json}", JsonSerializer.Serialize(command));
-            return new BackendResponse<NoteDetails>()
+            return new DomainResponse<NoteDetails>()
             {
                 Exception = exception.ToSerializableException()
             };

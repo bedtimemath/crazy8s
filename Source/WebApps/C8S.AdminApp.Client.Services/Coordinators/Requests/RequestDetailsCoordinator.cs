@@ -1,4 +1,5 @@
-﻿using C8S.AdminApp.Client.Services.Navigation;
+﻿using C8S.AdminApp.Client.Services.Navigation.Commands;
+using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components;
@@ -34,7 +35,7 @@ public sealed class RequestDetailsCoordinator(
     {
         try
         {
-            var backendResponse = await GetQueryResults<RequestDetailsQuery, BackendResponse<RequestDetails?>>
+            var backendResponse = await GetQueryResults<RequestDetailsQuery, DomainResponse<RequestDetails?>>
                 (new RequestDetailsQuery() { RequestId = id });
             if (!backendResponse.Success)
                 throw backendResponse.Exception!.ToException();

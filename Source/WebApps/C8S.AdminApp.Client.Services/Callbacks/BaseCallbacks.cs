@@ -9,7 +9,7 @@ public abstract class BaseCallbacks(
 {
     private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 
-    protected async Task<BackendResponse<TResult>> CallBackendServer<TResult>(
+    protected async Task<DomainResponse<TResult>> CallBackendServer<TResult>(
         string httpMethod, string endpoint, int? id = null,
         object? payload = null, CancellationToken token = default)
         where TResult: class?
@@ -20,13 +20,13 @@ public abstract class BaseCallbacks(
 
         var bodyJson = await httpResponse.Content.ReadAsStringAsync(token);
         var backendResponse = JsonSerializer
-                                  .Deserialize<BackendResponse<TResult>>(bodyJson, _options) ??
+                                  .Deserialize<DomainResponse<TResult>>(bodyJson, _options) ??
                               throw new Exception($"Could not deserialize: {bodyJson}");
 
         return backendResponse;
     }
 
-    protected async Task<BackendResponse> CallBackendServer(
+    protected async Task<DomainResponse> CallBackendServer(
         string httpMethod, string endpoint, int? id = null,
         object? payload = null, CancellationToken token = default)
     {
@@ -36,7 +36,7 @@ public abstract class BaseCallbacks(
 
         var bodyJson = await httpResponse.Content.ReadAsStringAsync(token);
         var backendResponse = JsonSerializer
-                                  .Deserialize<BackendResponse>(bodyJson, _options) ??
+                                  .Deserialize<DomainResponse>(bodyJson, _options) ??
                               throw new Exception($"Could not deserialize: {bodyJson}");
 
         return backendResponse;

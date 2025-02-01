@@ -17,7 +17,7 @@ namespace C8S.AdminApp.Controllers
         private readonly ILogger<AppointmentController> _logger = loggerFactory.CreateLogger<AppointmentController>();
         
         [HttpGet]
-        public async Task<BackendResponse<AppointmentDetails?>> GetAppointment(int appointmentId)
+        public async Task<DomainResponse<AppointmentDetails?>> GetAppointment(int appointmentId)
         {
             try
             {
@@ -47,12 +47,12 @@ namespace C8S.AdminApp.Controllers
                                     throw new UnreachableException("FullSlate Appointment missing Deleted")
                     };
                 
-                return new BackendResponse<AppointmentDetails?>() { Result = appointment };
+                return new DomainResponse<AppointmentDetails?>() { Result = appointment };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while getting details: {Id}", appointmentId);
-                return new BackendResponse<AppointmentDetails?>()
+                return new DomainResponse<AppointmentDetails?>()
                 {
                     Exception = exception.ToSerializableException()
                 };

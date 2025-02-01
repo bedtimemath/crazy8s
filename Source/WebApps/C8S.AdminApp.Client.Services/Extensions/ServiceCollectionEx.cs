@@ -12,6 +12,7 @@ public static class ServiceCollectionEx
         this IServiceCollection services)
     {
         services.AddScoped<SidebarMenuCoordinator>();
+        services.AddScoped<SidebarGroupCoordinator>();
 
         services.AddScoped<AppointmentDisplayerCoordinator>();
         

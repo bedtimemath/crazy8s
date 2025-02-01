@@ -11,17 +11,17 @@ public class RequestCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
         // QUERIES
-        ICQRSQueryHandler<RequestsListQuery, BackendResponse<RequestsListResults>>,
-        ICQRSQueryHandler<RequestDetailsQuery, BackendResponse<RequestDetails?>>,
+        ICQRSQueryHandler<RequestsListQuery, DomainResponse<RequestsListResults>>,
+        ICQRSQueryHandler<RequestDetailsQuery, DomainResponse<RequestDetails?>>,
         // COMMANDS
-        ICQRSCommandHandler<RequestUpdateAppointmentCommand, BackendResponse<RequestDetails>>
+        ICQRSCommandHandler<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestCallbacks> _logger = loggerFactory.CreateLogger<RequestCallbacks>();
     #endregion
 
     #region Queries
-    public async Task<BackendResponse<RequestsListResults>> Handle(
+    public async Task<DomainResponse<RequestsListResults>> Handle(
         RequestsListQuery query, CancellationToken token)
     {
         try
@@ -31,11 +31,11 @@ public class RequestCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling requests list request: {@Request}", query);
-            return BackendResponse<RequestsListResults>.CreateFailureResponse(exception);
+            return DomainResponse<RequestsListResults>.CreateFailureResponse(exception);
         }
     }
 
-    public async Task<BackendResponse<RequestDetails?>> Handle(
+    public async Task<DomainResponse<RequestDetails?>> Handle(
         RequestDetailsQuery query, CancellationToken token)
     {
         try
@@ -45,13 +45,13 @@ public class RequestCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling request details request: {@Request}", query);
-            return BackendResponse<RequestDetails?>.CreateFailureResponse(exception);
+            return DomainResponse<RequestDetails?>.CreateFailureResponse(exception);
         }
     }
     #endregion
 
     #region Commands
-    public async Task<BackendResponse<RequestDetails>> Handle(
+    public async Task<DomainResponse<RequestDetails>> Handle(
         RequestUpdateAppointmentCommand command, CancellationToken token)
     {
         try
@@ -62,7 +62,7 @@ public class RequestCallbacks(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling update appointment command: {@Command}", command);
-            return BackendResponse<RequestDetails>.CreateFailureResponse(exception);
+            return DomainResponse<RequestDetails>.CreateFailureResponse(exception);
         }
     }
     #endregion
