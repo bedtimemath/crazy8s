@@ -22,8 +22,6 @@ public sealed class HubService(
     {
         if (_hubConnection != null) return;
 
-        _logger.LogDebug("Initializing Hub Service");
-
         try
         {
             var http = provider.GetRequiredService<IHttpClientFactory>();

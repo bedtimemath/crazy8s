@@ -78,8 +78,9 @@ try
     /*****************************************
      * SOFT CROW & LOCAL
      */
-    host.UseCQRSService();
-    await host.UseHubServiceAsync();
+    host.SetUpCQRSService();
+
+    await host.SetUpInitializableServices();
 
     await host.RunAsync();
 }

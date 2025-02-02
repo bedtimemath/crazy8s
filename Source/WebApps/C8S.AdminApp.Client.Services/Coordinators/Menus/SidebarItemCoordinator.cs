@@ -30,10 +30,7 @@ public sealed class SidebarItemCoordinator(
 
         IsSelected = shouldBeSelected;
         if (ComponentRefresh != null)
-        {
-            _logger.LogDebug("Calling for refresh.");
             await ComponentRefresh.Invoke().ConfigureAwait(false);
-        }
     }
     #endregion
     

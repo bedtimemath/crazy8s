@@ -1,4 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Menu.Models;
+using C8S.AdminApp.Client.Services.Menu.Notifications;
 using C8S.AdminApp.Client.Services.Menu.Queries;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
@@ -13,19 +14,49 @@ public sealed class SidebarItemListCoordinator(
     ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
-    //private readonly ILogger<SidebarItemListCoordinator> _logger = loggerFactory.CreateLogger<SidebarItemListCoordinator>();
+    private readonly ILogger<SidebarItemListCoordinator> _logger = loggerFactory.CreateLogger<SidebarItemListCoordinator>();
     #endregion
     
     #region Public Properties
     public MenuGroup Group { get; set; } = null!;
+    public IEnumerable<MenuItem> MenuItems = [];
+    #endregion
+
+    #region SetUp / TearDown
+    public override void SetUp()
+    {
+        base.SetUp();
+        
+        PubSubService.Subscribe<MenuChange>(HandleMenuChange);
+        Task.Run(async () => await GetMenuItems());
+    }
+
+    public override void TearDown()
+    {
+        base.TearDown();
+        
+        PubSubService.Unsubscribe<MenuChange>(HandleMenuChange);
+    }
     #endregion
 
     #region Public Methods
-    public async Task<IEnumerable<MenuItem>> GetMenuItems()
+    private async Task GetMenuItems()
     {
         var response = await GetQueryResults<MenuItemsQuery, DomainResponse<IEnumerable<MenuItem>>>(
             new MenuItemsQuery() { Entity = Group.Entity });
-        return response.Success ? response.Result! : [];
+
+        MenuItems = response.Success ? response.Result! : [];
+        if (ComponentRefresh != null)
+            await ComponentRefresh.Invoke().ConfigureAwait(false);
+    }
+    #endregion
+    
+    #region Event Handlers
+    public async Task HandleMenuChange(MenuChange menuChange)
+    {
+        if (menuChange.Entity != Group.Entity) return;
+
+        await GetMenuItems();
     }
     #endregion
 }

@@ -14,7 +14,6 @@ public sealed partial class SidebarItemList: BaseCoordinatedComponent<SidebarIte
 
     #region Private Variables
     //private ILogger<SidebarMenu> _logger = null!;
-    private IEnumerable<MenuItem> _items = null!;
     #endregion
 
     #region Component LifeCycle
@@ -23,20 +22,15 @@ public sealed partial class SidebarItemList: BaseCoordinatedComponent<SidebarIte
         base.OnInitialized();
 
         //_logger = Service.LoggerFactory.CreateLogger<SidebarMenu>();
+        Service.SetUp();
+        Service.Group = Group;
         Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
+        Service.TearDown();
         Service.ComponentRefresh = null;
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
-
-        Service.Group = Group;
-        _items = await Service.GetMenuItems();
     }
     #endregion
 }

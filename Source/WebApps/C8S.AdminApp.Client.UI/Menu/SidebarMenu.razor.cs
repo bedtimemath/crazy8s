@@ -17,11 +17,13 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
         base.OnInitialized();
 
         //_logger = Service.LoggerFactory.CreateLogger<SidebarMenu>();
+        Service.SetUp();
         Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
+        Service.TearDown();
         Service.ComponentRefresh = null;
     }
 

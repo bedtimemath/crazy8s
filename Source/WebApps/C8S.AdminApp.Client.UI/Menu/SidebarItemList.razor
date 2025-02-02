@@ -1,7 +1,7 @@
 ﻿@inherits BaseCoordinatedComponent<SidebarItemListCoordinator>
 
 <div id="@ComponentId" class="c8s-sidebar-item-list @CssClass">
-    @foreach (var item in _items)
+    @foreach (var item in Service.MenuItems)
     {
         <SidebarItem Item="item" />
     }

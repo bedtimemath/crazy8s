@@ -1,6 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Menu.Models;
-using C8S.AdminApp.Client.Services.Navigation.Models;
 using Microsoft.AspNetCore.Components;
 using SC.Common.Razor.Base;
 
@@ -23,13 +22,13 @@ public sealed partial class SidebarGroup: BaseCoordinatedComponent<SidebarGroupC
         base.OnInitialized();
 
         //_logger = Service.LoggerFactory.CreateLogger<SidebarGroup>();
-        Service.PubSubService.Subscribe<NavigationChange>(Service.HandleNavigationChange);
+        Service.SetUp();
         Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
     {
-        Service.PubSubService.Unsubscribe<NavigationChange>(Service.HandleNavigationChange);
+        Service.TearDown();
         Service.ComponentRefresh = null;
     }
 

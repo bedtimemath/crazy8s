@@ -57,8 +57,6 @@ public sealed class NotesListEditorCoordinator(
 
     public async Task HandleDataChangeNotification(DataChange dataChange)
     {
-        _logger.LogDebug("DataChange={@DataChange}", dataChange);
-
         // don't bother if not a note or missing details
         if (dataChange is not {
                 EntityName: C8SConstants.Entities.Note,
@@ -178,8 +176,6 @@ public sealed class NotesListEditorCoordinator(
 
     public async Task RefreshNotesList()
     {
-        _logger.LogDebug("Refreshing notes list");
-
         IsBusy = true;
 
         try
@@ -195,9 +191,6 @@ public sealed class NotesListEditorCoordinator(
             var results = backendResponse.Result!;
             Notes = results.Items;
             TotalCount = results.Total;
-
-            foreach (var note in Notes)
-                _logger.LogDebug("{@Note}", note);
 
             // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated(); 

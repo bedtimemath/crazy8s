@@ -19,10 +19,10 @@ public static class ServiceCollectionEx
 
         // Local Services
         services.AddSingleton<INavigationService, NavigationService>();
-        services.AddSingleton<ISidebarMenuService, SidebarMenuService>();
 
         // Initializable
         services.AddSingleton<IHubService, HubService>();
+        services.AddSingleton<ISidebarMenuService, SidebarMenuService>();
 
         // Callback Singletons
         services.AddSingleton<AppointmentCallbacks>();

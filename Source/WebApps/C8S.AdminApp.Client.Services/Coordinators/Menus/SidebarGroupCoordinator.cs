@@ -1,4 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Menu.Models;
+using C8S.AdminApp.Client.Services.Menu.Notifications;
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
@@ -22,6 +23,22 @@ public sealed class SidebarGroupCoordinator(
     public MenuGroup Group { get; set; } = null!;
     #endregion
     
+    #region SetUp / TearDown
+    public override void SetUp()
+    {
+        base.SetUp();
+
+        PubSubService.Subscribe<NavigationChange>(HandleNavigationChange);
+    }
+
+    public override void TearDown()
+    {
+        base.TearDown();
+
+        PubSubService.Unsubscribe<NavigationChange>(HandleNavigationChange);
+    }
+    #endregion
+    
     #region Event Handlers
     public async Task HandleNavigationChange(NavigationChange navigationChange)
     {
@@ -30,10 +47,7 @@ public sealed class SidebarGroupCoordinator(
 
         IsSelected = shouldBeSelected;
         if (ComponentRefresh != null)
-        {
-            _logger.LogDebug("Calling for refresh.");
             await ComponentRefresh.Invoke().ConfigureAwait(false);
-        }
     }
     #endregion
     

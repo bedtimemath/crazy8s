@@ -21,16 +21,21 @@ namespace C8S.AdminApp.Client.Extensions;
 
 public static class WebAssemblyHostEx
 {
-    public static async Task<WebAssemblyHost> UseHubServiceAsync(this WebAssemblyHost host)
+    public static async Task<WebAssemblyHost> SetUpInitializableServices(this WebAssemblyHost host)
     {
         var serviceProvider = host.Services;
 
+        // ASYNC SETUP
         var hubService = serviceProvider.GetRequiredService<IHubService>();
         await hubService.InitializeAsync(serviceProvider);
 
+        // SYNC SETUP
+        var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
+        sidebarMenuService.Initialize(serviceProvider);
+
         return host;
     }
-    public static WebAssemblyHost UseCQRSService(this WebAssemblyHost host)
+    public static WebAssemblyHost SetUpCQRSService(this WebAssemblyHost host)
     {
         var serviceProvider = host.Services;
 
