@@ -16,7 +16,7 @@ public sealed class RequestsListCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
     ICQRSService cqrsService,
-    IJSRuntime jsRuntime) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    IJSRuntime jsRuntime) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region Constants & ReadOnlys
     public const string ListerContainerId = "request-list-container";

@@ -10,7 +10,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 public sealed class SidebarMenuCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     //private readonly ILogger<SidebarMenuCoordinator> _logger = loggerFactory.CreateLogger<SidebarMenuCoordinator>();

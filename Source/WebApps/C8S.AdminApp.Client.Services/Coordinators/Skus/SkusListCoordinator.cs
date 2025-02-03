@@ -7,7 +7,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Skus;
 public sealed class SkusListCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     //private readonly ILogger<SkusListCoordinator> _logger = loggerFactory.CreateLogger<SkusListCoordinator>();

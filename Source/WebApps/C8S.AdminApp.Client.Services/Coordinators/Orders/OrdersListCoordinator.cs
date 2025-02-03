@@ -7,7 +7,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Orders;
 public sealed class OrdersListCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     //private readonly ILogger<OrdersListCoordinator> _logger = loggerFactory.CreateLogger<OrdersListCoordinator>();

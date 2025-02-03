@@ -11,7 +11,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 public sealed class SidebarGroupCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<SidebarGroupCoordinator> _logger = loggerFactory.CreateLogger<SidebarGroupCoordinator>();

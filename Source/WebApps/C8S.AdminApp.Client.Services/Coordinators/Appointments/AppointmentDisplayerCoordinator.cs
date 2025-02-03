@@ -13,7 +13,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Appointments;
 public class AppointmentDisplayerCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentDisplayerCoordinator> _logger = loggerFactory.CreateLogger<AppointmentDisplayerCoordinator>();

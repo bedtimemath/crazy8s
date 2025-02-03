@@ -7,7 +7,7 @@ namespace C8S.AdminApp.Client.Services.Coordinators.Sites;
 public sealed class SitesListCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
-    ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     //private readonly ILogger<SitesListCoordinator> _logger = loggerFactory.CreateLogger<SitesListCoordinator>();

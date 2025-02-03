@@ -15,7 +15,7 @@ public sealed class RequestDetailsCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
     ICQRSService cqrsService,
-    NavigationManager navigationManager) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
+    NavigationManager navigationManager) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<RequestDetailsCoordinator> _logger = loggerFactory.CreateLogger<RequestDetailsCoordinator>();
@@ -67,7 +67,7 @@ public sealed class RequestDetailsCoordinator(
 
     public async Task LinkPlace()
     {
-        await pubSubService.Publish(new Notification()
+        await PubSubService.Publish(new Notification()
         {
             Level = NotificationLevel.Success,
             Detail = "You clicked the link button! Good job."
@@ -82,7 +82,7 @@ public sealed class RequestDetailsCoordinator(
 
     public async Task LinkPerson()
     {
-        await pubSubService.Publish(new Notification()
+        await PubSubService.Publish(new Notification()
             {
                 Level = NotificationLevel.Error,
                 Summary = "Oops! You did that wrong.",
