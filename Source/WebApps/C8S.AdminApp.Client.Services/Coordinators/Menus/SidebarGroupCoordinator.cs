@@ -1,5 +1,4 @@
 ﻿using C8S.AdminApp.Client.Services.Menu.Models;
-using C8S.AdminApp.Client.Services.Menu.Notifications;
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
@@ -42,7 +41,7 @@ public sealed class SidebarGroupCoordinator(
     #region Event Handlers
     public async Task HandleNavigationChange(NavigationChange navigationChange)
     {
-        var shouldBeSelected = Group.Url == navigationChange.NewUrl;
+        var shouldBeSelected = Group.Url == navigationChange.PageUrl;
         if (shouldBeSelected == IsSelected) return;
 
         IsSelected = shouldBeSelected;

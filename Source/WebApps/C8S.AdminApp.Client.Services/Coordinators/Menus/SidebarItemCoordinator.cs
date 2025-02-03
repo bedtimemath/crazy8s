@@ -25,7 +25,7 @@ public sealed class SidebarItemCoordinator(
     #region Event Handlers
     public async Task HandleNavigationChange(NavigationChange navigationChange)
     {
-        var shouldBeSelected = Item.Url == navigationChange.NewUrl;
+        var shouldBeSelected = Item.Url == navigationChange.PageUrl;
         if (shouldBeSelected == IsSelected) return;
 
         IsSelected = shouldBeSelected;

@@ -68,15 +68,16 @@ public sealed class SidebarMenuService(
     {
         _logger.LogDebug("NavigationChange={@Change}", navigationChange);
 
-        if (navigationChange is not { Action: NavigationAction.Open, IdValue: not null }) return;
+        if (navigationChange is not { Action: NavigationAction.Open, Entity: not null, IdValue: not null }) return;
 
         var idValue = navigationChange.IdValue.Value;
+        var entity = navigationChange.Entity.Value;
 
         // create the dictionary for the entity, if it doesn't yet exist
-        if (!MenuItemsLookup.TryGetValue(navigationChange.Entity, out var menuItems))
+        if (!MenuItemsLookup.TryGetValue(entity, out var menuItems))
         {
             menuItems = new Dictionary<int, MenuItem>();
-            MenuItemsLookup.Add(navigationChange.Entity, menuItems);
+            MenuItemsLookup.Add(entity, menuItems);
         }
 
         // if we've already got the key, we're done
@@ -88,7 +89,7 @@ public sealed class SidebarMenuService(
             createUrl:() => $"request/{idValue}");
         menuItems.Add(idValue, menuItem);
 
-        await pubSubService.Publish(new MenuChange() { Entity = navigationChange.Entity })
+        await pubSubService.Publish(new MenuChange() { Entity = entity })
             .ConfigureAwait(false);
     }
     #endregion

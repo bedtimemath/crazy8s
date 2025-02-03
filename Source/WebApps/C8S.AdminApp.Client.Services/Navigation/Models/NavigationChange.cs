@@ -5,13 +5,13 @@ namespace C8S.AdminApp.Client.Services.Navigation.Models;
 
 public record NavigationChange
 {
+    public string? OldUrl { get; init; } = null!;
+
     public NavigationAction Action { get; init; }
 
-    public string OldUrl { get; init; } = null!;
+    public string PageUrl { get; init; } = null!;
 
-    public string NewUrl { get; init; } = null!;
-
-    public DomainEntity Entity { get; init; }
+    public DomainEntity? Entity { get; init; }
 
     public int? IdValue { get; init; }
 

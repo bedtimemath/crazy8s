@@ -8,9 +8,10 @@ public static class NavigationChangeEx
 {
     public static MenuItem ToMenuItem(this NavigationChange navigationChange,
         Func<string> createDisplay, Func<string> createUrl) =>
-        new MenuItem()
+        new()
         {
-            Entity = navigationChange.Entity,
+            Entity = navigationChange.Entity ??
+                     throw new UnreachableException("Missing Entity"),
             Display = createDisplay(),
             Url = createUrl(),
             IdValue = navigationChange.IdValue ??
