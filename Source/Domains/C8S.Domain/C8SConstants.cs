@@ -30,6 +30,7 @@ public static class C8SConstants
         public const string Contact = "user-hair-long";
         public const string Delete = "trash";
         public const string Edit = "pencil";
+        public const string Home = "house";
         public const string Link = "link";
         public const string Order = "cart-shopping";
         public const string Organization = "buildings";

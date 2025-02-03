@@ -13,6 +13,7 @@ public static class ServiceCollectionEx
     {
         services.AddScoped<SidebarMenuCoordinator>();
         services.AddScoped<SidebarGroupCoordinator>();
+        services.AddScoped<SidebarSingleCoordinator>();
         services.AddScoped<SidebarItemListCoordinator>();
         services.AddScoped<SidebarItemCoordinator>();
 

@@ -1,0 +1,20 @@
+﻿@inherits BaseCoordinatedComponent<SidebarSingleCoordinator>
+
+<div id="@ComponentId" class="c8s-sidebar-single @(Service.IsSelected ? "selected" : null) @CssClass">
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Left"
+                 onclick="@(async () => await Service.HandleClicked())"
+                 class="w-100">
+                 
+        <IconDisplay IconString="@Service.Single.IconString"
+                     CssClass="c8s-sidebar-single-icon" />
+
+        <RadzenText TagName="TagName.Div"
+                    TextStyle="TextStyle.Body1"
+                    TextAlign="TextAlign.Left"
+                    Text="@Service.Single.Display"
+                    class="c8s-sidebar-single-display" />
+
+    </RadzenStack>
+</div>

@@ -15,8 +15,6 @@ public static class NavigationChangeEx
             Display = createDisplay(),
             Url = createUrl(),
             IdValue = navigationChange.IdValue ??
-                      throw new UnreachableException("Missing IdValue"),
-            JsonDetails = navigationChange.JsonDetails ??
-                          throw new UnreachableException("Missing JsonDetails")
+                      throw new UnreachableException("Missing IdValue")
         };
 }

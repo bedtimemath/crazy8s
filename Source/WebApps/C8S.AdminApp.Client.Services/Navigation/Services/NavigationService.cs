@@ -35,8 +35,7 @@ public sealed class NavigationService(
             Action = command.Action,
             Entity = command.Entity,
             PageUrl = command.PageUrl,
-            IdValue = command.IdValue,
-            JsonDetails = command.JsonDetails
+            IdValue = command.IdValue
         });
     }
     #endregion

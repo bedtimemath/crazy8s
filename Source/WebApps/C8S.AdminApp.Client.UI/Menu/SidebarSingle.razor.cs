@@ -5,23 +5,23 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarItem: BaseCoordinatedComponent<SidebarItemCoordinator>
+public sealed partial class SidebarSingle: BaseCoordinatedComponent<SidebarSingleCoordinator>, IDisposable
 {
     #region Component Parameters
     [Parameter]
-    public MenuItem Item { get; set; } = null!;
+    public MenuSingle Single { get; set; } = null!;
     #endregion
 
     #region Private Variables
-    //private ILogger<SidebarItem> _logger = null!;
+    //private ILogger<SidebarSingle> _logger = null!;
     #endregion
 
     #region Component LifeCycle
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        
-        //_logger = Service.LoggerFactory.CreateLogger<SidebarItem>();
+
+        //_logger = Service.LoggerFactory.CreateLogger<SidebarSingle>();
         Service.SetUp();
         Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
     }
@@ -35,13 +35,8 @@ public sealed partial class SidebarItem: BaseCoordinatedComponent<SidebarItemCoo
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        Service.Item = Item;
-    }
-    #endregion
 
-    #region Event Handlers
-    private void HandleCloseButtonClicked()
-    {
+        Service.Single = Single;
     }
     #endregion
 }

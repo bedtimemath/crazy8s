@@ -1,11 +1,14 @@
 ﻿@inherits BaseCoordinatedComponent<SidebarMenuCoordinator>
 
 <div class="c8s-sidebar-menu @CssClass">
+    
+    <SidebarSingle Single="@_homeMenu" />
+
     @foreach (var group in _groups)
     {
-        <SidebarGroup Group="@group" />
-        <SidebarItemList Group="@group" />
+        <SidebarGroup Group="@group"/>
+        <SidebarItemList Group="@group"/>
     }
-    
+
 </div>
    

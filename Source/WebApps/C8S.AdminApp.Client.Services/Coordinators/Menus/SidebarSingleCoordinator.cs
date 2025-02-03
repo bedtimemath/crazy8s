@@ -8,20 +8,20 @@ using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 
-public sealed class SidebarItemCoordinator(
+public sealed class SidebarSingleCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
     ICQRSService cqrsService) : BaseCQRSCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<SidebarItemCoordinator> _logger = loggerFactory.CreateLogger<SidebarItemCoordinator>();
+    private readonly ILogger<SidebarSingleCoordinator> _logger = loggerFactory.CreateLogger<SidebarSingleCoordinator>();
     #endregion
-    
+
     #region Public Properties
     public bool IsSelected { get; private set; }
-    public MenuItem Item { get; set; } = null!;
+    public MenuSingle Single { get; set; } = null!;
     #endregion
-    
+
     #region SetUp / TearDown
     public override void SetUp()
     {
@@ -41,7 +41,7 @@ public sealed class SidebarItemCoordinator(
     #region Event Handlers
     public async Task HandleNavigationChange(NavigationChange navigationChange)
     {
-        var shouldBeSelected = Item.Url == navigationChange.PageUrl;
+        var shouldBeSelected = Single.Url == navigationChange.PageUrl;
         if (shouldBeSelected == IsSelected) return;
 
         IsSelected = shouldBeSelected;
@@ -49,16 +49,15 @@ public sealed class SidebarItemCoordinator(
             await ComponentRefresh.Invoke().ConfigureAwait(false);
     }
     #endregion
-    
+
     #region Public Methods
     public async Task HandleClicked()
     {
-        _logger.LogInformation("Item Clicked: {@Item}", Item);
+        _logger.LogInformation("Single Clicked: {@Single}", Single);
         await ExecuteCommand(new NavigationCommand()
         {
             Action = NavigationAction.Open,
-            Entity = Item.Entity,
-            PageUrl = Item.Url
+            PageUrl = Single.Url
         });
     }
     #endregion

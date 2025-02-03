@@ -99,14 +99,16 @@ ul.rz-profile-menu {
     }
 }
 
-/** SIDEBAR MENU - GROUP **/
-.c8s-sidebar-menu .c8s-sidebar-group {
+/** SIDEBAR MENU - GROUP / SINGLE **/
+.c8s-sidebar-menu .c8s-sidebar-group,
+.c8s-sidebar-menu .c8s-sidebar-single {
     margin: 0.25rem;
     padding: 0.5rem 0;
     cursor: pointer;
 }
 
-    .c8s-sidebar-menu .c8s-sidebar-group .c8s-sidebar-group-icon {
+    .c8s-sidebar-menu .c8s-sidebar-group .c8s-sidebar-group-icon,
+    .c8s-sidebar-menu .c8s-sidebar-single .c8s-sidebar-single-icon {
         padding-left: 1.25rem;
         flex-shrink: 0;
         min-width: 2.5rem;
@@ -114,13 +116,15 @@ ul.rz-profile-menu {
         align-items: center;
     }
 
-        .c8s-sidebar-menu .c8s-sidebar-group .c8s-sidebar-group-icon .sc-icon-display {
+        .c8s-sidebar-menu .c8s-sidebar-group .c8s-sidebar-group-icon .sc-icon-display,
+        .c8s-sidebar-menu .c8s-sidebar-single .c8s-sidebar-single-icon .sc-icon-display {
             font-size: x-large;
             text-align: center;
             min-width: 32px;
         }
 
-    .c8s-sidebar-menu .c8s-sidebar-group .c8s-sidebar-group-display {
+    .c8s-sidebar-menu .c8s-sidebar-group .c8s-sidebar-group-display,
+    .c8s-sidebar-menu .c8s-sidebar-single .c8s-sidebar-single-display {
         flex-shrink: 0;
         flex-grow: 1;
         margin-block-end: 0;
@@ -128,21 +132,25 @@ ul.rz-profile-menu {
     }
 
     /** SIDEBAR MENU - SELECTED **/
-    .c8s-sidebar-menu .c8s-sidebar-group.selected {
+    .c8s-sidebar-menu .c8s-sidebar-group.selected,
+    .c8s-sidebar-menu .c8s-sidebar-single.selected {
         color: var(--c8s-light);
         background-color: var(--c8s-primary-dark);
     }
 
-    .c8s-sidebar-menu .c8s-sidebar-group:not(.selected) {
+    .c8s-sidebar-menu .c8s-sidebar-group:not(.selected),
+    .c8s-sidebar-menu .c8s-sidebar-single:not(.selected) {
         color: revert;
         background-color: revert;
     }
 
-    .c8s-sidebar-menu .c8s-sidebar-group.selected .c8s-sidebar-group-display {
+    .c8s-sidebar-menu .c8s-sidebar-group.selected .c8s-sidebar-group-display,
+    .c8s-sidebar-menu .c8s-sidebar-single.selected .c8s-sidebar-single-display {
         color: var(--c8s-light);
     }
 
-    .c8s-sidebar-menu .c8s-sidebar-group:not(.selected) .c8s-sidebar-group-display {
+    .c8s-sidebar-menu .c8s-sidebar-group:not(.selected) .c8s-sidebar-group-display,
+    .c8s-sidebar-menu .c8s-sidebar-single:not(.selected) .c8s-sidebar-single-display {
         color: revert;
     }
     

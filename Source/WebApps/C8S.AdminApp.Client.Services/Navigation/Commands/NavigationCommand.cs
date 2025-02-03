@@ -10,5 +10,4 @@ public record NavigationCommand : ICQRSCommand
     public string PageUrl { get; init; } = null!;
     public DomainEntity? Entity { get; init; }
     public int? IdValue { get; init; }
-    public string? JsonDetails { get; init; }
 }

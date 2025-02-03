@@ -1,4 +1,5 @@
-﻿using C8S.AdminApp.Client.Services.Menu.Models;
+﻿using System.Diagnostics;
+using C8S.AdminApp.Client.Services.Menu.Models;
 using C8S.AdminApp.Client.Services.Menu.Notifications;
 using C8S.AdminApp.Client.Services.Menu.Queries;
 using Microsoft.Extensions.Logging;
@@ -42,8 +43,11 @@ public sealed class SidebarItemListCoordinator(
     #region Public Methods
     private async Task GetMenuItems()
     {
+        if (Group.Entity == null)
+            throw new UnreachableException("SidebarItemList shouldn't be invoked with an empty Entity");
+
         var response = await GetQueryResults<MenuItemsQuery, DomainResponse<IEnumerable<MenuItem>>>(
-            new MenuItemsQuery() { Entity = Group.Entity });
+            new MenuItemsQuery() { Entity = Group.Entity!.Value });
 
         MenuItems = response.Success ? response.Result! : [];
         if (ComponentRefresh != null)

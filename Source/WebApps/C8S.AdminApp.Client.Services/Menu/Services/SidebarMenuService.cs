@@ -31,7 +31,7 @@ public sealed class SidebarMenuService(
         new() { Entity = DomainEntity.Sku, Display = "Skus", IconString = C8SConstants.Icons.Sku, Url = "skus" }
     ];
 
-    private static readonly Dictionary<DomainEntity, Dictionary<int, MenuItem>> MenuItemsLookup = new();
+    private static readonly Dictionary<DomainEntity, Dictionary<int, MenuItem>> MenuItemsLookup = [];
     #endregion
 
     #region Public Methods
@@ -76,7 +76,7 @@ public sealed class SidebarMenuService(
         // create the dictionary for the entity, if it doesn't yet exist
         if (!MenuItemsLookup.TryGetValue(entity, out var menuItems))
         {
-            menuItems = new Dictionary<int, MenuItem>();
+            menuItems = [];
             MenuItemsLookup.Add(entity, menuItems);
         }
 

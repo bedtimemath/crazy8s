@@ -14,6 +14,4 @@ public record NavigationChange
     public DomainEntity? Entity { get; init; }
 
     public int? IdValue { get; init; }
-
-    public string? JsonDetails { get; init; }
 }

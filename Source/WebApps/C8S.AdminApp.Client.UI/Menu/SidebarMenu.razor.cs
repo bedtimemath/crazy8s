@@ -1,5 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Menu.Models;
+using C8S.Domain;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
@@ -9,6 +10,12 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
     #region Private Variables
     //private ILogger<SidebarMenu> _logger = null!;
     private IEnumerable<MenuGroup> _groups = null!;
+    private readonly MenuSingle _homeMenu = new()
+    {
+        Display = "Home",
+        IconString = C8SConstants.Icons.Home,
+        Url = "home"
+    };
     #endregion
     
     #region Component LifeCycle
