@@ -29,7 +29,7 @@ public sealed class NavigationService(
             await Task.Run(() => navigationManager.NavigateTo(command.PageUrl), cancellationToken);
     
         // now let everyone know
-        await pubSubService.Publish(new NavigationChange()
+        pubSubService.Publish(new NavigationChange()
         {
             OldUrl = oldUrl,
             Action = command.Action,

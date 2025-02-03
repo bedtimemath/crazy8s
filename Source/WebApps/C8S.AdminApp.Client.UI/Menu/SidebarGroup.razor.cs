@@ -5,33 +5,14 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarGroup: BaseCoordinatedComponent<SidebarGroupCoordinator>, IDisposable
+public sealed partial class SidebarGroup: BaseCoordinatedComponent<SidebarGroupCoordinator>
 {
     #region Component Parameters
     [Parameter]
     public MenuGroup Group { get; set; } = null!;
     #endregion
 
-    #region Private Variables
-    //private ILogger<SidebarGroup> _logger = null!;
-    #endregion
-
     #region Component LifeCycle
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        //_logger = Service.LoggerFactory.CreateLogger<SidebarGroup>();
-        Service.SetUp();
-        Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        Service.TearDown();
-        Service.ComponentRefresh = null;
-    }
-
     protected override void OnParametersSet()
     {
         base.OnParametersSet();

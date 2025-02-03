@@ -102,8 +102,7 @@ public sealed class SidebarMenuService(
             createUrl:() => $"request/{idValue}");
         menuItems.Add(idValue, menuItem);
 
-        await pubSubService.Publish(new MenuChange() { Entity = entity })
-            .ConfigureAwait(false);
+        pubSubService.Publish(new MenuChange() { Entity = entity });
     }
     #endregion
 

@@ -67,12 +67,11 @@ public sealed class RequestDetailsCoordinator(
 
     public async Task LinkPlace()
     {
-        await PubSubService.Publish(new Notification()
+        PubSubService.Publish(new Notification()
         {
             Level = NotificationLevel.Success,
             Detail = "You clicked the link button! Good job."
-        })
-        .ConfigureAwait(false);
+        });
     }
 
     public Task UnlinkPlace()
@@ -82,13 +81,12 @@ public sealed class RequestDetailsCoordinator(
 
     public async Task LinkPerson()
     {
-        await PubSubService.Publish(new Notification()
+        PubSubService.Publish(new Notification()
             {
                 Level = NotificationLevel.Error,
                 Summary = "Oops! You did that wrong.",
                 Detail = "Never click the link person button!!!!"
-            })
-            .ConfigureAwait(false);
+            });
     }
 
     public Task UnlinkPerson()

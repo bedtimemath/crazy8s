@@ -4,7 +4,7 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Menu;
 
-public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoordinator>, IDisposable
+public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoordinator>
 {
     #region Private Variables
     //private ILogger<SidebarMenu> _logger = null!;
@@ -14,21 +14,6 @@ public sealed partial class SidebarMenu: BaseCoordinatedComponent<SidebarMenuCoo
     #endregion
     
     #region Component LifeCycle
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        //_logger = Service.LoggerFactory.CreateLogger<SidebarMenu>();
-        Service.SetUp();
-        Service.ComponentRefresh = async () => await InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        Service.TearDown();
-        Service.ComponentRefresh = null;
-    }
-
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();

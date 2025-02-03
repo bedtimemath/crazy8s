@@ -48,8 +48,7 @@ public sealed class HubService(
     #endregion
 
     #region Event Handlers
-    private void HandleDataChangeMessage(DataChange dataChange) =>
-        Task.Run(async () => await pubSubService.Publish(dataChange));
+    private void HandleDataChangeMessage(DataChange dataChange) => pubSubService.Publish(dataChange);
     #endregion
 
 }
