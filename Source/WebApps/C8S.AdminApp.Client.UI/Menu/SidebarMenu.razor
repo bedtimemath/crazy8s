@@ -2,12 +2,20 @@
 
 <div class="c8s-sidebar-menu @CssClass">
     
-    <SidebarSingle Single="@_homeMenu" />
+    @foreach (var single in _preSingles)
+    {
+        <SidebarSingle Single="@single" />
+    }
 
     @foreach (var group in _groups)
     {
         <SidebarGroup Group="@group"/>
         <SidebarItemList Group="@group"/>
+    }
+    
+    @foreach (var single in _postSingles)
+    {
+        <SidebarSingle Single="@single" />
     }
 
 </div>

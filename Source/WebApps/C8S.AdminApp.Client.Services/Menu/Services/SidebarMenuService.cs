@@ -21,6 +21,11 @@ public sealed class SidebarMenuService(
     #endregion
 
     #region Constants & ReadOnlys
+
+    private static readonly IEnumerable<MenuSingle> PreSingles =
+    [
+        new() { Display = "Home", IconString = C8SConstants.Icons.Home, Url = "home" },
+    ];
     private static readonly IEnumerable<MenuGroup> MenuGroups = 
     [
         new() { Entity = DomainEntity.Request, Display = "Requests", IconString = C8SConstants.Icons.Request, Url = "requests" },
@@ -29,6 +34,9 @@ public sealed class SidebarMenuService(
         new() { Entity = DomainEntity.Site, Display = "Sites", IconString = C8SConstants.Icons.Site, Url = "sites" },
         new() { Entity = DomainEntity.Order, Display = "Orders", IconString = C8SConstants.Icons.Order, Url = "orders" },
         new() { Entity = DomainEntity.Sku, Display = "Skus", IconString = C8SConstants.Icons.Sku, Url = "skus" }
+    ];
+    private static readonly IEnumerable<MenuSingle> PostSingles =
+    [
     ];
 
     private static readonly Dictionary<DomainEntity, Dictionary<int, MenuItem>> MenuItemsLookup = [];
@@ -47,6 +55,11 @@ public sealed class SidebarMenuService(
     #endregion
 
     #region Query Handlers
+    public Task<DomainResponse<IEnumerable<MenuSingle>>> Handle(MenuSinglesQuery query, CancellationToken cancellationToken = default) =>
+        query.ShowBeforeOthers ?
+        Task.FromResult(DomainResponse<IEnumerable<MenuSingle>>.CreateSuccessResponse(PreSingles)) :
+        Task.FromResult(DomainResponse<IEnumerable<MenuSingle>>.CreateSuccessResponse(PostSingles));
+
     public Task<DomainResponse<IEnumerable<MenuGroup>>> Handle(MenuGroupsQuery query, CancellationToken cancellationToken = default) =>
         Task.FromResult(DomainResponse<IEnumerable<MenuGroup>>.CreateSuccessResponse(MenuGroups));
 

@@ -46,6 +46,7 @@ public static class WebAssemblyHostEx
 
         var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
         cqrsService.RegisterQuery<MenuGroupsQuery, DomainResponse<IEnumerable<MenuGroup>>>(sidebarMenuService.Handle);
+        cqrsService.RegisterQuery<MenuSinglesQuery, DomainResponse<IEnumerable<MenuSingle>>>(sidebarMenuService.Handle);
         cqrsService.RegisterQuery<MenuItemsQuery, DomainResponse<IEnumerable<MenuItem>>>(sidebarMenuService.Handle);
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();

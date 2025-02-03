@@ -23,5 +23,11 @@ public sealed class SidebarMenuCoordinator(
             new MenuGroupsQuery());
         return response.Success ? response.Result! : [];
     }
+    public async Task<IEnumerable<MenuSingle>> GetMenuSingles(bool showBeforeOthers)
+    {
+        var response = await GetQueryResults<MenuSinglesQuery, DomainResponse<IEnumerable<MenuSingle>>>(
+            new MenuSinglesQuery() { ShowBeforeOthers = showBeforeOthers });
+        return response.Success ? response.Result! : [];
+    }
     #endregion
 }

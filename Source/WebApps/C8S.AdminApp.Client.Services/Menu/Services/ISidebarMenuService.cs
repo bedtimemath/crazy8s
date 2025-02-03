@@ -8,6 +8,7 @@ namespace C8S.AdminApp.Client.Services.Menu.Services;
 
 public interface ISidebarMenuService : IServiceInitializable, IDisposable,
     ICQRSQueryHandler<MenuGroupsQuery, DomainResponse<IEnumerable<MenuGroup>>>,
+    ICQRSQueryHandler<MenuSinglesQuery, DomainResponse<IEnumerable<MenuSingle>>>,
     ICQRSQueryHandler<MenuItemsQuery, DomainResponse<IEnumerable<MenuItem>>>
 {
 }
