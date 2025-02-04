@@ -42,7 +42,7 @@ public class NoteCallbacks(
     {
         try
         {
-            return await CallBackendServer<NoteDetails?>("GET", "note", query.NoteId, token:token);
+            return await CallBackendServer<NoteDetails?>("GET", "notes", query.NoteId, token:token);
         }
         catch (Exception exception)
         {
@@ -72,7 +72,7 @@ public class NoteCallbacks(
     {
         try
         {
-            return await CallBackendServer<NoteDetails>("PATCH", "note", command.NoteId, 
+            return await CallBackendServer<NoteDetails>("PATCH", "notes", command.NoteId, 
                 payload:command, token:token);
         }
         catch (Exception exception)
@@ -87,7 +87,7 @@ public class NoteCallbacks(
     {
         try
         {
-            return await CallBackendServer("DELETE", "note", command.NoteId, token:token);
+            return await CallBackendServer("DELETE", "notes", command.NoteId, token:token);
         }
         catch (Exception exception)
         {

@@ -40,7 +40,7 @@ public class RequestCallbacks(
     {
         try
         {
-            return await CallBackendServer<RequestDetails?>("GET", "request", query.RequestId, token:token);
+            return await CallBackendServer<RequestDetails?>("GET", "requests", query.RequestId, token:token);
         }
         catch (Exception exception)
         {
@@ -56,7 +56,7 @@ public class RequestCallbacks(
     {
         try
         {
-            return await CallBackendServer<RequestDetails>("PATCH", "request", command.RequestId, 
+            return await CallBackendServer<RequestDetails>("PATCH", "requests", command.RequestId, 
                 payload:command, token:token);
         }
         catch (Exception exception)

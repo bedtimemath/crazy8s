@@ -76,12 +76,10 @@ public sealed class SidebarMenuService(
     #endregion
 
     #region Event Handlers
-
-    public async Task HandleNavigationChangeNotification(NavigationChange navigationChange)
+    public Task HandleNavigationChangeNotification(NavigationChange navigationChange)
     {
-        _logger.LogDebug("NavigationChange={@Change}", navigationChange);
-
-        if (navigationChange is not { Action: NavigationAction.Open, Entity: not null, IdValue: not null }) return;
+        if (navigationChange is not { Action: NavigationAction.Open, Entity: not null, IdValue: not null }) 
+            return Task.CompletedTask;
 
         var idValue = navigationChange.IdValue.Value;
         var entity = navigationChange.Entity.Value;
@@ -94,15 +92,18 @@ public sealed class SidebarMenuService(
         }
 
         // if we've already got the key, we're done
-        if (menuItems.ContainsKey(idValue)) return;
+        if (menuItems.ContainsKey(idValue)) 
+            return Task.CompletedTask;
 
         // otherwise, create and publish the change
         var menuItem = navigationChange.ToMenuItem(
             createDisplay:() => $"DISPLAY {navigationChange.IdValue.ToString()}", 
-            createUrl:() => $"request/{idValue}");
+            createUrl:() => $"requests/{idValue}");
         menuItems.Add(idValue, menuItem);
 
         pubSubService.Publish(new MenuChange() { Entity = entity });
+        
+        return Task.CompletedTask;
     }
     #endregion
 

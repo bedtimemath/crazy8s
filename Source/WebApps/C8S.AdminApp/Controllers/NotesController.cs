@@ -19,7 +19,6 @@ using SC.Common.PubSub;
 
 namespace C8S.AdminApp.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
 public class NotesController(
     ILoggerFactory loggerFactory,
@@ -32,8 +31,9 @@ public class NotesController(
     private readonly ILogger<NotesController> _logger = loggerFactory.CreateLogger<NotesController>();
     #endregion
 
-    #region Public Methods
+    #region GET LIST
     [HttpPost]
+    [Route("api/[controller]")]
     public async Task<DomainResponse<NotesListResults>> GetNotes(
         [FromBody] NotesListQuery query)
     {
@@ -80,8 +80,41 @@ public class NotesController(
         }
 
     }
+    #endregion
 
+    #region GET SINGLE
+    [HttpGet]
+    [Route("api/[controller]/{noteId:int}")]
+    public async Task<DomainResponse<NoteDetails?>> GetNote(int noteId)
+    {
+        try
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var queryable = dbContext.Notes
+                .AsSingleQuery()
+                .AsNoTracking();
+
+            var note = await queryable.FirstOrDefaultAsync(r => r.NoteId == noteId);
+
+            return new DomainResponse<NoteDetails?>()
+            {
+                Result = mapper.Map<NoteDetails?>(note)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while getting details: {Id}", noteId);
+            return new DomainResponse<NoteDetails?>()
+            {
+                Exception = exception.ToSerializableException()
+            };
+        }
+    }
+    #endregion
+
+    #region PUT
     [HttpPut]
+    [Route("api/[controller]")]
     public async Task<DomainResponse<NoteDetails>> PutNote(
         [FromBody] NoteAddCommand command)
     {
@@ -122,6 +155,89 @@ public class NotesController(
             {
                 Exception = exception.ToSerializableException()
             };
+        }
+    }
+    #endregion
+
+    #region PATCH
+    [HttpPatch]
+    [Route("api/[controller]/{noteId:int}")]
+    public async Task<DomainResponse<NoteDetails>> PatchNote(int noteId,
+        [FromBody] NoteUpdateCommand command)
+    {
+        try
+        {
+            // find the existing note
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var note = await dbContext.Notes.FindAsync(noteId) ??
+                       throw new Exception($"Note ID #{noteId} does not exist.");
+
+            // not bothering with automapper, since the only thing that's allowed to change
+            //  is the content
+            note.Content = command.Content;
+            await dbContext.SaveChangesAsync();
+            
+            // tell the world
+            var dataChange = new DataChange()
+            {
+                EntityId = noteId,
+                EntityName = C8SConstants.Entities.Note,
+                DataChangeAction = DataChangeAction.Modified,
+                JsonDetails = JsonSerializer.Serialize(mapper.Map<NoteDetails>(note))
+            };
+            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
+
+            return new DomainResponse<NoteDetails>()
+            {
+                Result = mapper.Map<NoteDetails?>(note)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while patching note: {Id}", noteId);
+            return new DomainResponse<NoteDetails>()
+            {
+                Exception = exception.ToSerializableException()
+            };
+        }
+    } 
+    #endregion
+
+    #region DELETE
+    [HttpDelete]
+    [Route("api/[controller]/{noteId:int}")]
+    public async Task<DomainResponse> DeleteNote(int noteId)
+    {
+        try
+        {
+            // find the existing note
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var note = await dbContext.Notes.FirstOrDefaultAsync(r => r.NoteId == noteId) ??
+                       throw new Exception("Entity not found");
+
+            // get the note as details, to return in JsonDetails
+            var removedDetails = mapper.Map<NoteDetails>(note);
+
+            // remove the note
+            dbContext.Notes.Remove(note);
+            await dbContext.SaveChangesAsync();
+
+            // tell the world
+            var dataChange = new DataChange()
+            {
+                EntityId = noteId,
+                EntityName = C8SConstants.Entities.Note,
+                DataChangeAction = DataChangeAction.Deleted,
+                JsonDetails = JsonSerializer.Serialize(removedDetails)
+            };
+            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
+
+            return DomainResponse.CreateSuccessResponse();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while getting details: {Id}", noteId);
+            return DomainResponse.CreateFailureResponse(exception);
         }
     }
     #endregion
