@@ -2,7 +2,9 @@
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
+using C8S.AdminApp.Client.Services.Navigation.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -28,6 +30,7 @@ public sealed class SidebarGroupCoordinator(
         base.SetUp();
 
         PubSubService.Subscribe<NavigationChange>(HandleNavigationChange);
+        Task.Run(async () => await CheckSelfAgainstUrl());
     }
 
     public override void TearDown()
@@ -39,15 +42,8 @@ public sealed class SidebarGroupCoordinator(
     #endregion
     
     #region Event Handlers
-    public async Task HandleNavigationChange(NavigationChange navigationChange)
-    {
-        var shouldBeSelected = Group.Url == navigationChange.PageUrl;
-        if (shouldBeSelected == IsSelected) return;
-
-        IsSelected = shouldBeSelected;
-        if (ComponentRefresh != null)
-            await ComponentRefresh.Invoke().ConfigureAwait(false);
-    }
+    public async Task HandleNavigationChange(NavigationChange navigationChange) =>
+        await CheckSelfAgainstUrl(navigationChange.PageUrl);
     #endregion
     
     #region Public Methods
@@ -60,6 +56,20 @@ public sealed class SidebarGroupCoordinator(
             Entity = Group.Entity,
             PageUrl = Group.Url
         });
+    }
+    #endregion
+    
+    #region Private Methods
+    private async Task CheckSelfAgainstUrl(string? url = null)
+    {
+        url ??= (await GetQueryResults<CurrentUrlQuery, DomainResponse<string>>(new CurrentUrlQuery())).Result;
+
+        var shouldBeSelected = Group.Url == url;
+        if (shouldBeSelected == IsSelected) return;
+
+        IsSelected = shouldBeSelected;
+        if (ComponentRefresh != null)
+            await ComponentRefresh.Invoke().ConfigureAwait(false);
     }
     #endregion
 }

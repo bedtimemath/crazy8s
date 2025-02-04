@@ -43,11 +43,8 @@ public sealed class SidebarItemCoordinator(
     #endregion
 
     #region Event Handlers
-    public async Task HandleNavigationChange(NavigationChange navigationChange)
-    {
-        _logger.LogDebug("Coordinator for {@Item}: {@Change}", Item, navigationChange);
+    public async Task HandleNavigationChange(NavigationChange navigationChange) =>
         await CheckSelfAgainstUrl(navigationChange.PageUrl);
-    }
     #endregion
     
     #region Public Methods

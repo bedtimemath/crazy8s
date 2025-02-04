@@ -36,6 +36,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
         NotifierService.NotificationReceived -= HandleNotificationReceived;
     }
 
+#if false // not necessary
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
@@ -49,7 +50,8 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
                 PageUrl = NavigationManager.GetRelativeUrl(),
             })
             .ConfigureAwait(false);
-    }
+    } 
+#endif
     #endregion
 
     #region Event Handlers

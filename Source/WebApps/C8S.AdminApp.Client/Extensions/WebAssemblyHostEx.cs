@@ -34,6 +34,9 @@ public static class WebAssemblyHostEx
         var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
         sidebarMenuService.Initialize(serviceProvider);
 
+        var navigationService = serviceProvider.GetRequiredService<INavigationService>();
+        navigationService.Initialize(serviceProvider);
+
         return host;
     }
     public static WebAssemblyHost SetUpCQRSService(this WebAssemblyHost host)
