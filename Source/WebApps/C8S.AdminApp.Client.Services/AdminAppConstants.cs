@@ -15,6 +15,6 @@ public static class AdminAppConstants
     public static class Pages
     {
         public const string RequestsList = "requests";
-        public const string RequestDetails = "request";
+        public const string PersonsList = "persons";
     }
 }

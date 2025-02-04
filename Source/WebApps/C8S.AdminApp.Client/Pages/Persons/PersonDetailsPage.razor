@@ -1,0 +1,46 @@
+﻿@page "/persons/{PersonId:int}"
+@inherits BaseCoordinatedPage<PersonDetailsCoordinator>
+@rendermode InteractiveWebAssembly
+@using C8S.AdminApp.Client.Services.Coordinators.Persons
+
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.Stretch"
+             Gap="1.0rem"
+             class="w-100 h-100">
+
+    <PersonHeader Coordinator="@Service"
+                   CssClass="flex-shrink-0" />
+        
+    <RadzenSplitter Orientation="Orientation.Horizontal">
+        <RadzenSplitterPane Size="70%">
+
+            <RadzenCard Style="position: relative" class="flex-grow-1">
+                
+                @*
+                <BusyCover IsBusy="_isBusy"/>
+
+                <PersonInfoSection Coordinator="@Service"/>
+                <hr/>
+                <PersonCallSection Coordinator="@Service"/>
+                <hr/>
+                <PersonPersonSection Coordinator="@Service"/>
+                <hr/>
+                <PersonPlaceSection Coordinator="@Service"/>
+                <hr/>
+                <PersonClubsSection Coordinator="@Service"/>
+                *@
+
+            </RadzenCard>
+
+        </RadzenSplitterPane>
+        <RadzenSplitterPane Size="30%">
+                
+            @*
+            <NotesListEditor PersonCoordinator="@Service" />
+            *@
+
+        </RadzenSplitterPane>
+    </RadzenSplitter>
+
+</RadzenStack>

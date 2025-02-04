@@ -1,0 +1,20 @@
+﻿@page "/persons"
+@inherits BaseCoordinatedPage<PersonsListCoordinator>
+@using C8S.AdminApp.Client.Services.Coordinators.Persons
+
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.Stretch"
+             Gap="1.0rem"
+             class="w-100 h-100">
+             
+    <PersonsFilter Coordinator="@Service"
+                   CssClass="flex-shrink-0" />
+
+    <PersonsList Coordinator="@Service"
+                 CssClass="flex-grow-1" />
+
+    <PersonsFooter Coordinator="@Service"
+                   CssClass="flex-shrink-0" />
+
+</RadzenStack>

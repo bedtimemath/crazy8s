@@ -1,0 +1,32 @@
+﻿@inherits BaseRazorComponent
+@using C8S.AdminApp.Client.Services.Coordinators.Persons
+
+<div id="@ComponentId" class="c8s-listpage-filter c8s-persons-filter @CssClass">
+
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Start"
+                 Gap="0.25rem"
+                 class="w-100 h-100">
+
+        <RadzenTextBox @bind-Value="@Coordinator.Query"
+                       Change="@Coordinator.HandleQueryValueChange"
+                       class="flex-grow-1" />
+
+        <IconButton ButtonType="ButtonType.Button"
+                    ButtonStyle="ButtonStyle.Danger"
+                    IconString="@C8SConstants.Icons.Clear"
+                    Text=""
+                    Click="@Coordinator.ClearFilter"
+                    class="flex-shrink-0" />
+
+        <RadzenDropDown @bind-Value="@Coordinator.SelectedSort"
+                        Data="@Coordinator.SortDropDownOptions"
+                        TextProperty="@nameof(PersonsListCoordinator.DropDownOption.Display)"
+                        ValueProperty="@nameof(PersonsListCoordinator.DropDownOption.Value)"
+                        Multiple="false"
+                        AllowClear="false"
+                        Change="@Coordinator.HandleSortDropdownChange"
+                        class="flex-shrink-0" />
+    </RadzenStack>
+</div>

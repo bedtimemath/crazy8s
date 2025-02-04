@@ -12,4 +12,9 @@
     <ProjectReference Include="..\C8S.Domain\C8S.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Persons\Commands\" />
+    <Folder Include="Persons\Enums\" />
+  </ItemGroup>
+
 </Project>

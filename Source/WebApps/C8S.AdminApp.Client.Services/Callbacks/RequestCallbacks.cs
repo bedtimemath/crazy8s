@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-using C8S.Domain.Features.Requests.Commands;
+﻿using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.Extensions.Logging;
-using SC.Common;
 using SC.Common.Interactions;
 using SC.Common.Models;
 using SC.Messaging.Abstractions.Interfaces;

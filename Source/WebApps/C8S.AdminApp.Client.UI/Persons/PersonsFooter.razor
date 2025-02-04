@@ -1,0 +1,20 @@
+﻿@inherits BaseRazorComponent
+
+<div id="@ComponentId" class="c8s-listpage-footer c8s-persons-footer @CssClass">
+    
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Normal"
+                 Gap="0.25rem"
+                 class="w-100 h-100">
+                 
+        <RadzenText TagName="TagName.Div"
+                    TextStyle="TextStyle.Body1"
+                    TextAlign="TextAlign.Center"
+                    class="flex-grow-1">
+            Found: @(Coordinator.TotalCount?.ToString("#,##0"))
+        </RadzenText>
+
+    </RadzenStack>
+
+</div>

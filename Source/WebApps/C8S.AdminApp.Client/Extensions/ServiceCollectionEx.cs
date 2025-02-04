@@ -27,6 +27,7 @@ public static class ServiceCollectionEx
         // Callback Singletons
         services.AddSingleton<AppointmentCallbacks>();
         services.AddSingleton<NoteCallbacks>();
+        services.AddSingleton<PersonCallbacks>();
         services.AddSingleton<RequestCallbacks>();
     }
 }

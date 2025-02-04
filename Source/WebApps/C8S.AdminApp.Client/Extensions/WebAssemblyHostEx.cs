@@ -11,6 +11,8 @@ using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
+using C8S.Domain.Features.Persons.Models;
+using C8S.Domain.Features.Persons.Queries;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
@@ -59,6 +61,11 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterQuery<RequestTitleQuery, DomainResponse<string?>>(requestsCallbacks.Handle);
         cqrsService.RegisterQuery<RequestDetailsQuery, DomainResponse<RequestDetails?>>(requestsCallbacks.Handle);
         cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>(requestsCallbacks.Handle);
+
+        var personsCallbacks = serviceProvider.GetRequiredService<PersonCallbacks>();
+        cqrsService.RegisterQuery<PersonsListQuery, DomainResponse<PersonsListResults>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonTitleQuery, DomainResponse<string?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonDetailsQuery, DomainResponse<PersonDetails?>>(personsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
         cqrsService.RegisterQuery<AppointmentDetailsQuery, DomainResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);

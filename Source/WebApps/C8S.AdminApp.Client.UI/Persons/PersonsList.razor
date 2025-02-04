@@ -1,0 +1,20 @@
+﻿@inherits BaseRazorComponent
+@using C8S.AdminApp.Client.Services.Coordinators.Persons
+
+<div id="@PersonsListCoordinator.ListerContainerId"
+     class="c8s-listpage-list c8s-persons-list @CssClass"
+     style="position: relative;">
+
+    <BusyCover IsBusy="@_isBusy" />
+
+    <Virtualize @ref="@_listerComponent"
+                ItemsProvider="@Coordinator.GetRows"
+                Context="person">
+        <ItemContent>
+            <RadzenCard class="rz-mb-2">
+                <PersonListItemDisplayer Person="@person" />
+            </RadzenCard>
+        </ItemContent>
+    </Virtualize>
+
+</div>
