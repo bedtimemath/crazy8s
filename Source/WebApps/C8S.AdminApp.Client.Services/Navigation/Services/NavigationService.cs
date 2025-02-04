@@ -2,8 +2,10 @@
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
+using C8S.AdminApp.Client.Services.Navigation.Queries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Navigation.Services;
@@ -18,6 +20,10 @@ public sealed class NavigationService(
     #endregion
 
     #region Command Handlers
+
+    public Task<DomainResponse<string>> Handle(CurrentUrlQuery query, CancellationToken cancellation) =>
+        Task.FromResult(DomainResponse<string>.CreateSuccessResponse(navigationManager.GetRelativeUrl()));
+
     public async Task Handle(NavigationCommand command, CancellationToken cancellationToken)
     {
         _logger.LogInformation("[{Action}]: {Group} [{IdValue}]", command.Action, command.Entity, command.IdValue);
