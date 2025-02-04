@@ -1,9 +1,12 @@
-﻿using C8S.AdminApp.Client.Services.Menu.Models;
+﻿using C8S.AdminApp.Client.Services.Extensions;
+using C8S.AdminApp.Client.Services.Menu.Models;
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
 using C8S.AdminApp.Client.Services.Navigation.Queries;
+using C8S.Domain.Features.Requests.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
@@ -16,12 +19,14 @@ public sealed class SidebarItemCoordinator(
     ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<SidebarItemCoordinator> _logger = loggerFactory.CreateLogger<SidebarItemCoordinator>();
+    //private readonly ILogger<SidebarItemCoordinator> _logger = loggerFactory.CreateLogger<SidebarItemCoordinator>();
     #endregion
     
     #region Public Properties
     public bool IsSelected { get; private set; }
     public MenuItem Item { get; set; } = null!;
+
+    public string? Display { get; private set; }
     #endregion
     
     #region SetUp / TearDown
@@ -30,7 +35,8 @@ public sealed class SidebarItemCoordinator(
         base.SetUp();
 
         PubSubService.Subscribe<NavigationChange>(HandleNavigationChange);
-        Task.Run(async () => await CheckSelfAgainstUrl());
+        Task.Run(async () => await GetItemDisplay().ConfigureAwait(false));
+        Task.Run(async () => await CheckSelfAgainstUrl().ConfigureAwait(false));
     }
 
     public override void TearDown()
@@ -47,32 +53,41 @@ public sealed class SidebarItemCoordinator(
         if (navigationChange.Action != NavigationAction.Open) return;
         await CheckSelfAgainstUrl(navigationChange.PageUrl);
     }
-
     #endregion
     
     #region Public Methods
-    public async Task HandleClicked()
-    {
-        _logger.LogInformation("Item Clicked: {@Item}", Item);
+    public async Task HandleClicked() =>
         await ExecuteCommand(new NavigationCommand()
         {
             Action = NavigationAction.Open,
-            PageUrl = Item.Url
+            PageUrl = DomainUrlEx.CreateUrlFromEntityIdValue(Item) 
         });
-    }
+    public async Task HandleCloseClicked() =>
+        await ExecuteCommand(new NavigationCommand()
+        {
+            Action = NavigationAction.Close,
+            PageUrl = DomainUrlEx.CreateUrlFromEntityIdValue(Item) 
+        });
     #endregion
     
     #region Private Methods
+
+    private async Task GetItemDisplay()
+    {
+        var response = await GetQueryResults<RequestTitleQuery, DomainResponse<string?>>(
+            new RequestTitleQuery() { RequestId = Item.IdValue });
+        Display = response.Result ?? SoftCrowConstants.Display.NotSet;
+        await PerformComponentRefresh();
+    }
     private async Task CheckSelfAgainstUrl(string? url = null)
     {
         url ??= (await GetQueryResults<CurrentUrlQuery, DomainResponse<string>>(new CurrentUrlQuery())).Result;
 
-        var shouldBeSelected = Item.Url == url;
+        var shouldBeSelected = DomainUrlEx.CreateUrlFromEntityIdValue(Item) == url;
         if (shouldBeSelected == IsSelected) return;
 
         IsSelected = shouldBeSelected;
-        if (ComponentRefresh != null)
-            await ComponentRefresh.Invoke().ConfigureAwait(false);
+        await PerformComponentRefresh();
     }
     #endregion
 }

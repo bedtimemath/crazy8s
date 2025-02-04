@@ -75,37 +75,45 @@ public sealed class SidebarMenuService(
     }
     #endregion
 
+    #region Command Handlers
+    #endregion
+
     #region Event Handlers
     public Task HandleNavigationChangeNotification(NavigationChange navigationChange)
     {
         if (navigationChange is not { Action: NavigationAction.Open }) 
             return Task.CompletedTask;
 
-        var entity = navigationChange.PageUrl.ToDomainEntity();
+        var entity = DomainUrlEx.GetDomainEntityFromUrl(navigationChange.PageUrl);
         if (entity == null) return Task.CompletedTask;
-        var idValue = navigationChange.PageUrl.ToIdValue();
+        var idValue = DomainUrlEx.GetIdValueFromUrl(navigationChange.PageUrl);
         if (idValue == null) return Task.CompletedTask;
+        
+        if (navigationChange.Action == NavigationAction.Open) HandleOpenChange(entity.Value, idValue.Value);
 
+        return Task.CompletedTask;
+    }
+    #endregion
+
+    #region Private Methods
+
+    private void HandleOpenChange(DomainEntity entity, int idValue)
+    {
         // create the dictionary for the entity, if it doesn't yet exist
-        if (!MenuItemsLookup.TryGetValue(entity.Value, out var menuItems))
+        if (!MenuItemsLookup.TryGetValue(entity, out var menuItems))
         {
             menuItems = [];
-            MenuItemsLookup.Add(entity.Value, menuItems);
+            MenuItemsLookup.Add(entity, menuItems);
         }
 
         // if we've already got the key, we're done
-        if (menuItems.ContainsKey(idValue.Value)) 
-            return Task.CompletedTask;
+        if (menuItems.ContainsKey(idValue)) return;
 
         // otherwise, create and publish the change
-        var menuItem = navigationChange.ToMenuItem(
-            createDisplay:() => $"DISPLAY {idValue.ToString()}", 
-            createUrl:() => $"requests/{idValue}");
-        menuItems.Add(idValue.Value, menuItem);
+        var menuItem = new MenuItem() { Entity = entity, IdValue = idValue };
+        menuItems.Add(idValue, menuItem);
 
-        pubSubService.Publish(new MenuChange() { Entity = entity.Value });
-        
-        return Task.CompletedTask;
+        pubSubService.Publish(new MenuChange() { Entity = entity });
     }
     #endregion
 

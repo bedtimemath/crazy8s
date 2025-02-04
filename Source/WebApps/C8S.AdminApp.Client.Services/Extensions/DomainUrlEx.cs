@@ -1,10 +1,11 @@
-﻿using C8S.Domain.Features;
+﻿using C8S.AdminApp.Client.Services.Menu.Models;
+using C8S.Domain.Features;
 
 namespace C8S.AdminApp.Client.Services.Extensions;
 
-public static class StringEx
+public static class DomainUrlEx
 {
-    public static DomainEntity? ToDomainEntity(this string relativeUrl)
+    public static DomainEntity? GetDomainEntityFromUrl(string relativeUrl)
     {
         var url = TrimUrl(relativeUrl);
         if (String.IsNullOrWhiteSpace(url)) return null;
@@ -24,7 +25,8 @@ public static class StringEx
             _ => null
         };
     }
-    public static int? ToIdValue(this string relativeUrl)
+
+    public static int? GetIdValueFromUrl(string relativeUrl)
     {
         var url = TrimUrl(relativeUrl);
         if (String.IsNullOrWhiteSpace(url)) return null;
@@ -35,6 +37,21 @@ public static class StringEx
         if (!Int32.TryParse(parts[1], out var idValue)) return null;
         return idValue;
     }
+
+    public static string CreateUrlFromEntityIdValue(MenuItem menuItem) =>
+        CreateUrlFromEntityIdValue(menuItem.Entity, menuItem.IdValue);
+    public static string CreateUrlFromEntityIdValue(DomainEntity entity, int idValue) =>
+        entity switch
+        {
+            DomainEntity.Contact => $"contacts/{idValue}",
+            DomainEntity.Order => $"orders/{idValue}",
+            DomainEntity.Organization => $"organizations/{idValue}",
+            DomainEntity.Request => $"requests/{idValue}",
+            DomainEntity.Site => $"sites/{idValue}",
+            DomainEntity.Sku => $"skus/{idValue}",
+            DomainEntity.Ticket => $"tickets/{idValue}",
+            _ => throw new ArgumentOutOfRangeException(nameof(entity), entity, null)
+        };
 
     private static string? TrimUrl(string? url)
     {

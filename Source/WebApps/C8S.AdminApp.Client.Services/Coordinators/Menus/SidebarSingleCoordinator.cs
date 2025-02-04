@@ -69,8 +69,7 @@ public sealed class SidebarSingleCoordinator(
         if (shouldBeSelected == IsSelected) return;
 
         IsSelected = shouldBeSelected;
-        if (ComponentRefresh != null)
-            await ComponentRefresh.Invoke().ConfigureAwait(false);
+        await PerformComponentRefresh();
     }
     #endregion
 }

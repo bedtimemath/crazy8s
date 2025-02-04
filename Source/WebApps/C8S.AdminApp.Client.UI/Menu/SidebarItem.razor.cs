@@ -20,10 +20,4 @@ public sealed partial class SidebarItem: BaseCoordinatedComponent<SidebarItemCoo
         Service.Item = Item;
     }
     #endregion
-
-    #region Event Handlers
-    private void HandleCloseButtonClicked()
-    {
-    }
-    #endregion
 }

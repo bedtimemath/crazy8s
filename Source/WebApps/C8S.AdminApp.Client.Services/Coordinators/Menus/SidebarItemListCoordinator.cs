@@ -50,8 +50,7 @@ public sealed class SidebarItemListCoordinator(
             new MenuItemsQuery() { Entity = Group.Entity!.Value });
 
         MenuItems = response.Success ? response.Result! : [];
-        if (ComponentRefresh != null)
-            await ComponentRefresh.Invoke().ConfigureAwait(false);
+        await PerformComponentRefresh();
     }
     #endregion
     

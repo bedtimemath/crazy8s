@@ -10,14 +10,14 @@
         <RadzenText TagName="TagName.Div"
                     TextStyle="TextStyle.Body1"
                     TextAlign="TextAlign.Left"
-                    Text="@Item.Display"
+                    Text="@Service.Display"
                     class="c8s-sidebar-item-display" />
         
         <IconButton ButtonType="ButtonType.Button"
                     ButtonStyle="ButtonStyle.Warning"
                     Variant="Variant.Text"
                     IconString="@C8SConstants.Icons.Close"
-                    Click="@HandleCloseButtonClicked" />
+                    Click="@(async () => await Service.HandleCloseClicked())"/>
 
     </RadzenStack>
 </div>

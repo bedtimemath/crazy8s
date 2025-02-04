@@ -56,6 +56,7 @@ public static class WebAssemblyHostEx
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
         cqrsService.RegisterQuery<RequestsListQuery, DomainResponse<RequestsListResults>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestTitleQuery, DomainResponse<string?>>(requestsCallbacks.Handle);
         cqrsService.RegisterQuery<RequestDetailsQuery, DomainResponse<RequestDetails?>>(requestsCallbacks.Handle);
         cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>(requestsCallbacks.Handle);
 

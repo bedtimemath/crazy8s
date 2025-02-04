@@ -3,7 +3,6 @@ using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
 using C8S.AdminApp.Client.Services.Navigation.Queries;
-using C8S.Domain.Features;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using SC.Common.Interactions;
@@ -28,6 +27,7 @@ public sealed class NavigationService(
     #region Public Methods
     public void Initialize(IServiceProvider _)
     {
+        _currentPage = navigationManager.GetRelativeUrl();
     }
 
     public void Dispose()
