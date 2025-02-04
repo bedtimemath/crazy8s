@@ -1,5 +1,7 @@
-﻿using C8S.AdminApp.Client.Services.Navigation.Commands;
+﻿using System.Diagnostics;
+using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
+using C8S.AdminApp.Client.Services.Navigation.Queries;
 using C8S.Domain.Features;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
@@ -59,13 +61,15 @@ public sealed class RequestDetailsCoordinator(
     }
 
     public async Task ClosePage()
-        => await ExecuteCommand(new NavigationCommand()
+    {
+        var currentUrl = (await GetQueryResults<CurrentUrlQuery, DomainResponse<string>>(new CurrentUrlQuery())).Result ??
+                         throw new UnreachableException("Could not get a return for the current url.");
+        await ExecuteCommand(new NavigationCommand()
         {
             Action = NavigationAction.Close,
-            PageUrl = $"requests/{Details!.RequestId}",
-            Entity = DomainEntity.Request,
-            IdValue = Details!.RequestId
+            PageUrl = currentUrl
         });
+    }
 
     public async Task LinkPlace()
     {

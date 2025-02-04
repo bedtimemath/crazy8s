@@ -10,11 +10,11 @@ public static class NavigationChangeEx
         Func<string> createDisplay, Func<string> createUrl) =>
         new()
         {
-            Entity = navigationChange.Entity ??
-                     throw new UnreachableException("Missing Entity"),
             Display = createDisplay(),
             Url = createUrl(),
-            IdValue = navigationChange.IdValue ??
+            Entity = navigationChange.PageUrl.ToDomainEntity() ??
+                     throw new UnreachableException("Missing Entity"),
+            IdValue = navigationChange.PageUrl.ToIdValue() ??
                       throw new UnreachableException("Missing IdValue")
         };
 }

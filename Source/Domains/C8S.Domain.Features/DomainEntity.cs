@@ -2,10 +2,11 @@
 
 public enum DomainEntity
 {
-    Request,
     Contact,
-    Site,
-    Organization,
     Order,
-    Sku
+    Organization,
+    Request,
+    Site,
+    Sku,
+    Ticket
 }

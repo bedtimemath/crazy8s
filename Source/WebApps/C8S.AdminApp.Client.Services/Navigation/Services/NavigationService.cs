@@ -21,17 +21,13 @@ public sealed class NavigationService(
     #endregion
 
     #region Private Variables
-    private readonly Stack<PageRecord> _history = new();
-    private PageRecord? _currentPage = null;
+    private readonly Stack<string> _history = new();
+    private string? _currentPage = null;
     #endregion
 
     #region Public Methods
     public void Initialize(IServiceProvider _)
     {
-        _currentPage = new PageRecord()
-        {
-            PageUrl = navigationManager.GetRelativeUrl()
-        };
     }
 
     public void Dispose()
@@ -45,7 +41,7 @@ public sealed class NavigationService(
 
     public async Task Handle(NavigationCommand command, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("[{Action}]: {Group} [{IdValue}]", command.Action, command.Entity, command.IdValue);
+        _logger.LogInformation("[{Action}]: {Url}", command.Action, command.PageUrl);
 
         // now do the work
         switch (command.Action)
@@ -66,51 +62,42 @@ public sealed class NavigationService(
     private async Task HandleOpen(NavigationCommand command, CancellationToken cancellationToken)
     {
         // we don't want to get stuck in an endless loop, so don't navigate to self
-        var currentUrl = navigationManager.GetRelativeUrl();
-        if (currentUrl == command.PageUrl) return;
+        if (_currentPage == command.PageUrl) return;
 
-        // add this to the stack
-        _history.Push(new PageRecord() { PageUrl = command.PageUrl, Entity = command.Entity, IdValue = command.IdValue });
+        // add the current page to the stack
+        if (_currentPage != null) _history.Push(_currentPage);
 
-        // now perform the navigation and publish the change
+        // now perform the navigation
         await Task.Run(() => navigationManager.NavigateTo(command.PageUrl), cancellationToken);
-        pubSubService.Publish(new NavigationChange()
-        {
-            OldUrl = currentUrl,
-            Action = command.Action,
-            Entity = command.Entity,
-            PageUrl = command.PageUrl,
-            IdValue = command.IdValue
-        });
-    }
-    private async Task<NavigationChange> HandleClose(NavigationCommand command, CancellationToken cancellationToken)
-    {
-        // get the most recent one from the stack
-        if (!_history.TryPop(out var popped))
-            popped = new PageRecord() { PageUrl = "home" };
-        
-        // close the existing by going to the old one
-        await Task.Run(() => navigationManager.NavigateTo(popped.PageUrl), cancellationToken);
 
-        
-        var currentUrl = navigationManager.GetRelativeUrl();
-        return new NavigationChange()
-        {
-            OldUrl = currentUrl,
-            Action = command.Action,
-            Entity = popped.Entity,
-            PageUrl = popped.PageUrl,
-            IdValue = popped.IdValue
-        };
-    }
-    #endregion
+        // publish the close (if possible), then the open
+        if (_currentPage != null)
+            pubSubService.Publish(new NavigationChange() { Action = NavigationAction.Close, PageUrl = _currentPage });
+        pubSubService.Publish(new NavigationChange() { Action = NavigationAction.Open, PageUrl = command.PageUrl });
 
-    #region Private Records
-    private record PageRecord
+        // switch to the new page
+        _currentPage = command.PageUrl;
+    }
+    private async Task HandleClose(NavigationCommand command, CancellationToken cancellationToken)
     {
-        public string PageUrl { get; init; } = null!;
-        public DomainEntity? Entity { get; init; }
-        public int? IdValue { get; init; }
+        // if we're not currently on the page being closed, all we need to do is say it is closed
+        var currentUrl = _currentPage;
+        if (currentUrl != command.PageUrl)
+            pubSubService.Publish(new NavigationChange() { Action = NavigationAction.Close, PageUrl = command.PageUrl });
+
+        else
+        {
+            // get the most recent one from the stack
+            if (!_history.TryPop(out var lastPage)) lastPage = "home";
+        
+            // close the existing by going to the old one
+            await Task.Run(() => navigationManager.NavigateTo(lastPage), cancellationToken);
+        
+            pubSubService.Publish(new NavigationChange() { Action = NavigationAction.Close, PageUrl = command.PageUrl });
+            pubSubService.Publish(new NavigationChange() { Action = NavigationAction.Open, PageUrl = lastPage });
+
+            _currentPage = lastPage;
+        }
     }
     #endregion
 }

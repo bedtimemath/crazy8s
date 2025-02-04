@@ -42,18 +42,20 @@ public sealed class SidebarGroupCoordinator(
     #endregion
     
     #region Event Handlers
-    public async Task HandleNavigationChange(NavigationChange navigationChange) =>
+    public async Task HandleNavigationChange(NavigationChange navigationChange)
+    {
+        if (navigationChange.Action != NavigationAction.Open) return;
         await CheckSelfAgainstUrl(navigationChange.PageUrl);
+    }
+
     #endregion
     
     #region Public Methods
     public async Task HandleClicked()
     {
-        _logger.LogInformation("Group Clicked: {@Group}", Group);
         await ExecuteCommand(new NavigationCommand()
         {
             Action = NavigationAction.Open,
-            Entity = Group.Entity,
             PageUrl = Group.Url
         });
     }

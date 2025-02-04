@@ -78,30 +78,32 @@ public sealed class SidebarMenuService(
     #region Event Handlers
     public Task HandleNavigationChangeNotification(NavigationChange navigationChange)
     {
-        if (navigationChange is not { Action: NavigationAction.Open, Entity: not null, IdValue: not null }) 
+        if (navigationChange is not { Action: NavigationAction.Open }) 
             return Task.CompletedTask;
 
-        var idValue = navigationChange.IdValue.Value;
-        var entity = navigationChange.Entity.Value;
+        var entity = navigationChange.PageUrl.ToDomainEntity();
+        if (entity == null) return Task.CompletedTask;
+        var idValue = navigationChange.PageUrl.ToIdValue();
+        if (idValue == null) return Task.CompletedTask;
 
         // create the dictionary for the entity, if it doesn't yet exist
-        if (!MenuItemsLookup.TryGetValue(entity, out var menuItems))
+        if (!MenuItemsLookup.TryGetValue(entity.Value, out var menuItems))
         {
             menuItems = [];
-            MenuItemsLookup.Add(entity, menuItems);
+            MenuItemsLookup.Add(entity.Value, menuItems);
         }
 
         // if we've already got the key, we're done
-        if (menuItems.ContainsKey(idValue)) 
+        if (menuItems.ContainsKey(idValue.Value)) 
             return Task.CompletedTask;
 
         // otherwise, create and publish the change
         var menuItem = navigationChange.ToMenuItem(
-            createDisplay:() => $"DISPLAY {navigationChange.IdValue.ToString()}", 
+            createDisplay:() => $"DISPLAY {idValue.ToString()}", 
             createUrl:() => $"requests/{idValue}");
-        menuItems.Add(idValue, menuItem);
+        menuItems.Add(idValue.Value, menuItem);
 
-        pubSubService.Publish(new MenuChange() { Entity = entity });
+        pubSubService.Publish(new MenuChange() { Entity = entity.Value });
         
         return Task.CompletedTask;
     }

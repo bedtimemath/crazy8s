@@ -164,9 +164,7 @@
                           Click="@(() => CQRSService.ExecuteCommand(new NavigationCommand()
                                  {
                                      Action = NavigationAction.Open,
-                                     Entity = DomainEntity.Request,
-                                     PageUrl = $"/requests/{Request.RequestId}",
-                                     IdValue = Request.RequestId
+                                     PageUrl = $"requests/{Request.RequestId}"
                                  }))" />
 
         </RadzenStack>

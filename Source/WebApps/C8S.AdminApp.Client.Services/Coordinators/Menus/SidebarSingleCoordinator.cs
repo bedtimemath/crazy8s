@@ -2,7 +2,9 @@
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
+using C8S.AdminApp.Client.Services.Navigation.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -28,6 +30,7 @@ public sealed class SidebarSingleCoordinator(
         base.SetUp();
 
         PubSubService.Subscribe<NavigationChange>(HandleNavigationChange);
+        Task.Run(async () => await CheckSelfAgainstUrl());
     }
 
     public override void TearDown()
@@ -41,24 +44,33 @@ public sealed class SidebarSingleCoordinator(
     #region Event Handlers
     public async Task HandleNavigationChange(NavigationChange navigationChange)
     {
-        var shouldBeSelected = Single.Url == navigationChange.PageUrl;
-        if (shouldBeSelected == IsSelected) return;
-
-        IsSelected = shouldBeSelected;
-        if (ComponentRefresh != null)
-            await ComponentRefresh.Invoke().ConfigureAwait(false);
+        if (navigationChange.Action != NavigationAction.Open) return;
+        await CheckSelfAgainstUrl(navigationChange.PageUrl);
     }
     #endregion
 
     #region Public Methods
     public async Task HandleClicked()
     {
-        _logger.LogInformation("Single Clicked: {@Single}", Single);
         await ExecuteCommand(new NavigationCommand()
         {
             Action = NavigationAction.Open,
             PageUrl = Single.Url
         });
+    }
+    #endregion
+    
+    #region Private Methods
+    private async Task CheckSelfAgainstUrl(string? url = null)
+    {
+        url ??= (await GetQueryResults<CurrentUrlQuery, DomainResponse<string>>(new CurrentUrlQuery())).Result;
+
+        var shouldBeSelected = Single.Url == url;
+        if (shouldBeSelected == IsSelected) return;
+
+        IsSelected = shouldBeSelected;
+        if (ComponentRefresh != null)
+            await ComponentRefresh.Invoke().ConfigureAwait(false);
     }
     #endregion
 }

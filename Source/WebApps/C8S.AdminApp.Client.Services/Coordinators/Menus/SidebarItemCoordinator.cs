@@ -1,5 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Extensions;
-using C8S.AdminApp.Client.Services.Menu.Models;
+﻿using C8S.AdminApp.Client.Services.Menu.Models;
 using C8S.AdminApp.Client.Services.Navigation.Commands;
 using C8S.AdminApp.Client.Services.Navigation.Enums;
 using C8S.AdminApp.Client.Services.Navigation.Models;
@@ -43,8 +42,12 @@ public sealed class SidebarItemCoordinator(
     #endregion
 
     #region Event Handlers
-    public async Task HandleNavigationChange(NavigationChange navigationChange) =>
+    public async Task HandleNavigationChange(NavigationChange navigationChange)
+    {
+        if (navigationChange.Action != NavigationAction.Open) return;
         await CheckSelfAgainstUrl(navigationChange.PageUrl);
+    }
+
     #endregion
     
     #region Public Methods
@@ -54,7 +57,6 @@ public sealed class SidebarItemCoordinator(
         await ExecuteCommand(new NavigationCommand()
         {
             Action = NavigationAction.Open,
-            Entity = Item.Entity,
             PageUrl = Item.Url
         });
     }
