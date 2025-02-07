@@ -27,6 +27,18 @@
       "commandName": "Project",
       "commandLineArgs": "show-config -p Production"
     },
+    "WordPress Test": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api"
+    },
+    "WordPress Test (Add User)": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api -a AddUser"
+    },
+    "WordPress Test (Get Users)": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api -a GetAllUsers"
+    },
     "FullSlate Add Appt": {
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a AddAppointment -e 2024-12-31"

@@ -118,6 +118,7 @@ try
      */
     // RequestProfile is used arbitrarily here
     builder.Services.AddAutoMapper(typeof(RequestProfile).Assembly);
+
     /*****************************************
      * SOFT CROW & LOCAL
      */

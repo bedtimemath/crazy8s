@@ -98,9 +98,6 @@ public sealed class PersonsListCoordinator(
     #region Event Handlers
     public void HandleQueryValueChange() => RaiseFilterChanged();
     public void HandleSortDropdownChange() => RaiseFilterChanged();
-    public void HandleStatusDropdownChange() => RaiseFilterChanged();
-    public void HandleAfterDatePickerChange() => RaiseFilterChanged();
-    public void HandleBeforeDatePickerChange() => RaiseFilterChanged();
     #endregion
 
     #region Internal Classes / Records

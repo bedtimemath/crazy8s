@@ -44,6 +44,7 @@ try
             LoadSampleDataOptions,
             ShowConfigOptions,
             TestFullSlateOptions,
+            TestWordPressApiOptions,
             TestInterceptorsOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
                    throw new Exception("Could not cast parser options to StandardConsoleOptions");
@@ -125,6 +126,11 @@ try
             {
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, TestFullSlate>();
+            })
+            .WithParsed<TestWordPressApiOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, TestWordPressApi>();
             })
             .WithParsed<TestInterceptorsOptions>(options =>
             {
