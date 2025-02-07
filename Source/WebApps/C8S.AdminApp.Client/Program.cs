@@ -4,7 +4,9 @@ using C8S.AdminApp.Client.Services.Extensions;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
+using SC.Common.Client.Extensions;
 using SC.Common.Helpers.Extensions;
+using SC.Messaging.Extensions;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -67,21 +69,26 @@ try
      * SOFT CROW & LOCAL
      */
     builder.Services.AddCommonHelpers();
+    builder.Services.AddMessagingServices();
+    builder.Services.AddNavigationServices();
     builder.Services.AddClientCoordinators();
     builder.Services.AddLocalServices();
 
     /*****************************************
-     * APP BUILD & RUN
+     * APP BUILD
      */
     var host = builder.Build();
     
     /*****************************************
      * SOFT CROW & LOCAL
      */
+    host.UseNavigationServices();
     host.SetUpCQRSService();
-
-    await host.SetUpInitializableServices();
-
+    await host.InitializeServices();
+    
+    /*****************************************
+     * APP RUN
+     */
     await host.RunAsync();
 }
 catch (Exception ex)

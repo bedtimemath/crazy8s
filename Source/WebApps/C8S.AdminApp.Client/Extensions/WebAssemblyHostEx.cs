@@ -3,9 +3,6 @@ using C8S.AdminApp.Client.Services.Callbacks;
 using C8S.AdminApp.Client.Services.Menu.Models;
 using C8S.AdminApp.Client.Services.Menu.Queries;
 using C8S.AdminApp.Client.Services.Menu.Services;
-using C8S.AdminApp.Client.Services.Navigation.Commands;
-using C8S.AdminApp.Client.Services.Navigation.Queries;
-using C8S.AdminApp.Client.Services.Navigation.Services;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Notes.Commands;
@@ -17,6 +14,9 @@ using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using SC.Common.Client.Navigation.Commands;
+using SC.Common.Client.Navigation.Queries;
+using SC.Common.Client.Navigation.Services;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 
@@ -24,7 +24,7 @@ namespace C8S.AdminApp.Client.Extensions;
 
 public static class WebAssemblyHostEx
 {
-    public static async Task<WebAssemblyHost> SetUpInitializableServices(this WebAssemblyHost host)
+    public static async Task<WebAssemblyHost> InitializeServices(this WebAssemblyHost host)
     {
         var serviceProvider = host.Services;
 
@@ -35,9 +35,6 @@ public static class WebAssemblyHostEx
         // SYNC SETUP
         var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
         sidebarMenuService.Initialize(serviceProvider);
-
-        var navigationService = serviceProvider.GetRequiredService<INavigationService>();
-        navigationService.Initialize(serviceProvider);
 
         return host;
     }

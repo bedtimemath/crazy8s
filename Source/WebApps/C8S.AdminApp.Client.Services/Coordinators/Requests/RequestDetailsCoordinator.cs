@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
-using C8S.AdminApp.Client.Services.Navigation.Commands;
-using C8S.AdminApp.Client.Services.Navigation.Enums;
-using C8S.AdminApp.Client.Services.Navigation.Queries;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Common.Client.Navigation.Commands;
+using SC.Common.Client.Navigation.Enums;
+using SC.Common.Client.Navigation.Queries;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Abstractions.Models;

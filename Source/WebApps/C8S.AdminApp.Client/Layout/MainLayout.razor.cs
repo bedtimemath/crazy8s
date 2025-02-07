@@ -1,6 +1,4 @@
 ﻿using C8S.AdminApp.Client.Services.Extensions;
-using C8S.AdminApp.Client.Services.Navigation.Commands;
-using C8S.AdminApp.Client.Services.Navigation.Enums;
 using Microsoft.AspNetCore.Components;
 using Radzen;
 using SC.Messaging.Abstractions.Interfaces;

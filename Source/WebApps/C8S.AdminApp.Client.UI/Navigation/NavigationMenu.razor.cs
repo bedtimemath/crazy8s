@@ -1,6 +1,6 @@
-﻿using C8S.AdminApp.Client.Services.Navigation.Services;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using SC.Common.Client.Navigation.Services;
 using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Navigation;

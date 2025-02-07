@@ -2,11 +2,11 @@
 using C8S.AdminApp.Client.Services.Menu.Models;
 using C8S.AdminApp.Client.Services.Menu.Notifications;
 using C8S.AdminApp.Client.Services.Menu.Queries;
-using C8S.AdminApp.Client.Services.Navigation.Enums;
-using C8S.AdminApp.Client.Services.Navigation.Models;
 using C8S.Domain;
 using C8S.Domain.Features;
 using Microsoft.Extensions.Logging;
+using SC.Common.Client.Navigation.Enums;
+using SC.Common.Client.Navigation.Models;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 
