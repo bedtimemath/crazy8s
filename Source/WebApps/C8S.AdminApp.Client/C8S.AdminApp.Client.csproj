@@ -13,11 +13,11 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.1" />
-		<PackageReference Include="Radzen.Blazor" Version="5.9.8" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
+		<PackageReference Include="Radzen.Blazor" Version="6.0.1" />
 		<PackageReference Include="Serilog" Version="4.2.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
 		<PackageReference Include="Serilog.Sinks.BrowserConsole" Version="8.0.0" />
@@ -34,6 +34,8 @@
 		<ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
 		<ProjectReference Include="..\..\Domains\C8S.Domain.Features\C8S.Domain.Features.csproj" />
 		<ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
+		<ProjectReference Include="..\..\Libraries\C8S.WordPress.Abstractions\C8S.WordPress.Abstractions.csproj" />
+		<ProjectReference Include="..\..\Libraries\C8S.WordPress\C8S.WordPress.csproj" />
 		<ProjectReference Include="..\C8S.AdminApp.Client.Services\C8S.AdminApp.Client.Services.csproj" />
 		<ProjectReference Include="..\C8S.AdminApp.Client.UI\C8S.AdminApp.Client.UI.csproj" />
 	</ItemGroup>

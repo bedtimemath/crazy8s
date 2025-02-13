@@ -55,6 +55,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.Messaging", "..\..\SoftC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.Messaging.Abstractions", "..\..\SoftCrow\Source\Libraries\SC.Messaging.Abstractions\SC.Messaging.Abstractions.csproj", "{D17AEB0F-E4E8-4698-BBDF-0E84F943D47B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.WordPress.Abstractions", "Libraries\C8S.WordPress.Abstractions\C8S.WordPress.Abstractions.csproj", "{25287628-D80C-4D8E-AE80-EF31A87C174B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.WordPress", "Libraries\C8S.WordPress\C8S.WordPress.csproj", "{C4B60B2C-D2CD-4349-B0EC-AD0A01510674}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +145,14 @@ Global
 		{D17AEB0F-E4E8-4698-BBDF-0E84F943D47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D17AEB0F-E4E8-4698-BBDF-0E84F943D47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D17AEB0F-E4E8-4698-BBDF-0E84F943D47B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25287628-D80C-4D8E-AE80-EF31A87C174B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25287628-D80C-4D8E-AE80-EF31A87C174B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25287628-D80C-4D8E-AE80-EF31A87C174B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25287628-D80C-4D8E-AE80-EF31A87C174B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4B60B2C-D2CD-4349-B0EC-AD0A01510674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B60B2C-D2CD-4349-B0EC-AD0A01510674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B60B2C-D2CD-4349-B0EC-AD0A01510674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B60B2C-D2CD-4349-B0EC-AD0A01510674}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -166,6 +178,8 @@ Global
 		{718C00AC-566F-41E5-B11C-BD91BE506842} = {5B1D362B-9047-4151-B890-7CE489E51A24}
 		{6D496B76-42D2-41A7-9B68-9BD973AB41B1} = {5B1D362B-9047-4151-B890-7CE489E51A24}
 		{D17AEB0F-E4E8-4698-BBDF-0E84F943D47B} = {5B1D362B-9047-4151-B890-7CE489E51A24}
+		{25287628-D80C-4D8E-AE80-EF31A87C174B} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
+		{C4B60B2C-D2CD-4349-B0EC-AD0A01510674} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}

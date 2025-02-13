@@ -34,8 +34,9 @@
                        
         <RadzenButton ButtonType="ButtonType.Button"
                       ButtonStyle="ButtonStyle.Primary"
-                      Text="Create"
+                      Text="Create in WordPress"
                       Click="@(async () => await Service.CreateWordPressUser())"
+                      IsBusy="@Service.IsCreating"
                       Disabled="@(Service.SelectedId == null)"
                       class="flex-shrink-0"/>
 
