@@ -39,6 +39,18 @@
       "commandName": "Project",
       "commandLineArgs": "test-wordpress-api -a GetAllUsers"
     },
+    "WordPress Test (Get Skus)": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api -a GetAllSkus"
+    },
+    "WordPress Test (Get Activities)": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api -a GetAllActivities"
+    },
+    "WordPress Test (Update Activity)": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api -a UpdateActivity -i 1067"
+    },
     "FullSlate Add Appt": {
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a AddAppointment -e 2024-12-31"

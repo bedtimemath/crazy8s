@@ -1,0 +1,43 @@
+﻿@inherits BaseCoordinatedComponent<WordPressUserCreatorCoordinator>
+@using C8S.AdminApp.Client.Services.Coordinators.Temp
+@using C8S.Domain.Features.Persons.Models
+
+<div class="c8s-wordpress-user-creator @CssClass">
+    <RadzenStack Orientation="Orientation.Horizontal"
+                 AlignItems="AlignItems.Center"
+                 JustifyContent="JustifyContent.Normal"
+                 Gap="0.5rem">
+        
+        @*
+        <RadzenTextBox @bind-Value="@Service.Email"
+                  class="flex-grow-1"/>
+        *@
+        
+        <RadzenDropDownDataGrid @bind-Value="@Service.SelectedId"
+                                Count="@Service.TotalPersons"
+                                Data="@Service.Persons"
+                                LoadData="@Service.LoadPersonsData"
+                                IsLoading="@Service.IsLoading"
+                                TextProperty="@nameof(PersonListItem.FullName)"
+                                ValueProperty="@nameof(PersonListItem.PersonId)"
+                                class="flex-grow-1">
+            <Columns>
+                <RadzenDropDownDataGridColumn Title="Id"
+                                              Property="@nameof(PersonListItem.PersonId)"
+                                              Width="100px" />
+                <RadzenDropDownDataGridColumn Title="Full Name"
+                                              Property="@nameof(PersonListItem.FullName)" />
+                <RadzenDropDownDataGridColumn Title="Email"
+                                              Property="@nameof(PersonListItem.Email)" />
+            </Columns>
+        </RadzenDropDownDataGrid>
+                       
+        <RadzenButton ButtonType="ButtonType.Button"
+                      ButtonStyle="ButtonStyle.Primary"
+                      Text="Create"
+                      Click="@(async () => await Service.CreateWordPressUser())"
+                      Disabled="@(Service.SelectedId == null)"
+                      class="flex-shrink-0"/>
+
+    </RadzenStack>
+</div>

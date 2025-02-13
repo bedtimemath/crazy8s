@@ -2,6 +2,7 @@
 using System.Net;
 using C8S.UtilityApp.Base;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SC.Common.Extensions;
 using WordPressPCL;
 using WordPressPCL.Models;
@@ -22,10 +23,13 @@ internal class TestWordPressApi(
 
         Console.WriteLine($"Site: {options.Site}");
         Console.WriteLine($"Action: {options.TestAction}");
+        Console.WriteLine($"ActivityId: {options.ActivityId}");
         Console.WriteLine($"UserId: {options.UserId}");
 
         if (options is { TestAction: WordPressApiAction.GetUser or WordPressApiAction.DeleteUser, UserId: null })
-            throw new UnreachableException("GetUser action requires a UserId");
+            throw new UnreachableException("GetUser / DeleteUser action requires a UserId");
+        if (options is { TestAction: WordPressApiAction.UpdateActivity, ActivityId: null })
+            throw new UnreachableException("UpdateActivity action requires a ActivityId");
         
         Console.WriteLine("Continue? Y/N");
         var checkContinue = Console.ReadKey();
@@ -41,7 +45,7 @@ internal class TestWordPressApi(
         };
         _httpClient = new HttpClient(handler) { BaseAddress = new Uri(options.Site) };
         var apiClient = new WordPressClient(_httpClient);
-        apiClient.Auth.UseBasicAuth("development@bedtimemath.org", "lX6w eFyu Wypf ZFQf YQEb IwoM");
+        apiClient.Auth.UseBasicAuth("development@bedtimemath.org", "rkz0 2cff PoAk WsBu Eyu9 d84W");
 
 
         switch (options.TestAction)
@@ -68,12 +72,79 @@ internal class TestWordPressApi(
             case WordPressApiAction.GetAllUsers:
                 await RunGetAllUsersTest(apiClient);
                 break;
+            case WordPressApiAction.GetAllSkus:
+                await RunGetAllSkusTest(apiClient);
+                break;
+            case WordPressApiAction.GetAllActivities:
+                await RunGetAllActivitiesTest(apiClient);
+                break;
+            case WordPressApiAction.UpdateActivity:
+                Console.WriteLine("== UPDATE ACTIVITY ==");
+                await RunUpdateActivityTest(apiClient, options.ActivityId!.Value);
+                Console.WriteLine("== GET ALL ACTIVITIES ==");
+                await RunGetAllActivitiesTest(apiClient);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(options.TestAction), $"Unrecognized WordPressApiAction: {options.TestAction}");
         }
 
         _logger.LogInformation("{Name}: complete.", nameof(TestWordPressApi));
         return 0;
+    }
+
+    private async Task RunGetAllSkusTest(WordPressClient apiClient)
+    {
+        try
+        {
+            var skus = await apiClient.CustomRequest.GetAsync<IEnumerable<Sku>>("/wp-json/wp/v2/sku");
+            foreach (var sku in skus)
+            {
+                _logger.LogDebug("{@Sku}", sku);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Could not run test");
+        }
+    }
+
+    private async Task RunGetAllActivitiesTest(WordPressClient apiClient)
+    {
+        try
+        {
+            var activities = await apiClient.CustomRequest.GetAsync<IEnumerable<Activity>>("/wp-json/wp/v2/activity");
+            foreach (var activity in activities)
+            {
+                _logger.LogDebug("{@Activity}", activity);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Could not run test");
+        }
+    }
+
+    private async Task RunUpdateActivityTest(WordPressClient apiClient, int activityId)
+    {
+        try
+        {
+            var activities = await apiClient.CustomRequest.GetAsync<IEnumerable<Activity>>($"/wp-json/wp/v2/activity");
+            var activity = activities.FirstOrDefault(a => a.ActivityId == activityId) ??
+                           throw new UnreachableException($"Could not find activity #{activityId}");
+
+            activity.Properties ??= new ActivityProperties();
+            activity.Properties.Materials ??= [];
+            activity.Properties.Materials.Add(new ActivityMaterial() { Quantity = 3, Material = "Triangles" });
+            activity.Properties.Materials.Add(new ActivityMaterial() { Quantity = 6, Material = "Hexagons" });
+
+            var updated = await apiClient.CustomRequest.UpdateAsync<Activity, Activity>($"/wp-json/wp/v2/activity/{activityId}", activity);
+
+            _logger.LogDebug("{@Activity}", updated);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Could not run test");
+        }
     }
 
     private async Task RunGetAllUsersTest(WordPressClient apiClient)
@@ -138,4 +209,72 @@ internal class TestWordPressApi(
             _logger.LogError(exception, "Could not run test");
         }
     }
+}
+
+public class Activity
+{
+    [JsonProperty(PropertyName = "id")]
+    public int ActivityId { get; set; }
+    [JsonProperty(PropertyName = "slug")]
+    public string? Slug { get; set; }
+    [JsonProperty(PropertyName = "status")]
+    public string? Status { get; set; }
+    [JsonProperty(PropertyName = "link")]
+    public string? Link { get; set; }
+    [JsonProperty(PropertyName = "type")]
+    public string? Type { get; set; }
+    [JsonProperty(PropertyName = "acf")]
+    public ActivityProperties? Properties { get; set; }
+}
+
+public class ActivityProperties
+{
+    [JsonProperty(PropertyName = "sku")]
+    public List<int>? Sku { get; set; }
+    [JsonProperty(PropertyName = "materials")]
+    public List<ActivityMaterial>? Materials { get; set; }
+}
+
+public class ActivityMaterial
+{
+    [JsonProperty(PropertyName = "quantity")]
+    public int? Quantity { get; set; }
+    [JsonProperty(PropertyName = "material")]
+    public string? Material { get; set; }
+}
+
+public class Sku
+{
+    [JsonProperty(PropertyName = "id")]
+    public int SkuId { get; set; }
+    [JsonProperty(PropertyName = "slug")]
+    public string? Slug { get; set; }
+    [JsonProperty(PropertyName = "status")]
+    public string? Status { get; set; }
+    [JsonProperty(PropertyName = "link")]
+    public string? Link { get; set; }
+    [JsonProperty(PropertyName = "type")]
+    public string? Type { get; set; }
+    [JsonProperty(PropertyName = "title")]
+    public SkuTitle? Title { get; set; }
+    [JsonProperty(PropertyName = "acf")]
+    public SkuProperties? Properties { get; set; }
+}
+
+public class SkuProperties
+{
+    [JsonProperty(PropertyName = "sku_name")]
+    public string? SkuName { get; set; }
+    [JsonProperty(PropertyName = "sku_identifier")]
+    public string? SkuIdentifier { get; set; }
+    [JsonProperty(PropertyName = "season")]
+    public string? Season { get; set; }
+    [JsonProperty(PropertyName = "age_range")]
+    public string? AgeRange { get; set; }
+}
+
+public class SkuTitle
+{
+    [JsonProperty(PropertyName = "rendered")]
+    public string? Rendered { get; set; }
 }

@@ -9,7 +9,10 @@ internal enum WordPressApiAction
     AddUser,
     GetUser,
     GetAllUsers,
-    DeleteUser
+    DeleteUser,
+    GetAllSkus,
+    GetAllActivities,
+    UpdateActivity
 }
 
 [Verb(name:"test-wordpress-api", isDefault:false, HelpText = "Test the WordPress API.")]
@@ -17,7 +20,7 @@ internal class TestWordPressApiOptions: StandardConsoleOptions
 {
     //private const string DefaultInputPath = "C:\\Git\\Crazy8s\\Data"; /* Change to match your desktop */
 
-    private const string DefaultSite = "https://beta.crazy8sclub.org/wp-json/";
+    private const string DefaultSite = "https://coaches.crazy8sclub.org/wp-json/";
     private const WordPressApiAction DefaultTestAction = WordPressApiAction.AllActions;
 
     [Option(shortName:'s', longName:"site", Default = DefaultSite )]
@@ -28,5 +31,8 @@ internal class TestWordPressApiOptions: StandardConsoleOptions
 
     [Option(shortName: 'u', longName: "user-id", Default = null)]
     public int? UserId { get; set; } = null;
+
+    [Option(shortName: 'i', longName: "activity-id", Default = null)]
+    public int? ActivityId { get; set; } = null;
 
 }
