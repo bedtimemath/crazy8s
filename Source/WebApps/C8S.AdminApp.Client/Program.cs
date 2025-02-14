@@ -1,7 +1,6 @@
 using C8S.AdminApp.Client.Extensions;
 using C8S.AdminApp.Client.Services;
 using C8S.AdminApp.Client.Services.Extensions;
-using C8S.WordPress.Extensions;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Radzen;
 using SC.Common;
@@ -74,7 +73,6 @@ try
     builder.Services.AddNavigationServices();
     builder.Services.AddClientCoordinators();
     builder.Services.AddLocalServices();
-    builder.Services.AddWordPressServices();
 
     /*****************************************
      * APP BUILD

@@ -13,6 +13,8 @@ using C8S.Domain.Features.Persons.Queries;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
+using C8S.WordPress.Abstractions.Commands;
+using C8S.WordPress.Abstractions.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SC.Common.Client.Navigation.Commands;
 using SC.Common.Client.Navigation.Queries;
@@ -74,6 +76,8 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterCommand<NoteUpdateCommand, DomainResponse<NoteDetails>>(noteCallbacks.Handle);
         cqrsService.RegisterCommand<NoteDeleteCommand, DomainResponse>(noteCallbacks.Handle);
 
+        var wordPressCallbacks = serviceProvider.GetRequiredService<WordPressCallbacks>();
+        cqrsService.RegisterCommand<WordPressUserAddCommand, DomainResponse<WordPressUser>>(wordPressCallbacks.Handle);
 
         return host;
     }

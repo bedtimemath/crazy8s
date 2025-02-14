@@ -7,7 +7,6 @@ using SC.Common.Interactions;
 
 namespace C8S.AdminApp.Controllers
 {
-    [Route("api/[controller]/{appointmentId:int}")]
     [ApiController]
     public class AppointmentController(
         ILoggerFactory loggerFactory,
@@ -17,6 +16,7 @@ namespace C8S.AdminApp.Controllers
         private readonly ILogger<AppointmentController> _logger = loggerFactory.CreateLogger<AppointmentController>();
         
         [HttpGet]
+        [Route("api/[controller]/{appointmentId:int}")]
         public async Task<DomainResponse<AppointmentDetails?>> GetAppointment(int appointmentId)
         {
             try

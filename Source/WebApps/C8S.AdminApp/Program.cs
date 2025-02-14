@@ -7,6 +7,7 @@ using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
 using C8S.FullSlate.Extensions;
+using C8S.WordPress.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
@@ -129,6 +130,10 @@ try
     if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
     if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
     builder.Services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
+
+    if (String.IsNullOrEmpty(endpoints.WPCoachesAreaApi)) throw new Exception("Missing Endpoints:WPCoachesAreaApi");
+    if (String.IsNullOrEmpty(apiKeys.WPCoachesArea)) throw new Exception("Missing ApiKeys:WPCoachesArea");
+    builder.Services.AddWordPressServices(endpoints.WPCoachesAreaApi, apiKeys.WPCoachesArea);
 
     builder.Services.AddScoped<ISelfService, SelfService>();
 

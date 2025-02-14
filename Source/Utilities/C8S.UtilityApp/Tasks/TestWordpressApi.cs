@@ -46,7 +46,7 @@ internal class TestWordPressApi(
         _httpClient = new HttpClient(handler) { BaseAddress = new Uri(options.Site) };
         var apiClient = new WordPressClient(_httpClient);
         apiClient.Auth.UseBasicAuth("development@bedtimemath.org", "rkz0 2cff PoAk WsBu Eyu9 d84W");
-
+        
 
         switch (options.TestAction)
         {

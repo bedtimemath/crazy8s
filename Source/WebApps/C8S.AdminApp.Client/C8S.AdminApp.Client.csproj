@@ -35,7 +35,6 @@
 		<ProjectReference Include="..\..\Domains\C8S.Domain.Features\C8S.Domain.Features.csproj" />
 		<ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
 		<ProjectReference Include="..\..\Libraries\C8S.WordPress.Abstractions\C8S.WordPress.Abstractions.csproj" />
-		<ProjectReference Include="..\..\Libraries\C8S.WordPress\C8S.WordPress.csproj" />
 		<ProjectReference Include="..\C8S.AdminApp.Client.Services\C8S.AdminApp.Client.Services.csproj" />
 		<ProjectReference Include="..\C8S.AdminApp.Client.UI\C8S.AdminApp.Client.UI.csproj" />
 	</ItemGroup>

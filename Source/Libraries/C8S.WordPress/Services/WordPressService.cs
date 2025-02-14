@@ -1,17 +1,19 @@
 ﻿using C8S.Domain.Features.Persons.Models;
-using C8S.WordPress.Abstractions.Interfaces;
 using Microsoft.Extensions.Logging;
+using WordPressPCL;
 
 namespace C8S.WordPress.Services;
 
 public class WordPressService(
-    ILoggerFactory loggerFactory): IWordPressService
+    ILoggerFactory loggerFactory,
+    WordPressClient wordPressClient)
 {
     private readonly ILogger<WordPressService> _logger = loggerFactory.CreateLogger<WordPressService>();
-    
-    public async Task CreateWordPressUserFromPerson(PersonDetails person)
+    private readonly WordPressClient _wordPressClient = wordPressClient;
+
+    public async Task CreateWordPressUserFromPerson(int personId)
     {
-        _logger.LogDebug("Creating from Person: {@Person}", person);
+        _logger.LogDebug("Creating from Person: {PersonId}", personId);
     }
 
 }
