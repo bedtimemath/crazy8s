@@ -18,14 +18,14 @@
     <ProjectReference Include="..\..\Libraries\C8S.WordPress\C8S.WordPress.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Client\C8S.AdminApp.Client.csproj" />
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.4.1" />
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.10.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.0.0" />
-    <PackageReference Include="Radzen.Blazor" Version="6.0.1" />
+    <PackageReference Include="Radzen.Blazor" Version="6.0.6" />
     <PackageReference Include="Serilog" Version="4.2.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.ApplicationInsights" Version="4.0.0" />

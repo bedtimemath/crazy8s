@@ -1,0 +1,10 @@
+﻿@inherits BaseCoordinatedComponent<WordPressCoachListerCoordinator>
+@using C8S.AdminApp.Client.Services.Coordinators.Temp
+@using C8S.Domain.Features.Persons.Models
+
+<div class="c8s-wordpress-coach-lister @CssClass">
+    <RadzenDataGrid @bind-Value="@Service.SelectedCoaches"
+                    Data="@Service.Coaches"
+                    Count="@Service.TotalCount"
+                    LoadData="@Service.LoadCoaches"/>
+</div>

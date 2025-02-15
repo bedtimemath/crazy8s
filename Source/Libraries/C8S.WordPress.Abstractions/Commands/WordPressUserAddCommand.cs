@@ -4,7 +4,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.WordPress.Abstractions.Commands;
 
-public record WordPressUserAddCommand: ICQRSCommand<DomainResponse<WordPressUser>>
+public record WordPressUserAddCommand: ICQRSCommand<DomainResponse<WordPressUserDetails>>
 {
     public int PersonId { get; init; }
 }

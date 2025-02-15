@@ -44,7 +44,7 @@ public sealed class WordPressUserCreatorCoordinator(
             if (!SelectedId.HasValue)
                 throw new UnreachableException("CreateWordPressUser called without PersonId set.");
 
-            var wordPressUser = await GetCommandResults<WordPressUserAddCommand, DomainResponse<WordPressUser>>(
+            var wordPressUser = await GetCommandResults<WordPressUserAddCommand, DomainResponse<WordPressUserDetails>>(
                 new WordPressUserAddCommand() { PersonId = SelectedId.Value });
             _logger.LogDebug("WPUser={@WPUser}", wordPressUser);
         }

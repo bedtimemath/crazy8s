@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
+using AutoMapper;
+using C8S.WordPress.Profiles;
 using C8S.WordPress.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using WordPressPCL;
 
 namespace C8S.WordPress.Extensions;
@@ -15,12 +18,19 @@ public static class ServiceCollectionEx
             throw new UnreachableException($"Could not parse ApiKeys:WPCoachesArea : {userPass}");
         var username = userPassParts[0];
         var password = userPassParts[1];
+        return AddWordPressServices(services, endpoint, username, password);
+    }
+    public static IServiceCollection AddWordPressServices(this IServiceCollection services,
+        string endpoint, string username, string password)
+    {
+        // set up automapper (WPUserProfile is used arbitrarily here)
+        services.AddAutoMapper(typeof(WPUserProfile));
 
-        var apiClient = new WordPressClient(endpoint);
-        apiClient.Auth.UseBasicAuth(username, password);
-
-        services.AddSingleton(apiClient);
-        services.AddScoped<WordPressService>();
+        services.AddScoped<WordPressService>(svc =>
+            new WordPressService(
+                svc.GetRequiredService<ILoggerFactory>(), 
+                svc.GetRequiredService<IMapper>(),
+                endpoint, username, password));
 
         return services;
     }

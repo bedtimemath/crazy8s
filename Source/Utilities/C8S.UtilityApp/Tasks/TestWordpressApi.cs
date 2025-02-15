@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using SC.Common.Extensions;
 using WordPressPCL;
 using WordPressPCL.Models;
+using WordPressPCL.Utility;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -151,7 +152,7 @@ internal class TestWordPressApi(
     {
         try
         {
-            var users = await apiClient.Users.GetAllAsync(useAuth:true);
+            var users = await apiClient.Users.GetAllAsync(embed:true, useAuth:true);
             foreach (var user in users)
             {
                 _logger.LogDebug("{@User}", user);
@@ -188,7 +189,12 @@ internal class TestWordPressApi(
     {
         try
         {
-            var user = await apiClient.Users.GetByIDAsync(id, useAuth:true);
+            var queryBuilder = new UsersQueryBuilder()
+            {
+                Context = Context.Edit, // required to see roles & capabilities
+                Include = [ id ]
+            };
+            var user = await apiClient.Users.QueryAsync(queryBuilder, useAuth:true);
             _logger.LogDebug("Got #{Id}:{@User}", id, user);
         }
         catch (Exception exception)
