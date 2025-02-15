@@ -11,13 +11,13 @@ using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Temp;
 
-public sealed class WordPressUserCreatorCoordinator(
+public sealed class WPUserCreatorCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
     ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
-    private readonly ILogger<WordPressUserCreatorCoordinator> _logger =
-        loggerFactory.CreateLogger<WordPressUserCreatorCoordinator>();
+    private readonly ILogger<WPUserCreatorCoordinator> _logger =
+        loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
 
     public string? Email { get; set; }
 
@@ -44,8 +44,8 @@ public sealed class WordPressUserCreatorCoordinator(
             if (!SelectedId.HasValue)
                 throw new UnreachableException("CreateWordPressUser called without PersonId set.");
 
-            var wordPressUser = await GetCommandResults<WordPressUserAddCommand, DomainResponse<WordPressUserDetails>>(
-                new WordPressUserAddCommand() { PersonId = SelectedId.Value });
+            var wordPressUser = await GetCommandResults<WPUserAddCommand, DomainResponse<WPUserDetails>>(
+                new WPUserAddCommand() { PersonId = SelectedId.Value });
             _logger.LogDebug("WPUser={@WPUser}", wordPressUser);
         }
         catch (Exception ex)

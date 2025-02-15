@@ -3,6 +3,7 @@ using C8S.WordPress.Abstractions.Models;
 using Microsoft.Extensions.Logging;
 using WordPressPCL;
 using WordPressPCL.Models;
+using WordPressPCL.Utility;
 
 namespace C8S.WordPress.Services;
 
@@ -24,10 +25,33 @@ public class WordPressService
         _wordPressClient.Auth.UseBasicAuth(username, password);
     }
 
-    public async Task<WordPressUserDetails> CreateWordPressUser(
-        string userName, string name, string email, string password,
-        string? firstName = null, string? lastName = null,
-        IList<string>? roles = null)
+    #region Get
+
+    public async Task<WPUsersListResults> GetWordPressUsers(
+        IEnumerable<string>? includeRoles = null)
+    {
+        includeRoles ??= [];
+        var queryBuilder = new UsersQueryBuilder()
+        {
+            Context = Context.Edit,
+            Roles = includeRoles.ToList()
+
+        };
+        var wpUsers = await _wordPressClient.Users
+            .QueryAsync(queryBuilder, useAuth: true);
+        return new WPUsersListResults()
+        {
+            Items = wpUsers.Select(_mapper.Map<WPUserDetails>).ToList(),
+            Total = wpUsers.Count
+        };
+    }
+    #endregion
+
+    #region Create
+    public async Task<WPUserDetails> CreateWordPressUser(
+    string userName, string name, string email, string password,
+    string? firstName = null, string? lastName = null,
+    IList<string>? roles = null)
     {
         roles ??= [];
         if (!roles.Contains("subscriber")) roles.Add("subscriber");
@@ -45,7 +69,8 @@ public class WordPressService
                 Roles = roles
             });
 
-        return _mapper.Map<WordPressUserDetails>(wpUser);
-    }
+        return _mapper.Map<WPUserDetails>(wpUser);
+    } 
+    #endregion
 
 }

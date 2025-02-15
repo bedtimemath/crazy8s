@@ -8,7 +8,7 @@ internal class WPUserProfile : Profile
 {
     public WPUserProfile()
     {
-        CreateMap<User, WordPressUserDetails>();
-        CreateMap<WordPressUserDetails, User>();
+        CreateMap<User, WPUserDetails>();
+        CreateMap<WPUserDetails, User>();
     }
 }

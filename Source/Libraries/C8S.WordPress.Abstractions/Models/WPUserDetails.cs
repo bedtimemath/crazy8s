@@ -1,6 +1,6 @@
 ﻿namespace C8S.WordPress.Abstractions.Models;
 
-public record WordPressUserDetails
+public record WPUserDetails
 {
     public int Id { get; init; }
     public string UserName { get; init; } = null!;

@@ -3,7 +3,7 @@ using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.UI.Temp;
 
-public partial class WordPressUserCreator : BaseCoordinatedComponent<WordPressUserCreatorCoordinator>
+public partial class WordPressUserCreator : BaseCoordinatedComponent<WPUserCreatorCoordinator>
 {
     
 }

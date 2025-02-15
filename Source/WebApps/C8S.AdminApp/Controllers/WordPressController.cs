@@ -25,34 +25,32 @@ namespace C8S.AdminApp.Controllers
         ) : ControllerBase
     {
         private readonly ILogger<WordPressController> _logger = loggerFactory.CreateLogger<WordPressController>();
-        
-    #region GET LIST
-    [HttpPost]
-    [Route("api/[controller]")]
-    public async Task<DomainResponse<WPUsersListResults>> GetWordPressUsers(
-        [FromBody] WordPressUsersListQuery query)
-    {
-        try
-        {
-            throw new NotImplementedException();
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return new DomainResponse<WPUsersListResults>()
-            {
-                Exception = exception.ToSerializableException()
-            };
-        }
 
-    }
-    #endregion
+        #region GET LIST
+        [HttpPost]
+        [Route("api/[controller]")]
+        public async Task<DomainResponse<WPUsersListResults>> GetWordPressUsers(
+            [FromBody] WPUsersListQuery query)
+        {
+            try
+            {
+                var listResults = await wordPressService.GetWordPressUsers(query.IncludeRoles);
+                return DomainResponse<WPUsersListResults>.CreateSuccessResponse(listResults);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
+                return DomainResponse<WPUsersListResults>.CreateFailureResponse(exception);
+            }
+
+        }
+        #endregion
 
         #region PUT
         [HttpPut]
         [Route("api/[controller]")]
-        public async Task<DomainResponse<WordPressUserDetails>> PutWordPressUser(
-            [FromBody] WordPressUserAddCommand command)
+        public async Task<DomainResponse<WPUserDetails>> PutWordPressUser(
+            [FromBody] WPUserAddCommand command)
         {
             try
             {
@@ -62,15 +60,15 @@ namespace C8S.AdminApp.Controllers
                              throw new Exception($"Could not find person: #{command.PersonId}");
 
                 var wordPressUser = await wordPressService.CreateWordPressUser(
-                    person.LastName, person.FirstName ?? "person_name", 
+                    person.LastName, person.FirstName ?? "person_name",
                     person.Email ?? "person_email", String.Empty.AppendRandomAlphaOnly(6) + "1a!",
                     person.FirstName, person.LastName);
-                return DomainResponse<WordPressUserDetails>.CreateSuccessResponse(wordPressUser);
+                return DomainResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while adding WordPress user: {Json}", JsonSerializer.Serialize(command));
-                return DomainResponse<WordPressUserDetails>.CreateFailureResponse(exception);
+                return DomainResponse<WPUserDetails>.CreateFailureResponse(exception);
             }
         }
         #endregion

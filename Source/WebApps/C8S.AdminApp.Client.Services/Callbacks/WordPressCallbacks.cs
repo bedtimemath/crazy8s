@@ -10,8 +10,10 @@ namespace C8S.AdminApp.Client.Services.Callbacks;
 public class WordPressCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
+        // QUERIES
+        ICQRSQueryHandler<WPUsersListQuery, DomainResponse<WPUsersListResults>>,
         // COMMANDS
-        ICQRSCommandHandler<WordPressUserAddCommand, DomainResponse<WordPressUserDetails>>
+        ICQRSCommandHandler<WPUserAddCommand, DomainResponse<WPUserDetails>>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentCallbacks> _logger = loggerFactory.CreateLogger<AppointmentCallbacks>();
@@ -19,35 +21,34 @@ public class WordPressCallbacks(
 
     #region Queries
     public async Task<DomainResponse<WPUsersListResults>> Handle(
-        WordPressUsersListQuery query, CancellationToken token)
+        WPUsersListQuery query, CancellationToken token)
     {
         try
         {
-            throw new NotImplementedException();
-            //return await CallBackendServer<WordPressUserDetails>("PUT", "wordpress", 
-            //    payload:command, token: token);
+            return await CallBackendServer<WPUsersListResults>("POST", "wordpress",
+                payload: query, token: token);
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error adding WordPress user: {@Command}", query);
+            _logger.LogError(exception, "Error handling WordPress users list request: {@Query}", query);
             return DomainResponse<WPUsersListResults>.CreateFailureResponse(exception);
         }
     }
     #endregion
 
     #region Commands
-    public async Task<DomainResponse<WordPressUserDetails>> Handle(
-        WordPressUserAddCommand command, CancellationToken token)
+    public async Task<DomainResponse<WPUserDetails>> Handle(
+        WPUserAddCommand command, CancellationToken token)
     {
         try
         {
-            return await CallBackendServer<WordPressUserDetails>("PUT", "wordpress", 
+            return await CallBackendServer<WPUserDetails>("PUT", "wordpress", 
                 payload:command, token: token);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error adding WordPress user: {@Command}", command);
-            return DomainResponse<WordPressUserDetails>.CreateFailureResponse(exception);
+            return DomainResponse<WPUserDetails>.CreateFailureResponse(exception);
         }
     }
     #endregion

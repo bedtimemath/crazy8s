@@ -78,8 +78,8 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterCommand<NoteDeleteCommand, DomainResponse>(noteCallbacks.Handle);
 
         var wordPressCallbacks = serviceProvider.GetRequiredService<WordPressCallbacks>();
-        cqrsService.RegisterQuery<WordPressUsersListQuery, DomainResponse<WPUsersListResults>>(wordPressCallbacks.Handle);
-        cqrsService.RegisterCommand<WordPressUserAddCommand, DomainResponse<WordPressUserDetails>>(wordPressCallbacks.Handle);
+        cqrsService.RegisterQuery<WPUsersListQuery, DomainResponse<WPUsersListResults>>(wordPressCallbacks.Handle);
+        cqrsService.RegisterCommand<WPUserAddCommand, DomainResponse<WPUserDetails>>(wordPressCallbacks.Handle);
 
         return host;
     }

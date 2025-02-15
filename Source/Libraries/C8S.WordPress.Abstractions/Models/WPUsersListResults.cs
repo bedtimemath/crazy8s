@@ -2,4 +2,4 @@
 
 namespace C8S.WordPress.Abstractions.Models;
 
-public class WPUsersListResults : DomainListResults<WordPressUserDetails>;
+public class WPUsersListResults : DomainListResults<WPUserDetails>;
