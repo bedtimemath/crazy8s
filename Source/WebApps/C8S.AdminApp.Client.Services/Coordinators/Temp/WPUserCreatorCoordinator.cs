@@ -3,8 +3,10 @@ using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
+using C8S.WordPress.Abstractions.Notifications;
 using Microsoft.Extensions.Logging;
 using Radzen;
+using Radzen.Blazor;
 using SC.Common.Interactions;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
@@ -16,8 +18,9 @@ public sealed class WPUserCreatorCoordinator(
     IPubSubService pubSubService,
     ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
-    private readonly ILogger<WPUserCreatorCoordinator> _logger =
-        loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
+    //private readonly ILogger<WPUserCreatorCoordinator> _logger = loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
+
+    public RadzenDropDownDataGrid<PersonListItem> DataGrid { get; set; } = null!;
 
     public string? Email { get; set; }
 
@@ -44,9 +47,14 @@ public sealed class WPUserCreatorCoordinator(
             if (!SelectedId.HasValue)
                 throw new UnreachableException("CreateWordPressUser called without PersonId set.");
 
-            var wordPressUser = await GetCommandResults<WPUserAddCommand, DomainResponse<WPUserDetails>>(
-                new WPUserAddCommand() { PersonId = SelectedId.Value });
-            _logger.LogDebug("WPUser={@WPUser}", wordPressUser);
+            var response = await GetCommandResults<WPUserAddCommand, DomainResponse<WPUserDetails>>(
+                               new WPUserAddCommand() { PersonId = SelectedId.Value }) ??
+                           throw new UnreachableException("GetCommandResults returned null");
+            if (!response.Success || response.Result == null)
+                throw response?.Exception?.ToException() ??
+                      new Exception("Error adding WPUser");
+
+            PubSubService.Publish(new WPUsersUpdated() { WPUser = response.Result });
         }
         catch (Exception ex)
         {
@@ -85,9 +93,6 @@ public sealed class WPUserCreatorCoordinator(
 
             Persons = personsListResult.Result.Items;
             TotalPersons = personsListResult.Result.Total;
-
-            _logger.LogDebug("Skip={Skip}, Top={Top}, Total={Total}",
-                args.Skip, args.Top, TotalPersons);
 
             IsLoading = false;
             await PerformComponentRefresh();

@@ -8,12 +8,8 @@
                  JustifyContent="JustifyContent.Normal"
                  Gap="0.5rem">
         
-        @*
-        <RadzenTextBox @bind-Value="@Service.Email"
-                  class="flex-grow-1"/>
-        *@
-        
-        <RadzenDropDownDataGrid @bind-Value="@Service.SelectedId"
+        <RadzenDropDownDataGrid @ref="@Service.DataGrid" 
+                                @bind-Value="@Service.SelectedId"
                                 Count="@Service.TotalPersons"
                                 Data="@Service.Persons"
                                 LoadData="@Service.LoadPersonsData"

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using C8S.WordPress.Abstractions.Models;
+using C8S.WordPress.Abstractions.Notifications;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
 using Radzen;
@@ -10,13 +11,12 @@ using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Temp;
 
-public sealed class WordPressCoachListerCoordinator(
+public sealed class WPCoachListerCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
     ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
-    private readonly ILogger<WordPressCoachListerCoordinator> _logger =
-        loggerFactory.CreateLogger<WordPressCoachListerCoordinator>();
+    //private readonly ILogger<WPCoachListerCoordinator> _logger = loggerFactory.CreateLogger<WPCoachListerCoordinator>();
 
     public RadzenDataGrid<WPUserDetails> DataGrid { get; set; } = null!;
 
@@ -29,13 +29,22 @@ public sealed class WordPressCoachListerCoordinator(
     public override void SetUp()
     {
         base.SetUp();
-        LoadCoaches(new LoadDataArgs());
+
+        PubSubService.Subscribe<WPUsersUpdated>(HandleWPUsersUpdated);
+        Task.Run(async () => await DataGrid.RefreshDataAsync());
+    }
+
+    public override void TearDown()
+    {
+        base.TearDown();
+
+        PubSubService.Unsubscribe<WPUsersUpdated>(HandleWPUsersUpdated);
     }
 
     public void LoadCoaches(LoadDataArgs args) =>
         Task.Run(async () => await LoadCoachesAsync(args));
 
-    private async Task LoadCoachesAsync(LoadDataArgs args)
+    private async Task LoadCoachesAsync(LoadDataArgs _)
     {
         try
         {
@@ -53,9 +62,6 @@ public sealed class WordPressCoachListerCoordinator(
             Coaches = wpUsersListResult.Result.Items;
             TotalCount = wpUsersListResult.Result.Total;
 
-            _logger.LogDebug("Skip={Skip}, Top={Top}, Total={Total}",
-                args.Skip, args.Top, TotalCount); 
-
             IsLoading = false;
             await PerformComponentRefresh();
         }
@@ -64,4 +70,7 @@ public sealed class WordPressCoachListerCoordinator(
             PubSubService.PublishException(ex);
         }
     }
+
+    private async Task HandleWPUsersUpdated(WPUsersUpdated _) =>
+        await DataGrid.RefreshDataAsync();
 }

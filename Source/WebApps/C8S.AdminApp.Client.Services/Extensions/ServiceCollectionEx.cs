@@ -30,7 +30,7 @@ public static class ServiceCollectionEx
         services.AddScoped<NotesListEditorCoordinator>();
 
         services.AddScoped<WPUserCreatorCoordinator>();
-        services.AddScoped<WordPressCoachListerCoordinator>();
+        services.AddScoped<WPCoachListerCoordinator>();
 
         return services;
     }
