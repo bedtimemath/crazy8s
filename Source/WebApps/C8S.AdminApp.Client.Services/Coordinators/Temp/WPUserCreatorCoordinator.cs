@@ -20,7 +20,7 @@ public sealed class WPUserCreatorCoordinator(
 {
     //private readonly ILogger<WPUserCreatorCoordinator> _logger = loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
 
-    public RadzenDropDownDataGrid<PersonListItem> DataGrid { get; set; } = null!;
+    public RadzenDropDownDataGrid<int?> DataGrid { get; set; } = null!;
 
     public string? Email { get; set; }
 

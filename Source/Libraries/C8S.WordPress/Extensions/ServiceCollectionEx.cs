@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
 using AutoMapper;
-using C8S.WordPress.Profiles;
+using C8S.WordPress.Mapping;
 using C8S.WordPress.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WordPressPCL;
 
 namespace C8S.WordPress.Extensions;
 
@@ -23,8 +22,8 @@ public static class ServiceCollectionEx
     public static IServiceCollection AddWordPressServices(this IServiceCollection services,
         string endpoint, string username, string password)
     {
-        // set up automapper (WPUserProfile is used arbitrarily here)
-        services.AddAutoMapper(typeof(WPUserProfile));
+        // set up automapper (WPProfiles is used arbitrarily here)
+        services.AddAutoMapper(typeof(WPSkuProfiles));
 
         services.AddScoped<WordPressService>(svc =>
             new WordPressService(

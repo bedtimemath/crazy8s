@@ -59,11 +59,12 @@ namespace C8S.AdminApp.Controllers
                 var person = await dbContext.Persons.FirstOrDefaultAsync(p => p.PersonId == command.PersonId) ??
                              throw new Exception($"Could not find person: #{command.PersonId}");
 
-                var wordPressUser = await wordPressService.CreateWordPressUser(
-                    person.LastName, person.FirstName ?? "person_name",
-                    person.Email ?? "person_email", String.Empty.AppendRandomAlphaOnly(6) + "1a!",
-                    person.FirstName, person.LastName);
-                return DomainResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
+                throw new NotImplementedException();
+                //var wordPressUser = await wordPressService.CreateWordPressUser(
+                //    person.LastName, person.FirstName ?? "person_name",
+                //    person.Email ?? "person_email", String.Empty.AppendRandomAlphaOnly(6) + "1a!",
+                //    person.FirstName, person.LastName);
+                //return DomainResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
             catch (Exception exception)
             {

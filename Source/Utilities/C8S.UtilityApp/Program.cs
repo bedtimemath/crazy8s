@@ -18,6 +18,7 @@ using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Net.Http.Headers;
+using C8S.WordPress.Extensions;
 
 /*****************************************
  * INITIAL LOGGING
@@ -40,6 +41,7 @@ try
     var parserResult = Parser.Default
         .ParseArguments<
             AddRequestOptions,
+            WPImportSkusOptions,
             LoadC8SDataOptions,
             LoadSampleDataOptions,
             ShowConfigOptions,
@@ -107,6 +109,11 @@ try
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, AddRequest>();
             })
+            .WithParsed<WPImportSkusOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, WPImportSkus>();
+            })
             .WithParsed<LoadSampleDataOptions>(options =>
             {
                 services.AddSingleton(options);
@@ -163,6 +170,10 @@ try
         var fullSlateApi = endpoints.FullSlateApi ?? throw new Exception("Missing Endpoints:FullSlateApi");
         var fullSlateToken = apiKeys.FullSlate ?? throw new Exception("Missing ApiKeys:FullSlate");
         services.AddFullSlateServices(fullSlateApi, fullSlateToken);
+        
+        var wordPressApi = endpoints.WPCoachesAreaApi ?? throw new Exception("Missing Endpoints:WPCoachesAreaApi");
+        var wordPressToken = apiKeys.WPCoachesArea ?? throw new Exception("Missing ApiKeys:WPCoachesArea");
+        services.AddWordPressServices(wordPressApi, wordPressToken);
         
         /*****************************************
          * HTTP CLIENTS

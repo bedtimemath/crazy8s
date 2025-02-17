@@ -7,6 +7,10 @@
       "commandName": "Project",
       "commandLineArgs": "add-request"
     },
+    "WP Import Skus": {
+      "commandName": "Project",
+      "commandLineArgs": "wp-import-skus"
+    },
     "Load C8s Data": {
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data"

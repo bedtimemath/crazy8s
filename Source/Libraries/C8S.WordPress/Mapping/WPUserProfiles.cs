@@ -2,11 +2,11 @@
 using C8S.WordPress.Abstractions.Models;
 using WordPressPCL.Models;
 
-namespace C8S.WordPress.Profiles;
+namespace C8S.WordPress.Mapping;
 
-internal class WPUserProfile : Profile
+internal class WPUserProfiles : Profile
 {
-    public WPUserProfile()
+    public WPUserProfiles()
     {
         CreateMap<User, WPUserDetails>();
         CreateMap<WPUserDetails, User>();

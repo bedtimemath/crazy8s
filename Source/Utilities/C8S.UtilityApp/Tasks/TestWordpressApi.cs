@@ -1,17 +1,13 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using C8S.UtilityApp.Base;
+using C8S.WordPress.Services;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SC.Common.Extensions;
-using WordPressPCL;
-using WordPressPCL.Models;
-using WordPressPCL.Utility;
 
 namespace C8S.UtilityApp.Tasks;
 
 internal class TestWordPressApi(
     ILoggerFactory loggerFactory,
+    WordPressService wordPressService,
     TestWordPressApiOptions options)
     : IActionLauncher
 {
@@ -31,7 +27,7 @@ internal class TestWordPressApi(
             throw new UnreachableException("GetUser / DeleteUser action requires a UserId");
         if (options is { TestAction: WordPressApiAction.UpdateActivity, ActivityId: null })
             throw new UnreachableException("UpdateActivity action requires a ActivityId");
-        
+
         Console.WriteLine("Continue? Y/N");
         var checkContinue = Console.ReadKey();
 
@@ -40,50 +36,41 @@ internal class TestWordPressApi(
 
         Console.WriteLine();
 
-        var handler = new HttpClientHandler()
-        {
-            //Proxy = new WebProxy("http://localhost:8866", false)
-        };
-        _httpClient = new HttpClient(handler) { BaseAddress = new Uri(options.Site) };
-        var apiClient = new WordPressClient(_httpClient);
-        apiClient.Auth.UseBasicAuth("development@bedtimemath.org", "rkz0 2cff PoAk WsBu Eyu9 d84W");
-        
-
         switch (options.TestAction)
         {
             case WordPressApiAction.AllActions:
                 Console.WriteLine("== GET ALL USERS ==");
-                await RunGetAllUsersTest(apiClient);
+                await RunGetAllUsersTest();
                 Console.WriteLine("== ADD USER ==");
-                var userId = await RunAddUserTest(apiClient);
+                var userId = await RunAddUserTest();
                 Console.WriteLine("== GET USER ==");
-                await RunGetUserTest(apiClient, userId);
+                await RunGetUserTest(userId);
                 Console.WriteLine("== DELETE USER ==");
-                await RunDeleteUserTest(apiClient, userId);
+                await RunDeleteUserTest(userId);
                 break;
             case WordPressApiAction.AddUser:
-                await RunAddUserTest(apiClient);
+                await RunAddUserTest();
                 break;
             case WordPressApiAction.GetUser:
-                await RunGetUserTest(apiClient, options.UserId!.Value);
+                await RunGetUserTest(options.UserId!.Value);
                 break;
             case WordPressApiAction.DeleteUser:
-                await RunDeleteUserTest(apiClient, options.UserId!.Value);
+                await RunDeleteUserTest(options.UserId!.Value);
                 break;
             case WordPressApiAction.GetAllUsers:
-                await RunGetAllUsersTest(apiClient);
+                await RunGetAllUsersTest();
                 break;
             case WordPressApiAction.GetAllSkus:
-                await RunGetAllSkusTest(apiClient);
+                await RunGetAllSkusTest();
                 break;
             case WordPressApiAction.GetAllActivities:
-                await RunGetAllActivitiesTest(apiClient);
+                await RunGetAllActivitiesTest();
                 break;
             case WordPressApiAction.UpdateActivity:
                 Console.WriteLine("== UPDATE ACTIVITY ==");
-                await RunUpdateActivityTest(apiClient, options.ActivityId!.Value);
+                await RunUpdateActivityTest(options.ActivityId!.Value);
                 Console.WriteLine("== GET ALL ACTIVITIES ==");
-                await RunGetAllActivitiesTest(apiClient);
+                await RunGetAllActivitiesTest();
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(options.TestAction), $"Unrecognized WordPressApiAction: {options.TestAction}");
@@ -93,11 +80,12 @@ internal class TestWordPressApi(
         return 0;
     }
 
-    private async Task RunGetAllSkusTest(WordPressClient apiClient)
+    private async Task RunGetAllSkusTest()
     {
         try
         {
-            var skus = await apiClient.CustomRequest.GetAsync<IEnumerable<Sku>>("/wp-json/wp/v2/sku");
+            var skusResult = await wordPressService.GetWordPressSkus();
+            var skus = skusResult.Items;
             foreach (var sku in skus)
             {
                 _logger.LogDebug("{@Sku}", sku);
@@ -109,15 +97,11 @@ internal class TestWordPressApi(
         }
     }
 
-    private async Task RunGetAllActivitiesTest(WordPressClient apiClient)
+    private async Task RunGetAllActivitiesTest()
     {
         try
         {
-            var activities = await apiClient.CustomRequest.GetAsync<IEnumerable<Activity>>("/wp-json/wp/v2/activity");
-            foreach (var activity in activities)
-            {
-                _logger.LogDebug("{@Activity}", activity);
-            }
+            throw new NotImplementedException();
         }
         catch (Exception exception)
         {
@@ -125,22 +109,11 @@ internal class TestWordPressApi(
         }
     }
 
-    private async Task RunUpdateActivityTest(WordPressClient apiClient, int activityId)
+    private async Task RunUpdateActivityTest( int activityId)
     {
         try
         {
-            var activities = await apiClient.CustomRequest.GetAsync<IEnumerable<Activity>>($"/wp-json/wp/v2/activity");
-            var activity = activities.FirstOrDefault(a => a.ActivityId == activityId) ??
-                           throw new UnreachableException($"Could not find activity #{activityId}");
-
-            activity.Properties ??= new ActivityProperties();
-            activity.Properties.Materials ??= [];
-            activity.Properties.Materials.Add(new ActivityMaterial() { Quantity = 3, Material = "Triangles" });
-            activity.Properties.Materials.Add(new ActivityMaterial() { Quantity = 6, Material = "Hexagons" });
-
-            var updated = await apiClient.CustomRequest.UpdateAsync<Activity, Activity>($"/wp-json/wp/v2/activity/{activityId}", activity);
-
-            _logger.LogDebug("{@Activity}", updated);
+            throw new NotImplementedException();
         }
         catch (Exception exception)
         {
@@ -148,11 +121,12 @@ internal class TestWordPressApi(
         }
     }
 
-    private async Task RunGetAllUsersTest(WordPressClient apiClient)
+    private async Task RunGetAllUsersTest()
     {
         try
         {
-            var users = await apiClient.Users.GetAllAsync(embed:true, useAuth:true);
+            var usersResult = await wordPressService.GetWordPressUsers();
+            var users = usersResult.Items;
             foreach (var user in users)
             {
                 _logger.LogDebug("{@User}", user);
@@ -164,19 +138,11 @@ internal class TestWordPressApi(
         }
     }
 
-    private async Task<int> RunAddUserTest(WordPressClient apiClient)
+    private async Task<int> RunAddUserTest()
     {
         try
         {
-            var extraBit = String.Empty.AppendRandomAlphaOnly(5);
-            var username = $"test_{extraBit}";
-            var email = $"dsteen+test{extraBit}@gmail.com";
-            var user = await apiClient.Users.CreateAsync(new User(username, email, "Test123!")
-            {
-                Roles = ["subscriber","coach"]
-            });
-            _logger.LogDebug("Created: {@User}", user);
-            return user.Id;
+            throw new NotImplementedException();
         }
         catch (Exception exception)
         {
@@ -184,31 +150,24 @@ internal class TestWordPressApi(
             return 0;
         }
     }
-    
-    private async Task RunGetUserTest(WordPressClient apiClient, int id)
+
+    private async Task RunGetUserTest( int id)
     {
         try
         {
-            var queryBuilder = new UsersQueryBuilder()
-            {
-                Context = Context.Edit, // required to see roles & capabilities
-                Include = [ id ]
-            };
-            var user = await apiClient.Users.QueryAsync(queryBuilder, useAuth:true);
-            _logger.LogDebug("Got #{Id}:{@User}", id, user);
+            throw new NotImplementedException();
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Could not run test");
         }
     }
-    
-    private async Task RunDeleteUserTest(WordPressClient apiClient, int id) 
+
+    private async Task RunDeleteUserTest( int id)
     {
         try
         {
-            var user = await apiClient.Users.Delete(id,1);
-            _logger.LogDebug("Deleted #{Id}:{@User}", id, user);
+            throw new NotImplementedException();
         }
         catch (Exception exception)
         {
@@ -217,6 +176,7 @@ internal class TestWordPressApi(
     }
 }
 
+#if false
 public class Activity
 {
     [JsonProperty(PropertyName = "id")]
@@ -247,40 +207,5 @@ public class ActivityMaterial
     public int? Quantity { get; set; }
     [JsonProperty(PropertyName = "material")]
     public string? Material { get; set; }
-}
-
-public class Sku
-{
-    [JsonProperty(PropertyName = "id")]
-    public int SkuId { get; set; }
-    [JsonProperty(PropertyName = "slug")]
-    public string? Slug { get; set; }
-    [JsonProperty(PropertyName = "status")]
-    public string? Status { get; set; }
-    [JsonProperty(PropertyName = "link")]
-    public string? Link { get; set; }
-    [JsonProperty(PropertyName = "type")]
-    public string? Type { get; set; }
-    [JsonProperty(PropertyName = "title")]
-    public SkuTitle? Title { get; set; }
-    [JsonProperty(PropertyName = "acf")]
-    public SkuProperties? Properties { get; set; }
-}
-
-public class SkuProperties
-{
-    [JsonProperty(PropertyName = "sku_name")]
-    public string? SkuName { get; set; }
-    [JsonProperty(PropertyName = "sku_identifier")]
-    public string? SkuIdentifier { get; set; }
-    [JsonProperty(PropertyName = "season")]
-    public string? Season { get; set; }
-    [JsonProperty(PropertyName = "age_range")]
-    public string? AgeRange { get; set; }
-}
-
-public class SkuTitle
-{
-    [JsonProperty(PropertyName = "rendered")]
-    public string? Rendered { get; set; }
-}
+} 
+#endif
