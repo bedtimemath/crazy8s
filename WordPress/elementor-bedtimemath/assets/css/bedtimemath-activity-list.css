@@ -1,0 +1,44 @@
+﻿.activity-list {
+    display: flex;
+    flex-direction: row;
+    align-content: space-between;
+    flex-wrap: wrap;
+}
+
+.activity {
+    flex-grow: 1;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    border: solid 2px black;
+    margin: 4px;
+    padding: 4px;
+    border-radius: 6px;
+    max-width: 48%;
+}
+
+.activity-image {
+    flex-shrink: 0;
+    align-self: center;
+    margin-right: 18px;
+    margin-left: 6px;
+}
+
+.activity-image img {
+    max-width: 150px;
+}
+
+.activity-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-label {
+    font-weight: bold;
+    margin-right: 0.25rem;
+}
+
+.activity-video a {
+    font-size: x-large;
+    font-weight: bold;
+}

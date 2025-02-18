@@ -1,0 +1,15 @@
+﻿.teaser {
+}
+
+    .teaser .teaser-thumbnail {
+    }
+
+    .teaser .teaser-title {
+    }
+
+.teaser .teaser-story a {
+    color: #002069;
+}
+    .teaser .teaser-story a:hover {
+        color: #e77a05;
+    }

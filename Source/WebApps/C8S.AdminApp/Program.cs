@@ -22,6 +22,11 @@ using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+#if !DEBUG
+using C8S.Domain;
+using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
+using Serilog.Sinks.MSSqlServer;
+#endif
 
 /*****************************************
  * INITIAL LOGGING

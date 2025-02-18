@@ -37,7 +37,7 @@ public partial class SubmitNewPages(
     FullSlateService fullSlateService)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger _logger = loggerFactory.CreateLogger<SubmitNewPages>();
+    private readonly ILogger<SubmitNewPages> _logger = loggerFactory.CreateLogger<SubmitNewPages>();
 
     private const string CoachResponse = "I'm a coach";
     private const string HostedBeforeResponse = "We've hosted before";

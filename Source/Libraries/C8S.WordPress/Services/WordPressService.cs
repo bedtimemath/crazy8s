@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,9 @@ public class WordPressService
         _logger = loggerFactory.CreateLogger<WordPressService>();
         _mapper = mapper;
 
+        //var httpHandler = new HttpClientHandler() { Proxy = new WebProxy(new Uri("http://localhost:8866")) };
+        //var httpClient = new HttpClient(httpHandler) { BaseAddress = new Uri(endpoint) };
+        //_wordPressClient = new WordPressClient(httpClient);
         _wordPressClient = new WordPressClient(endpoint);
         _wordPressClient.Auth.UseBasicAuth(username, password);
     }

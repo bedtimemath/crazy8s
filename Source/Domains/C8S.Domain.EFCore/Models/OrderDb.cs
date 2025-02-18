@@ -32,7 +32,7 @@ public class OrderDb: BaseCoreDb
 
     #region Database Properties
     [Required]
-    public int Number { get; set; } = default!;
+    public int Number { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -48,45 +48,45 @@ public class OrderDb: BaseCoreDb
     public string? ContactPhone { get; set; } = null;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.FullName)]
-    public string Recipient { get; set; } = default!;
+    public string Recipient { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string Line1 { get; set; } = default!;
+    public string Line1 { get; set; } = null!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? Line2 { get; set; } = default!;
+    public string? Line2 { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Medium)]
-    public string City { get; set; } = default!;
+    public string City { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
-    public string State { get; set; } = default!;
+    public string State { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.ZIPCode)]
-    public string ZIPCode { get; set; } = default!;
+    public string ZIPCode { get; set; } = null!;
 
     [Required]
-    public bool IsMilitary { get; set; } = default!;
+    public bool IsMilitary { get; set; } = false!;
     
     [Required]
     public DateTimeOffset OrderedOn { get; set; } = default!;
     
-    public DateOnly? ArriveBy { get; set; } = default!;
+    public DateOnly? ArriveBy { get; set; } = null!;
     
-    public DateTimeOffset? ShippedOn { get; set; } = default!;
+    public DateTimeOffset? ShippedOn { get; set; } = null!;
     
-    public DateTimeOffset? EmailedOn { get; set; } = default!;
+    public DateTimeOffset? EmailedOn { get; set; } = null!;
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Club))]
-    public int? ClubId { get; set; } = default!;
-    public ClubDb? Club { get; set; } = default!;
+    public int? ClubId { get; set; } = null!;
+    public ClubDb? Club { get; set; } = null!;
     #endregion
 
     #region Child Properties
-    public ICollection<ShipmentDb> Shipments { get; set; } = default!;
-    public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
-    public ICollection<OrderNoteDb> Notes { get; set; } = default!;
+    public ICollection<ShipmentDb> Shipments { get; set; } = null!;
+    public ICollection<OrderSkuDb> OrderSkus { get; set; } = null!;
+    public ICollection<OrderNoteDb> Notes { get; set; } = null!;
     #endregion
 }

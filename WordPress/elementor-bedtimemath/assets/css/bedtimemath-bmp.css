@@ -1,0 +1,42 @@
+﻿.bmp {
+}
+
+    .bmp .bmp-questions {
+    }
+
+        .bmp .bmp-questions .bmp-weeones-question,
+        .bmp .bmp-questions .bmp-littlekids-question,
+        .bmp .bmp-questions .bmp-littlekids-bonus-question,
+        .bmp .bmp-questions .bmp-bigkids-question,
+        .bmp .bmp-questions .bmp-bigkids-bonus-question,
+        .bmp .bmp-questions .bmp-skyslimit-question {
+            display: inline;
+        }
+
+        .bmp .bmp-questions .bmp-littlekids-bonus-question,
+        .bmp .bmp-questions .bmp-bigkids-bonus-question {
+            margin-left: 0.75em;
+        }
+
+    .bmp .bmp-spacer {
+        font-weight: bold;
+        font-style: italic;
+        margin-top: 10em;
+    }
+
+    .bmp .bmp-answers {
+    }
+
+        .bmp .bmp-answers .bmp-weeones-answer,
+        .bmp .bmp-answers .bmp-littlekids-answer,
+        .bmp .bmp-answers .bmp-littlekids-bonus-answer,
+        .bmp .bmp-answers .bmp-bigkids-answer,
+        .bmp .bmp-answers .bmp-bigkids-bonus-answer,
+        .bmp .bmp-answers .bmp-skyslimit-answer {
+            display: inline;
+        }
+
+        .bmp .bmp-answers .bmp-littlekids-bonus-answer,
+        .bmp .bmp-answers .bmp-bigkids-bonus-answer {
+            margin-left: 0.75em;
+        }
