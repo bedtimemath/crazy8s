@@ -7,7 +7,7 @@ using C8S.Domain.Features;
 using Microsoft.Extensions.Logging;
 using SC.Common.Client.Navigation.Enums;
 using SC.Common.Client.Navigation.Models;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Menu.Services;
@@ -55,21 +55,21 @@ public sealed class SidebarMenuService(
     #endregion
 
     #region Query Handlers
-    public Task<DomainResponse<IEnumerable<MenuSingle>>> Handle(MenuSinglesQuery query, CancellationToken cancellationToken = default) =>
+    public Task<WrappedResponse<IEnumerable<MenuSingle>>> Handle(MenuSinglesQuery query, CancellationToken cancellationToken = default) =>
         query.ShowBeforeOthers ?
-        Task.FromResult(DomainResponse<IEnumerable<MenuSingle>>.CreateSuccessResponse(PreSingles)) :
-        Task.FromResult(DomainResponse<IEnumerable<MenuSingle>>.CreateSuccessResponse(PostSingles));
+        Task.FromResult(WrappedResponse<IEnumerable<MenuSingle>>.CreateSuccessResponse(PreSingles)) :
+        Task.FromResult(WrappedResponse<IEnumerable<MenuSingle>>.CreateSuccessResponse(PostSingles));
 
-    public Task<DomainResponse<IEnumerable<MenuGroup>>> Handle(MenuGroupsQuery query, CancellationToken cancellationToken = default) =>
-        Task.FromResult(DomainResponse<IEnumerable<MenuGroup>>.CreateSuccessResponse(MenuGroups));
+    public Task<WrappedResponse<IEnumerable<MenuGroup>>> Handle(MenuGroupsQuery query, CancellationToken cancellationToken = default) =>
+        Task.FromResult(WrappedResponse<IEnumerable<MenuGroup>>.CreateSuccessResponse(MenuGroups));
 
-    public Task<DomainResponse<IEnumerable<MenuItem>>> Handle(MenuItemsQuery query, CancellationToken cancellationToken = default)
+    public Task<WrappedResponse<IEnumerable<MenuItem>>> Handle(MenuItemsQuery query, CancellationToken cancellationToken = default)
     {
         if (!MenuItemsLookup.TryGetValue(query.Entity, out var menuItems))
             menuItems = [];
 
         var response =
-            DomainResponse<IEnumerable<MenuItem>>.CreateSuccessResponse(menuItems.Values);
+            WrappedResponse<IEnumerable<MenuItem>>.CreateSuccessResponse(menuItems.Values);
 
         return Task.FromResult(response);
     }

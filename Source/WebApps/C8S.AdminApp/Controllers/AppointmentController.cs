@@ -3,7 +3,7 @@ using C8S.Domain.Features.Appointments.Models;
 using C8S.FullSlate.Services;
 using Microsoft.AspNetCore.Mvc;
 using SC.Common.Extensions;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers
 {
@@ -17,7 +17,7 @@ namespace C8S.AdminApp.Controllers
         
         [HttpGet]
         [Route("api/[controller]/{appointmentId:int}")]
-        public async Task<DomainResponse<AppointmentDetails?>> GetAppointment(int appointmentId)
+        public async Task<WrappedResponse<AppointmentDetails?>> GetAppointment(int appointmentId)
         {
             try
             {
@@ -47,12 +47,12 @@ namespace C8S.AdminApp.Controllers
                                     throw new UnreachableException("FullSlate Appointment missing Deleted")
                     };
                 
-                return new DomainResponse<AppointmentDetails?>() { Result = appointment };
+                return new WrappedResponse<AppointmentDetails?>() { Result = appointment };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while getting details: {Id}", appointmentId);
-                return new DomainResponse<AppointmentDetails?>()
+                return new WrappedResponse<AppointmentDetails?>()
                 {
                     Exception = exception.ToSerializableException()
                 };

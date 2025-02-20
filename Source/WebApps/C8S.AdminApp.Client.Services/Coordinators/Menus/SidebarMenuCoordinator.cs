@@ -1,7 +1,7 @@
 ﻿using C8S.AdminApp.Client.Services.Menu.Models;
 using C8S.AdminApp.Client.Services.Menu.Queries;
 using Microsoft.Extensions.Logging;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -19,13 +19,13 @@ public sealed class SidebarMenuCoordinator(
     #region Public Methods
     public async Task<IEnumerable<MenuGroup>> GetMenuGroups()
     {
-        var response = await GetQueryResults<MenuGroupsQuery, DomainResponse<IEnumerable<MenuGroup>>>(
+        var response = await GetQueryResults<MenuGroupsQuery, WrappedResponse<IEnumerable<MenuGroup>>>(
             new MenuGroupsQuery());
         return response.Success ? response.Result! : [];
     }
     public async Task<IEnumerable<MenuSingle>> GetMenuSingles(bool showBeforeOthers)
     {
-        var response = await GetQueryResults<MenuSinglesQuery, DomainResponse<IEnumerable<MenuSingle>>>(
+        var response = await GetQueryResults<MenuSinglesQuery, WrappedResponse<IEnumerable<MenuSingle>>>(
             new MenuSinglesQuery() { ShowBeforeOthers = showBeforeOthers });
         return response.Success ? response.Result! : [];
     }

@@ -3,6 +3,7 @@ using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
+using SC.Common.Responses;
 using WordPressPCL;
 using WordPressPCL.Models;
 using WordPressPCL.Models.Exceptions;
@@ -35,7 +36,7 @@ public class WordPressService
     }
 
     #region Get
-    public async Task<WPUsersListResults> GetWordPressUsers(
+    public async Task<WrappedListResponse<WPUserDetails>> GetWordPressUsers(
         IEnumerable<string>? includeRoles = null)
     {
         var queryBuilder = new UsersQueryBuilder()
@@ -67,15 +68,13 @@ public class WordPressService
                 break;
             }
         }
-
-        return new WPUsersListResults()
-        {
-            Items = allUsers.Select(_mapper.Map<WPUserDetails>).ToList(),
-            Total = allUsers.Count
-        };
+        
+        var items = allUsers.Select(_mapper.Map<WPUserDetails>).ToList();
+        var count = allUsers.Count;
+        return WrappedListResponse<WPUserDetails>.CreateSuccessResponse(items, count);
     }
 
-    public async Task<WPSkusListResults> GetWordPressSkus()
+    public async Task<WrappedListResponse<WPSkuDetails>> GetWordPressSkus()
     {
         var allSkus = new List<CustomSku>();
         var page = 1;
@@ -99,11 +98,9 @@ public class WordPressService
             }
         }
 
-        return new WPSkusListResults()
-        {
-            Items = allSkus.Select(_mapper.Map<WPSkuDetails>).ToList(),
-            Total = allSkus.Count
-        };
+        var items = allSkus.Select(_mapper.Map<WPSkuDetails>).ToList();
+        var count = allSkus.Count;
+        return WrappedListResponse<WPSkuDetails>.CreateSuccessResponse(items, count);
     }
     #endregion
 

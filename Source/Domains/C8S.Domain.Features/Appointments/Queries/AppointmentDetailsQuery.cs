@@ -1,10 +1,10 @@
 ﻿using C8S.Domain.Features.Appointments.Models;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Appointments.Queries;
 
-public record AppointmentDetailsQuery : ICQRSQuery<DomainResponse<AppointmentDetails?>>
+public record AppointmentDetailsQuery : ICQRSQuery<WrappedResponse<AppointmentDetails?>>
 {
-    public int AppointmentId { get; init; }
+    public long AppointmentId { get; init; }
 }

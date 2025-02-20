@@ -4,7 +4,7 @@ using C8S.Domain.Features.Appointments.Queries;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using Microsoft.Extensions.Logging;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -26,7 +26,7 @@ public class AppointmentDisplayerCoordinator(
 
     #region Private Variables
     private int _requestId;
-    private int? _appointmentId;
+    private long? _appointmentId;
     private DateTimeOffset? _startsOn;
     #endregion
 
@@ -35,7 +35,7 @@ public class AppointmentDisplayerCoordinator(
     #endregion
 
     #region Public Methods
-    public void SetDetailsId(int requestId, int? appointmentId, DateTimeOffset? startsOn)
+    public void SetDetailsId(int requestId, long? appointmentId, DateTimeOffset? startsOn)
     {
         _requestId = requestId;
         _appointmentId = appointmentId;
@@ -60,7 +60,7 @@ public class AppointmentDisplayerCoordinator(
                 throw new UnreachableException("CheckAndUpdateAppointment called with null appointment id");
 
             var appointmentResponse = await GetQueryResults
-                <AppointmentDetailsQuery, DomainResponse<AppointmentDetails?>>(
+                <AppointmentDetailsQuery, WrappedResponse<AppointmentDetails?>>(
                     new AppointmentDetailsQuery()
                     {
                         AppointmentId = _appointmentId.Value
@@ -75,7 +75,7 @@ public class AppointmentDisplayerCoordinator(
             // attempt to update the database so we don't have to always check
             try
             {
-                var databaseResponse = await GetCommandResults<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>(
+                var databaseResponse = await GetCommandResults<RequestUpdateAppointmentCommand, WrappedResponse<RequestDetails>>(
                         new RequestUpdateAppointmentCommand()
                         {
                             RequestId = _requestId,

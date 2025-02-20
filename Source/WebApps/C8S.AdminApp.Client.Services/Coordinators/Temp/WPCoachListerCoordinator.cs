@@ -5,7 +5,7 @@ using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
 using Radzen;
 using Radzen.Blazor;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -20,7 +20,7 @@ public sealed class WPCoachListerCoordinator(
 
     public RadzenDataGrid<WPUserDetails> DataGrid { get; set; } = null!;
 
-    public IEnumerable<WPUserDetails> Coaches { get; set; } = new List<WPUserDetails>();
+    public IList<WPUserDetails> Coaches { get; set; } = new List<WPUserDetails>();
     public IList<WPUserDetails> SelectedCoaches { get; set; } = [];
     public int TotalCount { get; set; }
 
@@ -51,16 +51,14 @@ public sealed class WPCoachListerCoordinator(
             IsLoading = true;
             await PerformComponentRefresh();
 
-            var wpUsersListResult = await GetQueryResults<WPUsersListQuery, DomainResponse<WPUsersListResults>>(
+            var response = await GetQueryResults<WPUsersListQuery, WrappedListResponse<WPUserDetails>>(
                 new WPUsersListQuery() { IncludeRoles = [ "Coach" ]}) ??
                                     throw new UnreachableException("GetQueryResults returned null");
-            
-            if (!wpUsersListResult.Success || wpUsersListResult.Result == null)
-                throw wpUsersListResult.Exception?.ToException() ??
-                      new Exception("Error occurred loading persons");
+            if (response is { Success: false } or { Result: null } ) 
+                throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
-            Coaches = wpUsersListResult.Result.Items;
-            TotalCount = wpUsersListResult.Result.Total;
+            Coaches = response.Result;
+            TotalCount = response.Total;
 
             IsLoading = false;
             await PerformComponentRefresh();

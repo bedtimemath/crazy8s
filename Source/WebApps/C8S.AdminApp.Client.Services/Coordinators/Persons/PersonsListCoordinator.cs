@@ -3,10 +3,11 @@ using C8S.Domain.Features.Persons.Queries;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using SC.Common.Interactions;
 using SC.Common.Razor.Extensions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
+using System.Diagnostics;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Persons;
 
@@ -69,7 +70,7 @@ public sealed class PersonsListCoordinator(
     {
         try
         {
-            var backendResponse = await GetQueryResults<PersonsListQuery, DomainResponse<PersonsListResults>>(
+            var response = await GetQueryResults<PersonsListQuery, WrappedListResponse<PersonListItem>>(
                     new PersonsListQuery()
                     {
                         StartIndex = person.StartIndex,
@@ -77,13 +78,14 @@ public sealed class PersonsListCoordinator(
                         Query = Query,
                         SortDescription = SelectedSort
                     });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+            if (response is { Success: false } or { Result: null } ) 
+                throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
-            var results = backendResponse.Result!;
-            TotalCount = results.Total;
+            var results = response.Result;
+            TotalCount = results.Count;
 
             RaiseListUpdated();
-            return new ItemsProviderResult<PersonListItem>(results.Items, results.Total);
+            return new ItemsProviderResult<PersonListItem>(results, results.Count);
         }
         catch (Exception ex)
         {

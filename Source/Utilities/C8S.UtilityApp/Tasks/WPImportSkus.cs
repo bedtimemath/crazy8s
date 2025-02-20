@@ -43,8 +43,9 @@ internal class WPImportSkus(
         //foreach (var dbSku in dbSkus)
         //    _logger.LogInformation("{@Sku}", dbSku);
 
-        var wpSkus = (await wordPressService.GetWordPressSkus()).Items;
-        _logger.LogInformation("Found {Count:#,##0} skus in WordPress.", wpSkus.Count);
+        var response = await wordPressService.GetWordPressSkus(); 
+        var wpSkus = response.Result;
+        _logger.LogInformation("Found {Count:#,##0} skus in WordPress.", response.Total);
 
         //foreach (var wpSku in wpSkus)
         //    _logger.LogInformation("{@Sku}", wpSku);

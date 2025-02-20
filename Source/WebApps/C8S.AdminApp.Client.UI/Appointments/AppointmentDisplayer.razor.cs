@@ -21,7 +21,7 @@ public partial class AppointmentDisplayer :
     public int RequestId { get; set; } 
     
     [Parameter]
-    public int? AppointmentId { get; set; } 
+    public long? AppointmentId { get; set; } 
 
     [Parameter]
     public DateTimeOffset? AppointmentStartsOn { get; set; } 

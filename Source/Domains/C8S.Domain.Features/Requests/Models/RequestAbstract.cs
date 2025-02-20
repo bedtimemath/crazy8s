@@ -10,7 +10,7 @@ public record RequestAbstract : RequestBase
     public string? PlaceCity { get; init; }
     public string? PlaceState { get; init; }
 
-    public int? FullSlateAppointmentId { get; init; }
+    public long? FullSlateAppointmentId { get; init; }
 
     public DateTimeOffset? FullSlateAppointmentStartsOn { get; init; }
 

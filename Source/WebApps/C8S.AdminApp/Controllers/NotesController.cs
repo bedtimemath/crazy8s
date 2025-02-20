@@ -14,8 +14,8 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SC.Common;
 using SC.Common.Extensions;
-using SC.Common.Interactions;
 using SC.Common.PubSub;
+using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers;
 
@@ -34,7 +34,7 @@ public class NotesController(
     #region GET LIST
     [HttpPost]
     [Route("api/[controller]")]
-    public async Task<DomainResponse<NotesListResults>> GetNotes(
+    public async Task<WrappedListResponse<NoteDetails>> GetNotes(
         [FromBody] NotesListQuery query)
     {
         try
@@ -56,36 +56,23 @@ public class NotesController(
             // sorting is always the same
             queryable = queryable.OrderByDescending(n => n.CreatedOn);
 
-            var totalNotes = await queryable.CountAsync();
-            var notes = await queryable.ToListAsync();
+            var items = await mapper.ProjectTo<NoteDetails>(queryable).ToListAsync();
+            var total = await queryable.CountAsync();
 
-            return new DomainResponse<NotesListResults>()
-            {
-                Result = new NotesListResults()
-                {
-                    Items = notes
-                        .Select(mapper.Map<NoteDetails>)
-                        .ToList(),
-                    Total = totalNotes
-                }
-            };
+            return WrappedListResponse<NoteDetails>.CreateSuccessResponse(items, total);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return new DomainResponse<NotesListResults>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedListResponse<NoteDetails>.CreateFailureResponse(exception);
         }
-
     }
     #endregion
 
     #region GET SINGLE
     [HttpGet]
     [Route("api/[controller]/{noteId:int}")]
-    public async Task<DomainResponse<NoteDetails?>> GetNote(int noteId)
+    public async Task<WrappedResponse<NoteDetails?>> GetNote(int noteId)
     {
         try
         {
@@ -96,7 +83,7 @@ public class NotesController(
 
             var note = await queryable.FirstOrDefaultAsync(r => r.NoteId == noteId);
 
-            return new DomainResponse<NoteDetails?>()
+            return new WrappedResponse<NoteDetails?>()
             {
                 Result = mapper.Map<NoteDetails?>(note)
             };
@@ -104,7 +91,7 @@ public class NotesController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", noteId);
-            return new DomainResponse<NoteDetails?>()
+            return new WrappedResponse<NoteDetails?>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -115,7 +102,7 @@ public class NotesController(
     #region PUT
     [HttpPut]
     [Route("api/[controller]")]
-    public async Task<DomainResponse<NoteDetails>> PutNote(
+    public async Task<WrappedResponse<NoteDetails>> PutNote(
         [FromBody] NoteAddCommand command)
     {
         try
@@ -143,7 +130,7 @@ public class NotesController(
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return new DomainResponse<NoteDetails>()
+            return new WrappedResponse<NoteDetails>()
             {
                 Result = addedDetails
             };
@@ -151,7 +138,7 @@ public class NotesController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while adding note: {Json}", JsonSerializer.Serialize(command));
-            return new DomainResponse<NoteDetails>()
+            return new WrappedResponse<NoteDetails>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -162,7 +149,7 @@ public class NotesController(
     #region PATCH
     [HttpPatch]
     [Route("api/[controller]/{noteId:int}")]
-    public async Task<DomainResponse<NoteDetails>> PatchNote(int noteId,
+    public async Task<WrappedResponse<NoteDetails>> PatchNote(int noteId,
         [FromBody] NoteUpdateCommand command)
     {
         try
@@ -187,7 +174,7 @@ public class NotesController(
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return new DomainResponse<NoteDetails>()
+            return new WrappedResponse<NoteDetails>()
             {
                 Result = mapper.Map<NoteDetails?>(note)
             };
@@ -195,7 +182,7 @@ public class NotesController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while patching note: {Id}", noteId);
-            return new DomainResponse<NoteDetails>()
+            return new WrappedResponse<NoteDetails>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -206,7 +193,7 @@ public class NotesController(
     #region DELETE
     [HttpDelete]
     [Route("api/[controller]/{noteId:int}")]
-    public async Task<DomainResponse> DeleteNote(int noteId)
+    public async Task<WrappedResponse> DeleteNote(int noteId)
     {
         try
         {
@@ -232,12 +219,12 @@ public class NotesController(
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return DomainResponse.CreateSuccessResponse();
+            return WrappedResponse.CreateSuccessResponse();
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", noteId);
-            return DomainResponse.CreateFailureResponse(exception);
+            return WrappedResponse.CreateFailureResponse(exception);
         }
     }
     #endregion

@@ -4,11 +4,12 @@ using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
-using SC.Common.Interactions;
 using SC.Common.Models;
 using SC.Common.Razor.Extensions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
+using System.Diagnostics;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
 
@@ -87,7 +88,7 @@ public sealed class RequestsListCoordinator(
         try
         {
             var hasCoachCall = SelectedSort.StartsWith("FullSlateAppointmentStartsOn") ? true : (bool?)null;
-            var backendResponse = await GetQueryResults<RequestsListQuery, DomainResponse<RequestsListResults>>(
+            var response = await GetQueryResults<RequestsListQuery, WrappedListResponse<RequestListItem>>(
                     new RequestsListQuery()
                     {
                         StartIndex = request.StartIndex,
@@ -99,13 +100,14 @@ public sealed class RequestsListCoordinator(
                         Statuses = SelectedStatuses,
                         HasCoachCall = hasCoachCall
                     });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+            if (response is { Success: false } or { Result: null } ) 
+                throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
-            var results = backendResponse.Result!;
-            TotalCount = results.Total;
+            var results = response.Result;
+            TotalCount = results.Count;
 
             RaiseListUpdated();
-            return new ItemsProviderResult<RequestListItem>(results.Items, results.Total);
+            return new ItemsProviderResult<RequestListItem>(results, results.Count);
         }
         catch (Exception ex)
         {

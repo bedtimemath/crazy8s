@@ -6,8 +6,8 @@ using C8S.Domain.Features.Notes.Queries;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.Json;
-using SC.Common.Interactions;
 using SC.Common.PubSub;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -34,7 +34,7 @@ public sealed class NotesListEditorCoordinator(
     public NoteReference NotesSource { get; set; } = default;
     public int SourceId { get; set; }
 
-    public List<NoteDetails> Notes { get; private set; } = [];
+    public IList<NoteDetails> Notes { get; private set; } = [];
     public int TotalCount { get; set; } 
     #endregion
 
@@ -102,7 +102,7 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetCommandResults<NoteAddCommand, DomainResponse<NoteDetails>>(
+            var backendResponse = await GetCommandResults<NoteAddCommand, WrappedResponse<NoteDetails>>(
                     new NoteAddCommand()
                     {
                         Reference = NotesSource,
@@ -128,13 +128,13 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetCommandResults<NoteUpdateCommand, DomainResponse<NoteDetails>>(
+            var response = await GetCommandResults<NoteUpdateCommand, WrappedResponse<NoteDetails>>(
                     new NoteUpdateCommand()
                     {
                         NoteId = note.NoteId,
                         Content = note.Content
                     });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException(); 
+            if (!response.Success) throw response.Exception!.ToException(); 
         }
         catch (Exception ex)
         {
@@ -153,12 +153,12 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetCommandResults<NoteDeleteCommand, DomainResponse>(
+            var response = await GetCommandResults<NoteDeleteCommand, WrappedResponse>(
                     new NoteDeleteCommand()
                     {
                         NoteId = noteId
                     });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+            if (!response.Success) throw response.Exception!.ToException();
 
             // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated(); 
@@ -180,17 +180,17 @@ public sealed class NotesListEditorCoordinator(
 
         try
         {
-            var backendResponse = await GetQueryResults<NotesListQuery, DomainResponse<NotesListResults>>(
+            var response = await GetQueryResults<NotesListQuery, WrappedListResponse<NoteDetails>>(
                     new NotesListQuery()
                     {
                         NotesSource = NotesSource,
                         SourceId = SourceId
                     });
-            if (!backendResponse.Success) throw backendResponse.Exception!.ToException();
+            if (response is { Success: false } or { Result: null } ) 
+                throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
-            var results = backendResponse.Result!;
-            Notes = results.Items;
-            TotalCount = results.Total;
+            Notes = response.Result;
+            TotalCount = response.Total;
 
             // todo: do I need this if the notification is coming from the backend later?
             RaiseListUpdated(); 

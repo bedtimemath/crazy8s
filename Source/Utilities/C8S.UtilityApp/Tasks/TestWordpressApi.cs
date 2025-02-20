@@ -85,7 +85,7 @@ internal class TestWordPressApi(
         try
         {
             var skusResult = await wordPressService.GetWordPressSkus();
-            var skus = skusResult.Items;
+            var skus = skusResult.Result ?? throw new Exception("No Skus returned.");
             foreach (var sku in skus)
             {
                 _logger.LogDebug("{@Sku}", sku);
@@ -126,7 +126,7 @@ internal class TestWordPressApi(
         try
         {
             var usersResult = await wordPressService.GetWordPressUsers();
-            var users = usersResult.Items;
+            var users = usersResult.Result ?? throw new Exception("No Users returned.");
             foreach (var user in users)
             {
                 _logger.LogDebug("{@User}", user);

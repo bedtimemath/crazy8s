@@ -2,13 +2,14 @@
 using System.Text.Json;
 using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.Extensions;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers;
 
@@ -23,7 +24,7 @@ public class RequestsController(
     #region GET LIST
     [HttpPost]
     [Route("api/[controller]")]
-    public async Task<DomainResponse<RequestsListResults>> GetRequests(
+    public async Task<WrappedListResponse<RequestListItem>> GetRequests(
     [FromBody] RequestsListQuery query)
     {
         try
@@ -86,26 +87,15 @@ public class RequestsController(
             if (query.StartIndex != null) queryable = queryable.Skip(query.StartIndex.Value);
             if (query.Count != null) queryable = queryable.Take(query.Count.Value);
 
-            var requests = await queryable.ToListAsync();
+            var items = await mapper.ProjectTo<RequestListItem>(queryable).ToListAsync();
+            var total = await queryable.CountAsync();
 
-            return new DomainResponse<RequestsListResults>()
-            {
-                Result = new RequestsListResults()
-                {
-                    Items = requests
-                        .Select(mapper.Map<RequestListItem>)
-                        .ToList(),
-                    Total = totalRequests
-                }
-            };
+            return WrappedListResponse<RequestListItem>.CreateSuccessResponse(items, total);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return new DomainResponse<RequestsListResults>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedListResponse<RequestListItem>.CreateFailureResponse(exception);
         }
 
     } 
@@ -114,7 +104,7 @@ public class RequestsController(
     #region GET SINGLE
     [HttpGet]
     [Route("api/[controller]/{requestId:int}")]
-    public async Task<DomainResponse<RequestDetails>> GetRequest(int requestId)
+    public async Task<WrappedResponse<RequestDetails>> GetRequest(int requestId)
     {
         try
         {
@@ -127,7 +117,7 @@ public class RequestsController(
 
             var request = await queryable.FirstOrDefaultAsync(r => r.RequestId == requestId);
 
-            return new DomainResponse<RequestDetails>()
+            return new WrappedResponse<RequestDetails>()
             {
                 Result = mapper.Map<RequestDetails?>(request)
             };
@@ -135,7 +125,7 @@ public class RequestsController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", requestId);
-            return new DomainResponse<RequestDetails>()
+            return new WrappedResponse<RequestDetails>()
             {
                 Exception = exception.ToSerializableException()
             };
@@ -146,7 +136,7 @@ public class RequestsController(
     #region PATCH
     [HttpPatch]
     [Route("api/[controller]/{requestId:int}")]
-    public async Task<DomainResponse<RequestDetails>> PatchRequest(int requestId,
+    public async Task<WrappedResponse<RequestDetails>> PatchRequest(int requestId,
         [FromBody] RequestUpdateAppointmentCommand command)
     {
         try
@@ -158,7 +148,7 @@ public class RequestsController(
             request.FullSlateAppointmentStartsOn = command.FullSlateAppointmentStartsOn;
             await dbContext.SaveChangesAsync();
 
-            return new DomainResponse<RequestDetails>()
+            return new WrappedResponse<RequestDetails>()
             {
                 Result = mapper.Map<RequestDetails?>(request)
             };
@@ -166,7 +156,7 @@ public class RequestsController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while patching appointment starts on: {Id}", requestId);
-            return new DomainResponse<RequestDetails>()
+            return new WrappedResponse<RequestDetails>()
             {
                 Exception = exception.ToSerializableException()
             };

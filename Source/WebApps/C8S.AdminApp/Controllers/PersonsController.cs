@@ -2,12 +2,13 @@
 using System.Text.Json;
 using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.Extensions;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers;
 
@@ -22,7 +23,7 @@ public class PersonsController(
     #region GET LIST
     [HttpPost]
     [Route("api/[controller]")]
-    public async Task<DomainResponse<PersonsListResults>> GetPersons(
+    public async Task<WrappedListResponse<PersonListItem>> GetPersons(
     [FromBody] PersonsListQuery query)
     {
         try
@@ -49,26 +50,15 @@ public class PersonsController(
             if (query.StartIndex != null) queryable = queryable.Skip(query.StartIndex.Value);
             if (query.Count != null) queryable = queryable.Take(query.Count.Value);
 
-            var persons = await queryable.ToListAsync();
+            var items = await mapper.ProjectTo<PersonListItem>(queryable).ToListAsync();
+            var total = await queryable.CountAsync();
 
-            return new DomainResponse<PersonsListResults>()
-            {
-                Result = new PersonsListResults()
-                {
-                    Items = persons
-                        .Select(mapper.Map<PersonListItem>)
-                        .ToList(),
-                    Total = totalPersons
-                }
-            };
+            return WrappedListResponse<PersonListItem>.CreateSuccessResponse(items, total);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return new DomainResponse<PersonsListResults>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedListResponse<PersonListItem>.CreateFailureResponse(exception);
         }
 
     } 
@@ -77,7 +67,7 @@ public class PersonsController(
     #region GET SINGLE
     [HttpGet]
     [Route("api/[controller]/{personId:int}")]
-    public async Task<DomainResponse<PersonDetails>> GetPerson(int personId)
+    public async Task<WrappedResponse<PersonDetails>> GetPerson(int personId)
     {
         try
         {
@@ -88,7 +78,7 @@ public class PersonsController(
 
             var person = await queryable.FirstOrDefaultAsync(r => r.PersonId == personId);
 
-            return new DomainResponse<PersonDetails>()
+            return new WrappedResponse<PersonDetails>()
             {
                 Result = mapper.Map<PersonDetails?>(person)
             };
@@ -96,7 +86,7 @@ public class PersonsController(
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", personId);
-            return new DomainResponse<PersonDetails>()
+            return new WrappedResponse<PersonDetails>()
             {
                 Exception = exception.ToSerializableException()
             };

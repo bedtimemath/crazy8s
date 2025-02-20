@@ -13,7 +13,7 @@ using C8S.WordPress.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.Extensions;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers
 {
@@ -29,18 +29,17 @@ namespace C8S.AdminApp.Controllers
         #region GET LIST
         [HttpPost]
         [Route("api/[controller]")]
-        public async Task<DomainResponse<WPUsersListResults>> GetWordPressUsers(
+        public async Task<WrappedListResponse<WPUserDetails>> GetWordPressUsers(
             [FromBody] WPUsersListQuery query)
         {
             try
             {
-                var listResults = await wordPressService.GetWordPressUsers(query.IncludeRoles);
-                return DomainResponse<WPUsersListResults>.CreateSuccessResponse(listResults);
+                return await wordPressService.GetWordPressUsers(query.IncludeRoles);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-                return DomainResponse<WPUsersListResults>.CreateFailureResponse(exception);
+                return WrappedListResponse<WPUserDetails>.CreateFailureResponse(exception);
             }
 
         }
@@ -49,7 +48,7 @@ namespace C8S.AdminApp.Controllers
         #region PUT
         [HttpPut]
         [Route("api/[controller]")]
-        public async Task<DomainResponse<WPUserDetails>> PutWordPressUser(
+        public async Task<WrappedResponse<WPUserDetails>> PutWordPressUser(
             [FromBody] WPUserAddCommand command)
         {
             try
@@ -69,7 +68,7 @@ namespace C8S.AdminApp.Controllers
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while adding WordPress user: {Json}", JsonSerializer.Serialize(command));
-                return DomainResponse<WPUserDetails>.CreateFailureResponse(exception);
+                return WrappedResponse<WPUserDetails>.CreateFailureResponse(exception);
             }
         }
         #endregion

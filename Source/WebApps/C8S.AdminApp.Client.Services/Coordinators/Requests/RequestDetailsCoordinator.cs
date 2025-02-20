@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using SC.Common.Client.Navigation.Commands;
 using SC.Common.Client.Navigation.Enums;
 using SC.Common.Client.Navigation.Queries;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Abstractions.Models;
 using SC.Messaging.Base;
@@ -37,7 +37,7 @@ public sealed class RequestDetailsCoordinator(
     {
         try
         {
-            var backendResponse = await GetQueryResults<RequestDetailsQuery, DomainResponse<RequestDetails?>>
+            var backendResponse = await GetQueryResults<RequestDetailsQuery, WrappedResponse<RequestDetails?>>
                 (new RequestDetailsQuery() { RequestId = id });
             if (!backendResponse.Success)
                 throw backendResponse.Exception!.ToException();
@@ -61,7 +61,7 @@ public sealed class RequestDetailsCoordinator(
 
     public async Task ClosePage()
     {
-        var currentUrl = (await GetQueryResults<CurrentUrlQuery, DomainResponse<string>>(new CurrentUrlQuery())).Result ??
+        var currentUrl = (await GetQueryResults<CurrentUrlQuery, WrappedResponse<string>>(new CurrentUrlQuery())).Result ??
                          throw new UnreachableException("Could not get a return for the current url.");
         await ExecuteCommand(new NavigationCommand()
         {

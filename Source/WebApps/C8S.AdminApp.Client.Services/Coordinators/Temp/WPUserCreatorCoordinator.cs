@@ -7,7 +7,7 @@ using C8S.WordPress.Abstractions.Notifications;
 using Microsoft.Extensions.Logging;
 using Radzen;
 using Radzen.Blazor;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -24,7 +24,7 @@ public sealed class WPUserCreatorCoordinator(
 
     public string? Email { get; set; }
 
-    public List<PersonListItem> Persons { get; set; } = [];
+    public IList<PersonListItem> Persons { get; set; } = [];
     public int? SelectedId { get; set; }
     public int TotalPersons { get; set; }
 
@@ -47,7 +47,7 @@ public sealed class WPUserCreatorCoordinator(
             if (!SelectedId.HasValue)
                 throw new UnreachableException("CreateWordPressUser called without PersonId set.");
 
-            var response = await GetCommandResults<WPUserAddCommand, DomainResponse<WPUserDetails>>(
+            var response = await GetCommandResults<WPUserAddCommand, WrappedResponse<WPUserDetails>>(
                                new WPUserAddCommand() { PersonId = SelectedId.Value }) ??
                            throw new UnreachableException("GetCommandResults returned null");
             if (!response.Success || response.Result == null)
@@ -78,21 +78,19 @@ public sealed class WPUserCreatorCoordinator(
             IsLoading = true;
             await PerformComponentRefresh();
 
-            var personsListResult = await GetQueryResults<PersonsListQuery, DomainResponse<PersonsListResults>>(
+            var response = await GetQueryResults<PersonsListQuery, WrappedListResponse<PersonListItem>>(
                 new PersonsListQuery()
                 {
                     StartIndex = args.Skip ?? 0,
                     Count = args.Top ?? 0,
                     Query = String.IsNullOrWhiteSpace(args.Filter) ? null : args.Filter,
                     SortDescription = "Email ASC"
-                }) ?? throw new UnreachableException("GetQueryResults returned null");
+                });
+            if (response is { Success: false } or { Result: null } ) 
+                throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
-            if (!personsListResult.Success || personsListResult.Result == null)
-                throw personsListResult.Exception?.ToException() ??
-                      new Exception("Error occurred loading persons");
-
-            Persons = personsListResult.Result.Items;
-            TotalPersons = personsListResult.Result.Total;
+            Persons = response.Result;
+            TotalPersons = response.Total;
 
             IsLoading = false;
             await PerformComponentRefresh();

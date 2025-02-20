@@ -4,7 +4,7 @@ using SC.Common.Client.Navigation.Commands;
 using SC.Common.Client.Navigation.Enums;
 using SC.Common.Client.Navigation.Models;
 using SC.Common.Client.Navigation.Queries;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
@@ -64,7 +64,7 @@ public sealed class SidebarGroupCoordinator(
     #region Private Methods
     private async Task CheckSelfAgainstUrl(string? url = null)
     {
-        url ??= (await GetQueryResults<CurrentUrlQuery, DomainResponse<string>>(new CurrentUrlQuery())).Result;
+        url ??= (await GetQueryResults<CurrentUrlQuery, WrappedResponse<string>>(new CurrentUrlQuery())).Result;
 
         var shouldBeSelected = Group.Url == url;
         if (shouldBeSelected == IsSelected) return;

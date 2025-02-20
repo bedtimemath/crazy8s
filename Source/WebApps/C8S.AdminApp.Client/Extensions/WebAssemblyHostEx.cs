@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SC.Common.Client.Navigation.Commands;
 using SC.Common.Client.Navigation.Queries;
 using SC.Common.Client.Navigation.Services;
-using SC.Common.Interactions;
+using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Extensions;
@@ -49,37 +49,37 @@ public static class WebAssemblyHostEx
 
         var navigationService = serviceProvider.GetRequiredService<INavigationService>();
         cqrsService.RegisterCommand<NavigationCommand>(navigationService.Handle);
-        cqrsService.RegisterQuery<CurrentUrlQuery, DomainResponse<string>>(navigationService.Handle);
+        cqrsService.RegisterQuery<CurrentUrlQuery, WrappedResponse<string>>(navigationService.Handle);
 
         var sidebarMenuService = serviceProvider.GetRequiredService<ISidebarMenuService>();
-        cqrsService.RegisterQuery<MenuGroupsQuery, DomainResponse<IEnumerable<MenuGroup>>>(sidebarMenuService.Handle);
-        cqrsService.RegisterQuery<MenuSinglesQuery, DomainResponse<IEnumerable<MenuSingle>>>(sidebarMenuService.Handle);
-        cqrsService.RegisterQuery<MenuItemsQuery, DomainResponse<IEnumerable<MenuItem>>>(sidebarMenuService.Handle);
+        cqrsService.RegisterQuery<MenuGroupsQuery, WrappedResponse<IEnumerable<MenuGroup>>>(sidebarMenuService.Handle);
+        cqrsService.RegisterQuery<MenuSinglesQuery, WrappedResponse<IEnumerable<MenuSingle>>>(sidebarMenuService.Handle);
+        cqrsService.RegisterQuery<MenuItemsQuery, WrappedResponse<IEnumerable<MenuItem>>>(sidebarMenuService.Handle);
 
         var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
-        cqrsService.RegisterQuery<RequestsListQuery, DomainResponse<RequestsListResults>>(requestsCallbacks.Handle);
-        cqrsService.RegisterQuery<RequestTitleQuery, DomainResponse<string?>>(requestsCallbacks.Handle);
-        cqrsService.RegisterQuery<RequestDetailsQuery, DomainResponse<RequestDetails?>>(requestsCallbacks.Handle);
-        cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, DomainResponse<RequestDetails>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestsListQuery, WrappedListResponse<RequestListItem>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestTitleQuery, WrappedResponse<string?>>(requestsCallbacks.Handle);
+        cqrsService.RegisterQuery<RequestDetailsQuery, WrappedResponse<RequestDetails?>>(requestsCallbacks.Handle);
+        cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, WrappedResponse<RequestDetails>>(requestsCallbacks.Handle);
 
         var personsCallbacks = serviceProvider.GetRequiredService<PersonCallbacks>();
-        cqrsService.RegisterQuery<PersonsListQuery, DomainResponse<PersonsListResults>>(personsCallbacks.Handle);
-        cqrsService.RegisterQuery<PersonTitleQuery, DomainResponse<string?>>(personsCallbacks.Handle);
-        cqrsService.RegisterQuery<PersonDetailsQuery, DomainResponse<PersonDetails?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonsListQuery, WrappedListResponse<PersonListItem>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonTitleQuery, WrappedResponse<string?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonDetailsQuery, WrappedResponse<PersonDetails?>>(personsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
-        cqrsService.RegisterQuery<AppointmentDetailsQuery, DomainResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
+        cqrsService.RegisterQuery<AppointmentDetailsQuery, WrappedResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
 
         var noteCallbacks = serviceProvider.GetRequiredService<NoteCallbacks>();
-        cqrsService.RegisterQuery<NotesListQuery, DomainResponse<NotesListResults>>(noteCallbacks.Handle);
-        cqrsService.RegisterQuery<NoteDetailsQuery, DomainResponse<NoteDetails?>>(noteCallbacks.Handle);
-        cqrsService.RegisterCommand<NoteAddCommand, DomainResponse<NoteDetails>>(noteCallbacks.Handle);
-        cqrsService.RegisterCommand<NoteUpdateCommand, DomainResponse<NoteDetails>>(noteCallbacks.Handle);
-        cqrsService.RegisterCommand<NoteDeleteCommand, DomainResponse>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NotesListQuery, WrappedListResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterQuery<NoteDetailsQuery, WrappedResponse<NoteDetails?>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteAddCommand, WrappedResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteUpdateCommand, WrappedResponse<NoteDetails>>(noteCallbacks.Handle);
+        cqrsService.RegisterCommand<NoteDeleteCommand, WrappedResponse>(noteCallbacks.Handle);
 
         var wordPressCallbacks = serviceProvider.GetRequiredService<WordPressCallbacks>();
-        cqrsService.RegisterQuery<WPUsersListQuery, DomainResponse<WPUsersListResults>>(wordPressCallbacks.Handle);
-        cqrsService.RegisterCommand<WPUserAddCommand, DomainResponse<WPUserDetails>>(wordPressCallbacks.Handle);
+        cqrsService.RegisterQuery<WPUsersListQuery, WrappedListResponse<WPUserDetails>>(wordPressCallbacks.Handle);
+        cqrsService.RegisterCommand<WPUserAddCommand, WrappedResponse<WPUserDetails>>(wordPressCallbacks.Handle);
 
         return host;
     }
