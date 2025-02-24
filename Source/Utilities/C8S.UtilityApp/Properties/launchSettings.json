@@ -79,6 +79,10 @@
       "commandName": "Project",
       "commandLineArgs": "test-fullslate -a GetOpeningsList"
     },
+    "Fulco Get Invoices": {
+      "commandName": "Project",
+      "commandLineArgs": "test-fulco -a GetInvoices"
+    },
     "Test Interceptors": {
       "commandName": "Project",
       "commandLineArgs": "test-interceptors"

@@ -46,6 +46,7 @@ try
             LoadSampleDataOptions,
             ShowConfigOptions,
             TestFullSlateOptions,
+            TestFulcoOptions,
             TestWordPressApiOptions,
             TestInterceptorsOptions>(args);
     var platform = (parserResult.Value as StandardConsoleOptions)?.Platform ??
@@ -133,6 +134,11 @@ try
             {
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, TestFullSlate>();
+            })
+            .WithParsed<TestFulcoOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, TestFulco>();
             })
             .WithParsed<TestWordPressApiOptions>(options =>
             {

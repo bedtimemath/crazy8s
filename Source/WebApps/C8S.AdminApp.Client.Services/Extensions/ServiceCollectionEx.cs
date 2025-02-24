@@ -21,6 +21,8 @@ public static class ServiceCollectionEx
 
         services.AddScoped<AppointmentDisplayerCoordinator>();
         
+        services.AddScoped<FulcoCoordinator>();
+
         services.AddScoped<RequestsListCoordinator>();
         services.AddScoped<RequestDetailsCoordinator>();
         
