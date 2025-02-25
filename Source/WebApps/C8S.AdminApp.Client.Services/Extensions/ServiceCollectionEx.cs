@@ -1,4 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Appointments;
+using C8S.AdminApp.Client.Services.Coordinators.Fulco;
 using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Persons;

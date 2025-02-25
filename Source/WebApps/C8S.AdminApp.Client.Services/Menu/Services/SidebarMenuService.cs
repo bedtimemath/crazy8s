@@ -37,6 +37,7 @@ public sealed class SidebarMenuService(
     ];
     private static readonly IEnumerable<MenuSingle> PostSingles =
     [
+        new() { Display = "Fulco", IconString = C8SConstants.Icons.Fulco, Url = "fulco" },
     ];
 
     private static readonly Dictionary<DomainEntity, Dictionary<int, MenuItem>> MenuItemsLookup = [];

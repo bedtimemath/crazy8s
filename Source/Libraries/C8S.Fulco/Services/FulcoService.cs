@@ -8,4 +8,6 @@ public class FulcoService
         throw new NotImplementedException();
     public Task<IEnumerable<FulcoInvoice>> GetInvoices(DateOnly startDate, DateOnly endDate) =>
         throw new NotImplementedException();
+
+
 }

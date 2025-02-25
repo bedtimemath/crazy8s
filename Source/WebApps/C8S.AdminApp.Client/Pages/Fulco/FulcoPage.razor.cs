@@ -1,9 +1,9 @@
-﻿using C8S.AdminApp.Client.Services.Coordinators.Requests;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Fulco;
 using SC.Common.Client.Base;
 
-namespace C8S.AdminApp.Client.Pages.Requests;
+namespace C8S.AdminApp.Client.Pages.Fulco;
 
 public sealed partial class RequestsListPage :
-    BaseCoordinatedPage<RequestsListCoordinator>
+    BaseCoordinatedPage<FulcoCoordinator>
 {
 }

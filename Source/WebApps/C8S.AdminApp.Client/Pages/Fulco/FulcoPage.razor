@@ -1,20 +1,13 @@
 ﻿@page "/fulco"
 @inherits BaseCoordinatedPage<FulcoCoordinator>
-@using C8S.AdminApp.Client.Services.Coordinators.Requests
+@using C8S.AdminApp.Client.Services.Coordinators.Fulco
 
 <RadzenStack Orientation="Orientation.Vertical"
              AlignItems="AlignItems.Stretch"
              JustifyContent="JustifyContent.Stretch"
              Gap="1.0rem"
              class="w-100 h-100">
-
-    <RequestsFilter Coordinator="@Service"
-                    CssClass="flex-shrink-0" />
-
-    <RequestsList Coordinator="@Service"
-                  CssClass="flex-grow-1" />
-
-    <RequestsFooter Coordinator="@Service"
-                    CssClass="flex-shrink-0"  />
+             
+    <h2>Fulco</h2>
 
 </RadzenStack>

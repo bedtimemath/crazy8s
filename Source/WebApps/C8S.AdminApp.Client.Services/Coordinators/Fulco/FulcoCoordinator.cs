@@ -1,4 +1,5 @@
-﻿using C8S.Domain.Features.Requests.Enums;
+﻿using System.Diagnostics;
+using C8S.Domain.Features.Requests.Enums;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
@@ -9,11 +10,10 @@ using SC.Common.Razor.Extensions;
 using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
-using System.Diagnostics;
 
-namespace C8S.AdminApp.Client.Services.Coordinators.Requests;
+namespace C8S.AdminApp.Client.Services.Coordinators.Fulco;
 
-public sealed class RequestsListCoordinator(
+public sealed class FulcoCoordinator(
     ILoggerFactory loggerFactory,
     IPubSubService pubSubService,
     ICQRSService cqrsService,
@@ -27,7 +27,7 @@ public sealed class RequestsListCoordinator(
     #endregion
 
     #region ReadOnly Constructor Variables
-    private readonly ILogger<RequestsListCoordinator> _logger = loggerFactory.CreateLogger<RequestsListCoordinator>();
+    private readonly ILogger<FulcoCoordinator> _logger = loggerFactory.CreateLogger<FulcoCoordinator>();
     #endregion
 
     #region ReadOnly Variables
