@@ -1,18 +1,11 @@
 ﻿using System.Text.Json;
-using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.EFCore.Models;
-using C8S.Domain.Enums;
-using C8S.Domain.Features.Notes.Models;
-using C8S.Domain.Features.Notes.Queries;
-using C8S.FullSlate.Services;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using C8S.WordPress.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SC.Common.Extensions;
 using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers

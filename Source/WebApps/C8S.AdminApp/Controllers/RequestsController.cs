@@ -2,7 +2,6 @@
 using System.Text.Json;
 using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Requests.Commands;
 using C8S.Domain.Features.Requests.Models;
 using C8S.Domain.Features.Requests.Queries;

@@ -31,7 +31,6 @@ try
     var environmentName = Environment.GetEnvironmentVariable("AZURE_FUNCTIONS_ENVIRONMENT");
     Log.Logger.Information("Environment: {Environment}", environmentName);
 
-
     // check for the two variables we need immediately
     var appConfig = Environment.GetEnvironmentVariable("C8S_AppConfig");
     var configFolder = Environment.GetEnvironmentVariable("C8S_ConfigFolder");

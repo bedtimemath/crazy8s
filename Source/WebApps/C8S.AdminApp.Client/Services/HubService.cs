@@ -50,5 +50,4 @@ public sealed class HubService(
     #region Event Handlers
     private void HandleDataChangeMessage(DataChange dataChange) => pubSubService.Publish(dataChange);
     #endregion
-
 }
