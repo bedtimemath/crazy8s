@@ -37,7 +37,8 @@ public partial class NoteDisplayer : BaseRazorComponent
         catch (Exception exc)
         {
             Logger.LogError(exc, "Could not delete note: {@Note}", note);
-            await RaiseExceptionAsync(exc);
+            // todo
+            //await RaiseExceptionAsync(exc);
         }
     }
     private async Task HandleEditClicked(NoteDetails note)
@@ -56,7 +57,8 @@ public partial class NoteDisplayer : BaseRazorComponent
         catch (Exception exc)
         {
             Logger.LogError(exc, "Could not edit note: {@Note}", note);
-            await RaiseExceptionAsync(exc);
+            // todo
+            //await RaiseExceptionAsync(exc);
         }
     }
 }
