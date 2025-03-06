@@ -20,11 +20,11 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "fulco": {
+    "wordpress": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "fulco",
+      "launchUrl": "wordpress",
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "applicationUrl": "https://localhost:7195;http://localhost:5157",
       "environmentVariables": {

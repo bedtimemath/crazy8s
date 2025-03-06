@@ -41,6 +41,7 @@ public static class C8SConstants
         public const string Sku = "barcode";
         public const string Settings = "gear";
         public const string Unlink = "link-slash";
+        public const string WordPress = "wordpress";
     }
 
     public static class LogTables

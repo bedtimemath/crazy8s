@@ -5,6 +5,7 @@ using C8S.AdminApp.Client.Services.Menu.Queries;
 using C8S.Domain;
 using C8S.Domain.Features;
 using Microsoft.Extensions.Logging;
+using SC.Common;
 using SC.Common.Client.Navigation.Enums;
 using SC.Common.Client.Navigation.Models;
 using SC.Common.Responses;
@@ -37,7 +38,7 @@ public sealed class SidebarMenuService(
     ];
     private static readonly IEnumerable<MenuSingle> PostSingles =
     [
-        new() { Display = "Fulco", IconString = C8SConstants.Icons.Fulco, Url = "fulco" },
+        new() { Display = "WordPress", IconString = C8SConstants.Icons.WordPress, IconGroup = SoftCrowConstants.IconGroups.Brands, Url = "wordpress" },
     ];
 
     private static readonly Dictionary<DomainEntity, Dictionary<int, MenuItem>> MenuItemsLookup = [];
@@ -74,9 +75,6 @@ public sealed class SidebarMenuService(
 
         return Task.FromResult(response);
     }
-    #endregion
-
-    #region Command Handlers
     #endregion
 
     #region Event Handlers
