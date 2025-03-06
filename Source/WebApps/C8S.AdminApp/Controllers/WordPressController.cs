@@ -6,6 +6,7 @@ using C8S.WordPress.Abstractions.Queries;
 using C8S.WordPress.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SC.Common.Extensions;
 using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers
@@ -51,12 +52,15 @@ namespace C8S.AdminApp.Controllers
                 var person = await dbContext.Persons.FirstOrDefaultAsync(p => p.PersonId == command.PersonId) ??
                              throw new Exception($"Could not find person: #{command.PersonId}");
 
-                throw new NotImplementedException();
-                //var wordPressUser = await wordPressService.CreateWordPressUser(
-                //    person.LastName, person.FirstName ?? "person_name",
-                //    person.Email ?? "person_email", String.Empty.AppendRandomAlphaOnly(6) + "1a!",
-                //    person.FirstName, person.LastName);
-                //return DomainResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
+                var wordPressUser = await wordPressService.CreateWordPressUser(new WPUserDetails()
+                {
+                    UserName = "C8S_" + String.Empty.AppendRandomAlphaOnly(),
+                    FirstName = person.FirstName,
+                    LastName = person.LastName,
+                    Email = $"dsteen+{String.Empty.AppendRandomAlphaOnly()}@gmail.com",
+                    Roles = ["subscriber","coach"]
+                });
+                return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
             catch (Exception exception)
             {

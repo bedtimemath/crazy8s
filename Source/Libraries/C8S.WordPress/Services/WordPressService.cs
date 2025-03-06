@@ -1,8 +1,8 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
+using SC.Common.Extensions;
 using SC.Common.Responses;
 using WordPressPCL;
 using WordPressPCL.Models;
@@ -107,12 +107,21 @@ public class WordPressService
     #region Create
     public async Task<WPUserDetails> CreateWordPressUser(WPUserDetails userDetails)
     {
-        if (!userDetails.Roles.Contains("subscriber")) userDetails.Roles.Add("subscriber");
-        if (!userDetails.Roles.Contains("coach")) userDetails.Roles.Add("coach");
+        try
+        {
+            if (!userDetails.Roles.Contains("subscriber")) userDetails.Roles.Add("subscriber");
+            if (!userDetails.Roles.Contains("coach")) userDetails.Roles.Add("coach");
         
-        var user = _mapper.Map<User>(userDetails);
-        var output = await _wordPressClient.Users.CreateAsync(user);
-        return _mapper.Map<WPUserDetails>(output);
+            var user = _mapper.Map<User>(userDetails);
+            user.Password = String.Empty.AppendRandomAlphaOnly(12);
+            var output = await _wordPressClient.Users.CreateAsync(user);
+            return _mapper.Map<WPUserDetails>(output);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating WordPress user: {@UserDetails}", userDetails);
+            throw;
+        }
     }
 
     public async Task<WPSkuDetails> CreateWordPressSku(WPSkuCreate skuCreate)
