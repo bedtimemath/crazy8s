@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Text;
+using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
+using SC.Common;
 using SC.Common.Extensions;
 using SC.Common.Responses;
 using WordPressPCL;
@@ -105,20 +107,24 @@ public class WordPressService
     #endregion
 
     #region Create
-    public async Task<WPUserDetails> CreateWordPressUser(WPUserDetails userDetails)
+    public async Task<WPUserDetails> CreateWordPressUser(WPUserDetails userDetails,
+        string? userName = null)
     {
+        userName ??= GenerateUserName(userDetails);
         try
         {
-            if (!userDetails.Roles.Contains("subscriber")) userDetails.Roles.Add("subscriber");
-            if (!userDetails.Roles.Contains("coach")) userDetails.Roles.Add("coach");
-        
             var user = _mapper.Map<User>(userDetails);
+            user.UserName = userName;
             user.Password = String.Empty.AppendRandomAlphaOnly(12);
             var output = await _wordPressClient.Users.CreateAsync(user);
             return _mapper.Map<WPUserDetails>(output);
         }
         catch (Exception ex)
         {
+            // Would be nice if the WordPressPCL library threw a more specific exception
+            if (ex.Message == "Sorry, that username already exists!")
+                return await CreateWordPressUser(userDetails, IncrementUserName(userName));
+
             _logger.LogError(ex, "Error creating WordPress user: {@UserDetails}", userDetails);
             throw;
         }
@@ -130,6 +136,28 @@ public class WordPressService
         var output = await _wordPressClient.CustomRequest
             .CreateAsync<CustomSkuCreate, CustomSku>(SkuBaseUrl, customSku);
         return _mapper.Map<WPSkuDetails>(output);
+    }
+    #endregion
+
+    #region Private Methods
+
+    private static string GenerateUserName(WPUserDetails userDetails)
+    {
+        var parts = new List<string>();
+        if (!string.IsNullOrWhiteSpace(userDetails.FirstName))
+            parts.Add(userDetails.FirstName.RemoveNonAlphanumeric());
+        if (!string.IsNullOrWhiteSpace(userDetails.LastName))
+            parts.Add(userDetails.LastName.RemoveNonAlphanumeric());
+        if (parts.Count == 0)
+            parts.Add(userDetails.Email.RemoveNonAlphanumeric());
+
+        return String.Join('_', parts);
+    }
+    private static string IncrementUserName(string userName)
+    {
+        var endingMatch = SoftCrowRegex.GetMatchForEndingDigits(userName);
+        return (!endingMatch.Success) ? userName + "_1" :
+                endingMatch.Groups["start"].Value + (Int32.Parse(endingMatch.Groups["digits"].Value) + 1);
     }
     #endregion
 
