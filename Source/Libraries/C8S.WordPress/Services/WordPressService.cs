@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
@@ -17,6 +18,7 @@ public class WordPressService
 {
     private const int DefaultPerPage = 100;
     private const string SkuBaseUrl = "/wp-json/wp/v2/sku";
+    private const string GetRolesUrl = "/wp-json/c8s/v1/get-roles";
 
     private readonly ILogger<WordPressService> _logger;
     private readonly IMapper _mapper;
@@ -49,10 +51,11 @@ public class WordPressService
 
         // we do this here so that we won't re-enumerate the roles within the while loop
         if (includeRoles != null) queryBuilder.Roles = includeRoles.ToList();
-        
+
         var allUsers = new List<User>();
         var page = 1;
-        while (true) {
+        while (true)
+        {
             try
             {
                 queryBuilder.Page = page;
@@ -70,7 +73,7 @@ public class WordPressService
                 break;
             }
         }
-        
+
         var items = allUsers.Select(_mapper.Map<WPUserDetails>).ToList();
         var count = allUsers.Count;
         return WrappedListResponse<WPUserDetails>.CreateSuccessResponse(items, count);
@@ -80,7 +83,8 @@ public class WordPressService
     {
         var allSkus = new List<CustomSku>();
         var page = 1;
-        while (true) {
+        while (true)
+        {
             try
             {
                 var skus = (await _wordPressClient.CustomRequest
@@ -104,18 +108,42 @@ public class WordPressService
         var count = allSkus.Count;
         return WrappedListResponse<WPSkuDetails>.CreateSuccessResponse(items, count);
     }
+
+    public async Task<WrappedListResponse<WPRoleDetails>> GetWordPressRoles()
+    {
+        var roles = (await _wordPressClient.CustomRequest
+            .GetAsync<List<WPRoleDetails>>(GetRolesUrl, useAuth: true));
+        return WrappedListResponse<WPRoleDetails>.CreateSuccessResponse(roles, roles.Count);
+    }
     #endregion
 
     #region Create
-    public async Task<WPUserDetails> CreateWordPressUser(WPUserDetails userDetails,
-        string? userName = null)
+    public async Task<WPUserDetails> CreateWordPressUser(
+        string email,
+        string? name = null,
+        string? firstName = null,
+        string? lastName = null,
+        string? userName = null,
+        string? password = null,
+        IList<string>? roles = null,
+        IDictionary<string, bool>? capabilities = null)
     {
-        userName ??= GenerateUserName(userDetails);
+        name ??= GenerateName(firstName, lastName);
+        userName ??= GenerateUserName(email, name);
+        password ??= String.Empty.AppendRandom(12);
         try
         {
-            var user = _mapper.Map<User>(userDetails);
-            user.UserName = userName;
-            user.Password = String.Empty.AppendRandomAlphaOnly(12);
+            var user = new User()
+            {
+                Email = email,
+                Name = name,
+                FirstName = firstName,
+                LastName = lastName,
+                UserName = userName,
+                Password = password,
+                Roles = roles ?? [],
+                Capabilities = capabilities
+            };
             var output = await _wordPressClient.Users.CreateAsync(user);
             return _mapper.Map<WPUserDetails>(output);
         }
@@ -123,9 +151,10 @@ public class WordPressService
         {
             // Would be nice if the WordPressPCL library threw a more specific exception
             if (ex.Message == "Sorry, that username already exists!")
-                return await CreateWordPressUser(userDetails, IncrementUserName(userName));
+                return await CreateWordPressUser(IncrementUserName(userName),
+                    name, firstName, lastName, userName, password, roles, capabilities);
 
-            _logger.LogError(ex, "Error creating WordPress user: {@UserDetails}", userDetails);
+            _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
             throw;
         }
     }
@@ -141,18 +170,15 @@ public class WordPressService
 
     #region Private Methods
 
-    private static string GenerateUserName(WPUserDetails userDetails)
-    {
-        var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(userDetails.FirstName))
-            parts.Add(userDetails.FirstName.RemoveNonAlphanumeric());
-        if (!string.IsNullOrWhiteSpace(userDetails.LastName))
-            parts.Add(userDetails.LastName.RemoveNonAlphanumeric());
-        if (parts.Count == 0)
-            parts.Add(userDetails.Email.RemoveNonAlphanumeric());
+    private static string GenerateUserName(string email, string? name = null) =>
+        String.IsNullOrWhiteSpace(name) ? email.RemoveNonAlphanumeric() : 
+            String.Join('_', name.Split(' ').Select(s => s.RemoveNonAlphanumeric()));
 
-        return String.Join('_', parts);
-    }
+    private static string GenerateName(string? firstName, string? lastName) =>
+        !String.IsNullOrWhiteSpace(firstName) && !String.IsNullOrWhiteSpace(lastName)
+            ? $"{firstName} {lastName}"
+            : firstName ?? lastName ?? SoftCrowConstants.Display.AnonymousWord;
+
     private static string IncrementUserName(string userName)
     {
         var endingMatch = SoftCrowRegex.GetMatchForEndingDigits(userName);

@@ -9,13 +9,12 @@
                  Gap="0.5rem">
         
         <RadzenDropDownDataGrid @ref="@Service.DataGrid" 
-                                @bind-Value="@Service.SelectedId"
+                                @bind-Value="@Service.SelectedPerson"
                                 Count="@Service.TotalPersons"
                                 Data="@Service.Persons"
                                 LoadData="@Service.LoadPersonsData"
                                 IsLoading="@Service.IsLoading"
                                 TextProperty="@nameof(PersonListItem.FullName)"
-                                ValueProperty="@nameof(PersonListItem.PersonId)"
                                 class="flex-grow-1">
             <Columns>
                 <RadzenDropDownDataGridColumn Title="Id"
@@ -33,7 +32,7 @@
                       Text="Create in WordPress"
                       Click="@(async () => await Service.CreateWordPressUser())"
                       IsBusy="@Service.IsCreating"
-                      Disabled="@(Service.SelectedId == null)"
+                      Disabled="@(Service.SelectedPerson == null)"
                       class="flex-shrink-0"/>
 
     </RadzenStack>

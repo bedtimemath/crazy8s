@@ -1,8 +1,6 @@
 ﻿@inherits BaseCoordinatedComponent<WPCoachListerCoordinator>
-@using C8S.AdminApp.Client.Services
 @using C8S.AdminApp.Client.Services.Coordinators.Temp
 @using C8S.WordPress.Abstractions.Models
-@using SC.Common
 
 <div class="c8s-wordpress-coach-lister @CssClass">
     <RadzenDataGrid @ref="@Service.DataGrid" 
@@ -15,7 +13,7 @@
             <RadzenDataGridColumn Title="Id" 
                                   Property="@nameof(WPUserDetails.Id)"
                                   TextAlign="TextAlign.Center"
-                                  Width="40px" />
+                                  Width="80px" />
             <RadzenDataGridColumn Title="Name" 
                                   Property="@nameof(WPUserDetails.Name)"
                                   TextAlign="TextAlign.Left"

@@ -60,6 +60,9 @@ internal class TestWordPressApi(
             case WordPressApiAction.GetAllUsers:
                 await RunGetAllUsersTest();
                 break;
+            case WordPressApiAction.GetAllRoles:
+                await RunGetAllRolesTest();
+                break;
             case WordPressApiAction.GetAllSkus:
                 await RunGetAllSkusTest();
                 break;
@@ -78,6 +81,23 @@ internal class TestWordPressApi(
 
         _logger.LogInformation("{Name}: complete.", nameof(TestWordPressApi));
         return 0;
+    }
+
+    private async Task RunGetAllRolesTest()
+    {
+        try
+        {
+            var rolesResult = await wordPressService.GetWordPressRoles();
+            var roles = rolesResult.Result ?? throw new Exception("No Roles returned.");
+            foreach (var role in roles)
+            {
+                _logger.LogDebug("{@Role}", role);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Could not run test");
+        }
     }
 
     private async Task RunGetAllSkusTest()

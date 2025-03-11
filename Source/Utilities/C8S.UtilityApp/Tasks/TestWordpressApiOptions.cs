@@ -10,6 +10,7 @@ internal enum WordPressApiAction
     GetUser,
     GetAllUsers,
     DeleteUser,
+    GetAllRoles,
     GetAllSkus,
     GetAllActivities,
     UpdateActivity

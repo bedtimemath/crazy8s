@@ -20,12 +20,12 @@ public sealed class WPUserCreatorCoordinator(
 {
     //private readonly ILogger<WPUserCreatorCoordinator> _logger = loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
 
-    public RadzenDropDownDataGrid<int?> DataGrid { get; set; } = null!;
+    public RadzenDropDownDataGrid<PersonListItem?> DataGrid { get; set; } = null!;
 
     public string? Email { get; set; }
 
     public IList<PersonListItem> Persons { get; set; } = [];
-    public int? SelectedId { get; set; }
+    public PersonListItem? SelectedPerson { get; set; }
     public int TotalPersons { get; set; }
 
     public bool IsCreating { get; set; } = false;
@@ -44,11 +44,18 @@ public sealed class WPUserCreatorCoordinator(
 
         try
         {
-            if (!SelectedId.HasValue)
-                throw new UnreachableException("CreateWordPressUser called without PersonId set.");
+            if (SelectedPerson == null)
+                throw new UnreachableException("CreateWordPressUser called without person selected.");
 
             var response = await GetCommandResults<WPUserAddCommand, WrappedResponse<WPUserDetails>>(
-                               new WPUserAddCommand() { PersonId = SelectedId.Value }) ??
+                               new WPUserAddCommand()
+                               {
+                                   Email = SelectedPerson.Email,
+                                   Name = SelectedPerson.FullName,
+                                   FirstName = SelectedPerson.FirstName,
+                                   LastName = SelectedPerson.LastName,
+                                   Roles = ["coach"]
+                               }) ??
                            throw new UnreachableException("GetCommandResults returned null");
             if (!response.Success || response.Result == null)
                 throw response?.Exception?.ToException() ??

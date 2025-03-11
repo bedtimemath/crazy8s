@@ -47,6 +47,10 @@
       "commandName": "Project",
       "commandLineArgs": "test-wordpress-api -a GetUser -u 11"
     },
+    "WordPress Test (Get Roles)": {
+      "commandName": "Project",
+      "commandLineArgs": "test-wordpress-api -a GetAllRoles"
+    },
     "WordPress Test (Get Skus)": {
       "commandName": "Project",
       "commandLineArgs": "test-wordpress-api -a GetAllSkus"

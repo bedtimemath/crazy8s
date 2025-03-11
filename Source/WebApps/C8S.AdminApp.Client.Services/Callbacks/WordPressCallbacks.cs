@@ -1,5 +1,4 @@
-﻿using C8S.Domain.Features.Notes.Models;
-using C8S.WordPress.Abstractions.Commands;
+﻿using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
