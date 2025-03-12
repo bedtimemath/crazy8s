@@ -43,6 +43,12 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
             .HasConversion<string>()
             .IsRequired(true);
 
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string? Year { get; set; }
+        entity.Property(m => m.Year)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .IsRequired(false);
+
         //public int Season { get; set; } = default!;
         entity.Property(m => m.Season)
             .IsRequired(false);

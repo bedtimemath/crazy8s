@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20250116224547_InitialSetup")]
+    [Migration("20250311175515_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace C8S.Domain.EFCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -73,6 +73,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Year")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -565,6 +569,9 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<long?>("FullSlateAppointmentId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTimeOffset?>("FullSlateAppointmentStartsOn")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
@@ -875,6 +882,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Year")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 

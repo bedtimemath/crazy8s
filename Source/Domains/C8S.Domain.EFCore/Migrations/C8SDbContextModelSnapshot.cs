@@ -17,7 +17,7 @@ namespace C8S.Domain.EFCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -70,6 +70,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Year")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -875,6 +879,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("Year")
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 

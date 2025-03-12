@@ -31,9 +31,9 @@
       "commandName": "Project",
       "commandLineArgs": "show-config -p Production"
     },
-    "WordPress Test": {
+    "WordPress Import": {
       "commandName": "Project",
-      "commandLineArgs": "test-wordpress-api"
+      "commandLineArgs": "wp-import"
     },
     "WordPress Test (Add User)": {
       "commandName": "Project",

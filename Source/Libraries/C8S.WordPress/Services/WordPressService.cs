@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Net;
 using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
@@ -19,6 +18,7 @@ public class WordPressService
     private const int DefaultPerPage = 100;
     private const string SkuBaseUrl = "/wp-json/wp/v2/sku";
     private const string GetRolesUrl = "/wp-json/c8s/v1/get-roles";
+    private const string CreateRoleUrl = "/wp-json/c8s/v1/add-role";
 
     private readonly ILogger<WordPressService> _logger;
     private readonly IMapper _mapper;
@@ -32,10 +32,10 @@ public class WordPressService
         _logger = loggerFactory.CreateLogger<WordPressService>();
         _mapper = mapper;
 
-        //var httpHandler = new HttpClientHandler() { Proxy = new WebProxy(new Uri("http://localhost:8866")) };
-        //var httpClient = new HttpClient(httpHandler) { BaseAddress = new Uri(endpoint) };
-        //_wordPressClient = new WordPressClient(httpClient);
-        _wordPressClient = new WordPressClient(endpoint);
+        var httpHandler = new HttpClientHandler() { Proxy = new WebProxy(new Uri("http://localhost:8866")) };
+        var httpClient = new HttpClient(httpHandler) { BaseAddress = new Uri(endpoint) };
+        _wordPressClient = new WordPressClient(httpClient);
+        //_wordPressClient = new WordPressClient(endpoint);
         _wordPressClient.Auth.UseBasicAuth(username, password);
     }
 
@@ -109,12 +109,9 @@ public class WordPressService
         return WrappedListResponse<WPSkuDetails>.CreateSuccessResponse(items, count);
     }
 
-    public async Task<WrappedListResponse<WPRoleDetails>> GetWordPressRoles()
-    {
-        var roles = (await _wordPressClient.CustomRequest
-            .GetAsync<List<WPRoleDetails>>(GetRolesUrl, useAuth: true));
-        return WrappedListResponse<WPRoleDetails>.CreateSuccessResponse(roles, roles.Count);
-    }
+    public async Task<WrappedListResponse<WPRoleDetails>> GetWordPressRoles() =>
+        await _wordPressClient.CustomRequest
+            .GetAsync<WrappedListResponse<WPRoleDetails>>(GetRolesUrl, useAuth: true);
     #endregion
 
     #region Create
@@ -166,10 +163,19 @@ public class WordPressService
             .CreateAsync<CustomSkuCreate, CustomSku>(SkuBaseUrl, customSku);
         return _mapper.Map<WPSkuDetails>(output);
     }
+
+    public async Task<WPRoleDetails> CreateWordPressRole(WPRoleDetails details)
+    {
+        var wrappedResponse = await _wordPressClient.CustomRequest
+            .CreateAsync<WPRoleDetails, WrappedResponse<WPRoleDetails>>(CreateRoleUrl, details);
+        if (!wrappedResponse.Success) 
+            throw  wrappedResponse.Exception!.ToException();
+
+        return wrappedResponse.Result!;
+    }
     #endregion
 
     #region Private Methods
-
     private static string GenerateUserName(string email, string? name = null) =>
         String.IsNullOrWhiteSpace(name) ? email.RemoveNonAlphanumeric() : 
             String.Join('_', name.Split(' ').Select(s => s.RemoveNonAlphanumeric()));

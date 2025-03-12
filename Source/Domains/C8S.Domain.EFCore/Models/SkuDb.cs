@@ -30,14 +30,17 @@ public class SkuDb : BaseCoreDb
 
     #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Key)]
-    public string Key { get; set; } = default!;
+    public string Key { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string Name { get; set; } = default!;
+    public string Name { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public SkuStatus Status { get; set; } = default!;
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    public string? Year { get; set; }
 
     public int? Season { get; set; }
 

@@ -2,8 +2,8 @@
 using CommandLine;
 
 namespace C8S.UtilityApp.Tasks;
-[Verb(name:"wp-import-skus", isDefault:false, HelpText = "Import SKUs to WordPress.")]
-internal class WPImportSkusOptions: StandardConsoleOptions
+[Verb(name:"wp-import", isDefault:false, HelpText = "Import SKUs & Roles to WordPress.")]
+internal class WPImportOptions: StandardConsoleOptions
 {
     //private const string DefaultInputPath = "C:\\Git\\Crazy8s\\Data"; /* Change to match your desktop */
     private const string DefaultSite = "https://coaches.crazy8sclub.org/wp-json/";

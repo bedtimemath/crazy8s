@@ -41,7 +41,7 @@ try
     var parserResult = Parser.Default
         .ParseArguments<
             AddRequestOptions,
-            WPImportSkusOptions,
+            WPImportOptions,
             LoadC8SDataOptions,
             LoadSampleDataOptions,
             ShowConfigOptions,
@@ -110,10 +110,10 @@ try
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, AddRequest>();
             })
-            .WithParsed<WPImportSkusOptions>(options =>
+            .WithParsed<WPImportOptions>(options =>
             {
                 services.AddSingleton(options);
-                services.AddSingleton<IActionLauncher, WPImportSkus>();
+                services.AddSingleton<IActionLauncher, WPImport>();
             })
             .WithParsed<LoadSampleDataOptions>(options =>
             {

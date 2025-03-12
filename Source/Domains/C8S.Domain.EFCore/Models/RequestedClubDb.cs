@@ -40,7 +40,7 @@ public class RequestedClubDb : BaseDb
     public ClubSize ClubSize { get; set; } = default!;
 
     [Required]
-    public int Season { get; set; } = default!;
+    public int? Season { get; set; }
 
     [Required]
     public DateOnly StartsOn { get; set; }

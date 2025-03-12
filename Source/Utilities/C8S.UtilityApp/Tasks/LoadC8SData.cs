@@ -1,4 +1,5 @@
-﻿using C8S.Domain.EFCore.Contexts;
+﻿using System.Text.RegularExpressions;
+using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using C8S.UtilityApp.Base;
@@ -510,13 +511,13 @@ internal class LoadC8SData(
             for (int index = 0; index < skusCount; index++)
             {
                 var sqlSku = sqlSkus[index];
-
                 var sku = new SkuDb()
                 {
                     OldSystemSkuId = sqlSku.OldSystemSkuId,
                     Key = sqlSku.Key,
                     Name = sqlSku.Name,
                     Status = sqlSku.Status ?? SkuStatus.Inactive,
+                    Year = GetYearFromSkuKey(sqlSku.Key),
                     Season = sqlSku.Season,
                     AgeLevel = sqlSku.AgeLevel,
                     ClubSize = sqlSku.ClubSize ?? ClubSize.Size16,
@@ -683,5 +684,13 @@ internal class LoadC8SData(
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
+    }
+
+    private readonly Regex _parseSkuKey =
+        new Regex(@"^C8\.S\d.(?<year>F[^\-]+)\-.+$", RegexOptions.Compiled | RegexOptions.Singleline);
+    private string? GetYearFromSkuKey(string key)
+    {
+        var match = _parseSkuKey.Match(key);
+        return  (!match.Success) ? null : match.Groups["year"].Value;
     }
 }

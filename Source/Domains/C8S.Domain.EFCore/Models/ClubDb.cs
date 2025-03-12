@@ -44,6 +44,9 @@ public class ClubDb : BaseCoreDb
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ClubStatus Status { get; set; } = default!;
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    public string? Year { get; set; }
     
     public int? Season { get; set; }
 
