@@ -32,10 +32,10 @@ public class WordPressService
         _logger = loggerFactory.CreateLogger<WordPressService>();
         _mapper = mapper;
 
-        var httpHandler = new HttpClientHandler() { Proxy = new WebProxy(new Uri("http://localhost:8866")) };
-        var httpClient = new HttpClient(httpHandler) { BaseAddress = new Uri(endpoint) };
-        _wordPressClient = new WordPressClient(httpClient);
-        //_wordPressClient = new WordPressClient(endpoint);
+        //var httpHandler = new HttpClientHandler() { Proxy = new WebProxy(new Uri("http://localhost:8866")) };
+        //var httpClient = new HttpClient(httpHandler) { BaseAddress = new Uri(endpoint) };
+        //_wordPressClient = new WordPressClient(httpClient);
+        _wordPressClient = new WordPressClient(endpoint);
         _wordPressClient.Auth.UseBasicAuth(username, password);
     }
 
@@ -177,8 +177,8 @@ public class WordPressService
 
     #region Private Methods
     private static string GenerateUserName(string email, string? name = null) =>
-        String.IsNullOrWhiteSpace(name) ? email.RemoveNonAlphanumeric() : 
-            String.Join('_', name.Split(' ').Select(s => s.RemoveNonAlphanumeric()));
+        String.IsNullOrWhiteSpace(name) ? email.ToFirstWord('@')!.RemoveNonAlphanumeric() : 
+            String.Join("", name.Split(' ').Select(s => s.RemoveNonAlphanumeric()));
 
     private static string GenerateName(string? firstName, string? lastName) =>
         !String.IsNullOrWhiteSpace(firstName) && !String.IsNullOrWhiteSpace(lastName)
@@ -188,7 +188,7 @@ public class WordPressService
     private static string IncrementUserName(string userName)
     {
         var endingMatch = SoftCrowRegex.GetMatchForEndingDigits(userName);
-        return (!endingMatch.Success) ? userName + "_1" :
+        return (!endingMatch.Success) ? userName + "1" :
                 endingMatch.Groups["start"].Value + (Int32.Parse(endingMatch.Groups["digits"].Value) + 1);
     }
     #endregion

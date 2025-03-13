@@ -8,6 +8,8 @@
                     Data="@Service.Coaches"
                     Count="@Service.TotalCount"
                     LoadData="@Service.LoadCoaches"
+                    SelectionMode="DataGridSelectionMode.Single"
+                    RowSelect="SelectedCoachChanged"
                     IsLoading="@Service.IsLoading">
         <Columns>
             <RadzenDataGridColumn Title="Id" 

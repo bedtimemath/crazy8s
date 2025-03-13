@@ -36,7 +36,8 @@ internal class WPImport(
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var dbSkus = await dbContext.Skus
-            .Where(s => s.Status == SkuStatus.Active)
+            .Where(s => (s.Year == "F23" || s.Year == "F23C" || s.Year == "F24") && 
+                        (s.Name != "dont use"))
             .ToListAsync();
         _logger.LogInformation("Found {Count:#,##0} active skus in C8s database.", dbSkus.Count);
 

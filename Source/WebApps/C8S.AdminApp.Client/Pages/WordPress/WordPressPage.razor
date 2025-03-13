@@ -1,25 +1,38 @@
 ﻿@page "/wordpress"
 @inherits BaseCoordinatedPage<WordPressCoordinator>
 @using C8S.AdminApp.Client.Services.Coordinators.WordPress
+@using C8S.AdminApp.Client.UI.WordPress
 
-<RadzenStack Orientation="Orientation.Vertical"
-             AlignItems="AlignItems.Stretch"
-             JustifyContent="JustifyContent.Normal"
-             Gap="1rem">
 
-    <RadzenStack Orientation="Orientation.Horizontal"
-                 AlignItems="AlignItems.Center"
-                 JustifyContent="JustifyContent.Normal"
-                 Gap="1rem">
+<RadzenSplitter Orientation="Orientation.Vertical">
+    <RadzenSplitterPane Size="50%">
 
-        <RadzenText TagName="TagName.Div"
-                    TextAlign="TextAlign.Start"
-                    TextStyle="TextStyle.Body1"
-                    Text="Pick C8s Person:"
-                    class="flex-shrink-0" />
+        <RadzenStack Orientation="Orientation.Vertical"
+                     AlignItems="AlignItems.Stretch"
+                     JustifyContent="JustifyContent.Normal"
+                     Gap="1rem">
 
-        <WordPressUserCreator CssClass="flex-grow-1" />
-    </RadzenStack>
+            <RadzenStack Orientation="Orientation.Horizontal"
+                         AlignItems="AlignItems.Center"
+                         JustifyContent="JustifyContent.Normal"
+                         Gap="1rem">
 
-    <WordPressCoachLister />
-</RadzenStack>
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Start"
+                            TextStyle="TextStyle.Body1"
+                            Text="Pick C8s Person:"
+                            class="flex-shrink-0"/>
+
+                <WordPressUserCreator CssClass="flex-grow-1"/>
+            </RadzenStack>
+
+            <WordPressCoachLister @bind-SelectedCoach="@SelectedCoach" />
+        </RadzenStack>
+
+    </RadzenSplitterPane>
+    <RadzenSplitterPane Size="50%">
+        <div>
+           COACH: @SelectedCoach?.Name
+        </div>
+    </RadzenSplitterPane>
+</RadzenSplitter>

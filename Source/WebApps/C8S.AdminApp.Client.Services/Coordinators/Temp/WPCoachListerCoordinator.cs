@@ -44,6 +44,9 @@ public sealed class WPCoachListerCoordinator(
     public void LoadCoaches(LoadDataArgs args) =>
         Task.Run(async () => await LoadCoachesAsync(args));
 
+    public void SelectCoach(WPUserDetails details) =>
+        SelectedCoaches = new List<WPUserDetails> { details };
+
     private async Task LoadCoachesAsync(LoadDataArgs _)
     {
         try
