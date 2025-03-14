@@ -37,6 +37,7 @@ public static class C8SConstants
         public const string Organization = "buildings";
         public const string Refresh = "arrow-rotate-right";
         public const string Request = "clipboard-list";
+        public const string Save = "floppy-disk";
         public const string Site = "school";
         public const string Sku = "barcode";
         public const string Settings = "gear";

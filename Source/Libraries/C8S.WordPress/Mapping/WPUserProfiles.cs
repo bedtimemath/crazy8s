@@ -8,7 +8,9 @@ internal class WPUserProfiles : Profile
 {
     public WPUserProfiles()
     {
-        CreateMap<User, WPUserDetails>();
-        CreateMap<WPUserDetails, User>();
+        CreateMap<User, WPUserDetails>()
+            .ForMember(m => m.RoleSlugs, opt => opt.MapFrom(m => m.Roles));
+        CreateMap<WPUserDetails, User>()
+            .ForMember(m => m.Roles, opt => opt.MapFrom(m => m.RoleSlugs));
     }
 }

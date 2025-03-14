@@ -78,6 +78,7 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterCommand<NoteDeleteCommand, WrappedResponse>(noteCallbacks.Handle);
 
         var wordPressCallbacks = serviceProvider.GetRequiredService<WordPressCallbacks>();
+        cqrsService.RegisterQuery<WPRolesListQuery, WrappedListResponse<WPRoleDetails>>(wordPressCallbacks.Handle);
         cqrsService.RegisterQuery<WPUsersListQuery, WrappedListResponse<WPUserDetails>>(wordPressCallbacks.Handle);
         cqrsService.RegisterCommand<WPUserAddCommand, WrappedResponse<WPUserDetails>>(wordPressCallbacks.Handle);
 

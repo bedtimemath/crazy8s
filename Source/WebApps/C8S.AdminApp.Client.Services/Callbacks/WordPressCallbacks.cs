@@ -25,13 +25,27 @@ public class WordPressCallbacks(
     {
         try
         {
-            return await CallBackendReturnList<WPUserDetails>("POST", "wordpress",
+            return await CallBackendReturnList<WPUserDetails>("POST", "wordpress/users",
                 payload: query, token: token);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling WordPress users list request: {@Query}", query);
             return WrappedListResponse<WPUserDetails>.CreateFailureResponse(exception);
+        }
+    }
+    public async Task<WrappedListResponse<WPRoleDetails>> Handle(
+        WPRolesListQuery query, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendReturnList<WPRoleDetails>("POST", "wordpress/roles",
+                payload: query, token: token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling WordPress roles list request: {@Query}", query);
+            return WrappedListResponse<WPRoleDetails>.CreateFailureResponse(exception);
         }
     }
     #endregion
@@ -42,7 +56,7 @@ public class WordPressCallbacks(
     {
         try
         {
-            return await CallBackendReturnSingle<WPUserDetails>("PUT", "wordpress", payload:command, token: token);
+            return await CallBackendReturnSingle<WPUserDetails>("PUT", "wordpress/users", payload:command, token: token);
         }
         catch (Exception exception)
         {

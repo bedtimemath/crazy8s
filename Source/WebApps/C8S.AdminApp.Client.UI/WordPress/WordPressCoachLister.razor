@@ -26,15 +26,7 @@
                                   Width="240px" />
             <RadzenDataGridColumn Title="Roles">
                 <Template Context="coach">
-                    @String.Join(",", coach.Roles)
-                </Template>
-            </RadzenDataGridColumn>
-            <RadzenDataGridColumn Title=""
-                                  Width="60px">
-                <Template Context="coach">
-                    <IconButton ButtonType="ButtonType.Button"
-                                ButtonStyle="ButtonStyle.Danger"
-                                IconString="@C8SConstants.Icons.Delete"/>
+                    @String.Join(",", coach.RoleSlugs)
                 </Template>
             </RadzenDataGridColumn>
         </Columns>

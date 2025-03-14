@@ -21,7 +21,7 @@ namespace C8S.AdminApp.Controllers
 
         #region GET LIST
         [HttpPost]
-        [Route("api/[controller]")]
+        [Route("api/[controller]/users")]
         public async Task<WrappedListResponse<WPUserDetails>> GetWordPressUsers(
             [FromBody] WPUsersListQuery query)
         {
@@ -36,11 +36,27 @@ namespace C8S.AdminApp.Controllers
             }
 
         }
+        [HttpPost]
+        [Route("api/[controller]/roles")]
+        public async Task<WrappedListResponse<WPRoleDetails>> GetWordPressRoles(
+            [FromBody] WPRolesListQuery query)
+        {
+            try
+            {
+                return await wordPressService.GetWordPressRoles();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
+                return WrappedListResponse<WPRoleDetails>.CreateFailureResponse(exception);
+            }
+
+        }
         #endregion
 
         #region PUT
         [HttpPut]
-        [Route("api/[controller]")]
+        [Route("api/[controller]/users")]
         public async Task<WrappedResponse<WPUserDetails>> PutWordPressUser(
             [FromBody] WPUserAddCommand command)
         {
@@ -53,8 +69,7 @@ namespace C8S.AdminApp.Controllers
                     command.LastName,
                     command.UserName,
                     command.Password,
-                    command.Roles,
-                    command.Capabilities
+                    command.Roles
                 );
                 return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }

@@ -122,8 +122,7 @@ public class WordPressService
         string? lastName = null,
         string? userName = null,
         string? password = null,
-        IList<string>? roles = null,
-        IDictionary<string, bool>? capabilities = null)
+        IList<string>? roleSlugs = null)
     {
         name ??= GenerateName(firstName, lastName);
         userName ??= GenerateUserName(email, name);
@@ -138,8 +137,7 @@ public class WordPressService
                 LastName = lastName,
                 UserName = userName,
                 Password = password,
-                Roles = roles ?? [],
-                Capabilities = capabilities
+                Roles = roleSlugs ?? []
             };
             var output = await _wordPressClient.Users.CreateAsync(user);
             return _mapper.Map<WPUserDetails>(output);
@@ -149,7 +147,7 @@ public class WordPressService
             // Would be nice if the WordPressPCL library threw a more specific exception
             if (ex.Message == "Sorry, that username already exists!")
                 return await CreateWordPressUser(IncrementUserName(userName),
-                    name, firstName, lastName, userName, password, roles, capabilities);
+                    name, firstName, lastName, userName, password, roleSlugs);
 
             _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
             throw;

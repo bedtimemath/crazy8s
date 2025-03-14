@@ -10,7 +10,5 @@ public record WPUserDetails
     public string? FirstName { get; init; }
     public string? LastName { get; init; }
 
-    public IList<string> Roles { get; init; } = [];
-    public IDictionary<string, bool> Capabilities { get; init; } = new Dictionary<string, bool>();
-    public IDictionary<string, bool> ExtraCapabilities { get; init; } = new Dictionary<string, bool>();
+    public IList<string> RoleSlugs { get; init; } = [];
 }

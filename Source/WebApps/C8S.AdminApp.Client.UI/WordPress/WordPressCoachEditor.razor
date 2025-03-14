@@ -1,6 +1,86 @@
 ﻿@inherits BaseCoordinatedComponent<WPCoachEditorCoordinator>
 @using C8S.AdminApp.Client.Services.Coordinators.WordPress
+@using C8S.WordPress.Abstractions.Models
 
 <div class="c8s-wordpress-coach-editor @CssClass">
-    COACH: @Service.Coach?.Name
+
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Start"
+                 JustifyContent="JustifyContent.Stretch"
+                 Gap="1rem"
+                 class="w-100 rz-p-2">
+
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     Gap="0"
+                     class="w-100">
+                     
+            <RadzenRow class="flex-grow-1">
+                <RadzenColumn Size="12">
+                    <RadzenRow>
+                        <RadzenColumn Size="4" SizeLG="2">
+                            <strong>Id</strong>
+                        </RadzenColumn>
+                        <RadzenColumn Size="8" SizeLG="10">
+                            @Service.Coach.Id
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow>
+                        <RadzenColumn Size="4" SizeLG="2">
+                            <strong>User</strong>
+                        </RadzenColumn>
+                        <RadzenColumn Size="8" SizeLG="10">
+                            @Service.Coach.UserName
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow>
+                        <RadzenColumn Size="4" SizeLG="2">
+                            <strong>Name</strong>
+                        </RadzenColumn>
+                        <RadzenColumn Size="8" SizeLG="10">
+                            @Service.Coach.Name
+                        </RadzenColumn>
+                    </RadzenRow>
+                    <RadzenRow>
+                        <RadzenColumn Size="4" SizeLG="2">
+                            <strong>Email</strong>
+                        </RadzenColumn>
+                        <RadzenColumn Size="8" SizeLG="10">
+                            @Service.Coach.Email
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenColumn>
+            </RadzenRow>
+
+
+            @* ACTION BUTTONS *@
+            <RadzenStack Orientation="Orientation.Vertical"
+                         AlignItems="AlignItems.Center"
+                         JustifyContent="JustifyContent.Start"
+                         Gap="1rem"
+                         class="flex-shrink-0">
+
+                <IconButton ButtonType="ButtonType.Button"
+                            ButtonStyle="ButtonStyle.Success"
+                            IconString="@C8SConstants.Icons.Save"
+                            Text="Save" />
+
+                <IconButton ButtonType="ButtonType.Button"
+                            ButtonStyle="ButtonStyle.Danger"
+                            Variant="Variant.Text"
+                            IconString="@C8SConstants.Icons.Delete"
+                            Text="Delete" />
+            </RadzenStack>
+
+        </RadzenStack>
+
+
+        <RadzenCheckBoxList Data="@Service.Roles"
+                            @bind-Value="@Service.SelectedSlugs"
+                            TValue="string"
+                            TextProperty="@nameof(WPRoleDetails.Display)"
+                            ValueProperty="@nameof(WPRoleDetails.Slug)" />
+
+    </RadzenStack>
 </div>

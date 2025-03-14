@@ -6,6 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Coordinators\Temp\**" />
+    <Content Remove="Coordinators\Temp\**" />
+    <EmbeddedResource Remove="Coordinators\Temp\**" />
+    <None Remove="Coordinators\Temp\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -19,7 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Coordinators\Temp\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
