@@ -1,5 +1,5 @@
 ﻿@inherits BaseCoordinatedComponent<WPCoachListerCoordinator>
-@using C8S.AdminApp.Client.Services.Coordinators.Temp
+@using C8S.AdminApp.Client.Services.Coordinators.WordPress
 @using C8S.WordPress.Abstractions.Models
 
 <div class="c8s-wordpress-coach-lister @CssClass">
@@ -9,7 +9,7 @@
                     Count="@Service.TotalCount"
                     LoadData="@Service.LoadCoaches"
                     SelectionMode="DataGridSelectionMode.Single"
-                    RowSelect="SelectedCoachChanged"
+                    RowSelect="@(async (WPUserDetails args) => await Service.HandleRowSelected(args))"
                     IsLoading="@Service.IsLoading">
         <Columns>
             <RadzenDataGridColumn Title="Id" 

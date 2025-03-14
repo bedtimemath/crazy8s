@@ -4,7 +4,6 @@ using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Persons;
 using C8S.AdminApp.Client.Services.Coordinators.Requests;
-using C8S.AdminApp.Client.Services.Coordinators.Temp;
 using C8S.AdminApp.Client.Services.Coordinators.WordPress;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,8 +32,8 @@ public static class ServiceCollectionEx
 
         services.AddScoped<NotesListEditorCoordinator>();
 
-        services.AddScoped<WordPressCoordinator>();
         services.AddScoped<WPUserCreatorCoordinator>();
+        services.AddScoped<WPCoachEditorCoordinator>();
         services.AddScoped<WPCoachListerCoordinator>();
 
         return services;

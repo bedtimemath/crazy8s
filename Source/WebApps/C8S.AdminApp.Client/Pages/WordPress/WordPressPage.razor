@@ -1,10 +1,9 @@
 ﻿@page "/wordpress"
-@inherits BaseCoordinatedPage<WordPressCoordinator>
-@using C8S.AdminApp.Client.Services.Coordinators.WordPress
+@inherits BaseRazorPage
 @using C8S.AdminApp.Client.UI.WordPress
 
 
-<RadzenSplitter Orientation="Orientation.Vertical">
+<RadzenSplitter Orientation="Orientation.Horizontal">
     <RadzenSplitterPane Size="50%">
 
         <RadzenStack Orientation="Orientation.Vertical"
@@ -21,18 +20,31 @@
                             TextAlign="TextAlign.Start"
                             TextStyle="TextStyle.Body1"
                             Text="Pick C8s Person:"
-                            class="flex-shrink-0"/>
+                            class="flex-shrink-0" />
 
-                <WordPressUserCreator CssClass="flex-grow-1"/>
+                <WordPressUserCreator CssClass="flex-grow-1" />
             </RadzenStack>
 
-            <WordPressCoachLister @bind-SelectedCoach="@SelectedCoach" />
+            <WordPressCoachLister CoachSelected="@HandleCoachSelected" />
         </RadzenStack>
 
     </RadzenSplitterPane>
     <RadzenSplitterPane Size="50%">
-        <div>
-           COACH: @SelectedCoach?.Name
-        </div>
+        @if (SelectedCoach == null)
+        {
+            <RadzenStack Orientation="Orientation.Vertical"
+                         AlignItems="AlignItems.Center"
+                         JustifyContent="JustifyContent.Center"
+                         class="w-100 h-100">
+                <RadzenText TagName="TagName.Div"
+                            TextStyle="TextStyle.Body1"
+                            TextAlign="TextAlign.Center"
+                            Text="Choose a coach" />
+            </RadzenStack>
+        }
+        else
+        {
+            <WordPressCoachEditor Coach="@SelectedCoach" />
+        }
     </RadzenSplitterPane>
 </RadzenSplitter>

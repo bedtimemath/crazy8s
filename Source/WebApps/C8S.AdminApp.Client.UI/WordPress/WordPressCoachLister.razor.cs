@@ -1,4 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Coordinators.Temp;
+﻿using C8S.AdminApp.Client.Services.Coordinators.WordPress;
 using C8S.WordPress.Abstractions.Models;
 using Microsoft.AspNetCore.Components;
 using SC.Common.Razor.Base;
@@ -8,13 +8,11 @@ namespace C8S.AdminApp.Client.UI.WordPress;
 public partial class WordPressCoachLister : BaseCoordinatedComponent<WPCoachListerCoordinator>
 {
     [Parameter]
-    public WPUserDetails SelectedCoach
+    public EventCallback<WPUserDetails> CoachSelected { get; set; }
+
+    protected override void OnInitialized()
     {
-        get => Service.SelectedCoaches[0];
-        set => Service.SelectCoach(value);
+        base.OnInitialized();
+        Service.CoachSelected = CoachSelected;
     }
-
-    [Parameter]
-    public EventCallback<WPUserDetails> SelectedCoachChanged { get; set; }
-
 }

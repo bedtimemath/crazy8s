@@ -1,12 +1,10 @@
-﻿using C8S.AdminApp.Client.Services.Coordinators.WordPress;
-using C8S.WordPress.Abstractions.Models;
-using Microsoft.AspNetCore.Components;
+﻿using C8S.WordPress.Abstractions.Models;
 using SC.Common.Client.Base;
 
 namespace C8S.AdminApp.Client.Pages.WordPress;
 
-public sealed partial class WordPressPage :
-    BaseCoordinatedPage<WordPressCoordinator>
+public sealed partial class WordPressPage : BaseRazorPage
 {
-    public WPUserDetails? SelectedCoach { get; set; } = null!;
+    public WPUserDetails? SelectedCoach { get; private set; }
+    private void HandleCoachSelected(WPUserDetails coach) => SelectedCoach = coach;
 }

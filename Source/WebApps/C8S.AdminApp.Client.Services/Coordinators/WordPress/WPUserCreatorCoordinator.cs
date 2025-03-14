@@ -11,7 +11,7 @@ using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
 
-namespace C8S.AdminApp.Client.Services.Coordinators.Temp;
+namespace C8S.AdminApp.Client.Services.Coordinators.WordPress;
 
 public sealed class WPUserCreatorCoordinator(
     ILoggerFactory loggerFactory,
@@ -79,7 +79,7 @@ public sealed class WPUserCreatorCoordinator(
 
     private async Task LoadPersonsList(LoadDataArgs args)
     {
-        if (!String.IsNullOrWhiteSpace(args.Filter) && args.Filter.Length < 3) return;
+        if (!string.IsNullOrWhiteSpace(args.Filter) && args.Filter.Length < 3) return;
         try
         {
             IsLoading = true;
@@ -90,7 +90,7 @@ public sealed class WPUserCreatorCoordinator(
                 {
                     StartIndex = args.Skip ?? 0,
                     Count = args.Top ?? 0,
-                    Query = String.IsNullOrWhiteSpace(args.Filter) ? null : args.Filter,
+                    Query = string.IsNullOrWhiteSpace(args.Filter) ? null : args.Filter,
                     SortDescription = "Email ASC"
                 });
             if (response is { Success: false } or { Result: null } ) 
