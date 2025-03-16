@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using C8S.Domain.Features.Clubs.Models;
+using C8S.Domain.Features.Clubs.Queries;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using C8S.WordPress.Abstractions.Commands;
@@ -18,14 +20,14 @@ public sealed class WPUserCreatorCoordinator(
     IPubSubService pubSubService,
     ICQRSService cqrsService) : BaseCoordinator(loggerFactory, pubSubService, cqrsService)
 {
-    //private readonly ILogger<WPUserCreatorCoordinator> _logger = loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
+    private readonly ILogger<WPUserCreatorCoordinator> _logger = loggerFactory.CreateLogger<WPUserCreatorCoordinator>();
 
-    public RadzenDropDownDataGrid<PersonListItem?> DataGrid { get; set; } = null!;
+    public RadzenDropDownDataGrid<Person?> DataGrid { get; set; } = null!;
 
     public string? Email { get; set; }
 
-    public IList<PersonListItem> Persons { get; set; } = [];
-    public PersonListItem? SelectedPerson { get; set; }
+    public IList<Person> Persons { get; set; } = [];
+    public Person? SelectedPerson { get; set; }
     public int TotalPersons { get; set; }
 
     public bool IsCreating { get; set; } = false;
@@ -35,6 +37,32 @@ public sealed class WPUserCreatorCoordinator(
     {
         base.SetUp();
         LoadPersonsData(new LoadDataArgs() { Skip = 0, Top = 5 });
+    }
+
+    public async Task SetSelectedPerson(Person person)
+    {
+        SelectedPerson = person;
+
+        try
+        {
+            var response = await GetQueryResults<PersonWithOrdersQuery, WrappedResponse<PersonWithOrders?>>(
+                               new PersonWithOrdersQuery() { PersonId = person.PersonId }) ??
+                           throw new UnreachableException("GetQueryResults returned null");
+            if (!response.Success)
+                throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
+
+            var personWithOrders = response.Result!;
+            var clubs = personWithOrders.ClubPersons.Select(cp => cp.Club).ToList();
+            _logger.LogDebug("Person {Name} has {Count} clubs", personWithOrders.FullName, clubs.Count);
+            foreach (var club in clubs)
+            {
+                _logger.LogDebug("{@Club}: {Count}", club, club.Orders.Count);
+            }
+        }
+        catch (Exception ex)
+        {
+            PubSubService.PublishException(ex);
+        }
     }
 
     public async Task CreateWordPressUser()
@@ -85,7 +113,7 @@ public sealed class WPUserCreatorCoordinator(
             IsLoading = true;
             await PerformComponentRefresh();
 
-            var response = await GetQueryResults<PersonsListQuery, WrappedListResponse<PersonListItem>>(
+            var response = await GetQueryResults<PersonsListQuery, WrappedListResponse<Person>>(
                 new PersonsListQuery()
                 {
                     StartIndex = args.Skip ?? 0,

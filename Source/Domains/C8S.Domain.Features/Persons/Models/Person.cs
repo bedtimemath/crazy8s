@@ -2,8 +2,12 @@
 
 namespace C8S.Domain.Features.Persons.Models;
 
-public record PersonAbstract : PersonBase
+public record Person
 {
+    public int PersonId { get; init; }
+
+    public string LastName { get; init; } = null!;
+    public string Email { get; init; } = null!;
     public string? FirstName { get; init; }
 
     [JsonIgnore]

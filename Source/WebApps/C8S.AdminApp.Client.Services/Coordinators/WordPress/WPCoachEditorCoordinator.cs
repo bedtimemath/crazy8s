@@ -1,10 +1,9 @@
 ﻿using System.Diagnostics;
+using C8S.Domain.Features.Clubs.Queries;
+using C8S.Domain.Features.Persons.Models;
 using C8S.WordPress.Abstractions.Models;
-using C8S.WordPress.Abstractions.Notifications;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
-using Radzen;
-using Radzen.Blazor;
 using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
@@ -24,6 +23,7 @@ public sealed class WPCoachEditorCoordinator(
     public IEnumerable<string> SelectedSlugs { get; set; } = [];
 
     public bool IsLoading { get; set; } = false;
+    public bool HasChanged { get; set; } = false;
     #endregion
 
     #region SetUp / TearDown
@@ -40,6 +40,14 @@ public sealed class WPCoachEditorCoordinator(
         Coach = coach;
         SelectedSlugs = coach.RoleSlugs;
         Task.Run(async () => await PerformComponentRefresh());
+    }
+
+    public void HandleRolesChanged(IEnumerable<string> values)
+    {
+        var valuesList = values.ToList();
+        HasChanged = Coach.RoleSlugs.Except(valuesList).Any() || 
+                     valuesList.Except(Coach.RoleSlugs).Any();
+        SelectedSlugs = valuesList;
     }
     #endregion
 

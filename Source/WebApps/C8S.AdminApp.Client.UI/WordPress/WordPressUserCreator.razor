@@ -9,21 +9,22 @@
                  Gap="0.5rem">
         
         <RadzenDropDownDataGrid @ref="@Service.DataGrid" 
-                                @bind-Value="@Service.SelectedPerson"
+                                Value="@Service.SelectedPerson"
+                                ValueChanged="@(async (Person p) => await Service.SetSelectedPerson(p))"
                                 Count="@Service.TotalPersons"
                                 Data="@Service.Persons"
                                 LoadData="@Service.LoadPersonsData"
                                 IsLoading="@Service.IsLoading"
-                                TextProperty="@nameof(PersonListItem.FullName)"
+                                TextProperty="@nameof(Person.FullName)"
                                 class="flex-grow-1">
             <Columns>
                 <RadzenDropDownDataGridColumn Title="Id"
-                                              Property="@nameof(PersonListItem.PersonId)"
+                                              Property="@nameof(Person.PersonId)"
                                               Width="100px" />
                 <RadzenDropDownDataGridColumn Title="Full Name"
-                                              Property="@nameof(PersonListItem.FullName)" />
+                                              Property="@nameof(Person.FullName)" />
                 <RadzenDropDownDataGridColumn Title="Email"
-                                              Property="@nameof(PersonListItem.Email)" />
+                                              Property="@nameof(Person.Email)" />
             </Columns>
         </RadzenDropDownDataGrid>
                        

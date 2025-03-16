@@ -20,7 +20,7 @@ public sealed partial class PersonsList : BaseRazorComponent, IDisposable
     #endregion
 
     #region Component References
-    private Virtualize<PersonListItem> _listerComponent = null!;
+    private Virtualize<Person> _listerComponent = null!;
     #endregion
 
     #region Private Variables

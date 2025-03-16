@@ -21,7 +21,7 @@ public class ClubPersonDb: BaseDb
 
     #region Database Properties
     [Required]
-    public bool IsPrimary { get; set; } = default!;
+    public bool IsPrimary { get; set; }
     #endregion
 
     #region Reference Properties

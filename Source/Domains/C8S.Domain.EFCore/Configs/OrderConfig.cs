@@ -130,12 +130,6 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
         #endregion
 
         #region Navigation Configuration
-        //public ClubDb? Club { get; set; } = null;
-        entity.HasOne(m => m.Club)
-            .WithOne(m => m.Order)
-            .HasForeignKey<OrderDb>(m => m.ClubId)
-            .IsRequired(false);
-
         //public ICollection<ShipmentDb> Shipments { get; set; } = default!;
         entity.HasMany(m => m.Shipments)
             .WithOne(m => m.Order)
@@ -145,6 +139,12 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
         entity.HasMany(m => m.OrderSkus)
             .WithOne(m => m.Order)
             .HasForeignKey(m => m.OrderId);
+
+        //public ClubDb? Club { get; set; } = null;
+        entity.HasOne(m => m.Club)
+            .WithMany(m => m.Orders)
+            .HasForeignKey(m => m.ClubId)
+            .IsRequired(false);
 
         //public ICollection<OrderNoteDb> Notes { get; set; } = default!;
         entity.HasMany(m => m.Notes)

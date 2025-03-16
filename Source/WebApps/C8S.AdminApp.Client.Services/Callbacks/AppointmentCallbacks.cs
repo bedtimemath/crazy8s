@@ -10,24 +10,24 @@ public class AppointmentCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
         // QUERIES
-        ICQRSQueryHandler<AppointmentDetailsQuery, WrappedResponse<AppointmentDetails?>>
+        ICQRSQueryHandler<AppointmentDetailsQuery, WrappedResponse<Appointment?>>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentCallbacks> _logger = loggerFactory.CreateLogger<AppointmentCallbacks>();
     #endregion
 
     #region Queries
-    public async Task<WrappedResponse<AppointmentDetails?>> Handle(
+    public async Task<WrappedResponse<Appointment?>> Handle(
         AppointmentDetailsQuery query, CancellationToken token)
     {
         try
         {
-            return await CallBackendReturnSingle<AppointmentDetails?>("GET", "appointment", query.AppointmentId, token: token);
+            return await CallBackendReturnSingle<Appointment?>("GET", "appointment", query.AppointmentId, token: token);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling appointment: {@Appointment}", query);
-            return WrappedResponse<AppointmentDetails?>.CreateFailureResponse(exception);
+            return WrappedResponse<Appointment?>.CreateFailureResponse(exception);
         }
     }
     #endregion

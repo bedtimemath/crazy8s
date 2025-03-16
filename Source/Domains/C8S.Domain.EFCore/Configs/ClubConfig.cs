@@ -99,14 +99,14 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
             .HasForeignKey(m => m.SaleId)
             .IsRequired(false);
 
-        //public OrderDb? Order { get; set; }
-        entity.HasOne(m => m.Order)
-            .WithOne(m => m.Club)
-            .HasForeignKey<OrderDb>(m => m.ClubId)
-            .IsRequired(false);
-
         //public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
         entity.HasMany(m => m.ClubPersons)
+            .WithOne(m => m.Club)
+            .HasForeignKey(m => m.ClubId)
+            .IsRequired(false);
+
+        //public ICollection<OrderDb> Orders { get; set; } = null!;
+        entity.HasMany(m => m.Orders)
             .WithOne(m => m.Club)
             .HasForeignKey(m => m.ClubId)
             .IsRequired(false);

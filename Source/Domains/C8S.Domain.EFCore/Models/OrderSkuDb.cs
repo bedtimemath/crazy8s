@@ -29,19 +29,19 @@ public class OrderSkuDb: BaseDb
 
     #region Database Properties
     [Required]
-    public int Ordinal { get; set; } = default!;
+    public int Ordinal { get; set; }
 
     [Required]
-    public short Quantity { get; set; } = default!;
+    public short Quantity { get; set; }
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Order))]
-    public int OrderId { get; set; } = default!;
-    public OrderDb Order { get; set; } = default!;
+    public int OrderId { get; set; }
+    public OrderDb Order { get; set; } = null!;
 
     [ForeignKey(nameof(Sku))]
-    public int SkuId { get; set; } = default!;
-    public SkuDb Sku { get; set; } = default!;
+    public int SkuId { get; set; }
+    public SkuDb Sku { get; set; } = null!;
     #endregion
 }

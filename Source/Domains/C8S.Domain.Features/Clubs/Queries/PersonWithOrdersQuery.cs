@@ -2,9 +2,9 @@
 using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 
-namespace C8S.Domain.Features.Persons.Queries;
+namespace C8S.Domain.Features.Clubs.Queries;
 
-public record PersonDetailsQuery : ICQRSQuery<WrappedResponse<PersonDetails?>>
+public record PersonWithOrdersQuery : ICQRSQuery<WrappedResponse<PersonWithOrders?>>
 {
     public int PersonId { get; init; }
 }

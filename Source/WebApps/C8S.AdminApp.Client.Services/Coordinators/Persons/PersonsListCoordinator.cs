@@ -65,12 +65,12 @@ public sealed class PersonsListCoordinator(
         RaiseFilterChanged();
     }
     
-    public async ValueTask<ItemsProviderResult<PersonListItem>>
+    public async ValueTask<ItemsProviderResult<Person>>
         GetRows(ItemsProviderRequest person)
     {
         try
         {
-            var response = await GetQueryResults<PersonsListQuery, WrappedListResponse<PersonListItem>>(
+            var response = await GetQueryResults<PersonsListQuery, WrappedListResponse<Person>>(
                     new PersonsListQuery()
                     {
                         StartIndex = person.StartIndex,
@@ -85,7 +85,7 @@ public sealed class PersonsListCoordinator(
             TotalCount = results.Count;
 
             RaiseListUpdated();
-            return new ItemsProviderResult<PersonListItem>(results, results.Count);
+            return new ItemsProviderResult<Person>(results, results.Count);
         }
         catch (Exception ex)
         {

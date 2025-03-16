@@ -4,6 +4,7 @@ using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250311175515_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,7 +310,9 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ClubId");
+                    b.HasIndex("ClubId")
+                        .IsUnique()
+                        .HasFilter("[ClubId] IS NOT NULL");
 
                     b.HasIndex("OldSystemOrderId")
                         .IsUnique()
@@ -1211,8 +1216,8 @@ namespace C8S.Domain.EFCore.Migrations
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.ClubDb", "Club")
-                        .WithMany("Orders")
-                        .HasForeignKey("ClubId");
+                        .WithOne("Order")
+                        .HasForeignKey("C8S.Domain.EFCore.Models.OrderDb", "ClubId");
 
                     b.Navigation("Club");
                 });
@@ -1427,7 +1432,7 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Navigation("Notes");
 
-                    b.Navigation("Orders");
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.InvoiceDb", b =>

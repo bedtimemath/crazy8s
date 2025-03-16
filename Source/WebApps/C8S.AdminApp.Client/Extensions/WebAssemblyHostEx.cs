@@ -5,6 +5,7 @@ using C8S.AdminApp.Client.Services.Menu.Queries;
 using C8S.AdminApp.Client.Services.Menu.Services;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
+using C8S.Domain.Features.Clubs.Queries;
 using C8S.Domain.Features.Notes.Commands;
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
@@ -63,12 +64,13 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, WrappedResponse<RequestDetails>>(requestsCallbacks.Handle);
 
         var personsCallbacks = serviceProvider.GetRequiredService<PersonCallbacks>();
-        cqrsService.RegisterQuery<PersonsListQuery, WrappedListResponse<PersonListItem>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonsListQuery, WrappedListResponse<Person>>(personsCallbacks.Handle);
         cqrsService.RegisterQuery<PersonTitleQuery, WrappedResponse<string?>>(personsCallbacks.Handle);
-        cqrsService.RegisterQuery<PersonDetailsQuery, WrappedResponse<PersonDetails?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonQuery, WrappedResponse<Person?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonWithOrdersQuery, WrappedResponse<PersonWithOrders?>>(personsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
-        cqrsService.RegisterQuery<AppointmentDetailsQuery, WrappedResponse<AppointmentDetails?>>(appointmentCallbacks.Handle);
+        cqrsService.RegisterQuery<AppointmentDetailsQuery, WrappedResponse<Appointment?>>(appointmentCallbacks.Handle);
 
         var noteCallbacks = serviceProvider.GetRequiredService<NoteCallbacks>();
         cqrsService.RegisterQuery<NotesListQuery, WrappedListResponse<NoteDetails>>(noteCallbacks.Handle);

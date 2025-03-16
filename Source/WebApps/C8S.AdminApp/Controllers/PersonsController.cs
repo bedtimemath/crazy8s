@@ -22,7 +22,7 @@ public class PersonsController(
     #region GET LIST
     [HttpPost]
     [Route("api/[controller]")]
-    public async Task<WrappedListResponse<PersonListItem>> GetPersons(
+    public async Task<WrappedListResponse<Person>> GetPersons(
     [FromBody] PersonsListQuery query)
     {
         try
@@ -49,15 +49,15 @@ public class PersonsController(
             if (query.StartIndex != null) queryable = queryable.Skip(query.StartIndex.Value);
             if (query.Count != null) queryable = queryable.Take(query.Count.Value);
 
-            var items = await mapper.ProjectTo<PersonListItem>(queryable).ToListAsync();
+            var items = await mapper.ProjectTo<Person>(queryable).ToListAsync();
             var total = await queryable.CountAsync();
 
-            return WrappedListResponse<PersonListItem>.CreateSuccessResponse(items, total);
+            return WrappedListResponse<Person>.CreateSuccessResponse(items, total);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while executing query: {Query}", JsonSerializer.Serialize(query));
-            return WrappedListResponse<PersonListItem>.CreateFailureResponse(exception);
+            return WrappedListResponse<Person>.CreateFailureResponse(exception);
         }
 
     } 
@@ -66,7 +66,7 @@ public class PersonsController(
     #region GET SINGLE
     [HttpGet]
     [Route("api/[controller]/{personId:int}")]
-    public async Task<WrappedResponse<PersonDetails>> GetPerson(int personId)
+    public async Task<WrappedResponse<Person>> GetPerson(int personId)
     {
         try
         {
@@ -77,15 +77,48 @@ public class PersonsController(
 
             var person = await queryable.FirstOrDefaultAsync(r => r.PersonId == personId);
 
-            return new WrappedResponse<PersonDetails>()
+            return new WrappedResponse<Person>()
             {
-                Result = mapper.Map<PersonDetails?>(person)
+                Result = mapper.Map<Person?>(person)
             };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", personId);
-            return new WrappedResponse<PersonDetails>()
+            return new WrappedResponse<Person>()
+            {
+                Exception = exception.ToSerializableException()
+            };
+        }
+    }
+
+    [HttpGet]
+    [Route("api/[controller]/ClubOrders/{personId:int}")]
+    public async Task<WrappedResponse<PersonWithOrders>> GetPersonClubOrders(int personId)
+    {
+        try
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var queryable = dbContext.Persons
+                .Include(p => p.ClubPersons)
+                .ThenInclude(cp => cp.Club)
+                .ThenInclude(c => c.Orders)
+                .ThenInclude(o => o.OrderSkus)
+                .ThenInclude(os => os.Sku)
+                .AsSingleQuery()
+                .AsNoTracking();
+
+            var person = await queryable.FirstOrDefaultAsync(r => r.PersonId == personId);
+
+            return new WrappedResponse<PersonWithOrders>()
+            {
+                Result = mapper.Map<PersonWithOrders?>(person)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while getting details: {Id}", personId);
+            return new WrappedResponse<PersonWithOrders>()
             {
                 Exception = exception.ToSerializableException()
             };

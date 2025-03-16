@@ -38,7 +38,7 @@ public class PersonDb : BaseCoreDb
     public string? FirstName { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
-    public string LastName { get; set; } = default!;
+    public string LastName { get; set; } = null!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Email)]
     public string? Email { get; set; }
@@ -62,17 +62,17 @@ public class PersonDb : BaseCoreDb
 
     #region Reference Properties
     [ForeignKey(nameof(Place))]
-    public int? PlaceId { get; set; } = default!;
-    public PlaceDb? Place { get; set; } = default!;
+    public int? PlaceId { get; set; } = null!;
+    public PlaceDb? Place { get; set; } = null!;
     #endregion
 
     #region Reference Collections
-    public ICollection<PermissionDb> Permissions { get; set; } = default!;
-    public ICollection<RequestDb> Requests { get; set; } = default!;
+    public ICollection<PermissionDb> Permissions { get; set; } = null!;
+    public ICollection<RequestDb> Requests { get; set; } = null!;
 
-    public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
-    public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
-    public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;
-    public ICollection<PersonNoteDb> Notes { get; set; } = default!;
+    public ICollection<ClubPersonDb> ClubPersons { get; set; } = null!;
+    public ICollection<SalePersonDb> SalePersons { get; set; } = null!;
+    public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = null!;
+    public ICollection<PersonNoteDb> Notes { get; set; } = null!;
     #endregion
 }

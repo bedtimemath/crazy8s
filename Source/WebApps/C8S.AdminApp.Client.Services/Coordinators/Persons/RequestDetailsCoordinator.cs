@@ -29,7 +29,7 @@ public sealed class PersonDetailsCoordinator(
     #endregion
 
     #region Public Properties
-    public PersonDetails? Details { get; private set; } 
+    public Person? Details { get; private set; } 
     #endregion
 
     #region Public Methods
@@ -37,8 +37,8 @@ public sealed class PersonDetailsCoordinator(
     {
         try
         {
-            var backendResponse = await GetQueryResults<PersonDetailsQuery, WrappedResponse<PersonDetails?>>
-                (new PersonDetailsQuery() { PersonId = id });
+            var backendResponse = await GetQueryResults<PersonQuery, WrappedResponse<Person?>>
+                (new PersonQuery() { PersonId = id });
             if (!backendResponse.Success)
                 throw backendResponse.Exception!.ToException();
 

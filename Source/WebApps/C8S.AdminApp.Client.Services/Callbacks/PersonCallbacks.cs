@@ -1,4 +1,5 @@
-﻿using C8S.Domain.Features.Persons.Models;
+﻿using C8S.Domain.Features.Clubs.Queries;
+using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using Microsoft.Extensions.Logging;
 using SC.Common.Models;
@@ -11,8 +12,8 @@ public class PersonCallbacks(
     ILoggerFactory loggerFactory,
     IHttpClientFactory httpClientFactory) : BaseCallbacks(httpClientFactory),
         // QUERIES
-        ICQRSQueryHandler<PersonsListQuery, WrappedListResponse<PersonListItem>>,
-        ICQRSQueryHandler<PersonDetailsQuery, WrappedResponse<PersonDetails?>>,
+        ICQRSQueryHandler<PersonsListQuery, WrappedListResponse<Person>>,
+        ICQRSQueryHandler<PersonQuery, WrappedResponse<Person?>>,
         ICQRSQueryHandler<PersonTitleQuery, WrappedResponse<string?>>
 {
     #region ReadOnly Constructor Variables
@@ -20,31 +21,45 @@ public class PersonCallbacks(
     #endregion
 
     #region Queries
-    public async Task<WrappedListResponse<PersonListItem>> Handle(
+    public async Task<WrappedListResponse<Person>> Handle(
         PersonsListQuery query, CancellationToken token)
     {
         try
         {
-            return await CallBackendReturnList<PersonListItem>("POST", "persons", payload:query, token:token);
+            return await CallBackendReturnList<Person>("POST", "persons", payload:query, token:token);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling persons list person: {@Person}", query);
-            return WrappedListResponse<PersonListItem>.CreateFailureResponse(exception);
+            return WrappedListResponse<Person>.CreateFailureResponse(exception);
         }
     }
 
-    public async Task<WrappedResponse<PersonDetails?>> Handle(
-        PersonDetailsQuery query, CancellationToken token)
+    public async Task<WrappedResponse<Person?>> Handle(
+        PersonQuery query, CancellationToken token)
     {
         try
         {
-            return await CallBackendReturnSingle<PersonDetails?>("GET", "persons", query.PersonId, token:token);
+            return await CallBackendReturnSingle<Person?>("GET", "persons", query.PersonId, token:token);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error handling person details person: {@Person}", query);
-            return WrappedResponse<PersonDetails?>.CreateFailureResponse(exception);
+            return WrappedResponse<Person?>.CreateFailureResponse(exception);
+        }
+    }
+
+    public async Task<WrappedResponse<PersonWithOrders?>> Handle(
+        PersonWithOrdersQuery query, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendReturnSingle<PersonWithOrders?>("GET", "persons/cluborders", query.PersonId, token:token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling person details person: {@Person}", query);
+            return WrappedResponse<PersonWithOrders?>.CreateFailureResponse(exception);
         }
     }
 
@@ -53,7 +68,7 @@ public class PersonCallbacks(
     {
         try
         {
-            var response = await CallBackendReturnSingle<PersonDetails?>("GET", "persons", query.PersonId, token:token);
+            var response = await CallBackendReturnSingle<Person?>("GET", "persons", query.PersonId, token:token);
             return response switch
             {
                 { Success: false, Exception: not null } =>

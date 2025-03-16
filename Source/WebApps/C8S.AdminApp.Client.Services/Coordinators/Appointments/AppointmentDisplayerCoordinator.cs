@@ -60,7 +60,7 @@ public class AppointmentDisplayerCoordinator(
                 throw new UnreachableException("CheckAndUpdateAppointment called with null appointment id");
 
             var appointmentResponse = await GetQueryResults
-                <AppointmentDetailsQuery, WrappedResponse<AppointmentDetails?>>(
+                <AppointmentDetailsQuery, WrappedResponse<Appointment?>>(
                     new AppointmentDetailsQuery()
                     {
                         AppointmentId = _appointmentId.Value

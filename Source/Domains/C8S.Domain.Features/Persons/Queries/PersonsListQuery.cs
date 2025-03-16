@@ -4,7 +4,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Persons.Queries;
 
-public record PersonsListQuery : ICQRSQuery<WrappedListResponse<PersonListItem>>
+public record PersonsListQuery : ICQRSQuery<WrappedListResponse<Person>>
 {
     public int? StartIndex { get; init; }
     public int? Count { get; init; }

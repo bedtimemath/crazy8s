@@ -11,5 +11,5 @@ public partial class PersonListItemDisplayer : BaseRazorComponent
     public ICQRSService CQRSService { get; set; } = null!;
 
     [Parameter]
-    public PersonListItem Person { get; set; } = null!;
+    public Person Person { get; set; } = null!;
 }

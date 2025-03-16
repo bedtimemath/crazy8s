@@ -8,11 +8,7 @@ internal class PersonProfile: Profile
 {
     public PersonProfile()
     {
-        CreateMap<PersonDb, PersonAbstract>()
-            .Include<PersonDb, PersonDetails>()
-            .Include<PersonDb, PersonListItem>();
-        
-        CreateMap<PersonDb, PersonDetails>();
-        CreateMap<PersonDb, PersonListItem>();
+        CreateMap<PersonDb, Person>();
+        CreateMap<PersonDb, PersonWithOrders>();
     }
 }

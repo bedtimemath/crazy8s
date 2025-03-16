@@ -1,6 +1,6 @@
 ﻿namespace C8S.Domain.Features.Appointments.Models;
 
-public abstract record AppointmentBase
+public record Appointment
 {
     public int AppointmentId { get; init; }
     public DateTimeOffset StartsOn { get; init; }

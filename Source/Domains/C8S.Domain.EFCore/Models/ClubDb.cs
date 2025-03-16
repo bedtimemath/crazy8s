@@ -63,19 +63,17 @@ public class ClubDb : BaseCoreDb
 
     #region Reference Properties
     [Required, ForeignKey(nameof(Place))]
-    public int PlaceId { get; set; } = default!;
-    public PlaceDb Place { get; set; } = default!;
+    public int PlaceId { get; set; }
+    public PlaceDb Place { get; set; } = null!;
 
     [ForeignKey(nameof(Sale))]
     public int? SaleId { get; set; }
     public SaleDb? Sale { get; set; }
-
-    // one-to-one
-    public OrderDb? Order { get; set; }
     #endregion
 
     #region Reference Collections
-    public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
-    public ICollection<ClubNoteDb> Notes { get; set; } = default!;
+    public ICollection<ClubPersonDb> ClubPersons { get; set; } = null!;
+    public ICollection<OrderDb> Orders { get; set; } = null!;
+    public ICollection<ClubNoteDb> Notes { get; set; } = null!;
     #endregion
 }

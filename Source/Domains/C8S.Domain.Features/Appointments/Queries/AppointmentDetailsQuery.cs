@@ -4,7 +4,7 @@ using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.Domain.Features.Appointments.Queries;
 
-public record AppointmentDetailsQuery : ICQRSQuery<WrappedResponse<AppointmentDetails?>>
+public record AppointmentDetailsQuery : ICQRSQuery<WrappedResponse<Appointment?>>
 {
     public long AppointmentId { get; init; }
 }

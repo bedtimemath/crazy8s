@@ -64,7 +64,8 @@
                 <IconButton ButtonType="ButtonType.Button"
                             ButtonStyle="ButtonStyle.Success"
                             IconString="@C8SConstants.Icons.Save"
-                            Text="Save" />
+                            Text="Save"
+                            Disabled="@(!Service.HasChanged)" />
 
                 <IconButton ButtonType="ButtonType.Button"
                             ButtonStyle="ButtonStyle.Danger"
@@ -77,7 +78,8 @@
 
 
         <RadzenCheckBoxList Data="@Service.Roles"
-                            @bind-Value="@Service.SelectedSlugs"
+                            Value="@Service.SelectedSlugs"
+                            ValueChanged="@Service.HandleRolesChanged"
                             TValue="string"
                             TextProperty="@nameof(WPRoleDetails.Display)"
                             ValueProperty="@nameof(WPRoleDetails.Slug)" />

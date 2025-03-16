@@ -17,7 +17,7 @@ namespace C8S.AdminApp.Controllers
         
         [HttpGet]
         [Route("api/[controller]/{appointmentId:int}")]
-        public async Task<WrappedResponse<AppointmentDetails?>> GetAppointment(int appointmentId)
+        public async Task<WrappedResponse<Appointment?>> GetAppointment(int appointmentId)
         {
             try
             {
@@ -34,7 +34,7 @@ namespace C8S.AdminApp.Controllers
 
                 // we could use automapper for this when/if it gets more complicated
                 var fullSlateAppointment = appointmentResponse.Data;
-                var appointment = fullSlateAppointment == null ? null : new AppointmentDetails()
+                var appointment = fullSlateAppointment == null ? null : new Appointment()
                     {
                         AppointmentId = fullSlateAppointment.Id,
                         StatusString = fullSlateAppointment.StatusString ??
@@ -47,12 +47,12 @@ namespace C8S.AdminApp.Controllers
                                     throw new UnreachableException("FullSlate Appointment missing Deleted")
                     };
                 
-                return new WrappedResponse<AppointmentDetails?>() { Result = appointment };
+                return new WrappedResponse<Appointment?>() { Result = appointment };
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while getting details: {Id}", appointmentId);
-                return new WrappedResponse<AppointmentDetails?>()
+                return new WrappedResponse<Appointment?>()
                 {
                     Exception = exception.ToSerializableException()
                 };
