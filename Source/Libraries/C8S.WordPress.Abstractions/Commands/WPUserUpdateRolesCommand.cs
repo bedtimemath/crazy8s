@@ -6,6 +6,6 @@ namespace C8S.WordPress.Abstractions.Commands;
 
 public record WPUserUpdateRolesCommand: ICQRSCommand<WrappedResponse<WPUserDetails>>
 {    
-    public string UserName { get; init; } = null!;
-    public IList<string> Roles { get; init; } = [];
+    public int Id { get; init; }
+    public IEnumerable<string> Roles { get; init; } = [];
 }

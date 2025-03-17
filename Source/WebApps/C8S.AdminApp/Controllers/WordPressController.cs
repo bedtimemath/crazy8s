@@ -76,7 +76,7 @@ namespace C8S.AdminApp.Controllers
                 
                 // tell the world
                 await hubContext.SendDataChange(
-                    DataChangeAction.Added, C8SConstants.Entities.WPUser, 0, wordPressUser);
+                    DataChangeAction.Added, C8SConstants.Entities.WPUser, wordPressUser.Id, wordPressUser);
 
                 return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
@@ -90,19 +90,17 @@ namespace C8S.AdminApp.Controllers
 
         #region PATCH
         [HttpPatch]
-        [Route("api/[controller]/users/{username}")]
-        public async Task<WrappedResponse<WPUserDetails>> PatchWordPressUser(string username,
+        [Route("api/[controller]/users/{id:int}")]
+        public async Task<WrappedResponse<WPUserDetails>> PatchWordPressUserRoles(int id,
             [FromBody] WPUserUpdateRolesCommand command)
         {
             try
             {
-                var wordPressUser = await wordPressService.UpdateWordPressUserRoles(
-                    command.UserName,
-                    command.Roles);
+                var wordPressUser = await wordPressService.UpdateWordPressUserRoles(id, command.Roles);
                 
                 // tell the world
                 await hubContext.SendDataChange(
-                    DataChangeAction.Modified, C8SConstants.Entities.WPUser, 0, wordPressUser);
+                    DataChangeAction.Modified, C8SConstants.Entities.WPUser, id, wordPressUser);
 
                 return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
@@ -116,12 +114,12 @@ namespace C8S.AdminApp.Controllers
         
         #region DELETE
         [HttpDelete]
-        [Route("api/[controller]/users/{username}")]
-        public async Task<WrappedResponse> DeleteWordPressUser(string username)
+        [Route("api/[controller]/users/{id:int}")]
+        public async Task<WrappedResponse> DeleteWordPressUser(int id)
         {
             try
             {
-                await wordPressService.DeleteWordPressUser(username);
+                await wordPressService.DeleteWordPressUser(id);
                 
                 // tell the world
                 await hubContext.SendDataChange(
@@ -131,7 +129,7 @@ namespace C8S.AdminApp.Controllers
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Error while deleting WordPress user: {Username}", username);
+                _logger.LogError(exception, "Error creating WordPress user ID#: {@Id}", id);
                 return WrappedResponse.CreateFailureResponse(exception);
             }
         }

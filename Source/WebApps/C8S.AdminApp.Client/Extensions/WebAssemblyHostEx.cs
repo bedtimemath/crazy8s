@@ -84,6 +84,7 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterQuery<WPRolesListQuery, WrappedListResponse<WPRoleDetails>>(wordPressCallbacks.Handle);
         cqrsService.RegisterQuery<WPUsersListQuery, WrappedListResponse<WPUserDetails>>(wordPressCallbacks.Handle);
         cqrsService.RegisterCommand<WPUserAddCommand, WrappedResponse<WPUserDetails>>(wordPressCallbacks.Handle);
+        cqrsService.RegisterCommand<WPUserUpdateRolesCommand, WrappedResponse<WPUserDetails>>(wordPressCallbacks.Handle);
         cqrsService.RegisterCommand<WPUserDeleteCommand, WrappedResponse>(wordPressCallbacks.Handle);
 
         return host;

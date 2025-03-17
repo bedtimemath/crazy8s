@@ -71,7 +71,7 @@ public class WordPressCallbacks(
     {
         try
         {
-            return await CallBackendReturnSingle<WPUserDetails>("PATCH", "wordpress/users", payload:command, token: token);
+            return await CallBackendReturnSingle<WPUserDetails>("PATCH", $"wordpress/users/{command.Id}", payload:command, token: token);
         }
         catch (Exception exception)
         {
@@ -85,7 +85,7 @@ public class WordPressCallbacks(
     {
         try
         {
-            return await CallBackendNoReturn("DELETE", $"wordpress/users/{command.UserName}", token: token);
+            return await CallBackendNoReturn("DELETE", $"wordpress/users/{command.Id}", token: token);
         }
         catch (Exception exception)
         {

@@ -175,7 +175,7 @@ public class WordPressService
 
     #region Update
     public async Task<WPUserDetails> UpdateWordPressUserRoles(
-        string userName,
+        int id,
         IEnumerable<string> roles)
     {
         try
@@ -184,8 +184,8 @@ public class WordPressService
             if (usersResponse is { Success: false } or { Result: null })
                 throw usersResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
-            var foundUser = usersResponse.Result.FirstOrDefault(u => u.UserName == userName) ??
-                               throw new Exception($"Could not find user with username: {userName}");
+            var foundUser = usersResponse.Result.FirstOrDefault(u => u.Id == id) ??
+                               throw new Exception($"Could not find user for ID#: {id}");
             var updatedUser = foundUser with { RoleSlugs = roles.ToList() };
 
             var output = await _wordPressClient.Users.UpdateAsync(_mapper.Map<User>(updatedUser));
@@ -194,7 +194,7 @@ public class WordPressService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
+            _logger.LogError(ex, "Error updating WordPress user ID#: {@Id}", id);
             throw;
         }
     }
@@ -202,7 +202,7 @@ public class WordPressService
 
     #region Delete
     public async Task DeleteWordPressUser(
-        string userName)
+        int id)
     {
         try
         {
@@ -211,8 +211,8 @@ public class WordPressService
                 throw usersResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
 
             var usersList = usersResponse.Result.OrderBy(u => u.Id).ToList();
-            var userToDelete = usersList.FirstOrDefault(u => u.UserName == userName) ??
-                               throw new Exception($"Could not find user with username: {userName}");
+            var userToDelete = usersList.FirstOrDefault(u => u.Id == id) ??
+                               throw new Exception($"Could not find user with ID#: {id}");
             var admin = usersList.FirstOrDefault(u => u.RoleSlugs.Contains("administrator")) ??
                         throw new Exception("Could not find administrator");
 
@@ -221,7 +221,7 @@ public class WordPressService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
+            _logger.LogError(ex, "Error creating WordPress user ID#: {@Id}", id);
             throw;
         }
     }

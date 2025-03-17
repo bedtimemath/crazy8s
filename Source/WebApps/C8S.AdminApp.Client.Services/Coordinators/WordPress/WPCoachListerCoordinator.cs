@@ -69,6 +69,8 @@ public sealed class WPCoachListerCoordinator(
             IsLoading = true;
             await PerformComponentRefresh();
 
+            var currentSelection = SelectedCoaches.FirstOrDefault();
+
             var response = await GetQueryResults<WPUsersListQuery, WrappedListResponse<WPUserDetails>>(
                 new WPUsersListQuery() { IncludeRoles = ["Coach"] }) ??
                                     throw new UnreachableException("GetQueryResults returned null");
@@ -81,7 +83,13 @@ public sealed class WPCoachListerCoordinator(
             IsLoading = false;
             await PerformComponentRefresh();
 
-            await HandleRowSelected(null);
+            // reselect if possible
+            if (currentSelection != null)
+            {
+                var selectRow = DataGrid.View.FirstOrDefault(r => r.Id == currentSelection.Id);
+                if (selectRow != null)
+                    await DataGrid.SelectRow(selectRow);
+            }
         }
         catch (Exception ex)
         {
