@@ -30,8 +30,22 @@ public class PersonCallbacks(
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Error handling persons list person: {@Person}", query);
+            _logger.LogError(exception, "Error handling persons list person: {@Query}", query);
             return WrappedListResponse<Person>.CreateFailureResponse(exception);
+        }
+    }
+
+    public async Task<WrappedListResponse<PersonWithOrders>> Handle(
+        PersonsWithOrdersListQuery query, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendReturnList<PersonWithOrders>("POST", "persons/with-orders", payload:query, token:token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling persons list person: {@Query}", query);
+            return WrappedListResponse<PersonWithOrders>.CreateFailureResponse(exception);
         }
     }
 
@@ -54,7 +68,7 @@ public class PersonCallbacks(
     {
         try
         {
-            return await CallBackendReturnSingle<PersonWithOrders?>("GET", "persons/cluborders", query.PersonId, token:token);
+            return await CallBackendReturnSingle<PersonWithOrders?>("GET", "persons/with-orders", query.PersonId, token:token);
         }
         catch (Exception exception)
         {

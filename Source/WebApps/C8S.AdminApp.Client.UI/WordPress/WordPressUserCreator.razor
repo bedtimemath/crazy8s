@@ -1,40 +1,84 @@
 ﻿@inherits BaseCoordinatedComponent<WPUserCreatorCoordinator>
 @using C8S.AdminApp.Client.Services.Coordinators.WordPress
 @using C8S.Domain.Features.Persons.Models
+@using C8S.Domain.Features.Skus.Enums
+@using SC.Common.Models
 
 <div class="c8s-wordpress-user-creator @CssClass">
-    <RadzenStack Orientation="Orientation.Horizontal"
-                 AlignItems="AlignItems.Center"
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Stretch"
                  JustifyContent="JustifyContent.Normal"
                  Gap="0.5rem">
-        
-        <RadzenDropDownDataGrid @ref="@Service.DataGrid" 
-                                Value="@Service.SelectedPerson"
-                                ValueChanged="@(async (Person p) => await Service.SetSelectedPerson(p))"
-                                Count="@Service.TotalPersons"
-                                Data="@Service.Persons"
-                                LoadData="@Service.LoadPersonsData"
-                                IsLoading="@Service.IsLoading"
-                                TextProperty="@nameof(Person.FullName)"
-                                class="flex-grow-1">
-            <Columns>
-                <RadzenDropDownDataGridColumn Title="Id"
-                                              Property="@nameof(Person.PersonId)"
-                                              Width="100px" />
-                <RadzenDropDownDataGridColumn Title="Full Name"
-                                              Property="@nameof(Person.FullName)" />
-                <RadzenDropDownDataGridColumn Title="Email"
-                                              Property="@nameof(Person.Email)" />
-            </Columns>
-        </RadzenDropDownDataGrid>
-                       
-        <RadzenButton ButtonType="ButtonType.Button"
-                      ButtonStyle="ButtonStyle.Primary"
-                      Text="Create in WordPress"
-                      Click="@(async () => await Service.CreateWordPressUser())"
-                      IsBusy="@Service.IsCreating"
-                      Disabled="@(Service.SelectedPerson == null)"
-                      class="flex-shrink-0"/>
 
+        <RadzenCheckBoxList Value="@Service.SkuYears"
+                            ValueChanged="@(async (v) => await Service.SetSkuYears(v))"
+                            TValue="SkuYearOption"
+                            Data="@(EnumLabel<SkuYearOption>.GetAllEnumLabels())"
+                            ValueProperty="@nameof(EnumLabel<SkuYearOption>.Value)"
+                            TextProperty="@nameof(EnumLabel<SkuYearOption>.Display)"
+        />
+
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.Normal"
+                     Gap="0.5rem">
+
+            <RadzenDropDownDataGrid @ref="@Service.DataGrid"
+                                    @bind-Value="@Service.SelectedPerson"
+                                    TValue="PersonWithOrders"
+                                    Count="@Service.TotalPersons"
+                                    Data="@Service.Persons"
+                                    LoadData="@Service.LoadPersonsData"
+                                    IsLoading="@Service.IsLoading"
+                                    TextProperty="@nameof(Person.FullName)"
+                                    class="flex-grow-1">
+                <Columns>
+                    <RadzenDropDownDataGridColumn Title="Name & Email">
+                        <Template Context="person">
+                            <RadzenStack Orientation="Orientation.Vertical"
+                                         AlignItems="AlignItems.Start"
+                                         JustifyContent="JustifyContent.Normal"
+                                         Gap="0"
+                                         class="w-100">
+                                <RadzenText TagName="TagName.Div"
+                                            TextStyle="TextStyle.Body1"
+                                            Text="@person.FullName"
+                                            class="rz-mb-0" />
+                                <RadzenText TagName="TagName.Div"
+                                            TextStyle="TextStyle.Body2"
+                                            Text="@person.Email" />
+                            </RadzenStack>
+                        </Template>
+                    </RadzenDropDownDataGridColumn>
+                    <RadzenDropDownDataGridColumn Title="Skus">
+                        <Template Context="person">
+                            @foreach(var sku in ((PersonWithOrders)person)
+                                     .ClubPersons
+                                     .SelectMany(cp => cp.Club.Orders)
+                                     .SelectMany(o => o.OrderSkus)
+                                     .Select(os => os.Sku.Key)
+                                     .Distinct()
+                                     .OrderBy(k => k))
+                            {
+                                <RadzenText TagName="TagName.Div"
+                                            TextStyle="TextStyle.Body1"
+                                            Text="@sku"
+                                            style="white-space: normal;"
+                                            class="rz-mb-0" />
+                            }
+                        </Template>
+                    </RadzenDropDownDataGridColumn>
+                </Columns>
+            </RadzenDropDownDataGrid>
+
+            <RadzenButton ButtonType="ButtonType.Button"
+                          ButtonStyle="ButtonStyle.Primary"
+                          Text="Create in WordPress"
+                          Click="@(async () => await Service.CreateWordPressUser())"
+                          IsBusy="@Service.IsCreating"
+                          Disabled="@(Service.SelectedPerson == null)"
+                          class="flex-shrink-0" />
+
+        </RadzenStack>
     </RadzenStack>
 </div>

@@ -11,21 +11,10 @@
                      JustifyContent="JustifyContent.Normal"
                      Gap="1rem">
 
-            <RadzenStack Orientation="Orientation.Horizontal"
-                         AlignItems="AlignItems.Center"
-                         JustifyContent="JustifyContent.Normal"
-                         Gap="1rem">
-
-                <RadzenText TagName="TagName.Div"
-                            TextAlign="TextAlign.Start"
-                            TextStyle="TextStyle.Body1"
-                            Text="Pick C8s Person:"
-                            class="flex-shrink-0" />
-
-                <WordPressUserCreator CssClass="flex-grow-1" />
-            </RadzenStack>
+            <WordPressUserCreator />
 
             <WordPressCoachLister CoachSelected="@HandleCoachSelected" />
+
         </RadzenStack>
 
     </RadzenSplitterPane>

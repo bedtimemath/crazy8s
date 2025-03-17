@@ -57,7 +57,7 @@ public class SkuDb : BaseCoreDb
     #endregion
 
     #region Child Properties
-    public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
-    public ICollection<PermissionDb> Permissions { get; set; } = default!;
+    public ICollection<OrderSkuDb> OrderSkus { get; set; } = null!;
+    public ICollection<PermissionDb> Permissions { get; set; } = null!;
     #endregion
 }

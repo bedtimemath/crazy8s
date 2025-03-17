@@ -65,9 +65,10 @@ public static class WebAssemblyHostEx
 
         var personsCallbacks = serviceProvider.GetRequiredService<PersonCallbacks>();
         cqrsService.RegisterQuery<PersonsListQuery, WrappedListResponse<Person>>(personsCallbacks.Handle);
-        cqrsService.RegisterQuery<PersonTitleQuery, WrappedResponse<string?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonsWithOrdersListQuery, WrappedListResponse<PersonWithOrders>>(personsCallbacks.Handle);
         cqrsService.RegisterQuery<PersonQuery, WrappedResponse<Person?>>(personsCallbacks.Handle);
         cqrsService.RegisterQuery<PersonWithOrdersQuery, WrappedResponse<PersonWithOrders?>>(personsCallbacks.Handle);
+        cqrsService.RegisterQuery<PersonTitleQuery, WrappedResponse<string?>>(personsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
         cqrsService.RegisterQuery<AppointmentDetailsQuery, WrappedResponse<Appointment?>>(appointmentCallbacks.Handle);

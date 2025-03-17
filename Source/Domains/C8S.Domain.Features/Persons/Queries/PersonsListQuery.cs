@@ -1,13 +1,8 @@
 ﻿using C8S.Domain.Features.Persons.Models;
-using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
+using SC.Messaging.Abstractions.Base;
 
 namespace C8S.Domain.Features.Persons.Queries;
 
-public record PersonsListQuery : ICQRSQuery<WrappedListResponse<Person>>
+public record PersonsListQuery : BaseListQuery<Person>
 {
-    public int? StartIndex { get; init; }
-    public int? Count { get; init; }
-    public string? Query { get; init; }
-    public string? SortDescription { get; init; }
 }

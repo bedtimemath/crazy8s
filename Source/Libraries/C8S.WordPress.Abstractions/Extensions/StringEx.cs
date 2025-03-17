@@ -4,6 +4,6 @@ namespace C8S.WordPress.Abstractions.Extensions;
 
 public static class StringEx
 {
-    public static string ToSlug(string input) =>
-        input.RemoveNonAlphanumeric().ToLower();
+    public static string ToSlug(this string input) =>
+        input.RemoveNonAlphanumeric("_").ToLowerInvariant();
 }

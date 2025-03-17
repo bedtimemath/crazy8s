@@ -7,7 +7,8 @@ using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SC.Common.Extensions;
+
+using C8S.WordPress.Abstractions.Extensions;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -64,7 +65,7 @@ internal class WPImport(
         ConsoleEx.StartProgress("Adding skus to WordPress: ");
         foreach (var dbSku in dbSkus)
         {
-            var slug = dbSku.Key.RemoveNonAlphanumeric("_").ToLowerInvariant();
+            var slug = dbSku.Key.ToSlug();
             var display = dbSku.Name;
 
             if (wpSkus.Any(s => s.Properties.SkuIdentifier == dbSku.Key))

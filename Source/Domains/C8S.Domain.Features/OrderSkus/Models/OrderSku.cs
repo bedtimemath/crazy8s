@@ -1,5 +1,4 @@
-﻿using C8S.Domain.Features.Orders.Models;
-using C8S.Domain.Features.Skus.Models;
+﻿using C8S.Domain.Features.Skus.Models;
 
 namespace C8S.Domain.Features.OrderSkus.Models;
 
