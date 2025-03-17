@@ -147,18 +147,12 @@ public class RequestsController(
             request.FullSlateAppointmentStartsOn = command.FullSlateAppointmentStartsOn;
             await dbContext.SaveChangesAsync();
 
-            return new WrappedResponse<RequestDetails>()
-            {
-                Result = mapper.Map<RequestDetails?>(request)
-            };
+            return WrappedResponse<RequestDetails>.CreateSuccessResponse(mapper.Map<RequestDetails?>(request));
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while patching appointment starts on: {Id}", requestId);
-            return new WrappedResponse<RequestDetails>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedResponse<RequestDetails>.CreateFailureResponse(exception);
         }
     }
     #endregion

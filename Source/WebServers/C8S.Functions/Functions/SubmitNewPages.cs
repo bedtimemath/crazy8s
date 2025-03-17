@@ -493,7 +493,7 @@ public partial class SubmitNewPages(
                 {
                     EntityId = request.RequestId,
                     EntityName = nameof(RequestDb),
-                    DataChangeAction = DataChangeAction.Added
+                    Action = DataChangeAction.Added
                 };
                 var response = await httpClient.PostAsJsonAsync("/api/datachanges", dataChange, options);
                 if (!response.IsSuccessStatusCode)

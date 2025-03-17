@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using C8S.Domain.Features.Skus.Enums;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Extensions;
 using C8S.WordPress.Abstractions.Models;
-using C8S.WordPress.Abstractions.Notifications;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
 using Radzen;
@@ -86,8 +84,6 @@ public sealed class WPUserCreatorCoordinator(
             if (!addResponse.Success || addResponse.Result == null)
                 throw addResponse?.Exception?.ToException() ??
                       new Exception("Error adding WPUser");
-
-            PubSubService.Publish(new WPUsersUpdated() { WPUser = addResponse.Result });
         }
         catch (Exception ex)
         {

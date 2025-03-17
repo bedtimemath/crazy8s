@@ -1,11 +1,14 @@
 ﻿using System.Text.Json;
-using C8S.Domain.EFCore.Contexts;
+using C8S.AdminApp.Extensions;
+using C8S.AdminApp.Hubs;
+using C8S.Domain;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using C8S.WordPress.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using SC.Common.PubSub;
 using SC.Common.Responses;
 
 namespace C8S.AdminApp.Controllers
@@ -13,7 +16,7 @@ namespace C8S.AdminApp.Controllers
     [ApiController]
     public class WordPressController(
         ILoggerFactory loggerFactory,
-        IDbContextFactory<C8SDbContext> dbContextFactory,
+        IHubContext<CommunicationHub> hubContext,
         WordPressService wordPressService
         ) : ControllerBase
     {
@@ -69,14 +72,41 @@ namespace C8S.AdminApp.Controllers
                     command.LastName,
                     command.UserName,
                     command.Password,
-                    command.Roles
-                );
+                    command.Roles);
+                
+                // tell the world
+                await hubContext.SendDataChange(
+                    DataChangeAction.Added, C8SConstants.Entities.WPUser, 0, wordPressUser);
+
                 return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
             catch (Exception exception)
             {
                 _logger.LogError(exception, "Error while adding WordPress user: {Json}", JsonSerializer.Serialize(command));
                 return WrappedResponse<WPUserDetails>.CreateFailureResponse(exception);
+            }
+        }
+        #endregion
+        
+        #region DELETE
+        [HttpDelete]
+        [Route("api/[controller]/users/{username}")]
+        public async Task<WrappedResponse> DeleteWordPressUser(string username)
+        {
+            try
+            {
+                await wordPressService.DeleteWordPressUser(username);
+                
+                // tell the world
+                await hubContext.SendDataChange(
+                    DataChangeAction.Deleted, C8SConstants.Entities.WPUser);
+
+                return WrappedResponse.CreateSuccessResponse();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while deleting WordPress user: {Username}", username);
+                return WrappedResponse.CreateFailureResponse(exception);
             }
         }
         #endregion

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
-using C8S.Domain.Features.Clubs.Queries;
-using C8S.Domain.Features.Persons.Models;
+using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
@@ -40,6 +39,14 @@ public sealed class WPCoachEditorCoordinator(
         Coach = coach;
         SelectedSlugs = coach.RoleSlugs;
         Task.Run(async () => await PerformComponentRefresh());
+    }
+
+    public async Task HandleDeleteClicked()
+    {
+        var response = await GetCommandResults<WPUserDeleteCommand, WrappedResponse>(
+            new WPUserDeleteCommand() { UserName = Coach.UserName });
+        if (response is { Success: false })
+            throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
     }
 
     public void HandleRolesChanged(IEnumerable<string> values)

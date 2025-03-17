@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics;
+using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
@@ -125,7 +126,7 @@ public class WordPressService
     {
         name ??= GenerateName(firstName, lastName);
         userName ??= GenerateUserName(email, name);
-        password ??= String.Empty.AppendRandom(12);
+        password ??= userName.Reverse() + "_C8s!";
         try
         {
             var user = new User()
@@ -169,6 +170,33 @@ public class WordPressService
             throw  wrappedResponse.Exception!.ToException();
 
         return wrappedResponse.Result!;
+    }
+    #endregion
+
+    #region Delete
+    public async Task DeleteWordPressUser(
+        string userName)
+    {
+        try
+        {
+            var usersResponse = await GetWordPressUsers();
+            if (usersResponse is { Success: false } or { Result: null })
+                throw usersResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
+
+            var usersList = usersResponse.Result.OrderBy(u => u.Id).ToList();
+            var userToDelete = usersList.FirstOrDefault(u => u.UserName == userName) ??
+                               throw new Exception($"Could not find user with username: {userName}");
+            var admin = usersList.FirstOrDefault(u => u.RoleSlugs.Contains("administrator")) ??
+                        throw new Exception("Could not find administrator");
+
+            var result = await _wordPressClient.Users.Delete(userToDelete.Id, admin.Id);
+            if (!result) throw new Exception("Failed to delete user");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
+            throw;
+        }
     }
     #endregion
 

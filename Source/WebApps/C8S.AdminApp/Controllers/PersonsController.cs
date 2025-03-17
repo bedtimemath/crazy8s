@@ -124,18 +124,12 @@ public class PersonsController(
 
             var person = await queryable.FirstOrDefaultAsync(r => r.PersonId == personId);
 
-            return new WrappedResponse<Person>()
-            {
-                Result = mapper.Map<Person?>(person)
-            };
+            return WrappedResponse<Person>.CreateSuccessResponse(mapper.Map<Person?>(person));
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", personId);
-            return new WrappedResponse<Person>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedResponse<Person>.CreateFailureResponse(exception);
         }
     }
 
@@ -157,18 +151,12 @@ public class PersonsController(
 
             var person = await queryable.FirstOrDefaultAsync(r => r.PersonId == personId);
 
-            return new WrappedResponse<PersonWithOrders>()
-            {
-                Result = mapper.Map<PersonWithOrders?>(person)
-            };
+            return WrappedResponse<PersonWithOrders>.CreateSuccessResponse(mapper.Map<PersonWithOrders?>(person));
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while getting details: {Id}", personId);
-            return new WrappedResponse<PersonWithOrders>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedResponse<PersonWithOrders>.CreateFailureResponse(exception);
         }
     }
     #endregion

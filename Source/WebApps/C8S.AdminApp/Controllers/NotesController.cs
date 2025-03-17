@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using AutoMapper;
+using C8S.AdminApp.Extensions;
 using C8S.AdminApp.Hubs;
 using C8S.AdminApp.Services;
 using C8S.Domain;
@@ -121,27 +122,16 @@ public class NotesController(
                 _ => throw new ArgumentOutOfRangeException(nameof(NoteAddCommand.Reference))
             };
 
-            var dataChange = new DataChange()
-            {
-                EntityId = addedDetails.NoteId,
-                EntityName = C8SConstants.Entities.Note,
-                DataChangeAction = DataChangeAction.Added,
-                JsonDetails = JsonSerializer.Serialize(addedDetails)
-            };
-            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
-
-            return new WrappedResponse<NoteDetails>()
-            {
-                Result = addedDetails
-            };
+            // tell the world
+            await hubContext.SendDataChange(
+                DataChangeAction.Added, C8SConstants.Entities.Note, addedDetails.NoteId, addedDetails);
+            
+            return WrappedResponse<NoteDetails>.CreateSuccessResponse(addedDetails);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while adding note: {Json}", JsonSerializer.Serialize(command));
-            return new WrappedResponse<NoteDetails>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedResponse<NoteDetails>.CreateFailureResponse(exception);
         }
     }
     #endregion
@@ -163,31 +153,19 @@ public class NotesController(
             //  is the content
             note.Content = command.Content;
             await dbContext.SaveChangesAsync();
-            
-            // tell the world
-            var dataChange = new DataChange()
-            {
-                EntityId = noteId,
-                EntityName = C8SConstants.Entities.Note,
-                DataChangeAction = DataChangeAction.Modified,
-                JsonDetails = JsonSerializer.Serialize(mapper.Map<NoteDetails>(note))
-            };
-            await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
 
-            return new WrappedResponse<NoteDetails>()
-            {
-                Result = mapper.Map<NoteDetails?>(note)
-            };
+            // tell the world
+            await hubContext.SendDataChange(
+                DataChangeAction.Added, C8SConstants.Entities.Note, noteId, mapper.Map<NoteDetails>(note));
+
+            return WrappedResponse<NoteDetails>.CreateSuccessResponse(mapper.Map<NoteDetails?>(note));
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Error while patching note: {Id}", noteId);
-            return new WrappedResponse<NoteDetails>()
-            {
-                Exception = exception.ToSerializableException()
-            };
+            return WrappedResponse<NoteDetails>.CreateFailureResponse(exception);
         }
-    } 
+    }
     #endregion
 
     #region DELETE
@@ -214,7 +192,7 @@ public class NotesController(
             {
                 EntityId = noteId,
                 EntityName = C8SConstants.Entities.Note,
-                DataChangeAction = DataChangeAction.Deleted,
+                Action = DataChangeAction.Deleted,
                 JsonDetails = JsonSerializer.Serialize(removedDetails)
             };
             await hubContext.Clients.All.SendAsync(SoftCrowConstants.Messages.DataChange, dataChange);
@@ -312,7 +290,7 @@ public class NotesController(
         dbContext.SaleNotes.Add(noteDb);
         await dbContext.SaveChangesAsync();
         return mapper.Map<NoteDetails>(noteDb);
-    } 
+    }
 
     private async Task<NoteDetails> AddOrderNote(C8SDbContext dbContext, NoteAddCommand command)
     {
@@ -326,6 +304,6 @@ public class NotesController(
         dbContext.OrderNotes.Add(noteDb);
         await dbContext.SaveChangesAsync();
         return mapper.Map<NoteDetails>(noteDb);
-    } 
+    }
     #endregion
 }

@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
+using C8S.Domain;
 using C8S.WordPress.Abstractions.Models;
-using C8S.WordPress.Abstractions.Notifications;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 using Radzen;
 using Radzen.Blazor;
+using SC.Common.PubSub;
 using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Base;
@@ -40,7 +41,7 @@ public sealed class WPCoachListerCoordinator(
     {
         base.SetUp();
 
-        PubSubService.Subscribe<WPUsersUpdated>(HandleWPUsersUpdated);
+        PubSubService.Subscribe<DataChange>(HandleDataChange);
         Task.Run(async () => await DataGrid.RefreshDataAsync());
     }
 
@@ -48,7 +49,7 @@ public sealed class WPCoachListerCoordinator(
     {
         base.TearDown();
 
-        PubSubService.Unsubscribe<WPUsersUpdated>(HandleWPUsersUpdated);
+        PubSubService.Unsubscribe<DataChange>(HandleDataChange);
     }
     #endregion
 
@@ -88,7 +89,11 @@ public sealed class WPCoachListerCoordinator(
         }
     }
 
-    private async Task HandleWPUsersUpdated(WPUsersUpdated _) =>
-        await DataGrid.RefreshDataAsync(); 
+    private async Task HandleDataChange(DataChange dataChange)
+    {
+        if (dataChange is not { EntityName: C8SConstants.Entities.WPUser }) return;
+
+        await DataGrid.RefreshDataAsync();
+    }
     #endregion
 }

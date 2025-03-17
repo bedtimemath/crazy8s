@@ -13,7 +13,8 @@ public class WordPressCallbacks(
         // QUERIES
         ICQRSQueryHandler<WPUsersListQuery, WrappedListResponse<WPUserDetails>>,
         // COMMANDS
-        ICQRSCommandHandler<WPUserAddCommand, WrappedResponse<WPUserDetails>>
+        ICQRSCommandHandler<WPUserAddCommand, WrappedResponse<WPUserDetails>>,
+        ICQRSCommandHandler<WPUserDeleteCommand, WrappedResponse>
 {
     #region ReadOnly Constructor Variables
     private readonly ILogger<AppointmentCallbacks> _logger = loggerFactory.CreateLogger<AppointmentCallbacks>();
@@ -62,6 +63,20 @@ public class WordPressCallbacks(
         {
             _logger.LogError(exception, "Error adding WordPress user: {@Command}", command);
             return WrappedResponse<WPUserDetails>.CreateFailureResponse(exception);
+        }
+    }
+
+    public async Task<WrappedResponse> Handle(
+        WPUserDeleteCommand command, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendNoReturn("DELETE", $"wordpress/users/{command.UserName}", token: token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error deleting WordPress user: {@Command}", command);
+            return WrappedResponse.CreateFailureResponse(exception);
         }
     }
     #endregion

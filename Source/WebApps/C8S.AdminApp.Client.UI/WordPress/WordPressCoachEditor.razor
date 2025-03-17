@@ -71,11 +71,12 @@
                             ButtonStyle="ButtonStyle.Danger"
                             Variant="Variant.Text"
                             IconString="@C8SConstants.Icons.Delete"
-                            Text="Delete" />
+                            Text="Delete"
+                            IsBusy="@_isDeleting"
+                            Click="@(async () => await ConfirmDelete())" />
             </RadzenStack>
 
         </RadzenStack>
-
 
         <RadzenCheckBoxList Data="@Service.Roles"
                             Value="@Service.SelectedSlugs"
