@@ -41,6 +41,20 @@ public sealed class WPCoachEditorCoordinator(
         Task.Run(async () => await PerformComponentRefresh());
     }
 
+    public async Task HandleSaveClicked()
+    {
+        var response = await GetCommandResults<WPUserUpdateRolesCommand, WrappedResponse<WPUserDetails>>(
+            new WPUserUpdateRolesCommand()
+            {
+                UserName = Coach.UserName,
+                Roles = SelectedSlugs.ToList()
+            });
+        if (response is { Success: false } or { Result: null })
+            throw response.Exception?.ToException() ?? new UnreachableException("Missing exception");
+
+        SetCoach(response.Result);
+    }
+
     public async Task HandleDeleteClicked()
     {
         var response = await GetCommandResults<WPUserDeleteCommand, WrappedResponse>(

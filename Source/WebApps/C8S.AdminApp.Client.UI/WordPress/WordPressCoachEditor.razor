@@ -65,7 +65,8 @@
                             ButtonStyle="ButtonStyle.Success"
                             IconString="@C8SConstants.Icons.Save"
                             Text="Save"
-                            Disabled="@(!Service.HasChanged)" />
+                            Disabled="@(!Service.HasChanged)"
+                            Click="@(async () => await Service.HandleSaveClicked())"/>
 
                 <IconButton ButtonType="ButtonType.Button"
                             ButtonStyle="ButtonStyle.Danger"

@@ -87,6 +87,32 @@ namespace C8S.AdminApp.Controllers
             }
         }
         #endregion
+
+        #region PATCH
+        [HttpPatch]
+        [Route("api/[controller]/users/{username}")]
+        public async Task<WrappedResponse<WPUserDetails>> PatchWordPressUser(string username,
+            [FromBody] WPUserUpdateRolesCommand command)
+        {
+            try
+            {
+                var wordPressUser = await wordPressService.UpdateWordPressUserRoles(
+                    command.UserName,
+                    command.Roles);
+                
+                // tell the world
+                await hubContext.SendDataChange(
+                    DataChangeAction.Modified, C8SConstants.Entities.WPUser, 0, wordPressUser);
+
+                return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while adding WordPress user: {Json}", JsonSerializer.Serialize(command));
+                return WrappedResponse<WPUserDetails>.CreateFailureResponse(exception);
+            }
+        }
+        #endregion
         
         #region DELETE
         [HttpDelete]

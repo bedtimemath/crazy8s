@@ -65,6 +65,20 @@ public class WordPressCallbacks(
             return WrappedResponse<WPUserDetails>.CreateFailureResponse(exception);
         }
     }
+    
+    public async Task<WrappedResponse<WPUserDetails>> Handle(
+        WPUserUpdateRolesCommand command, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendReturnSingle<WPUserDetails>("PATCH", "wordpress/users", payload:command, token: token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error adding WordPress user: {@Command}", command);
+            return WrappedResponse<WPUserDetails>.CreateFailureResponse(exception);
+        }
+    }
 
     public async Task<WrappedResponse> Handle(
         WPUserDeleteCommand command, CancellationToken token)

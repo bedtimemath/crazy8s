@@ -173,6 +173,33 @@ public class WordPressService
     }
     #endregion
 
+    #region Update
+    public async Task<WPUserDetails> UpdateWordPressUserRoles(
+        string userName,
+        IEnumerable<string> roles)
+    {
+        try
+        {
+            var usersResponse = await GetWordPressUsers();
+            if (usersResponse is { Success: false } or { Result: null })
+                throw usersResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
+
+            var foundUser = usersResponse.Result.FirstOrDefault(u => u.UserName == userName) ??
+                               throw new Exception($"Could not find user with username: {userName}");
+            var updatedUser = foundUser with { RoleSlugs = roles.ToList() };
+
+            var output = await _wordPressClient.Users.UpdateAsync(_mapper.Map<User>(updatedUser));
+            return _mapper.Map<WPUserDetails>(output);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
+            throw;
+        }
+    }
+    #endregion
+
     #region Delete
     public async Task DeleteWordPressUser(
         string userName)
