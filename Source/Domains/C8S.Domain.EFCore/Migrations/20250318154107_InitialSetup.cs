@@ -116,7 +116,7 @@ namespace C8S.Domain.EFCore.Migrations
                     Phone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     JobTitle = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     JobTitleOther = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    WordPressUser = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    WordPressId = table.Column<int>(type: "int", nullable: true),
                     PlaceId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -659,9 +659,7 @@ namespace C8S.Domain.EFCore.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_ClubId",
                 table: "Orders",
-                column: "ClubId",
-                unique: true,
-                filter: "[ClubId] IS NOT NULL");
+                column: "ClubId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_OldSystemOrderId",
