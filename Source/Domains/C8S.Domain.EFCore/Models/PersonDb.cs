@@ -56,8 +56,7 @@ public class PersonDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? JobTitleOther { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string? WordPressUser { get; set; }
+    public int? WordPressId { get; set; }
     #endregion
 
     #region Reference Properties

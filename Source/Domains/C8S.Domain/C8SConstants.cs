@@ -20,6 +20,7 @@ public static class C8SConstants
     public static class Entities
     {
         public const string Note = "Note";
+        public const string Person = "Person";
         public const string WPUser = "WPUser";
     }
 

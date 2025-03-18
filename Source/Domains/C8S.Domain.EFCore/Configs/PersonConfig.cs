@@ -79,10 +79,8 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Medium)
             .IsRequired(false);
 
-        //[MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-        //public string? WordPressUser { get; set; }
-        entity.Property(m => m.WordPressUser)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Standard)
+        //public int? WordPressId { get; set; }
+        entity.Property(m => m.WordPressId)
             .IsRequired(false);
         #endregion
 

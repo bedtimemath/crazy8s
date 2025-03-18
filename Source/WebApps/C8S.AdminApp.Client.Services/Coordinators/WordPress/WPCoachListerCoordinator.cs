@@ -69,7 +69,7 @@ public sealed class WPCoachListerCoordinator(
             IsLoading = true;
             await PerformComponentRefresh();
 
-            var currentSelection = SelectedCoaches.FirstOrDefault();
+            var currentSelectionId = SelectedCoaches.FirstOrDefault()?.Id;
 
             var response = await GetQueryResults<WPUsersListQuery, WrappedListResponse<WPUserDetails>>(
                 new WPUsersListQuery() { IncludeRoles = ["Coach"] }) ??
@@ -83,13 +83,13 @@ public sealed class WPCoachListerCoordinator(
             IsLoading = false;
             await PerformComponentRefresh();
 
-            // reselect if possible
-            if (currentSelection != null)
-            {
-                var selectRow = DataGrid.View.FirstOrDefault(r => r.Id == currentSelection.Id);
-                if (selectRow != null)
-                    await DataGrid.SelectRow(selectRow);
-            }
+            // reselect if possible (must come after refresh)
+            var selectRow = Coaches.All(c => c.Id != currentSelectionId) ? null :
+                DataGrid.View.FirstOrDefault(r => r.Id == currentSelectionId);
+            if (selectRow != null)
+                await DataGrid.SelectRow(selectRow);
+            else
+                await HandleRowSelected(null);
         }
         catch (Exception ex)
         {

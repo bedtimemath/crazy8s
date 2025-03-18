@@ -84,6 +84,9 @@ public sealed class WPUserCreatorCoordinator(
             if (!addResponse.Success || addResponse.Result == null)
                 throw addResponse?.Exception?.ToException() ??
                       new Exception("Error adding WPUser");
+
+            // clear the dropdown
+            SelectedPerson = null;
         }
         catch (Exception ex)
         {

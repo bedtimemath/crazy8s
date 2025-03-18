@@ -3,20 +3,24 @@ using System.Text.Json;
 using C8S.AdminApp.Extensions;
 using C8S.AdminApp.Hubs;
 using C8S.Domain;
+using C8S.Domain.EFCore.Contexts;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using C8S.WordPress.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using SC.Common.PubSub;
 using SC.Common.Responses;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace C8S.AdminApp.Controllers
 {
     [ApiController]
     public class WordPressController(
         ILoggerFactory loggerFactory,
+        IDbContextFactory<C8SDbContext> dbContextFactory,
         IHubContext<CommunicationHub> hubContext,
         WordPressService wordPressService
         ) : ControllerBase
@@ -103,6 +107,13 @@ namespace C8S.AdminApp.Controllers
         {
             try
             {
+                // we don't allow creation unless we have a complementary user in our database
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+                var person = await dbContext.Persons.FirstOrDefaultAsync(p => p.Email == command.Email);
+                if (person == null)
+                    throw new Exception($"Person not found: {command.Email}");
+
+                // create in wordpress
                 var wordPressUser = await wordPressService.CreateWordPressUser(
                     command.Email,
                     command.Name,
@@ -111,10 +122,16 @@ namespace C8S.AdminApp.Controllers
                     command.UserName,
                     command.Password,
                     command.Roles);
-                
+
+                // add to our database
+                person.WordPressId = wordPressUser.Id;
+                await dbContext.SaveChangesAsync();
+
                 // tell the world
                 await hubContext.SendDataChange(
                     DataChangeAction.Added, C8SConstants.Entities.WPUser, wordPressUser.Id, wordPressUser);
+                await hubContext.SendDataChange(
+                    DataChangeAction.Modified, C8SConstants.Entities.Person, person.PersonId, person);
 
                 return WrappedResponse<WPUserDetails>.CreateSuccessResponse(wordPressUser);
             }
@@ -159,6 +176,19 @@ namespace C8S.AdminApp.Controllers
             {
                 await wordPressService.DeleteWordPressUser(id);
                 
+                // we do allow deletion even if we have no corresponding person in our database
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+                var person = await dbContext.Persons.FirstOrDefaultAsync(p => p.WordPressId == id);
+                if (person != null)
+                {
+                    person.WordPressId = null;
+                    await dbContext.SaveChangesAsync();
+
+                    // tell the world
+                    await hubContext.SendDataChange(
+                        DataChangeAction.Modified, C8SConstants.Entities.Person, person.PersonId, person);
+                }
+
                 // tell the world
                 await hubContext.SendDataChange(
                     DataChangeAction.Deleted, C8SConstants.Entities.WPUser);
