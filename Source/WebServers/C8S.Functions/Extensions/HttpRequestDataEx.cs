@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Text.Json;
 using C8S.Functions.Models;
 using Microsoft.Azure.Functions.Worker.Http;
 using SC.Common.Models;

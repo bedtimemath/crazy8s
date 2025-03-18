@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using C8S.FullSlate.Services;
+using C8S.Functions.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
@@ -25,21 +26,16 @@ public class GetOpenTimeSlots(
         {
             _logger.LogInformation("GetOpenTimeSlots triggered");
 
-            response = req.CreateResponse(HttpStatusCode.OK);
-
             var startDate = DateOnly.FromDateTime(DateTime.Now);
             var endDate = startDate.AddDays(28);
             var openings = fullSlateService.GetOpeningsList(startDate, endDate);
 
-            await response.WriteStringAsync(JsonSerializer.Serialize(openings));
+            response = await req.CreateSuccessResponse(openings);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Exception raised");
-            response = req.CreateResponse(HttpStatusCode.InternalServerError);
-            // can't use WriteAsJson, see: https://github.com/Azure/azure-functions-dotnet-worker/issues/344
-            // await response.WriteAsJsonAsync(ex.ToSerializableException());
-            await response.WriteStringAsync(JsonSerializer.Serialize(ex.ToSerializableException()));
+            response = await req.CreateFailureResponse(ex);
         }
         return response;
     }

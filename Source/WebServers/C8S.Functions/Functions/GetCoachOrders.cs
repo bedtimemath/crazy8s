@@ -1,11 +1,7 @@
 using System.Net;
-using System.Web;
+using System.Text.Json;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.EFCore.Models;
 using C8S.Functions.Extensions;
-using HttpMultipartParser;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
@@ -26,36 +22,41 @@ namespace C8S.Functions.Functions
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "coach")] HttpRequestData req)
         {
-            HttpResponseData httpResponse;
+            HttpResponseData response;
             try
             {
                 _logger.LogInformation("GetCoachOrders triggered");
-            
-                await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-                var order = new 
-                {
-                    Number = 1234,
-                    Status = "Shipped",
-                    ContactName = "Dug Steen",
-                    ContactEmail = "drsteen@drsteen.com",
-                    ContactPhone = "(970) 821-8128",
-                    Line1 = "1601 Trailwood Dr",
-                    City = "Fort Collins",
-                    State = "CO",
-                    ZIPCode = "80525",
-                    OrderedOn = new DateTimeOffset(2025,1,1,0,0,0,TimeSpan.Zero),
-                    ArriveBy = new DateOnly(2025,2,3),
-                    ShippedOn = new DateTimeOffset(2025,2,1,0,0,0,TimeSpan.Zero)
-                };
-                httpResponse = await req.CreateSuccessResponse(order);
+                // start by checking that we got a proper id value
+                // start by checking that we got a proper id value
+                var idString = req.Query["id"];
+                if (String.IsNullOrEmpty(idString))
+                    throw new ArgumentNullException("id");
+                if (!Int32.TryParse(idString, out var wordPressId))
+                    throw new ArgumentNullException("id");
+
+                // now look for the matching person
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+                var personDb = await dbContext.Persons
+                    .Include(p => p.ClubPersons)
+                    .ThenInclude(cp => cp.Club)
+                    .ThenInclude(c => c.Orders)
+                    .ThenInclude(o => o.OrderSkus)
+                    .AsNoTracking()
+                    .AsSingleQuery()
+                    .FirstOrDefaultAsync(p => p.WordPressId == wordPressId);
+                if (personDb == null)
+                    throw new ArgumentOutOfRangeException("id");
+
+                // send back the person with their orders
+                response = await req.CreateSuccessResponse(new { Name = personDb.LastName, Email = personDb.Email });
             }
             catch (Exception ex)
             {
-                httpResponse = await req.CreateFailureResponse(ex);
+                response = await req.CreateFailureResponse(ex);
             }
 
-            return httpResponse;
+            return response;
         }
     }
 }
