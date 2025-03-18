@@ -2,7 +2,7 @@
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Features.Clubs.Models;
 
-namespace C8S.AdminApp.MapProfiles;
+namespace C8S.Domain.Mapping.MapProfiles;
 
 internal class ClubProfile: Profile
 {

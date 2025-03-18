@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+    <ProjectReference Include="..\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
+    <ProjectReference Include="..\C8S.Domain.Features\C8S.Domain.Features.csproj" />
+  </ItemGroup>
+
+</Project>

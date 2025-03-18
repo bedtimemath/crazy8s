@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Fulco", "Libraries\C8S.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Fulco.Abstractions", "Libraries\C8S.Fulco.Abstractions\C8S.Fulco.Abstractions.csproj", "{8A723F31-9AA8-4D15-8377-A1DAF3CDB24B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Domain.Mapping", "Domains\C8S.Domain.Mapping\C8S.Domain.Mapping.csproj", "{3EDE3C60-FFB8-4545-B88F-1635E5759C9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +167,10 @@ Global
 		{8A723F31-9AA8-4D15-8377-A1DAF3CDB24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A723F31-9AA8-4D15-8377-A1DAF3CDB24B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A723F31-9AA8-4D15-8377-A1DAF3CDB24B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EDE3C60-FFB8-4545-B88F-1635E5759C9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EDE3C60-FFB8-4545-B88F-1635E5759C9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EDE3C60-FFB8-4545-B88F-1635E5759C9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EDE3C60-FFB8-4545-B88F-1635E5759C9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,6 +200,7 @@ Global
 		{C4B60B2C-D2CD-4349-B0EC-AD0A01510674} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 		{69B73D27-4F89-4152-8D28-31D7E8B45936} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
 		{8A723F31-9AA8-4D15-8377-A1DAF3CDB24B} = {FA4B1AC1-B059-4981-BB3E-AA0E9BA285A5}
+		{3EDE3C60-FFB8-4545-B88F-1635E5759C9A} = {FAE3D83F-CDBD-4ECA-B31B-B318BC792346}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9FCDA662-2D34-4C96-9FD9-ADF6BB28363B}

@@ -2,10 +2,10 @@ using Azure.Identity;
 using C8S.AdminApp;
 using C8S.AdminApp.Auth;
 using C8S.AdminApp.Extensions;
-using C8S.AdminApp.MapProfiles;
 using C8S.AdminApp.Services;
 using C8S.Domain.AppConfigs;
 using C8S.Domain.EFCore.Extensions;
+using C8S.Domain.Mapping.Extensions;
 using C8S.FullSlate.Extensions;
 using C8S.WordPress.Extensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -122,8 +122,7 @@ try
     /*****************************************
      * AUTOMAPPER
      */
-    // RequestProfile is used arbitrarily here
-    builder.Services.AddAutoMapper(typeof(RequestProfile).Assembly);
+    builder.Services.AddDomainMapping();
 
     /*****************************************
      * SOFT CROW & LOCAL

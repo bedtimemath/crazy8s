@@ -18,6 +18,7 @@ using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Net.Http.Headers;
 using C8S.Domain;
+using C8S.Domain.Mapping.Extensions;
 using Serilog.Core;
 using Serilog.Sinks.MSSqlServer;
 
@@ -112,6 +113,7 @@ try
         services.AddCommonHelpers();
         services.AddSCAuditContext(connections.Audit);
         services.AddC8SDbContext(connections.Database);
+        services.AddDomainMapping();
 
         if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
         if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");

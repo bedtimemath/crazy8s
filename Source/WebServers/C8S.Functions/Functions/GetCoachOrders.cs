@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.Json;
+using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Features.Persons.Models;
 using C8S.Functions.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -11,7 +13,8 @@ namespace C8S.Functions.Functions
 {
     public class GetCoachOrders(
         ILoggerFactory loggerFactory,
-        IDbContextFactory<C8SDbContext> dbContextFactory)
+        IDbContextFactory<C8SDbContext> dbContextFactory,
+        IMapper mapper)
     {
         #region ReadOnly Constructor Variables
 
@@ -49,7 +52,7 @@ namespace C8S.Functions.Functions
                     throw new ArgumentOutOfRangeException("id");
 
                 // send back the person with their orders
-                response = await req.CreateSuccessResponse(new { Name = personDb.LastName, Email = personDb.Email });
+                response = await req.CreateSuccessResponse(mapper.Map<PersonWithOrders>(personDb));
             }
             catch (Exception ex)
             {
