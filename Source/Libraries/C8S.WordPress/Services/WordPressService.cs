@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using AutoMapper;
+using C8S.WordPress.Abstractions.MagicLogin;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
@@ -19,6 +21,7 @@ public class WordPressService
     private const string SkuBaseUrl = "/wp-json/wp/v2/sku";
     private const string GetRolesUrl = "/wp-json/c8s/v1/get-roles";
     private const string CreateRoleUrl = "/wp-json/c8s/v1/add-role";
+    private const string MagicLoginUrl = "/wp-json/magic-login/v1/token";
 
     private readonly ILogger<WordPressService> _logger;
     private readonly IMapper _mapper;
@@ -39,8 +42,8 @@ public class WordPressService
         _wordPressClient.Auth.UseBasicAuth(username, password);
     }
 
-    #region Get
-    public async Task<WrappedListResponse<WPUserDetails>> GetWordPressUsers(
+    #region GET LIST
+    public async Task<List<WPUserDetails>> GetWordPressUsers(
         IEnumerable<string>? includeRoles = null)
     {
         var queryBuilder = new UsersQueryBuilder()
@@ -74,12 +77,10 @@ public class WordPressService
             }
         }
 
-        var items = allUsers.Select(_mapper.Map<WPUserDetails>).ToList();
-        var count = allUsers.Count;
-        return WrappedListResponse<WPUserDetails>.CreateSuccessResponse(items, count);
+        return allUsers.Select(_mapper.Map<WPUserDetails>).ToList();
     }
 
-    public async Task<WrappedListResponse<WPSkuDetails>> GetWordPressSkus()
+    public async Task<List<WPSkuDetails>> GetWordPressSkus()
     {
         var allSkus = new List<CustomSku>();
         var page = 1;
@@ -104,14 +105,26 @@ public class WordPressService
             }
         }
 
-        var items = allSkus.Select(_mapper.Map<WPSkuDetails>).ToList();
-        var count = allSkus.Count;
-        return WrappedListResponse<WPSkuDetails>.CreateSuccessResponse(items, count);
+        return allSkus.Select(_mapper.Map<WPSkuDetails>).ToList();
     }
 
-    public async Task<WrappedListResponse<WPRoleDetails>> GetWordPressRoles() =>
-        await _wordPressClient.CustomRequest
+    public async Task<List<WPRoleDetails>> GetWordPressRoles()
+    {
+        var rolesResponse = await _wordPressClient.CustomRequest
             .GetAsync<WrappedListResponse<WPRoleDetails>>(GetRolesUrl, useAuth: true);
+        if (rolesResponse is not { Success: true } or { Result: null })
+            throw rolesResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
+        
+        return rolesResponse.Result.ToList();
+    }
+    #endregion
+
+    #region GET
+    public async Task<WPUserDetails?> GetWordPressUserById(int id)
+    {
+        var allUsers = await GetWordPressUsers();
+        return allUsers.FirstOrDefault(u => u.Id == id);
+    }
     #endregion
 
     #region Create
@@ -166,70 +179,64 @@ public class WordPressService
     {
         var wrappedResponse = await _wordPressClient.CustomRequest
             .CreateAsync<WPRoleDetails, WrappedResponse<WPRoleDetails>>(CreateRoleUrl, details);
-        if (!wrappedResponse.Success) 
-            throw  wrappedResponse.Exception!.ToException();
+        if (!wrappedResponse.Success)
+            throw wrappedResponse.Exception!.ToException();
 
         return wrappedResponse.Result!;
+    }
+
+    public async Task<string> CreateMagicLinkForUser(int id,
+        string? redirectUrl = null)
+    {
+        var user = await GetWordPressUserById(id) ?? throw new Exception("User not found");
+        return await CreateMagicLinkForUser(user.Email);
+    }
+
+    public async Task<string> CreateMagicLinkForUser(string email)
+    {
+        var response = await _wordPressClient.CustomRequest
+            .CreateAsync<WPMagicLoginRequest, WPMagicLoginResponse>(
+                MagicLoginUrl, new WPMagicLoginRequest() { user = email });
+
+        if (!String.IsNullOrEmpty(response.code))
+            throw new Exception($"{response.code}: {response.message}");
+        if (response == null || String.IsNullOrEmpty(response.link))
+            throw new UnreachableException("Unknown error requesting magic link");
+
+        return response.link;
     }
     #endregion
 
     #region Update
-    public async Task<WPUserDetails> UpdateWordPressUserRoles(
-        int id,
-        IEnumerable<string> roles)
+    public async Task<WPUserDetails> UpdateWordPressUserRoles(int id, IEnumerable<string> roles)
     {
-        try
-        {
-            var usersResponse = await GetWordPressUsers();
-            if (usersResponse is { Success: false } or { Result: null })
-                throw usersResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
+        var users = await GetWordPressUsers();
+        var foundUser = users.FirstOrDefault(u => u.Id == id) ??
+                        throw new Exception($"Could not find user for ID#: {id}");
+        var updatedUser = foundUser with { RoleSlugs = roles.ToList() };
 
-            var foundUser = usersResponse.Result.FirstOrDefault(u => u.Id == id) ??
-                               throw new Exception($"Could not find user for ID#: {id}");
-            var updatedUser = foundUser with { RoleSlugs = roles.ToList() };
-
-            var output = await _wordPressClient.Users.UpdateAsync(_mapper.Map<User>(updatedUser));
-            return _mapper.Map<WPUserDetails>(output);
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error updating WordPress user ID#: {@Id}", id);
-            throw;
-        }
+        var output = await _wordPressClient.Users.UpdateAsync(_mapper.Map<User>(updatedUser));
+        return _mapper.Map<WPUserDetails>(output);
     }
     #endregion
 
     #region Delete
-    public async Task DeleteWordPressUser(
-        int id)
+    public async Task DeleteWordPressUser(int id)
     {
-        try
-        {
-            var usersResponse = await GetWordPressUsers();
-            if (usersResponse is { Success: false } or { Result: null })
-                throw usersResponse.Exception?.ToException() ?? new UnreachableException("Missing exception");
+        var users = (await GetWordPressUsers()).OrderBy(u => u.Id).ToList();
+        var userToDelete = users.FirstOrDefault(u => u.Id == id) ??
+                           throw new Exception($"Could not find user with ID#: {id}");
+        var admin = users.FirstOrDefault(u => u.RoleSlugs.Contains("administrator")) ??
+                    throw new Exception("Could not find administrator");
 
-            var usersList = usersResponse.Result.OrderBy(u => u.Id).ToList();
-            var userToDelete = usersList.FirstOrDefault(u => u.Id == id) ??
-                               throw new Exception($"Could not find user with ID#: {id}");
-            var admin = usersList.FirstOrDefault(u => u.RoleSlugs.Contains("administrator")) ??
-                        throw new Exception("Could not find administrator");
-
-            var result = await _wordPressClient.Users.Delete(userToDelete.Id, admin.Id);
-            if (!result) throw new Exception("Failed to delete user");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error creating WordPress user ID#: {@Id}", id);
-            throw;
-        }
+        var result = await _wordPressClient.Users.Delete(userToDelete.Id, admin.Id);
+        if (!result) throw new Exception("Failed to delete user");
     }
     #endregion
 
     #region Private Methods
     private static string GenerateUserName(string email, string? name = null) =>
-        String.IsNullOrWhiteSpace(name) ? email.ToFirstWord('@')!.RemoveNonAlphanumeric() : 
+        String.IsNullOrWhiteSpace(name) ? email.ToFirstWord('@')!.RemoveNonAlphanumeric() :
             String.Join("", name.Split(' ').Select(s => s.RemoveNonAlphanumeric()));
 
     private static string GenerateName(string? firstName, string? lastName) =>

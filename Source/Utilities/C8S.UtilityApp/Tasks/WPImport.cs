@@ -45,16 +45,14 @@ internal class WPImport(
         //foreach (var dbSku in dbSkus)
         //    _logger.LogInformation("{@Sku}", dbSku);
 
-        var skusResponse = await wordPressService.GetWordPressSkus(); 
-        var wpSkus = skusResponse.Result ?? [];
-        _logger.LogInformation("Found {Count:#,##0} skus in WordPress.", skusResponse.Total);
+        var wpSkus = await wordPressService.GetWordPressSkus(); 
+        _logger.LogInformation("Found {Count:#,##0} skus in WordPress.", wpSkus.Count);
 
         //foreach (var wpSku in wpSkus)
         //    _logger.LogInformation("{@Sku}", wpSku);
 
-        var rolesResponse = await wordPressService.GetWordPressRoles(); 
-        var wpRoles = rolesResponse.Result ?? [];
-        _logger.LogInformation("Found {Count:#,##0} roles in WordPress.", rolesResponse.Total);
+        var wpRoles = await wordPressService.GetWordPressRoles(); 
+        _logger.LogInformation("Found {Count:#,##0} roles in WordPress.", wpRoles.Count);
 
         var skusCreated = 0;
         var skusSkipped = 0;

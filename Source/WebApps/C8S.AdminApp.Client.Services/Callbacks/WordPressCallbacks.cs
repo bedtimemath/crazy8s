@@ -21,6 +21,21 @@ public class WordPressCallbacks(
     #endregion
 
     #region Queries
+    public async Task<WrappedResponse<WPUserDetails?>> Handle(
+        WPUserByIdQuery query, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendReturnSingle<WPUserDetails?>("GET", "wordpress/users",
+                id: query.Id, token: token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error handling WordPress user by id request: {@Query}", query);
+            return WrappedResponse<WPUserDetails?>.CreateFailureResponse(exception);
+        }
+    }
+    
     public async Task<WrappedListResponse<WPUserDetails>> Handle(
         WPUsersListQuery query, CancellationToken token)
     {
@@ -35,6 +50,7 @@ public class WordPressCallbacks(
             return WrappedListResponse<WPUserDetails>.CreateFailureResponse(exception);
         }
     }
+
     public async Task<WrappedListResponse<WPRoleDetails>> Handle(
         WPRolesListQuery query, CancellationToken token)
     {
@@ -52,6 +68,21 @@ public class WordPressCallbacks(
     #endregion
 
     #region Commands
+    public async Task<WrappedResponse<string>> Handle(
+        WPUserCreateMagicLinkCommand command, CancellationToken token)
+    {
+        try
+        {
+            return await CallBackendReturnSingle<string>("GET", "wordpress/users/magic-link", 
+                id: command.Id, token: token);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error getting magic link for user: {@Command}", command);
+            return WrappedResponse<string>.CreateFailureResponse(exception);
+        }
+    }
+    
     public async Task<WrappedResponse<WPUserDetails>> Handle(
         WPUserAddCommand command, CancellationToken token)
     {

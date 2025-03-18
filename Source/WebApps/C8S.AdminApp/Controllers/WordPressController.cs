@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using C8S.AdminApp.Extensions;
 using C8S.AdminApp.Hubs;
 using C8S.Domain;
@@ -30,7 +31,8 @@ namespace C8S.AdminApp.Controllers
         {
             try
             {
-                return await wordPressService.GetWordPressUsers(query.IncludeRoles);
+                var users = await wordPressService.GetWordPressUsers(query.IncludeRoles);
+                return WrappedListResponse<WPUserDetails>.CreateSuccessResponse(users, users.Count);
             }
             catch (Exception exception)
             {
@@ -39,6 +41,7 @@ namespace C8S.AdminApp.Controllers
             }
 
         }
+
         [HttpPost]
         [Route("api/[controller]/roles")]
         public async Task<WrappedListResponse<WPRoleDetails>> GetWordPressRoles(
@@ -46,7 +49,8 @@ namespace C8S.AdminApp.Controllers
         {
             try
             {
-                return await wordPressService.GetWordPressRoles();
+                var roles = await wordPressService.GetWordPressRoles();
+                return WrappedListResponse<WPRoleDetails>.CreateSuccessResponse(roles, roles.Count);
             }
             catch (Exception exception)
             {
@@ -54,6 +58,40 @@ namespace C8S.AdminApp.Controllers
                 return WrappedListResponse<WPRoleDetails>.CreateFailureResponse(exception);
             }
 
+        }
+        #endregion
+
+        #region GET
+        [HttpGet]
+        [Route("api/[controller]/users/{id:int}")]
+        public async Task<WrappedResponse<WPUserDetails?>> GetUserById(int id)
+        {
+            try
+            {
+                var user = await wordPressService.GetWordPressUserById(id);
+                return WrappedResponse<WPUserDetails?>.CreateSuccessResponse(user);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while getting user ID#: {Id}", id);
+                return WrappedResponse<WPUserDetails?>.CreateFailureResponse(exception);
+            }
+        }
+
+        [HttpGet]
+        [Route("api/[controller]/users/magic-link/{id:int}")]
+        public async Task<WrappedResponse<string>> GetMagicLinkForUser(int id)
+        {
+            try
+            {
+                var magicLink = await wordPressService.CreateMagicLinkForUser(id);
+                return WrappedResponse<string>.CreateSuccessResponse(magicLink);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, "Error while getting magic link ID#: {Id}", id);
+                return WrappedResponse<string>.CreateFailureResponse(exception);
+            }
         }
         #endregion
 

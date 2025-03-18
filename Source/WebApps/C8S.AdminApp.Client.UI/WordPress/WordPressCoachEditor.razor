@@ -15,7 +15,7 @@
                      JustifyContent="JustifyContent.SpaceBetween"
                      Gap="0"
                      class="w-100">
-                     
+
             <RadzenRow class="flex-grow-1">
                 <RadzenColumn Size="12">
                     <RadzenRow>
@@ -66,7 +66,7 @@
                             IconString="@C8SConstants.Icons.Save"
                             Text="Save"
                             Disabled="@(!Service.HasChanged)"
-                            Click="@(async () => await Service.HandleSaveClicked())"/>
+                            Click="@(async () => await Service.HandleSaveClicked())" />
 
                 <IconButton ButtonType="ButtonType.Button"
                             ButtonStyle="ButtonStyle.Danger"
@@ -77,6 +77,38 @@
                             Click="@(async () => await ConfirmDelete())" />
             </RadzenStack>
 
+        </RadzenStack>
+
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Center"
+                     JustifyContent="JustifyContent.SpaceBetween"
+                     Gap="1rem">
+            @if (Service.MagicLink != null)
+            {
+                <RadzenButton ButtonType="ButtonType.Button"
+                              ButtonStyle="ButtonStyle.Danger"
+                              Text="Clear Magic Link"
+                              Click="@(async () => await Service.HandleClearMagicLinkClicked())"
+                              class="flex-shrink-0" />
+
+                <div class="flex-grow-1" style="text-align: center;">
+                    <a href="@Service.MagicLink" target="_blank">
+                        @Service.MagicLink
+                    </a>
+                </div>
+            }
+            else
+            {
+                <RadzenButton ButtonType="ButtonType.Button"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Text="Create Magic Link"
+                              Click="@(async () => await Service.HandleCreateMagicLinkClicked())"
+                              class="flex-shrink-0" />
+
+                <div class="flex-grow-1" style="text-align: center;">
+                    &nbsp;
+                </div>
+            }
         </RadzenStack>
 
         <RadzenCheckBoxList Data="@Service.Roles"
