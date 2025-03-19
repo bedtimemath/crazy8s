@@ -24,11 +24,11 @@ public class ShipmentDb : BaseDb
 
     #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Key)]
-    public string TrackingNumber { get; set; } = default!;
+    public string TrackingNumber { get; set; } = null!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ShipMethod? ShipMethod { get; set; } = default!;
+    public ShipMethod? ShipMethod { get; set; } = null!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Medium)]
     public string? ShipMethodOther { get; set; } = null;
@@ -36,7 +36,7 @@ public class ShipmentDb : BaseDb
 
     #region Reference Properties
     [ForeignKey(nameof(Order))]
-    public int? OrderId { get; set; } = default!;
-    public OrderDb? Order { get; set; } = default!;
+    public int? OrderId { get; set; } = null!;
+    public OrderDb? Order { get; set; } = null!;
     #endregion
 }

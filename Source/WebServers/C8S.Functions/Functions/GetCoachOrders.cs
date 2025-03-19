@@ -1,5 +1,3 @@
-using System.Net;
-using System.Text.Json;
 using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.Features.Persons.Models;

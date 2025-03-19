@@ -19,6 +19,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 using System.Net.Http.Headers;
 using C8S.Domain;
 using C8S.Domain.Mapping.Extensions;
+using C8S.WordPress.Extensions;
 using Serilog.Core;
 using Serilog.Sinks.MSSqlServer;
 
@@ -118,6 +119,10 @@ try
         if (String.IsNullOrEmpty(endpoints.FullSlateApi)) throw new Exception("Missing Endpoints:FullSlateApi");
         if (String.IsNullOrEmpty(apiKeys.FullSlate)) throw new Exception("Missing ApiKeys:FullSlate");
         services.AddFullSlateServices(endpoints.FullSlateApi, apiKeys.FullSlate);
+
+        if (String.IsNullOrEmpty(endpoints.WPCoachesAreaApi)) throw new Exception("Missing Endpoints:WPCoachesAreaApi");
+        if (String.IsNullOrEmpty(apiKeys.WPCoachesArea)) throw new Exception("Missing ApiKeys:WPCoachesArea");
+        services.AddWordPressServices(endpoints.WPCoachesAreaApi, apiKeys.WPCoachesArea);
 
         /*****************************************
          * TELEMETRY

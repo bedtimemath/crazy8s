@@ -696,6 +696,13 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "SkuId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Persons_Email",
+                table: "Persons",
+                column: "Email",
+                unique: true,
+                filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Persons_OldSystemCoachId",
                 table: "Persons",
                 column: "OldSystemCoachId",

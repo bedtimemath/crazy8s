@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
@@ -69,17 +70,15 @@ internal class LoadC8SData(
         var sqlCoaches = (await oldSystemService.GetCoaches()).ToList();
         logger.LogInformation("Found {Count:#,##0} coaches", sqlCoaches.Count);
 
-        var hasOrgIds = sqlCoaches.Where(c => c.OldSystemOrganizationId.HasValue).ToList();
-        logger.LogInformation("Found {Count:#,##0} coaches with org ids", hasOrgIds.Count);
-
         await RemoveExistingCoaches(sqlCoaches);
         logger.LogInformation("Removed existing, now {Count:#,##0} coaches", sqlCoaches.Count);
 
         /*** ADDING PERSONS ***/
+        var duplicateLookup = new Dictionary<Guid, Guid>();
         if (sqlCoaches.Count > 0)
         {
-            var sqlCoachesCount = await AddPersons(sqlCoaches);
-            logger.LogInformation("Added {Count:#,##0} persons", sqlCoachesCount);
+            var (added, dupes) = await AddPersons(sqlCoaches, duplicateLookup);
+            logger.LogInformation("Added {Count:#,##0} persons; {Dupes:#,##0} were dupes", added, dupes);
         }
 
         /*** JOINING PERSONS WITH PLACES ***/
@@ -114,7 +113,7 @@ internal class LoadC8SData(
         }
 
         /*** JOIN REQUESTS TO PERSONS & PLACES ***/
-        var personsLinked = await JoinRequestsToPersons();
+        var personsLinked = await JoinRequestsToPersons(duplicateLookup);
         logger.LogInformation("{Count:#,##0} requests updated with person.", personsLinked);
 
         /*** JOIN REQUESTS TO PLACES ***/
@@ -128,7 +127,7 @@ internal class LoadC8SData(
         await RemoveExistingClubs(sqlClubs);
         logger.LogInformation("Removed existing, now {Count:#,##0} applications", sqlClubs.Count);
 
-        var clubsAdded = await AddClubs(sqlClubs);
+        var clubsAdded = await AddClubs(sqlClubs, duplicateLookup);
         logger.LogInformation("Added {Count:#,##0} clubs", clubsAdded);
 
         /*** SKUS ***/
@@ -174,6 +173,36 @@ internal class LoadC8SData(
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
+    }
+
+    private Dictionary<Guid, Guid> CreateDuplicateLookup(List<CoachSql> sqlCoaches)
+    {
+        var lookup = new Dictionary<Guid, Guid>();
+        var toRemove = new List<Guid>();
+
+        var duplicates = sqlCoaches
+            .GroupBy(c => c.Email)
+            .Where(g => g.Count() > 1)
+            .ToList();
+        foreach (var dupeGroup in duplicates)
+        {
+            var mostRecent = dupeGroup.OrderByDescending(c => c.CreatedOn).Take(1).First();
+            if (!mostRecent.OldSystemCoachId.HasValue)
+                throw new UnreachableException("Most recent missing OldSystemCoachId");
+            var others = dupeGroup.Except([mostRecent]).ToList();
+
+            foreach (var other in others)
+            {
+                if (!other.OldSystemCoachId.HasValue)
+                    throw new UnreachableException("Other missing OldSystemCoachId");
+                lookup.Add(other.OldSystemCoachId.Value, mostRecent.OldSystemCoachId.Value);
+                toRemove.Add(other.OldSystemCoachId.Value);
+            }
+        }
+
+        sqlCoaches.RemoveAll(c => toRemove.Contains(c.OldSystemCoachId!.Value));
+
+        return lookup;
     }
 
     private async Task<(int addedOrderSkus, int skippedOrderSkus)> JoinOrderSkus(List<OrderSkuSql> sqlOrderSkus)
@@ -360,7 +389,7 @@ internal class LoadC8SData(
         sqlSkus.RemoveAll(m => existingSkuIds.Contains(m.OldSystemSkuId));
     }
 
-    private async Task<int> AddClubs(List<ClubSql> sqlClubs)
+    private async Task<int> AddClubs(List<ClubSql> sqlClubs, Dictionary<Guid,Guid> duplicateLookup)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var allPersons = await dbContext.Persons.ToListAsync();
@@ -375,7 +404,7 @@ internal class LoadC8SData(
             var sqlClub = sqlClubs[index];
 
             // start by finding the original coach
-            var foundPerson = allPersons.FirstOrDefault(c => c.OldSystemCoachId == sqlClub.OldSystemCoachId);
+            var foundPerson = GetPersonWithLookup(allPersons, duplicateLookup, sqlClub.OldSystemCoachId);
             if (foundPerson == null && sqlClub.OldSystemCoachId != null)
             {
                 var deletedPerson = (await oldSystemService.GetDeletedCoach(sqlClub.OldSystemCoachId.Value));
@@ -485,7 +514,7 @@ internal class LoadC8SData(
         return placesLinked;
     }
 
-    private async Task<int> JoinRequestsToPersons()
+    private async Task<int> JoinRequestsToPersons(Dictionary<Guid,Guid> duplicateLookup)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var allPersons = await dbContext.Persons.ToListAsync();
@@ -507,7 +536,7 @@ internal class LoadC8SData(
             var oldCoachLink = request.OldSystemLinkedCoachId;
             if (oldCoachLink != null)
             {
-                var person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == oldCoachLink.Value);
+                var person = GetPersonWithLookup(allPersons, duplicateLookup, oldCoachLink.Value);
                 if (person != null)
                 {
                     request.PersonId = person.PersonId;
@@ -684,49 +713,76 @@ internal class LoadC8SData(
         }
     }
 
-    private async Task<int> AddPersons(List<CoachSql> sqlCoaches)
+    private async Task<(int, int)> AddPersons(List<CoachSql> sqlCoaches, 
+        Dictionary<Guid,Guid> duplicateLookup)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        var sqlCoachesCount = sqlCoaches.Count;
+        var added = 0;
+        var dupes = 0;
+        var toRemove = new List<CoachSql>();
+
         ConsoleEx.StartProgress("Adding persons: ");
-        for (int index = 0; index < sqlCoachesCount; index++)
+        for (int index = 0; index < sqlCoaches.Count; index++)
         {
             var sqlCoach = sqlCoaches[index];
 
-            var person = new PersonDb()
-            {
-                OldSystemCoachId = sqlCoach.OldSystemCoachId,
-                OldSystemOrganizationId = sqlCoach.OldSystemOrganizationId,
-                OldSystemUserId = sqlCoach.OldSystemUserId,
-                OldSystemCompanyId = sqlCoach.OldSystemCompanyId,
-                FirstName = sqlCoach.FirstName,
-                LastName = sqlCoach.LastName,
-                Email = sqlCoach.Email,
-                TimeZone = sqlCoach.TimeZone,
-                Phone = sqlCoach.Phone +
-                        (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
-                CreatedOn = sqlCoach.CreatedOn
-            };
-            if (!String.IsNullOrEmpty(sqlCoach.Notes))
-                person.Notes = (List<PersonNoteDb>)
-                [
-                    new()
-                    {
-                        Author = SoftCrowConstants.Display.System,
-                        Content = sqlCoach.Notes
-                    }
-                ];
-            dbContext.Persons.Add(person);
+            // check for duplicates
+            var person = dbContext.Persons
+                .FirstOrDefault(p =>
+                    !String.IsNullOrEmpty(p.Email) &&
+                    p.Email.Trim().ToLower() == sqlCoach.Email.Trim().ToLower());
+            if (person == null) 
+                person = new PersonDb()
+                {
+                    OldSystemCoachId = sqlCoach.OldSystemCoachId,
+                    OldSystemOrganizationId = sqlCoach.OldSystemOrganizationId,
+                    OldSystemUserId = sqlCoach.OldSystemUserId,
+                    OldSystemCompanyId = sqlCoach.OldSystemCompanyId,
+                    FirstName = sqlCoach.FirstName,
+                    LastName = sqlCoach.LastName,
+                    Email = sqlCoach.Email,
+                    TimeZone = sqlCoach.TimeZone,
+                    Phone = sqlCoach.Phone +
+                            (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
+                    Notes = new List<PersonNoteDb>(),
+                    CreatedOn = sqlCoach.CreatedOn
+                };
 
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)sqlCoachesCount);
+            if (!String.IsNullOrEmpty(sqlCoach.Notes))
+            {
+                person.Notes ??= new List<PersonNoteDb>();
+                person.Notes.Add(new()
+                {
+                    Author = SoftCrowConstants.Display.System,
+                    Content = sqlCoach.Notes
+                });
+            }
+
+            var isDupe = person.PersonId != 0;
+            if (isDupe)
+            {
+                duplicateLookup.Add(
+                    sqlCoach.OldSystemCoachId!.Value, 
+                    person.OldSystemCoachId!.Value);
+                toRemove.Add(sqlCoach);
+                dupes++;
+            }
+            else
+            {
+                dbContext.Persons.Add(person);
+                added++;
+            }
+
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlCoaches.Count);
         }
-        await dbContext.SaveChangesAsync();
         ConsoleEx.EndProgress();
 
-        return sqlCoachesCount;
+        // remove duplicates from the list
+        sqlCoaches.RemoveAll(c => toRemove.Contains(c));
+
+        return (added, dupes);
     }
 
     private async Task RemoveExistingCoaches(List<CoachSql> sqlCoaches)
@@ -794,6 +850,16 @@ internal class LoadC8SData(
         sqlOrganizations.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
     }
 
+    private static PersonDb? GetPersonWithLookup(List<PersonDb> allPersons, Dictionary<Guid, Guid> lookup, Guid? toMatch)
+    {
+        if (toMatch == null) return null;
+
+        var person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == toMatch);
+        if (person == null && lookup.TryGetValue(toMatch.Value, out var lookupId))
+            person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == lookupId);
+
+        return person;
+    }
     private readonly Regex _parseSkuKey =
         new Regex(@"^C8\.S\d.(?<year>F[^\-]+)\-.+$", RegexOptions.Compiled | RegexOptions.Singleline);
     private string? GetYearFromSkuKey(string key)

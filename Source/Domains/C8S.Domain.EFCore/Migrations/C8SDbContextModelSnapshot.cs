@@ -449,6 +449,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasKey("PersonId");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("OldSystemCoachId")
                         .IsUnique()
                         .HasFilter("[OldSystemCoachId] IS NOT NULL");

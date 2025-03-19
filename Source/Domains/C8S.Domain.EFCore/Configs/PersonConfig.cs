@@ -136,6 +136,8 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
         #endregion
 
         #region Indices
+        entity.HasIndex(m => m.Email)
+            .IsUnique(true);
         entity.HasIndex(m => m.OldSystemCoachId)
             .IsUnique(true);
         #endregion

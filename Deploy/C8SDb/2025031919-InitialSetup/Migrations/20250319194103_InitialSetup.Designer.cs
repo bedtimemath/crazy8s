@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20250318154107_InitialSetup")]
+    [Migration("20250319194103_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />
@@ -451,6 +451,10 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("PersonId");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("OldSystemCoachId")
                         .IsUnique()
