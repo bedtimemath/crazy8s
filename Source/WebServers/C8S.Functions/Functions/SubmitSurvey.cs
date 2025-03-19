@@ -7,21 +7,21 @@ using SC.Common.Extensions;
 
 namespace C8S.Functions.Functions;
 
-public class WebHook(
+public class SubmitSurvey(
     ILoggerFactory loggerFactory)
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger _logger = loggerFactory.CreateLogger<WebHook>();
+    private readonly ILogger _logger = loggerFactory.CreateLogger<SubmitSurvey>();
     #endregion
 
-    [Function("WebHook")]
-    public async Task<WebHookResponse> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
+    [Function("Submit-Survey")]
+    public async Task<SubmitSurveyResponse> Run(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "submit-survey")] HttpRequestData req)
     {
-        WebHookResponse response = new WebHookResponse();
+        SubmitSurveyResponse response = new SubmitSurveyResponse();
         try
         {
-            _logger.LogInformation("WebHook triggered");
+            _logger.LogInformation("SubmitSurvey triggered");
 
             var bodyString = await new StreamReader(req.Body).ReadToEndAsync();
             var reqObject = new
@@ -47,11 +47,11 @@ public class WebHook(
         return response;
     }
 
-    public class WebHookResponse
+    public class SubmitSurveyResponse
     {
-        [BlobOutput("webhook/{rand-guid}.json", Connection = "AzureWebJobsStorage")]
+        [BlobOutput("surveys-received/{rand-guid}.json", Connection = "AzureWebJobsStorage")]
         public string? JsonString { get; set; }
 
-        public HttpResponseData HttpResponse { get; set; } = default!;
+        public HttpResponseData HttpResponse { get; set; } = null!;
     }
 }
