@@ -15,13 +15,14 @@ public class ClubDb : BaseCoreDb
     [NotMapped] 
     public override int Id => ClubId;
     [NotMapped] 
-    public override string Display =>  String.Join("-", 
-                                           [ 
-                                               Season?.ToString() ?? SoftCrowConstants.Display.NotSet, 
-                                               AgeLevel?.GetLabel() ?? SoftCrowConstants.Display.NotSet, 
-                                               ClubSize?.GetLabel() ?? SoftCrowConstants.Display.NotSet 
-                                           ]) 
-                                       ?? SoftCrowConstants.Display.NotSet;
+    public override string Display => 
+        String.Join("-", 
+        [ 
+           Season?.ToString() ?? SoftCrowConstants.Display.NotSet, 
+           AgeLevel?.GetLabel() ?? SoftCrowConstants.Display.NotSet, 
+           ClubSize?.GetLabel() ?? SoftCrowConstants.Display.NotSet
+        ]) 
+    ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
@@ -40,7 +41,6 @@ public class ClubDb : BaseCoreDb
     #endregion
 
     #region Database Properties
-
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ClubStatus Status { get; set; } = default!;

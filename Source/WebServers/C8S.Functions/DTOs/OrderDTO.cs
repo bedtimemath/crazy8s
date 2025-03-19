@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using C8S.Domain.Enums;
 
 namespace C8S.Functions.DTOs;
 
@@ -12,7 +13,8 @@ public record OrderDTO
     public int Number { get; init; }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public string Status { get; init; } = null!;
+    [JsonPropertyName("status")]
+    public ClubStatus Status { get; init; } = default!;
 
     [JsonPropertyName("contact_name")]
     public string? ContactName { get; init; }
@@ -55,4 +57,7 @@ public record OrderDTO
 
     [JsonPropertyName("emailed_on")]
     public DateTimeOffset? EmailedOn { get; set; } = null!;
+
+    [JsonPropertyName("shipments")]
+    public List<ShipmentDTO> Shipments { get; init; } = [];
 }

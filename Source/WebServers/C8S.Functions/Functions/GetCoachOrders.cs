@@ -1,6 +1,9 @@
+using System.Text.Json.Serialization;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.Features.Persons.Models;
+using C8S.Functions.DTOs;
 using C8S.Functions.Extensions;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -29,7 +32,6 @@ namespace C8S.Functions.Functions
                 _logger.LogInformation("GetCoachOrders triggered");
 
                 // start by checking that we got a proper id value
-                // start by checking that we got a proper id value
                 var idString = req.Query["id"];
                 if (String.IsNullOrEmpty(idString))
                     throw new ArgumentNullException("id");
@@ -38,19 +40,44 @@ namespace C8S.Functions.Functions
 
                 // now look for the matching person
                 await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+                var personDTO = (PersonDTO?)null;
+                var clubDTOs = (List<ClubDTO>?)null;
+
                 var personDb = await dbContext.Persons
-                    .Include(p => p.ClubPersons)
-                    .ThenInclude(cp => cp.Club)
-                    .ThenInclude(c => c.Orders)
-                    .ThenInclude(o => o.OrderSkus)
                     .AsNoTracking()
                     .AsSingleQuery()
                     .FirstOrDefaultAsync(p => p.WordPressId == wordPressId);
-                if (personDb == null)
-                    throw new ArgumentOutOfRangeException("id");
 
-                // send back the person with their orders
-                response = await req.CreateSuccessResponse(mapper.Map<PersonWithOrders>(personDb));
+                // no point in checking clubs if we can't find the person
+                if (personDb != null)
+                {
+                    personDTO = mapper.Map<PersonDTO>(personDb);
+                    var clubDbs = await dbContext.Clubs
+                        .Include(c => c.Orders)
+                        .ThenInclude(o => o.Shipments)
+                        .Include(c => c.Orders)
+                        .ThenInclude(o => o.OrderSkus)
+                        .ThenInclude(os => os.Sku)
+                        .Where(c => c.ClubPersons.Any(cp => cp.Person.WordPressId == wordPressId))
+                        .AsNoTracking()
+                        .AsSingleQuery()
+                        .ToListAsync();
+                    clubDTOs = clubDbs.Select(mapper.Map<ClubDTO>).ToList();
+                } 
+
+#if false
+                _logger.LogDebug("Clubs: {@Clubs}", clubDTOs);
+                var personDTO = idString;
+                List<string> clubDTOs = ["one", "two", "three"];
+#endif
+
+                // send back the person with their clubs/orders
+                response = await req.CreateSuccessResponse(new PersonClubs()
+                {
+                    Person = personDTO,
+                    Clubs = clubDTOs
+                });
             }
             catch (Exception ex)
             {
@@ -60,4 +87,13 @@ namespace C8S.Functions.Functions
             return response;
         }
     }
+}
+
+public record PersonClubs
+{
+    [JsonPropertyName("person")]
+    public PersonDTO? Person { get; init; } = null!;
+
+    [JsonPropertyName("clubs")]
+    public List<ClubDTO>? Clubs { get; init; } = null!;
 }
