@@ -6,7 +6,7 @@
  *
  * Plugin Name: Elementor Crazy8s Coaches
  * Description: Elementor plugin for displaying Crazy 8s Coach information
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Dug Steen
  * Text Domain: elementor-crazy8s-coaches
  */

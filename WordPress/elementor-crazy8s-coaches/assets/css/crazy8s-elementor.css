@@ -3,3 +3,32 @@
 }
 
 /* .c8s-coach-skus-dropdown {} */
+
+
+.c8s-coach-orders-list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.5rem;
+
+} 
+.c8s-coach-orders-list .c8s-coach-order-container {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+
+    border: solid black 2px;
+    border-radius: 5px;
+    padding: 0.25rem;
+}
+.c8s-coach-orders-list .c8s-coach-order-subcontainer {
+    display: block;
+}
+/* .c8s-coach-orders-list .c8s-coach-order-container .c8s-coach-order-row {} */
+.c8s-coach-orders-list .c8s-coach-order-container .c8s-coach-order-caption {
+    font-weight: bold;
+}
