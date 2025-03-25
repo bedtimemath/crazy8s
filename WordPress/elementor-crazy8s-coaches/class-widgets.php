@@ -64,7 +64,8 @@ class Widgets {
 	 * @access private
 	 */
 	private function include_widgets_files() {
-		require_once 'widgets/class-coach-test.php';
+		require_once 'widgets/class-coach-skus-dropdown.php';
+		require_once 'widgets/class-coach-orders-list.php';
 	}
 
 	/**
@@ -80,7 +81,8 @@ class Widgets {
 		$this->include_widgets_files();
 
 		// Register the plugin widget classes.
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\CoachTest() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\CoachSkusDropdown() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Widgets\CoachOrdersList() );
 	}
 
 	/**

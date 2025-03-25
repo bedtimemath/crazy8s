@@ -14,7 +14,7 @@ public record OrderDTO
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     [JsonPropertyName("status")]
-    public ClubStatus Status { get; init; } = default!;
+    public OrderStatus Status { get; init; } = default!;
 
     [JsonPropertyName("contact_name")]
     public string? ContactName { get; init; }
@@ -60,4 +60,7 @@ public record OrderDTO
 
     [JsonPropertyName("shipments")]
     public List<ShipmentDTO> Shipments { get; init; } = [];
+
+    [JsonPropertyName("order_skus")]
+    public List<OrderSkuDTO> OrderSkus { get; init; } = [];
 }

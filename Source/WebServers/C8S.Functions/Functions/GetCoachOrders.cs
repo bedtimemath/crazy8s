@@ -66,18 +66,9 @@ namespace C8S.Functions.Functions
                     clubDTOs = clubDbs.Select(mapper.Map<ClubDTO>).ToList();
                 } 
 
-#if false
-                _logger.LogDebug("Clubs: {@Clubs}", clubDTOs);
-                var personDTO = idString;
-                List<string> clubDTOs = ["one", "two", "three"];
-#endif
-
                 // send back the person with their clubs/orders
-                response = await req.CreateSuccessResponse(new PersonClubs()
-                {
-                    Person = personDTO,
-                    Clubs = clubDTOs
-                });
+                var personClubs = personDTO == null ? null : new PersonClubs() { Person = personDTO, Clubs = clubDTOs };
+                response = await req.CreateSuccessResponse(personClubs);
             }
             catch (Exception ex)
             {

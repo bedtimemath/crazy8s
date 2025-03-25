@@ -13,6 +13,6 @@ public record OrderSkuDTO
     [JsonPropertyName("quantity")]
     public short Quantity { get; set; }
 
-    [JsonPropertyName("skus")]
-    public List<SkuDTO> Skus { get; init; } = [];
+    [JsonPropertyName("sku")]
+    public SkuDTO Sku { get; init; } = null!;
 }
