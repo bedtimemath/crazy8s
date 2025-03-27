@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using C8S.Domain.Base;
 using C8S.Domain.Enums;
 using SC.Common;
-using SC.Common.Extensions;
 
 namespace C8S.Domain.Obsolete.DTOs;
 
@@ -10,8 +10,7 @@ public class ClubDTO: BaseDTO
 {
     #region Property Overrides
     public override int Id => ClubId ?? 0;
-    public override string Display => String.Join(" ", new [] { Season.ToString(), AgeLevel?.GetLabel(), ClubSize?.GetLabel() }) 
-                                      ?? SoftCrowConstants.Display.NotSet;
+    public override string Display => ClubKey;
     #endregion
 
     #region Method Overrides
@@ -19,7 +18,6 @@ public class ClubDTO: BaseDTO
     {
         var errors = new List<string>();
         if (this.AgeLevel == null) errors.Add("AgeLevel is required.");
-        if (this.ClubSize == null) errors.Add("ClubSize is required.");
         if (this.Season == null) errors.Add("Season is required.");
         if (this.StartsOn == null) errors.Add("StartsOn is required.");
         return errors;
@@ -39,11 +37,13 @@ public class ClubDTO: BaseDTO
 
     public Guid? OldSystemMeetingAddressId { get; set; } = null;
 
-    public AgeLevel? AgeLevel { get; set; } = null;
-
-    public ClubSize? ClubSize { get; set; } = null;
+    public string? Year { get; set; } = null;
 
     public int? Season { get; set; } = null;
+
+    public AgeLevel? AgeLevel { get; set; } = null;
+
+    public string? Version { get; set; } = null;
 
     public DateOnly? StartsOn { get; set; } = null;
 
@@ -64,5 +64,10 @@ public class ClubDTO: BaseDTO
 
     #region Parent Properties
     public ICollection<OrderDTO>? Orders { get; set; } = null;
+    #endregion
+
+    #region Derived Properties
+    [NotMapped] 
+    public string ClubKey => String.Join('-', [Year, Season, AgeLevel, Version]);
     #endregion
 }

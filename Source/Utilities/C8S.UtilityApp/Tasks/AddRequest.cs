@@ -52,7 +52,6 @@ internal class AddRequest(
             {
                 Request = request,
                 AgeLevel = (AgeLevel)(randomizer.GetIntLessThan(2)),
-                ClubSize = ClubSize.Size16,
                 Season = randomizer.GetIntBetween(1,3),
                 StartsOn = DateOnly.FromDateTime(DateTime.Today.AddDays(randomizer.GetIntBetween(21,50)))
             })

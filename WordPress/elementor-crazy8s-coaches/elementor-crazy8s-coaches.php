@@ -17,3 +17,4 @@ define( 'ELEMENTOR_CRAZY8S_COACHES', __FILE__ );
  * Include the Elementor Crazy8s Coaches class.
  */
 require plugin_dir_path( ELEMENTOR_CRAZY8S_COACHES ) . 'class-elementor-crazy8s-coaches.php';
+require plugin_dir_path( ELEMENTOR_CRAZY8S_COACHES ) . 'helpers/class-helper.php';

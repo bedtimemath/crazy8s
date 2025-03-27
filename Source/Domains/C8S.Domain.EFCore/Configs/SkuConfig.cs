@@ -23,8 +23,8 @@ public class SkuConfig : BaseCoreConfig<SkuDb>
 
         #region Database Properties
         //[Required, MaxLength(SharedConstants.MaxLengths.Key)]
-        //public string Key { get; set; } = default!;
-        entity.Property(m => m.Key)
+        //public string FulcoId { get; set; } = default!;
+        entity.Property(m => m.FulcoId)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Key)
             .IsRequired(true);
 
@@ -43,29 +43,26 @@ public class SkuConfig : BaseCoreConfig<SkuDb>
             .IsRequired(true);
 
         //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
-        //public string? Year { get; set; }
+        //public string Year { get; set; }
         entity.Property(m => m.Year)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .IsRequired(false);
+            .IsRequired(true);
 
-        //public int? Season { get; set; }
+        //public int Season { get; set; }
         entity.Property(m => m.Season)
-            .IsRequired(false);
+            .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public AgeLevel? AgeLevel { get; set; }
+        //public AgeLevel AgeLevel { get; set; }
         entity.Property(m => m.AgeLevel)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(false);
-
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ClubSize? ClubSize { get; set; }
-        entity.Property(m => m.ClubSize)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .HasConversion<string>()
+            .IsRequired(true);
+        
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string? Version { get; set; } = null!;
+        entity.Property(m => m.Version)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.XLong)]
@@ -90,6 +87,10 @@ public class SkuConfig : BaseCoreConfig<SkuDb>
         #region Indices
         entity.HasIndex(m => m.OldSystemSkuId)
             .IsUnique(true);
+        entity.HasIndex(m => m.FulcoId)
+            .IsUnique(true);
+        entity.HasIndex(m => new { m.Year, m.Season, m.AgeLevel, m.Version })
+            .IsUnique(false);
         #endregion
     }
 }

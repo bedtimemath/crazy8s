@@ -51,7 +51,6 @@ public static class UnfinishedEx
             var applicationClub = new RequestedClubDb()
             {
                 Request = request,
-                ClubSize = ClubSize.Size16,
                 AgeLevel = parts[0] switch
                 {
                     "K2" => AgeLevel.GradesK2,

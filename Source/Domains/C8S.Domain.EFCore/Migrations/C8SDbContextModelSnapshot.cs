@@ -31,10 +31,7 @@ namespace C8S.Domain.EFCore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ClubId"));
 
                     b.Property<string>("AgeLevel")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("ClubSize")
+                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -62,7 +59,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<int?>("SaleId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Season")
+                    b.Property<int>("Season")
                         .HasColumnType("int");
 
                     b.Property<DateOnly?>("StartsOn")
@@ -73,7 +70,12 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<string>("Version")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.Property<string>("Year")
+                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -86,6 +88,8 @@ namespace C8S.Domain.EFCore.Migrations
                     b.HasIndex("PlaceId");
 
                     b.HasIndex("SaleId");
+
+                    b.HasIndex("Year", "Season", "AgeLevel", "Version");
 
                     b.ToTable("Clubs");
                 });
@@ -700,11 +704,6 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<string>("ClubSize")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
                     b.Property<Guid?>("OldSystemApplicationClubId")
                         .HasColumnType("uniqueidentifier");
 
@@ -845,10 +844,7 @@ namespace C8S.Domain.EFCore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkuId"));
 
                     b.Property<string>("AgeLevel")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
-
-                    b.Property<string>("ClubSize")
+                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
@@ -859,7 +855,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("Key")
+                    b.Property<string>("FulcoId")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -875,7 +871,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<Guid?>("OldSystemSkuId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int?>("Season")
+                    b.Property<int>("Season")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -883,15 +879,25 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<string>("Version")
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.Property<string>("Year")
+                        .IsRequired()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
                     b.HasKey("SkuId");
 
+                    b.HasIndex("FulcoId")
+                        .IsUnique();
+
                     b.HasIndex("OldSystemSkuId")
                         .IsUnique()
                         .HasFilter("[OldSystemSkuId] IS NOT NULL");
+
+                    b.HasIndex("Year", "Season", "AgeLevel", "Version");
 
                     b.ToTable("Skus");
                 });

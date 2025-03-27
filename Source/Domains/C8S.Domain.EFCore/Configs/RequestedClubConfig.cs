@@ -15,7 +15,7 @@ public class RequestedClubConfig : IEntityTypeConfiguration<RequestedClubDb>
         entity.HasKey(m => m.RequestedClubId);
         #endregion
 
-        #region Database Properties
+        #region Database Properties (Old System)
         //public Guid? OldSystemApplicationClubId { get; set; } = null;
         entity.Property(m => m.OldSystemApplicationClubId)
             .IsRequired(false);
@@ -27,6 +27,13 @@ public class RequestedClubConfig : IEntityTypeConfiguration<RequestedClubDb>
         //public Guid? OldSystemLinkedClubId { get; set; } = null;
         entity.Property(m => m.OldSystemLinkedClubId)
             .IsRequired(false);
+        #endregion
+
+        #region Database Properties
+        //[Required]
+        //public int Season { get; set; } = default!;
+        entity.Property(m => m.Season)
+            .IsRequired(true);
 
         //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -34,19 +41,6 @@ public class RequestedClubConfig : IEntityTypeConfiguration<RequestedClubDb>
         entity.Property(m => m.AgeLevel)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(true);
-
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
-        //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ClubSize ClubSize { get; set; } = default!;
-        entity.Property(m => m.ClubSize)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .HasConversion<string>()
-            .IsRequired(true);
-
-        //[Required]
-        //public int Season { get; set; } = default!;
-        entity.Property(m => m.Season)
             .IsRequired(true);
 
         //[Required]

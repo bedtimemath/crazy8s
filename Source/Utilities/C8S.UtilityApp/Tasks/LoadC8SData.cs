@@ -47,7 +47,32 @@ internal class LoadC8SData(
         var firstChar = Char.ToLower(checkContinue.KeyChar);
         if (firstChar != 'y') return 0;
         Console.WriteLine();
+        
 
+        /*** SKUS ***/
+        var sqlSkus = (await oldSystemService.GetSkus()).ToList();
+        logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
+
+        await RemoveExistingSkus(sqlSkus);
+        logger.LogInformation("Removed existing, now {Count:#,##0} skus", sqlSkus.Count);
+
+        Console.WriteLine("=== SKUS ===");
+        foreach (var sqlSku in sqlSkus)
+        {
+            var year = GetYearFromSqlSku(sqlSku);
+            var season = sqlSku.Season ?? 0;
+            var ageLevel = sqlSku.AgeLevel switch
+                {
+                    AgeLevel.GradesK2 => "K2",
+                    AgeLevel.Grades35 => "35",
+                    _ => throw new Exception($"Unrecognized AgeLevel: {sqlSku.AgeLevel}")
+                };
+            var version = GetVersionFromSqlSku(sqlSku);
+            Console.WriteLine($"{sqlSku.Key}|{year}-S{season}-{ageLevel}{(version == null ? null : ("-" + version))}");
+        }
+
+
+#if false
         /*** ADDRESSES ***/
         var sqlAddresses = (await oldSystemService.GetAddresses()).ToList();
         logger.LogInformation("Found {Count:#,##0} addresses", sqlAddresses.Count);
@@ -169,40 +194,11 @@ internal class LoadC8SData(
 
         /*** JOIN ORDERS & SKUS TO ORDER SKUS ***/
         var (addedOrderSkus, skippedOrderSkus) = await JoinOrderSkus(sqlOrderSkus);
-        logger.LogInformation("Added {Count:#,##0} orderSkus; skipped {Skipped:#,##0}", addedOrderSkus, skippedOrderSkus);
+        logger.LogInformation("Added {Count:#,##0} orderSkus; skipped {Skipped:#,##0}", addedOrderSkus, skippedOrderSkus); 
+#endif
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
-    }
-
-    private Dictionary<Guid, Guid> CreateDuplicateLookup(List<CoachSql> sqlCoaches)
-    {
-        var lookup = new Dictionary<Guid, Guid>();
-        var toRemove = new List<Guid>();
-
-        var duplicates = sqlCoaches
-            .GroupBy(c => c.Email)
-            .Where(g => g.Count() > 1)
-            .ToList();
-        foreach (var dupeGroup in duplicates)
-        {
-            var mostRecent = dupeGroup.OrderByDescending(c => c.CreatedOn).Take(1).First();
-            if (!mostRecent.OldSystemCoachId.HasValue)
-                throw new UnreachableException("Most recent missing OldSystemCoachId");
-            var others = dupeGroup.Except([mostRecent]).ToList();
-
-            foreach (var other in others)
-            {
-                if (!other.OldSystemCoachId.HasValue)
-                    throw new UnreachableException("Other missing OldSystemCoachId");
-                lookup.Add(other.OldSystemCoachId.Value, mostRecent.OldSystemCoachId.Value);
-                toRemove.Add(other.OldSystemCoachId.Value);
-            }
-        }
-
-        sqlCoaches.RemoveAll(c => toRemove.Contains(c.OldSystemCoachId!.Value));
-
-        return lookup;
     }
 
     private async Task<(int addedOrderSkus, int skippedOrderSkus)> JoinOrderSkus(List<OrderSkuSql> sqlOrderSkus)
@@ -359,13 +355,13 @@ internal class LoadC8SData(
             var sku = new SkuDb()
             {
                 OldSystemSkuId = sqlSku.OldSystemSkuId,
-                Key = sqlSku.Key,
+                FulcoId = sqlSku.Key,
                 Name = sqlSku.Name,
                 Status = sqlSku.Status ?? SkuStatus.Inactive,
-                Year = GetYearFromSkuKey(sqlSku.Key),
-                Season = sqlSku.Season,
-                AgeLevel = sqlSku.AgeLevel,
-                ClubSize = sqlSku.ClubSize ?? ClubSize.Size16,
+                Year = GetYearFromSqlSku(sqlSku),
+                Season = sqlSku.Season!.Value,
+                AgeLevel = sqlSku.AgeLevel!.Value,
+                Version = GetVersionFromSqlSku(sqlSku),
                 Comments = sqlSku.Notes
             };
             dbContext.Skus.Add(sku);
@@ -428,9 +424,8 @@ internal class LoadC8SData(
                 OldSystemCoachId = sqlClub.OldSystemCoachId,
                 OldSystemMeetingAddressId = sqlClub.OldSystemMeetingAddressId,
                 Status = clubStatus,
-                Season = sqlClub.Season,
-                AgeLevel = sqlClub.AgeLevel,
-                ClubSize = sqlClub.ClubSize ?? ClubSize.Size16,
+                Season = sqlClub.Season!.Value,
+                AgeLevel = sqlClub.AgeLevel!.Value,
                 StartsOn = sqlClub.StartsOn,
                 ClubPersons = []
             };
@@ -578,7 +573,6 @@ internal class LoadC8SData(
                     OldSystemApplicationId = appClub.OldSystemApplicationId,
                     OldSystemLinkedClubId = appClub.OldLinkedClubId,
                     AgeLevel = appClub.AgeLevel ?? throw new Exception("Missing Age Level"),
-                    ClubSize = appClub.ClubSize ?? ClubSize.Size16,
                     Season = appClub.Season ?? throw new Exception("Missing Season"),
                     StartsOn = appClub.StartsOn ?? throw new Exception("Missing Starts On")
                 };
@@ -861,10 +855,29 @@ internal class LoadC8SData(
         return person;
     }
     private readonly Regex _parseSkuKey =
-        new Regex(@"^C8\.S\d.(?<year>F[^\-]+)\-.+$", RegexOptions.Compiled | RegexOptions.Singleline);
-    private string? GetYearFromSkuKey(string key)
+        new Regex(@"^C8\.S\d.(?<year>F[\d+]+)(?<alt>ALT)?\-G(?:K2|35)(?<extra>.*)$", RegexOptions.Compiled | RegexOptions.Singleline);
+    private string GetYearFromSqlSku(SkuSql sqlSku)
+    {
+        var yearString = GetYearFromKey(sqlSku.Key);
+        return yearString ?? $"X{sqlSku.CreatedOn:yy}";
+    }
+    private string? GetVersionFromSqlSku(SkuSql sqlSku)
+    {
+        var extra = GetExtraFromKey(sqlSku.Key);
+        if (String.IsNullOrWhiteSpace(extra)) extra = null;
+        return (extra == "R") ? null : extra;
+    }
+
+    private string? GetYearFromKey(string key)
     {
         var match = _parseSkuKey.Match(key);
-        return (!match.Success) ? null : match.Groups["year"].Value;
+        return (match.Success) ? match.Groups["year"].Value : null;
+    }
+    private string? GetExtraFromKey(string key)
+    {
+        var match = _parseSkuKey.Match(key);
+        var extra = (match.Success) ? match.Groups["extra"].Value : null;
+        if (match.Success && !String.IsNullOrWhiteSpace(match.Groups["alt"].Value)) extra += "ALT";
+        return extra?.Trim();
     }
 }

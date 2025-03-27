@@ -15,8 +15,7 @@ public class RequestedClubDb : BaseDb
     [NotMapped] 
     public override int Id => RequestedClubId;
     [NotMapped] 
-    public override string Display =>  String.Join(" ", new [] { Season.ToString(), AgeLevel.GetLabel(), ClubSize.GetLabel() }) 
-                                       ?? SoftCrowConstants.Display.NotSet;
+    public override string Display =>  String.Join(" ", [ Season.ToString(), AgeLevel.GetLabel() ]);
     #endregion
 
     #region Id Property
@@ -24,23 +23,21 @@ public class RequestedClubDb : BaseDb
     public int RequestedClubId { get; set; }
     #endregion
 
-    #region Database Properties
+    #region Database Properties (Old System)
     public Guid? OldSystemApplicationClubId { get; set; } = null;
 
     public Guid? OldSystemApplicationId { get; set; } = null;
 
     public Guid? OldSystemLinkedClubId { get; set; } = null;
+    #endregion
+
+    #region Database Properties
+    [Required]
+    public int Season { get; set; }
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AgeLevel AgeLevel { get; set; } = default!;
-
-    [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize ClubSize { get; set; } = default!;
-
-    [Required]
-    public int? Season { get; set; }
 
     [Required]
     public DateOnly StartsOn { get; set; }
@@ -48,7 +45,7 @@ public class RequestedClubDb : BaseDb
 
     #region Reference Properties
     [ForeignKey(nameof(Request))]
-    public int RequestId { get; set; } = default!;
-    public RequestDb Request { get; set; } = default!;
+    public int RequestId { get; set; }
+    public RequestDb Request { get; set; } = null!;
     #endregion
 }

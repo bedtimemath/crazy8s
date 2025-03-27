@@ -66,7 +66,7 @@ public sealed class WPUserCreatorCoordinator(
                 .Select(cp => cp.Club)
                 .SelectMany(c => c.Orders)
                 .SelectMany(o => o.OrderSkus)
-                .Select(os => os.Sku.Key.ToSlug());
+                .Select(os => os.Sku.ClubKey.ToSlug());
 
             List<string> userRoles = ["coach"];
             userRoles.AddRange(roleSlugs.Intersect(skuSlugs));

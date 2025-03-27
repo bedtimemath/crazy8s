@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using C8S.Domain.Enums;
 using ALevel = C8S.Domain.Enums.AgeLevel;
-using CSize = C8S.Domain.Enums.ClubSize;
 
 namespace C8S.UtilityApp.Models;
 
@@ -52,23 +51,10 @@ public class SkuSql
 
     public AgeLevel? AgeLevel => AgeLevelString switch
     {
-        "3rd - 5th Grade" => ALevel.GradesK2,
-        "K - 2nd Grade" => ALevel.Grades35,
+        "K - 2nd Grade" => ALevel.GradesK2,
+        "3rd - 5th Grade" => ALevel.Grades35,
         "Unknown" or null => null,
         _ => throw new Exception($"Unrecognized: {AgeLevelString}")
-    };
-
-    public ClubSize? ClubSize => ClubSizeString switch
-    {
-        "Extra A4" => CSize.ExtraA4,
-        "Extra A4a" => CSize.ExtraA4a,
-        "Extra A4b" => CSize.ExtraA4b,
-        "Extra A8" => CSize.ExtraA8,
-        "Size 12" => CSize.Size12,
-        "Size 16" => CSize.Size16,
-        "Size 20" => CSize.Size20,
-        "Unknown" or null => null,
-        _ => throw new Exception($"Unrecognized: {ClubSizeString}")
     };
 
     public DateTimeOffset CreatedOn => 

@@ -47,11 +47,11 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
         //public string? Year { get; set; }
         entity.Property(m => m.Year)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .IsRequired(false);
+            .IsRequired(true);
 
         //public int Season { get; set; } = default!;
         entity.Property(m => m.Season)
-            .IsRequired(false);
+            .IsRequired(true);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -59,14 +59,11 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
         entity.Property(m => m.AgeLevel)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
-            .IsRequired(false);
+            .IsRequired(true);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public ClubSize? ClubSize { get; set; } = default!;
-        entity.Property(m => m.ClubSize)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .HasConversion<string>()
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string? Version { get; set; } = null!;
+        entity.Property(m => m.Version)
             .IsRequired(false);
 
         //public DateOnly? StartsOn { get; set; }
@@ -121,6 +118,8 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
         #region Indices
         entity.HasIndex(m => m.OldSystemClubId)
             .IsUnique(true);
+        entity.HasIndex(m => new { m.Year, m.Season, m.AgeLevel, m.Version })
+            .IsUnique(false);
         #endregion
     }
 }

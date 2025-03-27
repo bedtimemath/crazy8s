@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using C8S.Domain.Enums;
-using C8S.Domain.Features.Clubs.Models;
 
 namespace C8S.Functions.DTOs;
 
@@ -9,8 +8,8 @@ public record SkuDTO
     [JsonPropertyName("sku_id")]
     public int SkuId { get; init; }
 
-    [JsonPropertyName("key")]
-    public string Key { get; init; } = null!;
+    [JsonPropertyName("fulco_id")]
+    public string FulcoId { get; init; } = null!;
 
     [JsonPropertyName("name")]
     public string Name { get; init; } = null!;
@@ -20,16 +19,18 @@ public record SkuDTO
     public SkuStatus Status { get; init; } = default!;
 
     [JsonPropertyName("year")]
-    public string? Year { get; init; }
+    public string Year { get; init; } = null!;
 
     [JsonPropertyName("season")]
-    public int? Season { get; init; }
+    public int Season { get; init; }
 
     [JsonPropertyName("age_level")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel? AgeLevel { get; init; }
+    public AgeLevel AgeLevel { get; init; } = default!;
 
-    [JsonPropertyName("club_size")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize? ClubSize { get; init; }
+    [JsonPropertyName("version")]
+    public string? Version { get; init; }
+
+    [JsonPropertyName("club_key")]
+    public string ClubKey { get; init; } = null!;
 }

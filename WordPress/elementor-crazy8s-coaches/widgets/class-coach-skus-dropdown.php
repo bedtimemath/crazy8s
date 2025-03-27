@@ -253,15 +253,12 @@ class CoachSkusDropdown extends Widget_Base
 					}
 				}
 			}
-
-			foreach ($skus as $sku) {
 			?>
-				<div><strong><?php echo $sku['key'] ?></strong>: <?php echo $sku['name'] ?></div>
-			<?php
-			}
-
-			?>
-
+				<select name="skus_dropdown">
+					<?php foreach ($skus as $sku) { ?>
+						<option value="<?php echo $sku['key']; ?>"><?php echo $sku['name']; ?></option>
+					<?php } ?>
+				</select>
 		</div>
 	<?php
 	}
@@ -280,6 +277,6 @@ class CoachSkusDropdown extends Widget_Base
 	?>
 		<div>Skus Dropdown Goes Here</div>
 		<div>Platform: {{{ settings.platform }}}</div>
-	<?php
+<?php
 	}
 }

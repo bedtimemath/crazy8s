@@ -68,13 +68,13 @@ namespace C8S.Domain.EFCore.Migrations
                     SkuId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OldSystemSkuId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Key = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FulcoId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    Year = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    Season = table.Column<int>(type: "int", nullable: true),
-                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    Year = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Season = table.Column<int>(type: "int", nullable: false),
+                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Version = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -244,9 +244,8 @@ namespace C8S.Domain.EFCore.Migrations
                     OldSystemApplicationClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OldSystemApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OldSystemLinkedClubId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Season = table.Column<int>(type: "int", nullable: false),
+                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     StartsOn = table.Column<DateOnly>(type: "date", nullable: false),
                     RequestId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -355,10 +354,10 @@ namespace C8S.Domain.EFCore.Migrations
                     OldSystemCoachId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     OldSystemMeetingAddressId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    Year = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    Season = table.Column<int>(type: "int", nullable: true),
-                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    ClubSize = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    Year = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Season = table.Column<int>(type: "int", nullable: false),
+                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Version = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     StartsOn = table.Column<DateOnly>(type: "date", nullable: true),
                     PlaceId = table.Column<int>(type: "int", nullable: false),
                     SaleId = table.Column<int>(type: "int", nullable: true),
@@ -612,6 +611,11 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "SaleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Clubs_Year_Season_AgeLevel_Version",
+                table: "Clubs",
+                columns: new[] { "Year", "Season", "AgeLevel", "Version" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InvoicePersons_InvoiceId",
                 table: "InvoicePersons",
                 column: "InvoiceId");
@@ -790,11 +794,22 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Skus_FulcoId",
+                table: "Skus",
+                column: "FulcoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Skus_OldSystemSkuId",
                 table: "Skus",
                 column: "OldSystemSkuId",
                 unique: true,
                 filter: "[OldSystemSkuId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Skus_Year_Season_AgeLevel_Version",
+                table: "Skus",
+                columns: new[] { "Year", "Season", "AgeLevel", "Version" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Unfinisheds_Code",

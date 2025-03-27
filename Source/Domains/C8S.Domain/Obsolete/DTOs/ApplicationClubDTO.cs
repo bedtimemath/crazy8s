@@ -9,7 +9,7 @@ public class ApplicationClubDTO: BaseDTO
 {
     #region Property Overrides
     public override int Id => ApplicationClubId ?? 0;
-    public override string Display => String.Join(" ", new [] { Season.ToString(), AgeLevel?.GetLabel(), ClubSize?.GetLabel() }) 
+    public override string Display => String.Join(" ", [ Season.ToString(), AgeLevel?.GetLabel() ]) 
                                       ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
@@ -18,7 +18,6 @@ public class ApplicationClubDTO: BaseDTO
     {
         var errors = new List<string>();
         if (this.AgeLevel == null) errors.Add("AgeLevel is required.");
-        if (this.ClubSize == null) errors.Add("ClubSize is required.");
         if (this.Season == null) errors.Add("Season is required.");
         if (this.StartsOn == null) errors.Add("StartsOn is required.");
         if (this.ApplicationId == null) errors.Add("ApplicationId is required.");
@@ -38,8 +37,6 @@ public class ApplicationClubDTO: BaseDTO
     public Guid? OldSystemLinkedClubId { get; set; } = null;
 
     public AgeLevel? AgeLevel { get; set; } = null;
-
-    public ClubSize? ClubSize { get; set; } = null;
 
     public int? Season { get; set; } = null;
 

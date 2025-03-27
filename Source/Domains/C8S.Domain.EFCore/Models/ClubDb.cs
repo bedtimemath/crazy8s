@@ -4,7 +4,6 @@ using System.Text.Json.Serialization;
 using C8S.Domain.Enums;
 using SC.Common;
 using SC.Common.Base;
-using SC.Common.Extensions;
 
 namespace C8S.Domain.EFCore.Models;
 
@@ -15,14 +14,7 @@ public class ClubDb : BaseCoreDb
     [NotMapped] 
     public override int Id => ClubId;
     [NotMapped] 
-    public override string Display => 
-        String.Join("-", 
-        [ 
-           Season?.ToString() ?? SoftCrowConstants.Display.NotSet, 
-           AgeLevel?.GetLabel() ?? SoftCrowConstants.Display.NotSet, 
-           ClubSize?.GetLabel() ?? SoftCrowConstants.Display.NotSet
-        ]) 
-    ?? SoftCrowConstants.Display.NotSet;
+    public override string Display => ClubKey;
     #endregion
 
     #region Id Property
@@ -46,17 +38,16 @@ public class ClubDb : BaseCoreDb
     public ClubStatus Status { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? Year { get; set; }
+    public string Year { get; set; } = null!;
     
-    public int? Season { get; set; }
+    public int Season { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel? AgeLevel { get; set; }
+    public AgeLevel AgeLevel { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize? ClubSize { get; set; }
+    public string? Version { get; set; } = null!;
 
     public DateOnly? StartsOn { get; set; }
     #endregion
@@ -75,5 +66,10 @@ public class ClubDb : BaseCoreDb
     public ICollection<ClubPersonDb> ClubPersons { get; set; } = null!;
     public ICollection<OrderDb> Orders { get; set; } = null!;
     public ICollection<ClubNoteDb> Notes { get; set; } = null!;
+    #endregion
+
+    #region Derived Properties
+    [NotMapped] 
+    public string ClubKey => String.Join('-', [Year, Season, AgeLevel, Version]);
     #endregion
 }

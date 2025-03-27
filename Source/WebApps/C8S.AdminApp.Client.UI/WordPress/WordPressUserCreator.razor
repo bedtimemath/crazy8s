@@ -56,7 +56,7 @@
                                      .ClubPersons
                                      .SelectMany(cp => cp.Club.Orders)
                                      .SelectMany(o => o.OrderSkus)
-                                     .Select(os => os.Sku.Key)
+                                     .Select(os => os.Sku.ClubKey)
                                      .Distinct()
                                      .OrderBy(k => k))
                             {

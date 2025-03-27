@@ -63,10 +63,10 @@ internal class WPImport(
         ConsoleEx.StartProgress("Adding skus to WordPress: ");
         foreach (var dbSku in dbSkus)
         {
-            var slug = dbSku.Key.ToSlug();
+            var slug = dbSku.ClubKey.ToSlug();
             var display = dbSku.Name;
 
-            if (wpSkus.Any(s => s.Properties.SkuIdentifier == dbSku.Key))
+            if (wpSkus.Any(s => s.Properties.SkuIdentifier == dbSku.ClubKey))
             {
                 skusSkipped++;
             }
@@ -79,9 +79,9 @@ internal class WPImport(
                     Status = SkuStatus.Active,
                     Properties = new WPSkuProperties()
                     {
-                        SkuIdentifier = dbSku.Key,
-                        Season = dbSku.Season ?? 1,
-                        AgeLevel = dbSku.AgeLevel ?? AgeLevel.GradesK2
+                        SkuIdentifier = dbSku.ClubKey,
+                        Season = dbSku.Season,
+                        AgeLevel = dbSku.AgeLevel
                     }
                 };
 

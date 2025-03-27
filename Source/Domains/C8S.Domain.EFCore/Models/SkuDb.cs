@@ -15,8 +15,7 @@ public class SkuDb : BaseCoreDb
     [NotMapped] 
     public override int Id => SkuId;
     [NotMapped] 
-    public override string Display => String.Join(" ", new [] { Season?.ToString(), AgeLevel?.GetLabel(), ClubSize?.GetLabel() }
-                                           .Select(s => !String.IsNullOrEmpty(s)));
+    public override string Display => ClubKey;
     #endregion
 
     #region Id Property
@@ -30,7 +29,7 @@ public class SkuDb : BaseCoreDb
 
     #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Key)]
-    public string Key { get; set; } = null!;
+    public string FulcoId { get; set; } = null!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Name)]
     public string Name { get; set; } = null!;
@@ -40,17 +39,16 @@ public class SkuDb : BaseCoreDb
     public SkuStatus Status { get; set; } = default!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? Year { get; set; }
+    public string Year { get; set; } = null!;
 
-    public int? Season { get; set; }
-
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel? AgeLevel { get; set; }
+    public int Season { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize? ClubSize { get; set; }
+    public AgeLevel AgeLevel { get; set; }
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    public string? Version { get; set; } = null!;
 
     [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
     public string? Comments { get; set; }
@@ -59,5 +57,10 @@ public class SkuDb : BaseCoreDb
     #region Child Properties
     public ICollection<OrderSkuDb> OrderSkus { get; set; } = null!;
     public ICollection<PermissionDb> Permissions { get; set; } = null!;
+    #endregion
+
+    #region Derived Properties
+    [NotMapped] 
+    public string ClubKey => String.Join('-', [Year, Season, AgeLevel, Version]);
     #endregion
 }

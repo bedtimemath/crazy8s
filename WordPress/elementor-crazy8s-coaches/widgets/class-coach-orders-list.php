@@ -17,6 +17,7 @@ namespace ElementorCrazy8sCoaches\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
+use ElementorCrazy8sCoaches\Helpers\Helper;
 
 // Security Note: Blocks direct access to the plugin PHP files.
 defined('ABSPATH') || die();
@@ -28,6 +29,21 @@ defined('ABSPATH') || die();
  */
 class CoachOrdersList extends Widget_Base
 {
+	const FAKE_ORDER = array(
+		'number' => '12345',
+		'status' => 'Processing',
+		'name' => 'Edna Crabapple',
+		'recipient' => 'Springfield Middle School',
+		'shipping_address_1' => '123 Main St',
+		'shipping_address_2' => 'Apt 4B',
+		'city' => 'Springfield',
+		'state' => 'OH',
+		'zip_code' => '30521',
+		'ordered_on' => '2025-01-10T21:35:13.9776377+00:00',
+		'shipped_on' => '2025-01-15T05:20:31.0017605+00:00',
+	);
+	private $helper;
+
 	/**
 	 * Class constructor.
 	 *
@@ -37,6 +53,8 @@ class CoachOrdersList extends Widget_Base
 	public function __construct($data = array(), $args = null)
 	{
 		parent::__construct($data, $args);
+
+		$this->helper = new Helper();
 
 		//		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.1');
 		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES) . '?v=' . time(), array(), null);
@@ -174,95 +192,36 @@ class CoachOrdersList extends Widget_Base
 
 			$orders = [];
 			if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-				$orders[] = array(
-					'number' => '12345',
-					'status' => 'Processing',
-					'name' => 'Edna Crabapple',
-					'recipient' => 'Springfield Middle School',
-					'shipping_address_1' => '123 Main St',
-					'shipping_address_2' => 'Apt 4B',
-					'city' => 'Springfield',
-					'state' => 'OH',
-					'zip_code' => '30521'
-				);
+				$orders[] = self::FAKE_ORDER;
 			} else {
+				$result = $this->helper->fetch_order_data($settings);
 
-				// Set the base URL based on the platform
-				switch ($settings['platform']) {
-					case 'development':
-						$base_url = "https://localhost:7071/api/";
-						break;
-					case 'staging':
-						$base_url = "https://c8s-functions-staging.azurewebsites.net/api/";
-						break;
-					case 'production':
-					default:
-						$base_url = "https://api.crazy8sclub.org/api/";
-						break;
-				}
-
-				$user_id = get_current_user_id();
-				$api_url = $base_url . "coach/?id=" . $user_id;
-
-				$args = [
-					'headers' => [
-						'x-functions-key' => $settings['api-key']
-					]
-				];
-				$response = wp_remote_get($api_url, $args);
-				$status_code = wp_remote_retrieve_response_code($response);
-
-				if (is_wp_error($response)) {
-					$error_code = $response->get_error_code();
-					$error_message = $response->get_error_message();
-			?>
-					<div class="c8s-text-danger">
-						<strong>NETWORK ERROR</strong>:
-						<div>Code = <?php echo $error_code; ?></div>
-						<div><?php echo $error_message; ?></div>
-					</div>
-				<?php
-					return;
-				} else if ($status_code != 200) {
-				?>
-					<div class="c8s-text-danger">
-						<strong>API ERROR</strong>:
-						[<?php echo $status_code; ?>] Bad status code returned.
-					</div>
-				<?php
-				}
-
-				$body = wp_remote_retrieve_body($response);
-				$data = json_decode($body, true);
-				if (isset($data['Exception'])) {
-				?>
-					<div class="c8s-text-danger">
-						<strong>RESPONSE ERROR</strong>:
-						[<?php echo $data['Exception']['source']; ?>] <?php echo $data['Exception']['message'] ?>
-					</div>
-				<?php
-					return;
-				} else if (!isset($data['Result'])) {
-				?>
-					<div class="c8s-text-danger">
-						The current user has no associated Orders or SKUs.
-					</div>
-			<?php
-					return;
-				}
-
-				if (isset($data['Result']['clubs'])) {
-					foreach ($data['Result']['clubs'] as $club) {
-						if (isset($club['orders'])) {
-							foreach ($club['orders'] as $order) {
-								$orders[] = $order;
+				// Check the result and handle accordingly
+				if (is_object($result) && isset($result->error_type) && isset($result->error_message)) {
+					// Handle error
+					echo '<div class="c8s-text-danger">';
+					echo '<strong>' . $result->error_type . '</strong>: ' . $result->error_message;
+					echo '</div>';
+				} else if (is_array($result)) {
+					$data = $result['Result'];
+					if (isset($data['clubs'])) {
+						foreach ($data['clubs'] as $club) {
+							if (isset($club['orders'])) {
+								foreach ($club['orders'] as $order) {
+									$orders[] = $order;
+								}
 							}
 						}
 					}
-				}
-
-				foreach ($orders as $order) {
-					$this->render_order($order);
+					
+					// Sort the orders array in reverse-chronological order
+					usort($orders, function($a, $b) {
+						return strtotime($b['ordered_on']) - strtotime($a['ordered_on']);
+					});
+	
+					foreach ($orders as $order) {
+						$this->render_order($order);
+					}
 				}
 			}
 			?>
@@ -284,19 +243,7 @@ class CoachOrdersList extends Widget_Base
 		// Enqueue the plugin stylesheet
 		wp_enqueue_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES) . '?v=' . time(), array(), null);
 
-		$this->render_order(array(
-			'number' => '12345',
-			'status' => 'Processing',
-			'name' => 'Edna Crabapple',
-			'recipient' => 'Springfield Middle School',
-			'shipping_address_1' => '123 Main St',
-			'shipping_address_2' => 'Apt 4B',
-			'city' => 'Springfield',
-			'state' => 'OH',
-			'zip_code' => '30521',
-			'ordered_on' => '2025-01-10T21:35:13.9776377+00:00',
-			'shipped_on' => '2025-01-15T05:20:31.0017605+00:00',
-		));
+		$this->render_order(self::FAKE_ORDER);
 	}
 
 	/**

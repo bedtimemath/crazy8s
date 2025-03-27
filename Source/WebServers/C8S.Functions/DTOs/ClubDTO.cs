@@ -13,22 +13,26 @@ public record ClubDTO
     public ClubStatus Status { get; init; } = default!;
 
     [JsonPropertyName("year")]
-    public string? Year { get; init; }
+    public string Year { get; init; } = null!;
 
     [JsonPropertyName("season")]
-    public string? Season { get; init; }
+    public int Season { get; init; }
 
     [JsonPropertyName("age_level")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public AgeLevel? AgeLevel { get; init; }
+    public AgeLevel AgeLevel { get; init; }
 
-    [JsonPropertyName("club_size")]
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubSize? ClubSize { get; init; }
+    [JsonPropertyName("version")]
+    public string? Version { get; init; }
 
     [JsonPropertyName("starts_on")]
     public DateOnly? StartsOn { get; init; }
 
     [JsonPropertyName("orders")]
     public List<OrderDTO> Orders { get; init; } = [];
+
+    #region Derived Properties
+    [JsonPropertyName("club_key")]
+    public string ClubKey => String.Join('-', [Year, Season, AgeLevel, Version]);
+    #endregion
 }

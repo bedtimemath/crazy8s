@@ -198,6 +198,7 @@ final class Elementor_Crazy8s_Coaches {
 			self::MINIMUM_PHP_VERSION
 		);
 	}
+
 }
 
 // Instantiate Elementor_Crazy8s_Coaches.
