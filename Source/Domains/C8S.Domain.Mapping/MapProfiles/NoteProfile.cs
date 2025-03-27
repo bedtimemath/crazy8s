@@ -25,9 +25,6 @@ internal class NoteProfile : Profile
         CreateMap<PlaceNoteDb, NoteDetails>()
             .ForMember(m => m.ParentId, 
                 opt => opt.MapFrom(n => n.PlaceId));
-        CreateMap<RequestNoteDb, NoteDetails>()
-            .ForMember(m => m.ParentId, 
-                opt => opt.MapFrom(n => n.RequestId));
         CreateMap<TicketNoteDb, NoteDetails>()
             .ForMember(m => m.ParentId, 
                 opt => opt.MapFrom(n => n.TicketId));

@@ -41,6 +41,8 @@ internal class TestInterceptors(
         dbContext.Persons.Add(coach);
         logger.LogInformation("Added {Coach}", coach.Display);
 
+        throw new NotImplementedException();
+#if false
         // MODIFY 5 APPLICATIONS
         var applications = await dbContext.Requests
             .OrderByDescending(a => a.CreatedOn)
@@ -56,15 +58,16 @@ internal class TestInterceptors(
         // REMOVE APPLICATION
         var toDelete = await dbContext.Requests
             .OrderBy(a => a.CreatedOn)
-            .Skip(randomizer.GetIntBetween(100,1000))
+            .Skip(randomizer.GetIntBetween(100, 1000))
             .FirstAsync();
         logger.LogInformation("Deleting {Application}", toDelete.Display);
-        dbContext.Requests.Remove(toDelete);
+        dbContext.Requests.Remove(toDelete); 
 
         // UPDATE THE DATABASE
         await dbContext.SaveChangesAsync();
 
         logger.LogInformation("{Name}: complete.", nameof(TestInterceptors));
         return 0;
+#endif
     }
 }

@@ -10,9 +10,7 @@ internal class RequestProfile: Profile
     {
         CreateMap<RequestDb, RequestAbstract>()
             .Include<RequestDb, RequestDetails>()
-            .Include<RequestDb, RequestListItem>()
-            .ForMember(dest => dest.StartDates, 
-                opt => opt.MapFrom(src => src.RequestedClubs.Select(c => c.StartsOn)));
+            .Include<RequestDb, RequestListItem>();
         
         CreateMap<RequestDb, RequestDetails>();
         CreateMap<RequestDb, RequestListItem>();

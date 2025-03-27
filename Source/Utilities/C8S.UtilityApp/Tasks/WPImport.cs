@@ -1,14 +1,8 @@
-﻿using System.Diagnostics;
-using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.Enums;
+﻿using C8S.Domain.EFCore.Contexts;
 using C8S.UtilityApp.Base;
-using C8S.UtilityApp.Extensions;
-using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
-using C8S.WordPress.Abstractions.Extensions;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -34,10 +28,11 @@ internal class WPImport(
 
         Console.WriteLine();
 
+#if false
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var dbSkus = await dbContext.Offers
-            .Where(s => (s.Year == "F23" || s.Year == "F23C" || s.Year == "F24") && 
+            .Where(s => (s.Year == "F23" || s.Year == "F23C" || s.Year == "F24") &&
                         (s.Title != "dont use"))
             .ToListAsync();
         _logger.LogInformation("Found {Count:#,##0} active skus in C8s database.", dbSkus.Count);
@@ -45,13 +40,13 @@ internal class WPImport(
         //foreach (var dbSku in dbSkus)
         //    _logger.LogInformation("{@Sku}", dbSku);
 
-        var wpSkus = await wordPressService.GetWordPressSkus(); 
+        var wpSkus = await wordPressService.GetWordPressSkus();
         _logger.LogInformation("Found {Count:#,##0} skus in WordPress.", wpSkus.Count);
 
         //foreach (var wpSku in wpSkus)
         //    _logger.LogInformation("{@Sku}", wpSku);
 
-        var wpRoles = await wordPressService.GetWordPressRoles(); 
+        var wpRoles = await wordPressService.GetWordPressRoles();
         _logger.LogInformation("Found {Count:#,##0} roles in WordPress.", wpRoles.Count);
 
         var skusCreated = 0;
@@ -59,7 +54,7 @@ internal class WPImport(
 
         var rolesCreated = 0;
         var rolesSkipped = 0;
-        
+
         ConsoleEx.StartProgress("Adding skus to WordPress: ");
         foreach (var dbSku in dbSkus)
         {
@@ -113,7 +108,8 @@ internal class WPImport(
         ConsoleEx.EndProgress();
 
         _logger.LogInformation("{Created:#,##0} skus created, {Skipped:#,##0} skipped.", skusCreated, skusSkipped);
-        _logger.LogInformation("{Created:#,##0} roles created, {Skipped:#,##0} skipped.", rolesCreated, rolesSkipped);
+        _logger.LogInformation("{Created:#,##0} roles created, {Skipped:#,##0} skipped.", rolesCreated, rolesSkipped); 
+#endif
 
         _logger.LogInformation("{Name}: complete.", nameof(WPImport));
         return 0;

@@ -1,9 +1,4 @@
-﻿using System.Diagnostics;
-using C8S.Domain.EFCore.Models;
-using C8S.Domain.Enums;
-using C8S.Domain.Features.Requests.Enums;
-using SC.Common;
-using SC.Common.Helpers.PassThrus;
+﻿using C8S.Domain.EFCore.Models;
 using SC.Common.Interfaces;
 
 namespace C8S.Functions.Extensions;
@@ -13,6 +8,8 @@ public static class UnfinishedEx
     public static RequestDb ToRequest(this UnfinishedDb unfinished,
         IDateTimeHelper? dateTimeHelper = null)
     {
+        throw new NotImplementedException();
+#if false
         dateTimeHelper ??= new PassthruDateTimeHelper();
 
         var request = new RequestDb()
@@ -70,6 +67,7 @@ public static class UnfinishedEx
             request.RequestedClubs.Add(applicationClub);
         }
 
-        return request;
+        return request; 
+#endif
     }
 }

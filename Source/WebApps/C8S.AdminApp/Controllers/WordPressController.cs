@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using C8S.AdminApp.Extensions;
 using C8S.AdminApp.Hubs;
 using C8S.Domain;
@@ -13,7 +12,6 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.PubSub;
 using SC.Common.Responses;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace C8S.AdminApp.Controllers
 {

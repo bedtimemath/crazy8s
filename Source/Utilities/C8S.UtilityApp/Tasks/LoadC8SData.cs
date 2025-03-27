@@ -1,15 +1,10 @@
-﻿using System.Diagnostics;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.EFCore.Models;
-using C8S.Domain.Enums;
 using C8S.UtilityApp.Base;
-using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
 using C8S.UtilityApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SC.Common;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -47,29 +42,6 @@ internal class LoadC8SData(
         var firstChar = Char.ToLower(checkContinue.KeyChar);
         if (firstChar != 'y') return 0;
         Console.WriteLine();
-        
-
-        /*** SKUS ***/
-        var sqlSkus = (await oldSystemService.GetSkus()).ToList();
-        logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
-
-        await RemoveExistingSkus(sqlSkus);
-        logger.LogInformation("Removed existing, now {Count:#,##0} skus", sqlSkus.Count);
-
-        Console.WriteLine("=== SKUS ===");
-        foreach (var sqlSku in sqlSkus)
-        {
-            var year = GetYearFromSqlSku(sqlSku);
-            var season = sqlSku.Season ?? 0;
-            var ageLevel = sqlSku.AgeLevel switch
-                {
-                    AgeLevel.GradesK2 => "K2",
-                    AgeLevel.Grades35 => "35",
-                    _ => throw new Exception($"Unrecognized AgeLevel: {sqlSku.AgeLevel}")
-                };
-            var version = GetVersionFromSqlSku(sqlSku);
-            Console.WriteLine($"{sqlSku.Key}|{year}-S{season}-{ageLevel}{(version == null ? null : ("-" + version))}");
-        }
 
 
 #if false
@@ -201,6 +173,7 @@ internal class LoadC8SData(
         return 0;
     }
 
+#if false
     private async Task<(int addedOrderSkus, int skippedOrderSkus)> JoinOrderSkus(List<OrderSkuSql> sqlOrderSkus)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
@@ -385,7 +358,7 @@ internal class LoadC8SData(
         sqlSkus.RemoveAll(m => existingSkuIds.Contains(m.OldSystemSkuId));
     }
 
-    private async Task<int> AddClubs(List<ClubSql> sqlClubs, Dictionary<Guid,Guid> duplicateLookup)
+    private async Task<int> AddClubs(List<ClubSql> sqlClubs, Dictionary<Guid, Guid> duplicateLookup)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var allPersons = await dbContext.Persons.ToListAsync();
@@ -509,7 +482,7 @@ internal class LoadC8SData(
         return placesLinked;
     }
 
-    private async Task<int> JoinRequestsToPersons(Dictionary<Guid,Guid> duplicateLookup)
+    private async Task<int> JoinRequestsToPersons(Dictionary<Guid, Guid> duplicateLookup)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         var allPersons = await dbContext.Persons.ToListAsync();
@@ -707,8 +680,8 @@ internal class LoadC8SData(
         }
     }
 
-    private async Task<(int, int)> AddPersons(List<CoachSql> sqlCoaches, 
-        Dictionary<Guid,Guid> duplicateLookup)
+    private async Task<(int, int)> AddPersons(List<CoachSql> sqlCoaches,
+        Dictionary<Guid, Guid> duplicateLookup)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
@@ -726,7 +699,7 @@ internal class LoadC8SData(
                 .FirstOrDefault(p =>
                     !String.IsNullOrEmpty(p.Email) &&
                     p.Email.Trim().ToLower() == sqlCoach.Email.Trim().ToLower());
-            if (person == null) 
+            if (person == null)
                 person = new PersonDb()
                 {
                     OldSystemCoachId = sqlCoach.OldSystemCoachId,
@@ -757,7 +730,7 @@ internal class LoadC8SData(
             if (isDupe)
             {
                 duplicateLookup.Add(
-                    sqlCoach.OldSystemCoachId!.Value, 
+                    sqlCoach.OldSystemCoachId!.Value,
                     person.OldSystemCoachId!.Value);
                 toRemove.Add(sqlCoach);
                 dupes++;
@@ -854,6 +827,8 @@ internal class LoadC8SData(
 
         return person;
     }
+
+#endif
     private readonly Regex _parseSkuKey =
         new Regex(@"^C8\.S\d.(?<year>F[\d+]+)(?<alt>ALT)?\-G(?:K2|35)(?<extra>.*)$", RegexOptions.Compiled | RegexOptions.Singleline);
     private string GetYearFromSqlSku(SkuSql sqlSku)

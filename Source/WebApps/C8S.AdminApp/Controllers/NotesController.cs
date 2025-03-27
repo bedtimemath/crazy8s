@@ -48,7 +48,6 @@ public class NotesController(
                 NoteReference.Invoice => dbContext.InvoiceNotes.Where(n => n.InvoiceId == query.SourceId).AsNoTracking(),
                 NoteReference.Person => dbContext.PersonNotes.Where(n => n.PersonId == query.SourceId).AsNoTracking(),
                 NoteReference.Place => dbContext.PlaceNotes.Where(n => n.PlaceId == query.SourceId).AsNoTracking(),
-                NoteReference.Request => dbContext.RequestNotes.Where(n => n.RequestId == query.SourceId).AsNoTracking(),
                 NoteReference.Ticket => dbContext.TicketNotes.Where(n => n.TicketId == query.SourceId).AsNoTracking(),
                 NoteReference.Order => dbContext.OrderNotes.Where(n => n.OrderId == query.SourceId).AsNoTracking(),
                 _ => throw new ArgumentOutOfRangeException(nameof(query.NotesSource))
@@ -116,8 +115,7 @@ public class NotesController(
                 NoteReference.Invoice => await AddInvoiceNote(dbContext, command),
                 NoteReference.Person => await AddPersonNote(dbContext, command),
                 NoteReference.Place => await AddPlaceNote(dbContext, command),
-                NoteReference.Request => await AddRequestNote(dbContext, command),
-                NoteReference.Ticket => await AddSaleNote(dbContext, command),
+                NoteReference.Ticket => await AddTicketNote(dbContext, command),
                 NoteReference.Order => await AddOrderNote(dbContext, command),
                 _ => throw new ArgumentOutOfRangeException(nameof(NoteAddCommand.Reference))
             };
@@ -264,21 +262,7 @@ public class NotesController(
         return mapper.Map<NoteDetails>(noteDb);
     }
 
-    private async Task<NoteDetails> AddRequestNote(C8SDbContext dbContext, NoteAddCommand command)
-    {
-        var noteDb = new RequestNoteDb()
-        {
-            Reference = command.Reference,
-            RequestId = command.ParentId,
-            Content = command.Content,
-            Author = selfService.DisplayName
-        };
-        dbContext.RequestNotes.Add(noteDb);
-        await dbContext.SaveChangesAsync();
-        return mapper.Map<NoteDetails>(noteDb);
-    }
-
-    private async Task<NoteDetails> AddSaleNote(C8SDbContext dbContext, NoteAddCommand command)
+    private async Task<NoteDetails> AddTicketNote(C8SDbContext dbContext, NoteAddCommand command)
     {
         var noteDb = new TicketNoteDb()
         {

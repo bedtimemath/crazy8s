@@ -28,6 +28,8 @@ public class RequestsController(
     {
         try
         {
+            throw new NotImplementedException();
+#if false
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var queryable = dbContext.Requests
                 .Include(a => a.Place)
@@ -89,7 +91,8 @@ public class RequestsController(
             var items = await mapper.ProjectTo<RequestListItem>(queryable).ToListAsync();
             var total = await queryable.CountAsync();
 
-            return WrappedListResponse<RequestListItem>.CreateSuccessResponse(items, total);
+            return WrappedListResponse<RequestListItem>.CreateSuccessResponse(items, total); 
+#endif
         }
         catch (Exception exception)
         {
@@ -107,6 +110,8 @@ public class RequestsController(
     {
         try
         {
+            throw new NotImplementedException();
+#if false
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var queryable = dbContext.Requests
                 .Include(a => a.Place)
@@ -119,7 +124,8 @@ public class RequestsController(
             return new WrappedResponse<RequestDetails>()
             {
                 Result = mapper.Map<RequestDetails?>(request)
-            };
+            }; 
+#endif
         }
         catch (Exception exception)
         {

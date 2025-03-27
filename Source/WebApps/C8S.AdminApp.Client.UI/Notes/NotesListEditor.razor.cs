@@ -68,8 +68,11 @@ public sealed partial class NotesListEditor: BaseCoordinatedComponent<NotesListE
         var requestId = RequestCoordinator.Details?.RequestId ?? 0;
         if (requestId <= 0) return;
 
+        throw new NotImplementedException();
+#if false
         Service.NotesSource = NoteReference.Request;
-        Service.SourceId = requestId;
+        Service.SourceId = requestId; 
+#endif
 
         Task.Run(Service.RefreshNotesList);
     }

@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using C8S.Domain.EFCore.Contexts;
-using C8S.Domain.Features.Persons.Models;
 using C8S.Functions.DTOs;
 using C8S.Functions.Extensions;
 using Microsoft.Azure.Functions.Worker;
@@ -30,7 +28,8 @@ namespace C8S.Functions.Functions
             try
             {
                 _logger.LogInformation("GetCoachOrders triggered");
-
+                throw new NotImplementedException();
+#if false
                 // start by checking that we got a proper id value
                 var idString = req.Query["id"];
                 if (String.IsNullOrEmpty(idString))
@@ -64,11 +63,12 @@ namespace C8S.Functions.Functions
                         .AsSingleQuery()
                         .ToListAsync();
                     clubDTOs = clubDbs.Select(mapper.Map<ClubDTO>).ToList();
-                } 
+                }
 
                 // send back the person with their clubs/orders
                 var personClubs = personDTO == null ? null : new PersonClubs() { Person = personDTO, Clubs = clubDTOs };
                 response = await req.CreateSuccessResponse(personClubs);
+#endif
             }
             catch (Exception ex)
             {

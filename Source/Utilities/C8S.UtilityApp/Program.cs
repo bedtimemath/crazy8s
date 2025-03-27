@@ -40,7 +40,6 @@ try
      */
     var parserResult = Parser.Default
         .ParseArguments<
-            AddRequestOptions,
             WPImportOptions,
             LoadC8SDataOptions,
             LoadSampleDataOptions,
@@ -105,11 +104,6 @@ try
     {
         // Parsing the arguments
         parserResult
-            .WithParsed<AddRequestOptions>(options =>
-            {
-                services.AddSingleton(options);
-                services.AddSingleton<IActionLauncher, AddRequest>();
-            })
             .WithParsed<WPImportOptions>(options =>
             {
                 services.AddSingleton(options);
