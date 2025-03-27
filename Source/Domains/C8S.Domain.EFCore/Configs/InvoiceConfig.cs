@@ -38,6 +38,12 @@ public class InvoiceConfig : BaseCoreConfig<InvoiceDb>
             .HasForeignKey<TicketDb>(m => m.InvoiceId)
             .IsRequired(false);
 
+        //public ICollection<OrderDb> Orders { get; set; } = null!;
+        entity.HasMany(m => m.Orders)
+            .WithOne(m => m.Invoice)
+            .HasForeignKey(m => m.InvoiceId)
+            .IsRequired(false);
+
         //public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;
         entity.HasMany(m => m.InvoicePersons)
             .WithOne(m => m.Invoice)

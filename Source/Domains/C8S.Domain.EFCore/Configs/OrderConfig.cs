@@ -11,12 +11,15 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
     public override void Configure(EntityTypeBuilder<OrderDb> entity)
     {
         #region Id Property
+
         // [Required]
         // public int OrderId { get; set; }
         entity.HasKey(m => m.OrderId);
+
         #endregion
 
         #region Database Properties
+
         //[Required]
         //public int Number { get; set; } = default!;
         entity.Property(m => m.Number)
@@ -90,6 +93,12 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
             .HasDefaultValue(false)
             .IsRequired(true);
 
+        //[MaxLength(SoftCrowConstants.MaxLengths.Comments)]
+        //public string? Comments { get; set; } = null!;
+        entity.Property(m => m.Comments)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Comments)
+            .IsRequired(false);
+
         //[Required]
         //public DateTimeOffset OrderedOn { get; set; } = default!;
         entity.Property(m => m.OrderedOn)
@@ -106,9 +115,26 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
         //public DateTimeOffset? EmailedOn { get; set; } = default!;
         entity.Property(m => m.EmailedOn)
             .IsRequired(false);
+
+        #endregion
+
+        #region Reference Properties
+
+        //[Required, ForeignKey(nameof(Invoice))]
+        //public int InvoiceId { get; set; } = default!;
+        entity.Property(m => m.InvoiceId)
+            .IsRequired(true);
+
         #endregion
 
         #region Navigation Configuration
+
+        //public InvoiceDb Invoice { get; set; } = default!;
+        entity.HasOne(m => m.Invoice)
+            .WithMany(m => m.Orders)
+            .HasForeignKey(m => m.InvoiceId)
+            .IsRequired(true);
+
         //public ICollection<ShipmentDb> Shipments { get; set; } = default!;
         entity.HasMany(m => m.Shipments)
             .WithOne(m => m.Order)

@@ -33,7 +33,7 @@ public class OfferDb : BaseCoreDb
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public OfferStatus Status { get; set; } = default!;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Description)]
     public string? Description { get; set; }
     #endregion
 

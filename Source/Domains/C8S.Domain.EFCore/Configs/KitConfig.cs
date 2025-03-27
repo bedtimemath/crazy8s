@@ -47,10 +47,10 @@ public class KitConfig : BaseCoreConfig<KitDb>
         entity.Property(m => m.Version)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.XLong)]
+        //[MaxLength(SharedConstants.MaxLengths.Comments)]
         //public string? Comments { get; set; }
         entity.Property(m => m.Comments)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Comments)
             .IsRequired(false);
         #endregion
 

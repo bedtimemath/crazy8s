@@ -34,7 +34,7 @@ public class RequestDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Long)]
     public string? ReferenceSourceOther { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Comments)]
     public string? Comments { get; set; }
 
     [Required]

@@ -16,8 +16,8 @@ public class InvoicePersonConfig : IEntityTypeConfiguration<InvoicePersonDb>
 
         #region Database Properties
         //[Required]
-        //public bool IsPrimary { get; set; } = default!;
-        entity.Property(m => m.IsPrimary)
+        //public int Ordinal { get; set; }
+        entity.Property(m => m.Ordinal)
             .HasDefaultValue(false)
             .IsRequired(true);
         #endregion

@@ -11,7 +11,7 @@ public class InvoicePersonDb : BaseDb
     [NotMapped]
     public override int Id => InvoicePersonId;
     [NotMapped]
-    public override string Display => IsPrimary.ToString();
+    public override string Display => $"{Invoice}<=>{Person} [{Ordinal}]";
     #endregion
 
     #region Id Property
@@ -21,16 +21,16 @@ public class InvoicePersonDb : BaseDb
 
     #region Database Properties
     [Required]
-    public bool IsPrimary { get; set; } = default!;
+    public int Ordinal { get; set; }
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Person))]
-    public int PersonId { get; set; } = default!;
-    public PersonDb Person { get; set; } = default!;
+    public int PersonId { get; set; }
+    public PersonDb Person { get; set; } = null!;
 
     [ForeignKey(nameof(Invoice))]
-    public int InvoiceId { get; set; } = default!;
-    public InvoiceDb Invoice { get; set; } = default!;
+    public int InvoiceId { get; set; }
+    public InvoiceDb Invoice { get; set; } = null!;
     #endregion
 }

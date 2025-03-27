@@ -42,6 +42,8 @@ public class C8SDbContext(
     public DbSet<ShipmentDb> Shipments { get; set; }
     public DbSet<UnfinishedDb> Unfinisheds { get; set; }
     public DbSet<WorkshopCodeDb> WorkshopCodes { get; set; }
+
+    public DbSet<OldNewDb> OldNews { get; set; }
     #endregion
 
     #region DbContext Overrides
@@ -82,6 +84,8 @@ public class C8SDbContext(
         modelBuilder.ApplyConfiguration(new ShipmentConfig());
         modelBuilder.ApplyConfiguration(new UnfinishedConfig());
         modelBuilder.ApplyConfiguration(new WorkshopCodeConfig());
+
+        modelBuilder.ApplyConfiguration(new OldNewConfig());
     }
     #endregion
 }

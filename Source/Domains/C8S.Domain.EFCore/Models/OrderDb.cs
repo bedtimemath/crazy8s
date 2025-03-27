@@ -59,6 +59,9 @@ public class OrderDb: BaseCoreDb
 
     [Required]
     public bool IsMilitary { get; set; } = false!;
+
+    [MaxLength(SoftCrowConstants.MaxLengths.Comments)]
+    public string? Comments { get; set; } = null!;
     
     [Required]
     public DateTimeOffset OrderedOn { get; set; } = default!;
@@ -68,6 +71,12 @@ public class OrderDb: BaseCoreDb
     public DateTimeOffset? ShippedOn { get; set; } = null!;
     
     public DateTimeOffset? EmailedOn { get; set; } = null!;
+    #endregion
+
+    #region Reference Properties
+    [Required, ForeignKey(nameof(Invoice))]
+    public int InvoiceId { get; set; }
+    public InvoiceDb Invoice { get; set; } = null!;
     #endregion
 
     #region Child Properties

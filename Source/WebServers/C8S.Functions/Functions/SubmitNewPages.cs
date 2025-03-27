@@ -171,9 +171,11 @@ public partial class SubmitNewPages(
                 unfinished.PersonType = isCoach ? ApplicantType.Coach : ApplicantType.Supervisor;
                 unfinished.EndPart02On = dateTimeHelper.UtcNow;
 
+#if false
                 // in case we matched, but there weren't any clubs
                 unfinished.PersonId = existing?.PersonId;
-                unfinished.PlaceId = existing?.PlaceId;
+                unfinished.PlaceId = existing?.PlaceId; 
+#endif
 
                 await dbContext.SaveChangesAsync();
 
@@ -430,7 +432,7 @@ public partial class SubmitNewPages(
             // create the application & clubs
             var request = unfinished.ToRequest(dateTimeHelper);
             await dbContext.Requests.AddAsync(request);
-            unfinished.Request = request;
+            //unfinished.Request = request;
 
             /*** FULL SLATE ***/
             // convert timeslot to eastern time

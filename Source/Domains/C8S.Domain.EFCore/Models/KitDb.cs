@@ -41,7 +41,7 @@ public class KitDb : BaseCoreDb, IKit
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? Version { get; set; } = null!;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Comments)]
     public string? Comments { get; set; }
     #endregion
 

@@ -92,7 +92,7 @@ public class SubmitReturnPages(
                 // now we can update the unfinished entry, using the proper coach and place
                 unfinished.PersonType = ApplicantType.Returning;
 
-                unfinished.PersonId = existing.PersonId;
+                //unfinished.PersonId = existing.PersonId;
                 unfinished.PersonFirstName = existing.FirstName;
                 unfinished.PersonLastName = existing.LastName;
                 unfinished.PersonEmail = existing.Email;
@@ -100,7 +100,7 @@ public class SubmitReturnPages(
                 unfinished.PersonTimeZone = existing.TimeZone;
                 unfinished.HasHostedBefore = true;
 
-                unfinished.PlaceId = existing.Place.PlaceId;
+                //unfinished.PlaceId = existing.Place.PlaceId;
                 unfinished.PlaceName = existing.Place.Name;
                 unfinished.PlaceAddress1 = existing.Place.Line1;
                 unfinished.PlaceAddress2 = existing.Place.Line2;
@@ -245,7 +245,7 @@ public class SubmitReturnPages(
             // create the application & clubs
             var request = unfinished.ToRequest(dateTimeHelper);
             await dbContext.Requests.AddAsync(request);
-            unfinished.Request = request;
+            //unfinished.Request = request;
 
             await dbContext.SaveChangesAsync();
 

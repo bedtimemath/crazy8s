@@ -1,10 +1,14 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.EFCore.Models;
 using C8S.UtilityApp.Base;
+using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
 using C8S.UtilityApp.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SC.Common;
 
 namespace C8S.UtilityApp.Tasks;
 
@@ -15,6 +19,13 @@ internal class LoadC8SData(
     OldSystemService oldSystemService)
     : IActionLauncher
 {
+    private const string CoachTable = "Coach";
+    private const string OrganizationTable = "Organization";
+    private const string UserTable = "User";
+    private const string CompanyTable = "Company";
+    private const string PostalAddressTable = "PostalAddress";
+    private const string UsaPostalTable = "UsaPostal";
+
     private const int SaveBlock = 500;
 
     public async Task<int> Launch()
@@ -43,8 +54,6 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
-
-#if false
         /*** ADDRESSES ***/
         var sqlAddresses = (await oldSystemService.GetAddresses()).ToList();
         logger.LogInformation("Found {Count:#,##0} addresses", sqlAddresses.Count);
@@ -71,15 +80,15 @@ internal class LoadC8SData(
         logger.LogInformation("Removed existing, now {Count:#,##0} coaches", sqlCoaches.Count);
 
         /*** ADDING PERSONS ***/
-        var duplicateLookup = new Dictionary<Guid, Guid>();
         if (sqlCoaches.Count > 0)
         {
-            var (added, dupes) = await AddPersons(sqlCoaches, duplicateLookup);
+            var (added, dupes) = await AddPersons(sqlCoaches);
             logger.LogInformation("Added {Count:#,##0} persons; {Dupes:#,##0} were dupes", added, dupes);
         }
 
         /*** JOINING PERSONS WITH PLACES ***/
         await JoinPersonsWithPlaces();
+
 
         /*** APPLICATIONS ***/
         var sqlApplications = (await oldSystemService.GetApplications()).ToList();
@@ -95,6 +104,7 @@ internal class LoadC8SData(
             logger.LogInformation("Added {Count:#,##0} requests", sqlApplicationsCount);
         }
 
+#if false
         /*** APPLICATION CLUBS ***/
         var sqlApplicationClubs = (await oldSystemService.GetApplicationClubs()).ToList();
         logger.LogInformation("Found {Count:#,##0} application clubs", sqlApplicationClubs.Count);
@@ -173,7 +183,316 @@ internal class LoadC8SData(
         return 0;
     }
 
+    #region Add Entities
+    private async Task<(int, int)> AddPersons(List<CoachSql> sqlCoaches)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var added = 0;
+        var dupes = 0;
+        var toRemove = new List<CoachSql>();
+
+        ConsoleEx.StartProgress("Adding persons: ");
+        for (int index = 0; index < sqlCoaches.Count; index++)
+        {
+            var sqlCoach = sqlCoaches[index];
+
+            // check for duplicates
+            var person = dbContext.Persons
+                .FirstOrDefault(p =>
+                    !String.IsNullOrEmpty(p.Email) &&
+                    p.Email.Trim().ToLower() == sqlCoach.Email.Trim().ToLower());
+
+            // create the person if new
+            if (person == null)
+            {
+                person = new PersonDb()
+                {
+                    FirstName = sqlCoach.FirstName,
+                    LastName = sqlCoach.LastName,
+                    Email = sqlCoach.Email,
+                    TimeZone = sqlCoach.TimeZone,
+                    Phone = sqlCoach.Phone +
+                            (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
+                    Notes = new List<PersonNoteDb>(),
+                    CreatedOn = sqlCoach.CreatedOn
+                };
+
+                dbContext.Persons.Add(person);
+                added++;
+
+                await dbContext.SaveChangesAsync();
+            }
+
+            // otherwise, we'll be removing this person from the list of coaches
+            else
+            {
+                toRemove.Add(sqlCoach);
+                dupes++;
+            }
+
+            // either way, add any notes we might have
+            if (!String.IsNullOrEmpty(sqlCoach.Notes))
+            {
+                person.Notes ??= new List<PersonNoteDb>();
+                person.Notes.Add(new()
+                {
+                    Author = SoftCrowConstants.Display.System,
+                    Content = sqlCoach.Notes
+                });
+            }
+
+            // and create the connections
+
+            //OldSystemCoachId = sqlCoach.OldSystemCoachId,
+            if (sqlCoach.OldSystemCoachId != null)
+            {
+                var oldNewCoach = new OldNewDb()
+                {
+                    OldTableName = CoachTable,
+                    OldId = sqlCoach.OldSystemCoachId!.Value,
+                    NewTableName = nameof(PersonDb),
+                    NewId = person.PersonId
+                };
+                dbContext.OldNews.Add(oldNewCoach);
+            }
+
+            //OldSystemOrganizationId = sqlCoach.OldSystemOrganizationId,
+            if (sqlCoach.OldSystemOrganizationId != null)
+            {
+                var oldNewOrganization = new OldNewDb()
+                {
+                    OldTableName = OrganizationTable,
+                    OldId = sqlCoach.OldSystemOrganizationId!.Value,
+                    NewTableName = nameof(PersonDb),
+                    NewId = person.PersonId
+                };
+                dbContext.OldNews.Add(oldNewOrganization);
+            }
+
+            //OldSystemUserId = sqlCoach.OldSystemUserId,
+            if (sqlCoach.OldSystemUserId != null)
+            {
+                var oldNewUser = new OldNewDb()
+                {
+                    OldTableName = UserTable,
+                    OldId = sqlCoach.OldSystemUserId!.Value,
+                    NewTableName = nameof(PersonDb),
+                    NewId = person.PersonId
+                };
+                dbContext.OldNews.Add(oldNewUser);
+            }
+
+            //OldSystemCompanyId = sqlCoach.OldSystemCompanyId,
+            if (sqlCoach.OldSystemCompanyId != null)
+            {
+                var oldNewCompany = new OldNewDb()
+                {
+                    OldTableName = CompanyTable,
+                    OldId = sqlCoach.OldSystemCompanyId!.Value,
+                    NewTableName = nameof(PersonDb),
+                    NewId = person.PersonId
+                };
+                dbContext.OldNews.Add(oldNewCompany);
+            }
+
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlCoaches.Count);
+        }
+        ConsoleEx.EndProgress();
+
+        // remove duplicates from the list
+        sqlCoaches.RemoveAll(c => toRemove.Contains(c));
+
+        return (added, dupes);
+    }
+
+    private async Task<int> AddPlaces(List<OrganizationSql> sqlOrganizations, List<AddressSql> sqlAddresses)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var sqlOrganizationsCount = sqlOrganizations.Count;
+        ConsoleEx.StartProgress("Adding places: ");
+        var added = 0;
+        for (int index = 0; index < sqlOrganizationsCount; index++)
+        {
+            var sqlOrganization = sqlOrganizations[index];
+            var sqlAddress = sqlAddresses
+                                 .FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrganization.OldSystemPostalAddressId) ??
+                             throw new Exception($"Could not find address ({sqlOrganization.OldSystemPostalAddressId}) for organization ({sqlOrganization.OldSystemOrganizationId})");
+
+            var place = new PlaceDb()
+            {
+                Name = sqlOrganization.Name ?? SoftCrowConstants.Display.NotSet,
+                Type = sqlOrganization.Type,
+                TypeOther = sqlOrganization.TypeOther,
+                TaxIdentifier = sqlOrganization.TaxIdentifier,
+                Line1 = sqlAddress.StreetAddress ?? SoftCrowConstants.Display.NotSet,
+                Line2 = null,
+                City = sqlAddress.City ?? SoftCrowConstants.Display.NotSet,
+                State = sqlAddress.State ?? SoftCrowConstants.Display.NotSet,
+                ZIPCode = sqlAddress.PostalCode ?? SoftCrowConstants.Display.NotSet,
+                IsMilitary = sqlAddress.IsMilitary,
+                CreatedOn = sqlAddress.CreatedOn
+            };
+            if (!String.IsNullOrEmpty(sqlOrganization.Notes))
+                place.Notes = [
+                    new()
+                    {
+                        Author = SoftCrowConstants.Display.System,
+                        Content = sqlOrganization.Notes
+                    }
+                ];
+            dbContext.Places.Add(place);
+            await dbContext.SaveChangesAsync();
+            added++;
+
+            //OldSystemCompanyId = sqlOrganization.OldSystemCompanyId,
+            if (sqlOrganization.OldSystemOrganizationId != null)
+            {
+                var oldNewCompany = new OldNewDb()
+                {
+                    OldTableName = CompanyTable,
+                    OldId = sqlOrganization.OldSystemCompanyId!.Value,
+                    NewTableName = nameof(PlaceDb),
+                    NewId = place.PlaceId
+                };
+                dbContext.OldNews.Add(oldNewCompany);
+            }
+
+            //OldSystemOrganizationId = sqlOrganization.OldSystemOrganizationId,
+            if (sqlOrganization.OldSystemOrganizationId != null)
+            {
+                var oldNewOrganization = new OldNewDb()
+                {
+                    OldTableName = OrganizationTable,
+                    OldId = sqlOrganization.OldSystemOrganizationId!.Value,
+                    NewTableName = nameof(PlaceDb),
+                    NewId = place.PlaceId
+                };
+                dbContext.OldNews.Add(oldNewOrganization);
+            }
+
+            //OldSystemPostalAddressId = sqlOrganization.OldSystemPostalAddressId,
+            if (sqlOrganization.OldSystemPostalAddressId != null)
+            {
+                var oldNewAddress = new OldNewDb()
+                {
+                    OldTableName = PostalAddressTable,
+                    OldId = sqlOrganization.OldSystemPostalAddressId!.Value,
+                    NewTableName = nameof(PlaceDb),
+                    NewId = place.PlaceId
+                };
+                dbContext.OldNews.Add(oldNewAddress);
+            }
+
+            //OldSystemUsaPostalId = sqlAddress.OldSystemUsaPostalId,
+            if (sqlAddress.OldSystemUsaPostalId != null)
+            {
+                var oldNewUsaPostal = new OldNewDb()
+                {
+                    OldTableName = UsaPostalTable,
+                    OldId = sqlAddress.OldSystemUsaPostalId!.Value,
+                    NewTableName = nameof(PlaceDb),
+                    NewId = place.PlaceId
+                };
+                dbContext.OldNews.Add(oldNewUsaPostal);
+            }
+            
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlOrganizationsCount);
+        }
+        ConsoleEx.EndProgress();
+
+        return added;
+    }
+    #endregion
+
+    #region Joins
+    private async Task JoinPersonsWithPlaces()
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var oldNewCoaches = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(PersonDb) && o.OldTableName == OrganizationTable)
+            .ToListAsync();
+
+        var personsWithPlaceIds = oldNewCoaches.Select(o => o.NewId).ToList();
+        var personsMissingPlace = await dbContext.Persons
+            .Where(p => p.PlaceId == null && personsWithPlaceIds.Contains(p.PersonId))
+            .ToListAsync();
+
+        var personsMissingPlaceCount = personsMissingPlace.Count;
+        logger.LogInformation("Found {Count:#,##0} persons without a place", personsMissingPlaceCount);
+
+        var updated = 0;
+        var skipped = 0;
+        if (personsMissingPlaceCount > 0)
+        {
+            var oldNewOrganizations = await dbContext.OldNews
+                .Where(o => o.NewTableName == nameof(PlaceDb) && o.OldTableName == OrganizationTable)
+                .ToListAsync();
+
+            ConsoleEx.StartProgress("Joining persons with places: ");
+            for (int index = 0; index < personsMissingPlaceCount; index++)
+            {
+                var person = personsMissingPlace[index];
+                var organizationId = oldNewCoaches.FirstOrDefault(c => c.NewId == person.PersonId)?.OldId ??
+                                throw new UnreachableException("Could not match person in OldNew list");
+                var placeId = oldNewOrganizations.FirstOrDefault(o => o.OldId == organizationId)?.NewId;
+                if (placeId == null) { skipped++; continue; }
+
+                person.PlaceId = placeId;
+                updated++;
+
+                if ((index + 1) % SaveBlock == 0)
+                    await dbContext.SaveChangesAsync();
+                ConsoleEx.ShowProgress((float)index / (float)personsMissingPlaceCount);
+            }
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.EndProgress();
+
+            logger.LogInformation("{Count:#,##0} persons updated with a place; {Skipped:#,##0} skipped.", updated, skipped);
+        }
+    }
+
+    #endregion
+
+    #region Remove Dupes
+    private async Task RemoveExistingOrganizations(List<OrganizationSql> sqlOrganizations)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var existingGuids = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(PlaceDb))
+            .Select(o => o.OldId)
+            .ToListAsync();
+        sqlOrganizations.RemoveAll(m => existingGuids.Contains(m.OldSystemOrganizationId!.Value));
+    }
+
+    private async Task RemoveExistingCoaches(List<CoachSql> sqlCoaches)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var existingGuids = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(PersonDb))
+            .Select(o => o.OldId)
+            .ToListAsync();
+        sqlCoaches.RemoveAll(m => existingGuids.Contains(m.OldSystemCoachId!.Value));
+    }
+    #endregion
+
 #if false
+
+    private static PersonDb? GetPersonWithLookup(List<PersonDb> allPersons, Dictionary<Guid, Guid> lookup, Guid? toMatch)
+    {
+        if (toMatch == null) return null;
+
+        var person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == toMatch);
+        if (person == null && lookup.TryGetValue(toMatch.Value, out var lookupId))
+            person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == lookupId);
+
+        return person;
+    }
+
     private async Task<(int addedOrderSkus, int skippedOrderSkus)> JoinOrderSkus(List<OrderSkuSql> sqlOrderSkus)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
@@ -638,197 +957,8 @@ internal class LoadC8SData(
         sqlApplications.RemoveAll(m => existingRequestIds.Contains(m.OldSystemApplicationId));
     }
 
-    private async Task JoinPersonsWithPlaces()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var allPlaces = await dbContext.Places.ToListAsync();
-        var personsNoPlace = await dbContext.Persons
-            .Where(c => c.PlaceId == null && c.OldSystemOrganizationId != null)
-            .ToListAsync();
-
-        var personsNoPlaceCount = personsNoPlace.Count;
-        var personsUpdated = 0;
-        logger.LogInformation("Found {Count:#,##0} persons without a place", personsNoPlaceCount);
-
-        if (personsNoPlaceCount > 0)
-        {
-            ConsoleEx.StartProgress("Joining persons with places: ");
-            for (int index = 0; index < personsNoPlaceCount; index++)
-            {
-                var person = personsNoPlace[index];
-                if (person.OldSystemOrganizationId.HasValue)
-                {
-                    var place = allPlaces.FirstOrDefault(
-                                    o => o.OldSystemOrganizationId == person.OldSystemOrganizationId.Value) ??
-                                throw new Exception($"Could not find organization: {person.OldSystemOrganizationId.Value}");
-                    if (person.PlaceId == null)
-                    {
-                        person.PlaceId = place.PlaceId;
-                        personsUpdated++;
-                    }
-                }
-
-                if ((index + 1) % SaveBlock == 0)
-                    await dbContext.SaveChangesAsync();
-                ConsoleEx.ShowProgress((float)index / (float)personsNoPlaceCount);
-            }
-            await dbContext.SaveChangesAsync();
-            ConsoleEx.EndProgress();
-
-            logger.LogInformation("{Count:#,##0} persons updated with a place.", personsUpdated);
-        }
-    }
-
-    private async Task<(int, int)> AddPersons(List<CoachSql> sqlCoaches,
-        Dictionary<Guid, Guid> duplicateLookup)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var added = 0;
-        var dupes = 0;
-        var toRemove = new List<CoachSql>();
-
-        ConsoleEx.StartProgress("Adding persons: ");
-        for (int index = 0; index < sqlCoaches.Count; index++)
-        {
-            var sqlCoach = sqlCoaches[index];
-
-            // check for duplicates
-            var person = dbContext.Persons
-                .FirstOrDefault(p =>
-                    !String.IsNullOrEmpty(p.Email) &&
-                    p.Email.Trim().ToLower() == sqlCoach.Email.Trim().ToLower());
-            if (person == null)
-                person = new PersonDb()
-                {
-                    OldSystemCoachId = sqlCoach.OldSystemCoachId,
-                    OldSystemOrganizationId = sqlCoach.OldSystemOrganizationId,
-                    OldSystemUserId = sqlCoach.OldSystemUserId,
-                    OldSystemCompanyId = sqlCoach.OldSystemCompanyId,
-                    FirstName = sqlCoach.FirstName,
-                    LastName = sqlCoach.LastName,
-                    Email = sqlCoach.Email,
-                    TimeZone = sqlCoach.TimeZone,
-                    Phone = sqlCoach.Phone +
-                            (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
-                    Notes = new List<PersonNoteDb>(),
-                    CreatedOn = sqlCoach.CreatedOn
-                };
-
-            if (!String.IsNullOrEmpty(sqlCoach.Notes))
-            {
-                person.Notes ??= new List<PersonNoteDb>();
-                person.Notes.Add(new()
-                {
-                    Author = SoftCrowConstants.Display.System,
-                    Content = sqlCoach.Notes
-                });
-            }
-
-            var isDupe = person.PersonId != 0;
-            if (isDupe)
-            {
-                duplicateLookup.Add(
-                    sqlCoach.OldSystemCoachId!.Value,
-                    person.OldSystemCoachId!.Value);
-                toRemove.Add(sqlCoach);
-                dupes++;
-            }
-            else
-            {
-                dbContext.Persons.Add(person);
-                added++;
-            }
-
-            await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)sqlCoaches.Count);
-        }
-        ConsoleEx.EndProgress();
-
-        // remove duplicates from the list
-        sqlCoaches.RemoveAll(c => toRemove.Contains(c));
-
-        return (added, dupes);
-    }
-
-    private async Task RemoveExistingCoaches(List<CoachSql> sqlCoaches)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var existingCoachIds = await dbContext.Persons.Select(o => o.OldSystemCoachId).ToListAsync();
-        sqlCoaches.RemoveAll(m => existingCoachIds.Contains(m.OldSystemCoachId));
-    }
-
-    private async Task<int> AddPlaces(List<OrganizationSql> sqlOrganizations, List<AddressSql> sqlAddresses)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var sqlOrganizationsCount = sqlOrganizations.Count;
-        ConsoleEx.StartProgress("Adding places: ");
-        for (int index = 0; index < sqlOrganizationsCount; index++)
-        {
-            var sqlOrganization = sqlOrganizations[index];
-            var sqlAddress = sqlAddresses
-                                 .FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrganization.OldSystemPostalAddressId) ??
-                             throw new Exception($"Could not find address ({sqlOrganization.OldSystemPostalAddressId}) for organization ({sqlOrganization.OldSystemOrganizationId})");
-
-            var place = new PlaceDb()
-            {
-                OldSystemCompanyId = sqlOrganization.OldSystemCompanyId,
-                OldSystemOrganizationId = sqlOrganization.OldSystemOrganizationId,
-                OldSystemPostalAddressId = sqlOrganization.OldSystemPostalAddressId,
-                OldSystemUsaPostalId = sqlAddress.OldSystemUsaPostalId,
-                Name = sqlOrganization.Name ?? SoftCrowConstants.Display.NotSet,
-                Type = sqlOrganization.Type,
-                TypeOther = sqlOrganization.TypeOther,
-                TaxIdentifier = sqlOrganization.TaxIdentifier,
-                Line1 = sqlAddress.StreetAddress ?? SoftCrowConstants.Display.NotSet,
-                Line2 = null,
-                City = sqlAddress.City ?? SoftCrowConstants.Display.NotSet,
-                State = sqlAddress.State ?? SoftCrowConstants.Display.NotSet,
-                ZIPCode = sqlAddress.PostalCode ?? SoftCrowConstants.Display.NotSet,
-                IsMilitary = sqlAddress.IsMilitary,
-                CreatedOn = sqlAddress.CreatedOn
-            };
-            if (!String.IsNullOrEmpty(sqlOrganization.Notes))
-                place.Notes = [
-                    new()
-                    {
-                        Author = SoftCrowConstants.Display.System,
-                        Content = sqlOrganization.Notes
-                    }
-                ];
-            dbContext.Places.Add(place);
-
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)sqlOrganizationsCount);
-        }
-        await dbContext.SaveChangesAsync();
-        ConsoleEx.EndProgress();
-
-        return sqlOrganizationsCount;
-    }
-
-    private async Task RemoveExistingOrganizations(List<OrganizationSql> sqlOrganizations)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var existingOrgIds = await dbContext.Places.Select(o => o.OldSystemOrganizationId).ToListAsync();
-        sqlOrganizations.RemoveAll(m => existingOrgIds.Contains(m.OldSystemOrganizationId));
-    }
-
-    private static PersonDb? GetPersonWithLookup(List<PersonDb> allPersons, Dictionary<Guid, Guid> lookup, Guid? toMatch)
-    {
-        if (toMatch == null) return null;
-
-        var person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == toMatch);
-        if (person == null && lookup.TryGetValue(toMatch.Value, out var lookupId))
-            person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == lookupId);
-
-        return person;
-    }
-
 #endif
+
     private readonly Regex _parseSkuKey =
         new Regex(@"^C8\.S\d.(?<year>F[\d+]+)(?<alt>ALT)?\-G(?:K2|35)(?<extra>.*)$", RegexOptions.Compiled | RegexOptions.Singleline);
     private string GetYearFromSqlSku(SkuSql sqlSku)

@@ -36,7 +36,8 @@ public class InvoiceDb : BaseCoreDb
     #endregion
 
     #region Reference Collections
-    public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;
-    public ICollection<InvoiceNoteDb> Notes { get; set; } = default!;
+    public ICollection<OrderDb> Orders { get; set; } = null!;
+    public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = null!;
+    public ICollection<InvoiceNoteDb> Notes { get; set; } = null!;
     #endregion
 }

@@ -14,8 +14,7 @@ public class UnfinishedDb : BaseCoreDb
     [NotMapped]
     public override int Id => UnfinishedId;
     [NotMapped]
-    public override string Display => String.Join(" ", [PersonFirstName, PersonLastName, PlaceName])
-                                       ?? SoftCrowConstants.Display.NotSet;
+    public override string Display => Code.ToString();
     #endregion
 
     #region Id Property
@@ -78,7 +77,7 @@ public class UnfinishedDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
     public string? PlaceTaxIdentifier { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Description)]
     public string? ClubsString { get; set; }
 
     [MaxLength(SoftCrowConstants.MaxLengths.Short)]
@@ -92,7 +91,7 @@ public class UnfinishedDb : BaseCoreDb
     [MaxLength(SoftCrowConstants.MaxLengths.Long)]
     public string? ReferenceSourceOther { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Comments)]
     public string? Comments { get; set; }
 
     public DateTimeOffset? EndPart01On { get; set; }
@@ -104,15 +103,5 @@ public class UnfinishedDb : BaseCoreDb
     public DateTimeOffset? EndPart04On { get; set; }
 
     public DateTimeOffset? SubmittedOn { get; set; }
-
-    public int? PersonId { get; set; }
-
-    public int? PlaceId { get; set; }
-    #endregion
-
-    #region Reference Properties
-    [ForeignKey(nameof(Request))]
-    public int? RequestId { get; set; }
-    public RequestDb? Request { get; set; }
     #endregion
 }

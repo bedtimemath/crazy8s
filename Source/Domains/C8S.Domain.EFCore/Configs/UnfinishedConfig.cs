@@ -126,7 +126,7 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
 
         //public string? ClubsString { get; set; } = null;
         entity.Property(m => m.ClubsString)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Description)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Short)]
@@ -151,10 +151,10 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Long)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
+        //[MaxLength(SharedConstants.MaxLengths.Comments)]
         //public string? Comments { get; set; } = null;
         entity.Property(m => m.Comments)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Comments)
             .IsRequired(false);
 
         //public DateTimeOffset? EndPart01On { get; set; }
@@ -175,21 +175,6 @@ public class UnfinishedConfig : BaseCoreConfig<UnfinishedDb>
 
         //public DateTimeOffset? SubmittedOn { get; set; }
         entity.Property(m => m.SubmittedOn)
-            .IsRequired(false);
-
-        //public int? PersonId { get; set; }
-        entity.Property(m => m.PersonId)
-            .IsRequired(false);
-
-        //public int? PlaceId { get; set; }
-        entity.Property(m => m.PlaceId)
-            .IsRequired(false);
-        #endregion
-
-        #region Reference Properties
-        //[ForeignKey(nameof(Request))]
-        //public int? RequestId { get; set; } = default!;
-        entity.Property(m => m.RequestId)
             .IsRequired(false);
         #endregion
 

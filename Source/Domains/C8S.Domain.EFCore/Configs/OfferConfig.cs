@@ -36,10 +36,10 @@ public class OfferConfig : BaseCoreConfig<OfferDb>
             .HasConversion<string>()
             .IsRequired(true);
 
-        //[MaxLength(SharedConstants.MaxLengths.XLong)]
+        //[MaxLength(SharedConstants.MaxLengths.Description)]
         //public string? Description { get; set; }
         entity.Property(m => m.Description)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XLong);
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Description);
         #endregion
 
         #region Navigation Configuration

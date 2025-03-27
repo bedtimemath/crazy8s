@@ -47,7 +47,7 @@ public class ClubDTO: BaseDTO
 
     public DateOnly? StartsOn { get; set; } = null;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.XXXLong)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Comments)]
     public string? Notes { get; set; } = null;
     #endregion
 

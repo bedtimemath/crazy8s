@@ -43,10 +43,10 @@ public class RequestConfig : BaseCoreConfig<RequestDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Long)
             .IsRequired(false);
 
-        //[MaxLength(SharedConstants.MaxLengths.XXXLong)]
+        //[MaxLength(SharedConstants.MaxLengths.Comments)]
         //public string? Comments { get; set; }
         entity.Property(m => m.Comments)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XXXLong)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Comments)
             .IsRequired(false);
         #endregion
 
