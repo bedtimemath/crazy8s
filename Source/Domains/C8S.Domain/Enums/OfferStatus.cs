@@ -2,7 +2,7 @@
 
 namespace C8S.Domain.Enums;
 
-public enum SkuStatus
+public enum OfferStatus
 {
     [Label("Draft")]
     Draft,

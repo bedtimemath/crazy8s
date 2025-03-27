@@ -16,24 +16,6 @@ public class PlaceConfig : BaseCoreConfig<PlaceDb>
         entity.HasKey(m => m.PlaceId);
         #endregion
 
-        #region Database Properties (Old System)
-        //public Guid? OldSystemCompanyId { get; set; }
-        entity.Property(m => m.OldSystemCompanyId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemOrganizationId { get; set; }
-        entity.Property(m => m.OldSystemOrganizationId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemPostalAddressId { get; set; }
-        entity.Property(m => m.OldSystemPostalAddressId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemUsaPostalId { get; set; }
-        entity.Property(m => m.OldSystemUsaPostalId)
-            .IsRequired(false);
-        #endregion
-
         #region Database Properties
         //[Required, MaxLength(SharedConstants.MaxLengths.FullName)]
         //public string Name { get; set; } = default!;
@@ -127,13 +109,8 @@ public class PlaceConfig : BaseCoreConfig<PlaceDb>
             .WithOne(m => m.Place)
             .HasForeignKey(m => m.PlaceId);
 
-        //public ICollection<RequestDb> Requests { get; set; } = default!;
-        entity.HasMany(m => m.Requests)
-            .WithOne(m => m.Place)
-            .HasForeignKey(m => m.PlaceId);
-
-        //public ICollection<SaleDb> Sales { get; set; } = default!;
-        entity.HasMany(m => m.Sales)
+        //public ICollection<TicketDb> Tickets { get; set; } = default!;
+        entity.HasMany(m => m.Tickets)
             .WithOne(m => m.Place)
             .HasForeignKey(m => m.PlaceId);
 
@@ -142,11 +119,6 @@ public class PlaceConfig : BaseCoreConfig<PlaceDb>
             .WithOne(m => m.Place)
             .HasForeignKey(m => m.PlaceId)
             .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
-        #region Indices
-        entity.HasIndex(m => m.OldSystemOrganizationId)
-            .IsUnique(true);
         #endregion
     }
 }

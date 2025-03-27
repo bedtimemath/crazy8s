@@ -16,20 +16,6 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
         entity.HasKey(m => m.OrderId);
         #endregion
 
-        #region Database Properties (Old System)
-        //public Guid? OldSystemOrderId { get; set; } = null;
-        entity.Property(m => m.OldSystemOrderId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemShippingAddressId { get; set; } = null;
-        entity.Property(m => m.OldSystemShippingAddressId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemClubId { get; set; } = null;
-        entity.Property(m => m.OldSystemClubId)
-            .IsRequired(false);
-        #endregion
-
         #region Database Properties
         //[Required]
         //public int Number { get; set; } = default!;
@@ -122,40 +108,20 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
             .IsRequired(false);
         #endregion
 
-        #region Reference Properties
-        //[ForeignKey(nameof(Club))]
-        //public int? ClubId { get; set; } = null;
-        entity.Property(m => m.ClubId)
-            .IsRequired(false);
-        #endregion
-
         #region Navigation Configuration
         //public ICollection<ShipmentDb> Shipments { get; set; } = default!;
         entity.HasMany(m => m.Shipments)
             .WithOne(m => m.Order)
             .HasForeignKey(m => m.OrderId);
 
-        //public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
-        entity.HasMany(m => m.OrderSkus)
-            .WithOne(m => m.Order)
-            .HasForeignKey(m => m.OrderId);
-
-        //public ClubDb? Club { get; set; } = null;
-        entity.HasOne(m => m.Club)
-            .WithMany(m => m.Orders)
-            .HasForeignKey(m => m.ClubId)
-            .IsRequired(false);
+        //public ICollection<ClubDb> Clubs { get; set; } = null!;
+        // handled in the club config
 
         //public ICollection<OrderNoteDb> Notes { get; set; } = default!;
         entity.HasMany(m => m.Notes)
             .WithOne(m => m.Order)
             .HasForeignKey(m => m.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
-        #region Indices
-        entity.HasIndex(m => m.OldSystemOrderId)
-            .IsUnique(true);
         #endregion
     }
 }

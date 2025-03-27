@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
+public class TicketPersonConfig : IEntityTypeConfiguration<TicketPersonDb>
 {
-    public void Configure(EntityTypeBuilder<SalePersonDb> entity)
+    public void Configure(EntityTypeBuilder<TicketPersonDb> entity)
     {
         #region Id Property
         // [Required]
@@ -16,9 +16,8 @@ public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
 
         #region Database Properties
         //[Required]
-        //public bool IsPrimary { get; set; } = default!;
-        entity.Property(m => m.IsPrimary)
-            .HasDefaultValue(false)
+        //public int Ordinal { get; set; }
+        entity.Property(m => m.Ordinal)
             .IsRequired(true);
         #endregion
 
@@ -27,24 +26,24 @@ public class SalePersonConfig : IEntityTypeConfiguration<SalePersonDb>
         //public int PersonId { get; set; } = null;
         entity.Property(m => m.PersonId)
             .IsRequired(true);
-        
+
         //[ForeignKey(nameof(Sale))]
         //public int SaleId { get; set; } = null;
-        entity.Property(m => m.SaleId)
+        entity.Property(m => m.TicketId)
             .IsRequired(true);
         #endregion
 
         #region Navigation Configuration
         //public PersonDb Person { get; set; } = null;
         entity.HasOne(m => m.Person)
-            .WithMany(m => m.SalePersons)
+            .WithMany(m => m.TicketPersons)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(true);
 
-        //public SaleDb Sale { get; set; } = null;
-        entity.HasOne(m => m.Sale)
-            .WithMany(m => m.SalePersons)
-            .HasForeignKey(m => m.SaleId)
+        //public TicketDb Ticket { get; set; } = null;
+        entity.HasOne(m => m.Ticket)
+            .WithMany(m => m.TicketPersons)
+            .HasForeignKey(m => m.TicketId)
             .IsRequired(true);
         #endregion
     }

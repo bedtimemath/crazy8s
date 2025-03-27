@@ -7,35 +7,35 @@ using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("Sales")]
-public class SaleDb : BaseCoreDb
+[Table("Tickets")]
+public class TicketDb : BaseCoreDb
 {
     #region Override Properties
     [NotMapped] 
-    public override int Id => SaleId;
+    public override int Id => TicketId;
     [NotMapped] 
     public override string Display => SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property
     [Required] 
-    public int SaleId { get; set; }
+    public int TicketId { get; set; }
     #endregion
 
     #region Database Properties
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public SaleStatus Status { get; set; } = default!;
+    public TicketStatus Status { get; set; } = default!;
     #endregion
 
     #region Reference Properties
     [Required, ForeignKey(nameof(Place))]
-    public int PlaceId { get; set; } = default!;
-    public PlaceDb Place { get; set; } = default!;
-
-    [ForeignKey(nameof(Request))]
+    public int? PlaceId { get; set; }
+    public PlaceDb? Place { get; set; } = null!;
+    
+    [Required, ForeignKey(nameof(Request))]
     public int? RequestId { get; set; }
-    public RequestDb? Request { get; set; }
+    public RequestDb? Request { get; set; } = null!;
 
     [ForeignKey(nameof(Invoice))]
     public int? InvoiceId { get; set; }
@@ -43,8 +43,8 @@ public class SaleDb : BaseCoreDb
     #endregion
 
     #region Reference Collections
-    public ICollection<ClubDb> Clubs { get; set; } = default!;
-    public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
-    public ICollection<SaleNoteDb> Notes { get; set; } = default!;
+    public ICollection<ClubDb> Clubs { get; set; } = null!;
+    public ICollection<TicketPersonDb> TicketPersons { get; set; } = null!;
+    public ICollection<TicketNoteDb> Notes { get; set; } = null!;
     #endregion
 }

@@ -35,7 +35,7 @@ public class SkuDTO: BaseDTO
 
     public string? Name { get; set; } = null;
 
-    public SkuStatus? Status { get; set; } = null;
+    public OfferStatus? Status { get; set; } = null;
 
     public string? Year { get; set; } = null;
 

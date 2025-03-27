@@ -58,7 +58,7 @@ namespace C8S.Functions.Functions
                         .ThenInclude(o => o.Shipments)
                         .Include(c => c.Orders)
                         .ThenInclude(o => o.OrderSkus)
-                        .ThenInclude(os => os.Sku)
+                        .ThenInclude(os => os.Offer)
                         .Where(c => c.ClubPersons.Any(cp => cp.Person.WordPressId == wordPressId))
                         .AsNoTracking()
                         .AsSingleQuery()

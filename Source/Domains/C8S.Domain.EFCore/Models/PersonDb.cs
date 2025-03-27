@@ -14,23 +14,12 @@ public class PersonDb : BaseCoreDb
     [NotMapped] 
     public override int Id => PersonId;
     [NotMapped] 
-    public override string Display =>  String.Join(" ", new [] { FirstName, LastName }) 
-                                       ?? SoftCrowConstants.Display.NotSet;
+    public override string Display =>  String.Join(" ", [ FirstName, LastName ]) ;
     #endregion
 
     #region Id Property
     [Required] 
     public int PersonId { get; set; }
-    #endregion
-
-    #region Database Properties (Old System)
-    public Guid? OldSystemCoachId { get; set; } = null;
-
-    public Guid? OldSystemOrganizationId { get; set; } = null;
-
-    public Guid? OldSystemUserId { get; set; } = null;
-
-    public Guid? OldSystemCompanyId { get; set; } = null;
     #endregion
 
     #region Database Properties
@@ -67,10 +56,9 @@ public class PersonDb : BaseCoreDb
 
     #region Reference Collections
     public ICollection<PermissionDb> Permissions { get; set; } = null!;
-    public ICollection<RequestDb> Requests { get; set; } = null!;
 
     public ICollection<ClubPersonDb> ClubPersons { get; set; } = null!;
-    public ICollection<SalePersonDb> SalePersons { get; set; } = null!;
+    public ICollection<TicketPersonDb> TicketPersons { get; set; } = null!;
     public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = null!;
     public ICollection<PersonNoteDb> Notes { get; set; } = null!;
     #endregion

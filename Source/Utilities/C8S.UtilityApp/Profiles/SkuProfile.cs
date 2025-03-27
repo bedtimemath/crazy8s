@@ -10,7 +10,7 @@ internal class SkuProfile: Profile
     public SkuProfile()
     {
         CreateMap<SkuSql, SkuDTO>();
-        CreateMap<SkuDb, SkuDTO>()
+        CreateMap<OfferDb, SkuDTO>()
             .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
             .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
             .ReverseMap()

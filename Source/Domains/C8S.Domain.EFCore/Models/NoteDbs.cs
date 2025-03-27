@@ -21,6 +21,15 @@ public class InvoiceNoteDb: NoteDb
     public InvoiceNoteDb() { Reference = NoteReference.Invoice; }
 }
 
+public class OrderNoteDb: NoteDb
+{
+    [ForeignKey(nameof(Order))]
+    public int? OrderId { get; set; } = null!;
+    public OrderDb Order { get; set; } = null!;
+
+    public OrderNoteDb() { Reference = NoteReference.Order; }
+}
+
 public class PersonNoteDb: NoteDb
 {
     [ForeignKey(nameof(Person))]
@@ -39,29 +48,11 @@ public class PlaceNoteDb: NoteDb
     public PlaceNoteDb() { Reference = NoteReference.Place; }
 }
 
-public class RequestNoteDb: NoteDb
+public class TicketNoteDb: NoteDb
 {
-    [ForeignKey(nameof(Request))]
-    public int? RequestId { get; set; } = null!;
-    public RequestDb Request { get; set; } = null!;
+    [ForeignKey(nameof(Ticket))]
+    public int? TicketId { get; set; } = null!;
+    public TicketDb Ticket { get; set; } = null!;
 
-    public RequestNoteDb() { Reference = NoteReference.Request; }
-}
-
-public class SaleNoteDb: NoteDb
-{
-    [ForeignKey(nameof(Sale))]
-    public int? SaleId { get; set; } = null!;
-    public SaleDb Sale { get; set; } = null!;
-
-    public SaleNoteDb() { Reference = NoteReference.Sale; }
-}
-
-public class OrderNoteDb: NoteDb
-{
-    [ForeignKey(nameof(Order))]
-    public int? OrderId { get; set; } = null!;
-    public OrderDb Order { get; set; } = null!;
-
-    public OrderNoteDb() { Reference = NoteReference.Order; }
+    public TicketNoteDb() { Reference = NoteReference.Ticket; }
 }

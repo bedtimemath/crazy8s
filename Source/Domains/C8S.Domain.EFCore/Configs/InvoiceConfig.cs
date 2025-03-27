@@ -32,10 +32,10 @@ public class InvoiceConfig : BaseCoreConfig<InvoiceDb>
         #endregion
 
         #region Navigation Configuration
-        //public SaleDb? Sale { get; set; }
-        entity.HasOne(m => m.Sale)
+        //public TicketDb? Ticket { get; set; }
+        entity.HasOne(m => m.Ticket)
             .WithOne(m => m.Invoice)
-            .HasForeignKey<SaleDb>(m => m.InvoiceId)
+            .HasForeignKey<TicketDb>(m => m.InvoiceId)
             .IsRequired(false);
 
         //public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = default!;

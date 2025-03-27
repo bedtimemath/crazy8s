@@ -16,7 +16,7 @@ public record SkuDTO
 
     [JsonPropertyName("status")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public SkuStatus Status { get; init; } = default!;
+    public OfferStatus Status { get; init; } = default!;
 
     [JsonPropertyName("year")]
     public string Year { get; init; } = null!;

@@ -60,7 +60,7 @@ public class PersonsController(
                 .ThenInclude(cp => cp.Club)
                 .ThenInclude(c => c.Orders)
                 .ThenInclude(o => o.OrderSkus)
-                .ThenInclude(os => os.Sku)
+                .ThenInclude(os => os.Offer)
                 .AsSingleQuery()
                 .AsNoTracking()
                 .FilterSortPersonsQueryable(query);
@@ -90,8 +90,8 @@ public class PersonsController(
                     .Where(p => p.ClubPersons
                         .Any(cp => cp.Club.Orders
                             .Any(o => o.OrderSkus
-                                .Any(os => os.Sku.Year != null &&
-                                    skuYears.Contains(os.Sku.Year)))));
+                                .Any(os => os.Offer.Year != null &&
+                                    skuYears.Contains(os.Offer.Year)))));
             }
 
             var total = await queryable.CountAsync();
@@ -145,7 +145,7 @@ public class PersonsController(
                 .ThenInclude(cp => cp.Club)
                 .ThenInclude(c => c.Orders)
                 .ThenInclude(o => o.OrderSkus)
-                .ThenInclude(os => os.Sku)
+                .ThenInclude(os => os.Offer)
                 .AsSingleQuery()
                 .AsNoTracking();
 

@@ -47,7 +47,7 @@ public class RequestsController(
             if (query.HasCoachCall != null)
             {
                 queryable = queryable.Where(r =>
-                    (r.FullSlateAppointmentStartsOn == null ^ query.HasCoachCall.Value));
+                    (r.AppointmentStartsOn == null ^ query.HasCoachCall.Value));
             }
 
             /*** SUBMITTED BEFORE / AFTER ***/
@@ -144,7 +144,7 @@ public class RequestsController(
             var request = await dbContext.Requests.FindAsync(requestId) ??
                           throw new Exception($"Request ID #{requestId} does not exist.");
 
-            request.FullSlateAppointmentStartsOn = command.FullSlateAppointmentStartsOn;
+            request.AppointmentStartsOn = command.FullSlateAppointmentStartsOn;
             await dbContext.SaveChangesAsync();
 
             return WrappedResponse<RequestDetails>.CreateSuccessResponse(mapper.Map<RequestDetails?>(request));

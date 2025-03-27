@@ -13,9 +13,9 @@ internal class CustomProfiles : Profile
         CreateMap<string, CustomTitle>()
             .ConvertUsing(m => new CustomTitle() { Rendered = m });
 
-        CreateMap<SkuStatus, string>()
+        CreateMap<OfferStatus, string>()
             .ConvertUsing<SkuStatusToStringConverter>();
-        CreateMap<string, SkuStatus>()
+        CreateMap<string, OfferStatus>()
             .ConvertUsing<StringToSkuStatusConverter>();
     }
 }

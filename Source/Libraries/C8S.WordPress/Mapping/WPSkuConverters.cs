@@ -25,26 +25,26 @@ internal class StringToAgeLevelConverter : ITypeConverter<string, AgeLevel>
         };
 }
 
-internal class SkuStatusToStringConverter : ITypeConverter<SkuStatus, string>
+internal class SkuStatusToStringConverter : ITypeConverter<OfferStatus, string>
 {
-    public string Convert(SkuStatus source, string destination, ResolutionContext context)
+    public string Convert(OfferStatus source, string destination, ResolutionContext context)
         => source switch
         {
-            SkuStatus.Active => "publish",
-            SkuStatus.Draft => "draft",
-            SkuStatus.Inactive => "trash",
+            OfferStatus.Active => "publish",
+            OfferStatus.Draft => "draft",
+            OfferStatus.Inactive => "trash",
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
         };
 }
 
-internal class StringToSkuStatusConverter : ITypeConverter<string, SkuStatus>
+internal class StringToSkuStatusConverter : ITypeConverter<string, OfferStatus>
 {
-    public SkuStatus Convert(string  source, SkuStatus destination, ResolutionContext context)
+    public OfferStatus Convert(string  source, OfferStatus destination, ResolutionContext context)
         => source switch
         {
-            "publish" => SkuStatus.Active,
-            "draft" => SkuStatus.Draft,
-            "trash" => SkuStatus.Inactive,
+            "publish" => OfferStatus.Active,
+            "draft" => OfferStatus.Draft,
+            "trash" => OfferStatus.Inactive,
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
         };
 }

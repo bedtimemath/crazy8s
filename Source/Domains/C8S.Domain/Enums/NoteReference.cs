@@ -4,9 +4,8 @@ public enum NoteReference
 {
     Club,
     Invoice,
+    Order,
     Person,
     Place,
-    Request,
-    Sale,
-    Order
+    Ticket
 }

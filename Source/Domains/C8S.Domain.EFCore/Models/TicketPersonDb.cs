@@ -4,14 +4,14 @@ using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
 
-[Table("SalePersons")]
-public class SalePersonDb: BaseDb
+[Table("TicketPersons")]
+public class TicketPersonDb: BaseDb
 {
     #region Override Properties
     [NotMapped] 
     public override int Id => SalePersonId;
     [NotMapped] 
-    public override string Display => IsPrimary.ToString();
+    public override string Display => $"{Ticket}<=>{Person}";
     #endregion
 
     #region Id Property
@@ -21,16 +21,16 @@ public class SalePersonDb: BaseDb
 
     #region Database Properties
     [Required]
-    public bool IsPrimary { get; set; } = default!;
+    public int Ordinal { get; set; }
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Person))]
-    public int PersonId { get; set; } = default!;
-    public PersonDb Person { get; set; } = default!;
+    public int PersonId { get; set; }
+    public PersonDb Person { get; set; } = null!;
 
-    [ForeignKey(nameof(Sale))]
-    public int SaleId { get; set; } = default!;
-    public SaleDb Sale { get; set; } = default!;
+    [ForeignKey(nameof(Ticket))]
+    public int TicketId { get; set; }
+    public TicketDb Ticket { get; set; } = null!;
     #endregion
 }

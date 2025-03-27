@@ -8,6 +8,6 @@ internal class OrderSkuProfile: Profile
 {
     public OrderSkuProfile()
     {
-        CreateMap<OrderSkuDb, OrderSku>();
+        CreateMap<OrderClubDb, OrderSku>();
     }
 }

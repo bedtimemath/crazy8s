@@ -22,14 +22,6 @@ public class OrderDb: BaseCoreDb
     public int OrderId { get; set; }
     #endregion
 
-    #region Database Properties (Old System)
-    public Guid? OldSystemOrderId { get; set; } = null;
-    
-    public Guid? OldSystemShippingAddressId { get; set; } = null;
-
-    public Guid? OldSystemClubId { get; set; } = null;
-    #endregion
-
     #region Database Properties
     [Required]
     public int Number { get; set; }
@@ -78,15 +70,9 @@ public class OrderDb: BaseCoreDb
     public DateTimeOffset? EmailedOn { get; set; } = null!;
     #endregion
 
-    #region Reference Properties
-    [ForeignKey(nameof(Club))]
-    public int? ClubId { get; set; } = null!;
-    public ClubDb? Club { get; set; } = null!;
-    #endregion
-
     #region Child Properties
+    public ICollection<ClubDb> Clubs { get; set; } = null!;
     public ICollection<ShipmentDb> Shipments { get; set; } = null!;
-    public ICollection<OrderSkuDb> OrderSkus { get; set; } = null!;
     public ICollection<OrderNoteDb> Notes { get; set; } = null!;
     #endregion
 }

@@ -5,38 +5,20 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class SkuConfig : BaseCoreConfig<SkuDb>
+public class KitConfig : BaseCoreConfig<KitDb>
 {
-    public override void Configure(EntityTypeBuilder<SkuDb> entity)
+    public override void Configure(EntityTypeBuilder<KitDb> entity)
     {
         #region Id Property
         // [Required]
-        // public int SkuId { get; set; }
-        entity.HasKey(m => m.SkuId);
-        #endregion
-
-        #region Database Properties (Old System)
-        //public Guid? OldSystemSkuId { get; set; } = null;
-        entity.Property(m => m.OldSystemSkuId)
-            .IsRequired(false);
+        // public int KitId { get; set; }
+        entity.HasKey(m => m.KitId);
         #endregion
 
         #region Database Properties
-        //[Required, MaxLength(SharedConstants.MaxLengths.Key)]
-        //public string FulcoId { get; set; } = default!;
-        entity.Property(m => m.FulcoId)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Key)
-            .IsRequired(true);
-
-        //[Required, MaxLength(SharedConstants.MaxLengths.Name)]
-        //public string Name { get; set; } = default!;
-        entity.Property(m => m.Name)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Name)
-            .IsRequired(true);
-
-        //[Required, MaxLength(SharedConstants.MaxLengths.Short)]
+        //[Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public SkuStatus Status { get; set; } = default!;
+        //public KitStatus Status { get; set; } = default!;
         entity.Property(m => m.Status)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
@@ -59,7 +41,7 @@ public class SkuConfig : BaseCoreConfig<SkuDb>
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasConversion<string>()
             .IsRequired(true);
-        
+
         //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
         //public string? Version { get; set; } = null!;
         entity.Property(m => m.Version)
@@ -68,29 +50,43 @@ public class SkuConfig : BaseCoreConfig<SkuDb>
         //[MaxLength(SharedConstants.MaxLengths.XLong)]
         //public string? Comments { get; set; }
         entity.Property(m => m.Comments)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.XLong);
-        #endregion
-
-        #region Navigation Configuration
-        //public ICollection<OrderSkuDb> OrderSkus { get; set; } = default!;
-        entity.HasMany(m => m.OrderSkus)
-            .WithOne(m => m.Sku)
-            .HasForeignKey(m => m.SkuId);
-
-        //public ICollection<PermissionDb> Permissions { get; set; } = default!;
-        entity.HasMany(m => m.Permissions)
-            .WithOne(m => m.Sku)
-            .HasForeignKey(m => m.SkuId)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.XLong)
             .IsRequired(false);
         #endregion
 
+        #region Reference Properties
+        //[Required, ForeignKey(nameof(Offer))]
+        //public int OfferId { get; set; }
+        entity.Property(m => m.OfferId)
+            .IsRequired(true);
+
+        //[Required, ForeignKey(nameof(KitPage))]
+        //public int? KitPageId { get; set; }
+        entity.Property(m => m.KitPageId)
+            .IsRequired(false);
+        #endregion
+
+        #region Navigation Configuration
+        //public OfferDb Offer { get; set; } = null!;
+        entity.HasOne<OfferDb>(m => m.Offer)
+            .WithOne(m => m.Kit)
+            .HasForeignKey<KitDb>(m => m.OfferId);
+
+        //public KitPageDb? KitPage { get; set; } = null!;
+        entity.HasOne<KitPageDb>()
+            .WithMany(m => m.Kits)
+            .HasForeignKey(m => m.KitPageId)
+            .IsRequired(false);
+
+        //public ICollection<ClubDb> Clubs { get; set; } = null!;
+        entity.HasMany(m => m.Clubs)
+            .WithOne(m => m.Kit)
+            .HasForeignKey(m => m.KitId);
+        #endregion
+
         #region Indices
-        entity.HasIndex(m => m.OldSystemSkuId)
-            .IsUnique(true);
-        entity.HasIndex(m => m.FulcoId)
-            .IsUnique(true);
         entity.HasIndex(m => new { m.Year, m.Season, m.AgeLevel, m.Version })
-            .IsUnique(false);
+            .IsUnique(true);
         #endregion
     }
 }

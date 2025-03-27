@@ -479,8 +479,8 @@ public partial class SubmitNewPages(
             }
 
             /*** UPDATE W/APPT ***/
-            request.FullSlateAppointmentId = appointmentResponse.Data?.Id;
-            request.FullSlateAppointmentStartsOn = appointmentResponse.Data?.AtDateTime;
+            request.AppointmentId = appointmentResponse.Data?.Id;
+            request.AppointmentStartsOn = appointmentResponse.Data?.AtDateTime;
             await dbContext.SaveChangesAsync();
 
             /*** COMPLETE ***/

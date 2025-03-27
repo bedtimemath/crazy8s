@@ -48,6 +48,28 @@ public class InvoiceNoteConfig : IEntityTypeConfiguration<InvoiceNoteDb>
     }
 }
 
+public class OrderNoteConfig : IEntityTypeConfiguration<OrderNoteDb>
+{
+    public void Configure(EntityTypeBuilder<OrderNoteDb> entity)
+    {
+        #region Reference Properties
+        // [Required]
+        // [ForeignKey(nameof(Order))]
+        // public int OrderId { get; set; } = default!;
+        entity.Property(m => m.OrderId)
+            .IsRequired(false);
+        #endregion
+
+        #region Navigation Configuration
+        // public OrderDb Order { get; set; } = default!;
+        entity.HasOne(m => m.Order)
+            .WithMany(m => m.Notes)
+            .HasForeignKey(m => m.OrderId)
+            .OnDelete(DeleteBehavior.NoAction);
+        #endregion
+    }
+}
+
 public class PersonNoteConfig : IEntityTypeConfiguration<PersonNoteDb>
 {
     public void Configure(EntityTypeBuilder<PersonNoteDb> entity)
@@ -92,67 +114,23 @@ public class PlaceNoteConfig : IEntityTypeConfiguration<PlaceNoteDb>
     }
 }
 
-public class RequestNoteConfig : IEntityTypeConfiguration<RequestNoteDb>
+public class TicketNoteConfig : IEntityTypeConfiguration<TicketNoteDb>
 {
-    public void Configure(EntityTypeBuilder<RequestNoteDb> entity)
-    {
-        #region Reference Properties
-        // [Required]
-        // [ForeignKey(nameof(Request))]
-        // public int RequestId { get; set; } = default!;
-        entity.Property(m => m.RequestId)
-			.IsRequired(false);
-        #endregion
-
-        #region Navigation Configuration
-        // public RequestDb Request { get; set; } = default!;
-        entity.HasOne(m => m.Request)
-            .WithMany(m => m.Notes)
-            .HasForeignKey(m => m.RequestId)
-            .OnDelete(DeleteBehavior.NoAction);
-        #endregion
-    }
-}
-
-public class SaleNoteConfig : IEntityTypeConfiguration<SaleNoteDb>
-{
-    public void Configure(EntityTypeBuilder<SaleNoteDb> entity)
+    public void Configure(EntityTypeBuilder<TicketNoteDb> entity)
     {
         #region Reference Properties
         // [Required]
         // [ForeignKey(nameof(Sale))]
         // public int SaleId { get; set; } = default!;
-        entity.Property(m => m.SaleId)
+        entity.Property(m => m.TicketId)
 			.IsRequired(false);
         #endregion
 
         #region Navigation Configuration
         // public SaleDb Sale { get; set; } = default!;
-        entity.HasOne(m => m.Sale)
+        entity.HasOne(m => m.Ticket)
             .WithMany(m => m.Notes)
-            .HasForeignKey(m => m.SaleId)
-            .OnDelete(DeleteBehavior.NoAction);
-        #endregion
-    }
-}
-
-public class OrderNoteConfig : IEntityTypeConfiguration<OrderNoteDb>
-{
-    public void Configure(EntityTypeBuilder<OrderNoteDb> entity)
-    {
-        #region Reference Properties
-        // [Required]
-        // [ForeignKey(nameof(Order))]
-        // public int OrderId { get; set; } = default!;
-        entity.Property(m => m.OrderId)
-			.IsRequired(false);
-        #endregion
-
-        #region Navigation Configuration
-        // public OrderDb Order { get; set; } = default!;
-        entity.HasOne(m => m.Order)
-            .WithMany(m => m.Notes)
-            .HasForeignKey(m => m.OrderId)
+            .HasForeignKey(m => m.TicketId)
             .OnDelete(DeleteBehavior.NoAction);
         #endregion
     }

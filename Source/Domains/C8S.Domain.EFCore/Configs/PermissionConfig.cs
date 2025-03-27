@@ -16,10 +16,9 @@ public class PermissionConfig : IEntityTypeConfiguration<PermissionDb>
 
         #region Database Properties
         //[Required]
-        //public bool IsPrimary { get; set; } = default!;
-        entity.Property(m => m.IsPrimary)
-            .HasDefaultValue(false)
-            .IsRequired(true);
+        //public DateTimeOffset? ExpiresOn { get; set; }
+        entity.Property(m => m.ExpiresOn)
+            .IsRequired(false);
         #endregion
 
         #region Reference Properties
@@ -27,10 +26,10 @@ public class PermissionConfig : IEntityTypeConfiguration<PermissionDb>
         //public int PersonId { get; set; } = null;
         entity.Property(m => m.PersonId)
             .IsRequired(true);
-        
-        //[ForeignKey(nameof(Sku))]
-        //public int SkuId { get; set; } = null;
-        entity.Property(m => m.SkuId)
+
+        //[ForeignKey(nameof(KitPage))]
+        //public int KitPageId { get; set; }
+        entity.Property(m => m.KitPageId)
             .IsRequired(true);
         #endregion
 
@@ -41,10 +40,10 @@ public class PermissionConfig : IEntityTypeConfiguration<PermissionDb>
             .HasForeignKey(m => m.PersonId)
             .IsRequired(true);
 
-        //public SkuDb Sku { get; set; } = null;
-        entity.HasOne(m => m.Sku)
+        //public KitPageDb KitPage { get; set; } = null!;
+        entity.HasOne(m => m.KitPage)
             .WithMany(m => m.Permissions)
-            .HasForeignKey(m => m.SkuId)
+            .HasForeignKey(m => m.KitPageId)
             .IsRequired(true);
         #endregion
     }

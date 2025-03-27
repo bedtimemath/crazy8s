@@ -28,12 +28,11 @@ public class InvoiceDb : BaseCoreDb
     public InvoiceStatus Status { get; set; } = default!;
 
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Standard)]
-    public string Identifier { get; set; } = default!;
+    public string Identifier { get; set; } = null!;
     #endregion
 
     #region Reference Properties
-    // one-to-one
-    public SaleDb? Sale { get; set; }
+    public TicketDb? Ticket { get; set; }
     #endregion
 
     #region Reference Collections

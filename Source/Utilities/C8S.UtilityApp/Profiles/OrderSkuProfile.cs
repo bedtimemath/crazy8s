@@ -10,7 +10,7 @@ internal class OrderSkuProfile: Profile
     public OrderSkuProfile()
     {
         CreateMap<OrderSkuSql, OrderSkuDTO>();
-        CreateMap<OrderSkuDb, OrderSkuDTO>()
+        CreateMap<OrderClubDb, OrderSkuDTO>()
             .ForSourceMember(src => src.Id, opt => opt.DoNotValidate())
             .ForSourceMember(src => src.Display, opt => opt.DoNotValidate())
             .ReverseMap()

@@ -20,11 +20,10 @@ public class NoteConfig : IEntityTypeConfiguration<NoteDb>
         entity.HasDiscriminator(m => m.Reference)
             .HasValue<ClubNoteDb>(NoteReference.Club)
             .HasValue<InvoiceNoteDb>(NoteReference.Invoice)
+            .HasValue<OrderNoteDb>(NoteReference.Order)
             .HasValue<PersonNoteDb>(NoteReference.Person)
             .HasValue<PlaceNoteDb>(NoteReference.Place)
-            .HasValue<RequestNoteDb>(NoteReference.Request)
-            .HasValue<SaleNoteDb>(NoteReference.Sale)
-            .HasValue<OrderNoteDb>(NoteReference.Order);
+            .HasValue<TicketNoteDb>(NoteReference.Ticket);
         #endregion
 
         #region Database Properties

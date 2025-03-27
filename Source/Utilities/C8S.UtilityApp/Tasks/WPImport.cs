@@ -36,9 +36,9 @@ internal class WPImport(
 
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        var dbSkus = await dbContext.Skus
+        var dbSkus = await dbContext.Offers
             .Where(s => (s.Year == "F23" || s.Year == "F23C" || s.Year == "F24") && 
-                        (s.Name != "dont use"))
+                        (s.Title != "dont use"))
             .ToListAsync();
         _logger.LogInformation("Found {Count:#,##0} active skus in C8s database.", dbSkus.Count);
 
@@ -64,7 +64,7 @@ internal class WPImport(
         foreach (var dbSku in dbSkus)
         {
             var slug = dbSku.ClubKey.ToSlug();
-            var display = dbSku.Name;
+            var display = dbSku.Title;
 
             if (wpSkus.Any(s => s.Properties.SkuIdentifier == dbSku.ClubKey))
             {
@@ -76,7 +76,7 @@ internal class WPImport(
                 {
                     Slug = slug,
                     Title = display,
-                    Status = SkuStatus.Active,
+                    Status = OfferStatus.Active,
                     Properties = new WPSkuProperties()
                     {
                         SkuIdentifier = dbSku.ClubKey,

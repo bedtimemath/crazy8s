@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;using System.ComponentModel.DataAnnotations.Schema;
 using SC.Common.Base;
 
 namespace C8S.Domain.EFCore.Models;
@@ -11,7 +10,7 @@ public class PermissionDb: BaseDb
     [NotMapped] 
     public override int Id => PermissionId;
     [NotMapped] 
-    public override string Display => IsPrimary.ToString();
+    public override string Display => $"{Person}<=>{KitPage}";
     #endregion
 
     #region Id Property
@@ -21,16 +20,16 @@ public class PermissionDb: BaseDb
 
     #region Database Properties
     [Required]
-    public bool IsPrimary { get; set; } = default!;
+    public DateTimeOffset? ExpiresOn { get; set; }
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Person))]
-    public int PersonId { get; set; } = default!;
-    public PersonDb Person { get; set; } = default!;
+    public int PersonId { get; set; }
+    public PersonDb Person { get; set; } = null!;
 
-    [ForeignKey(nameof(Sku))]
-    public int SkuId { get; set; } = default!;
-    public SkuDb Sku { get; set; } = default!;
+    [ForeignKey(nameof(KitPage))]
+    public int KitPageId { get; set; }
+    public KitPageDb KitPage { get; set; } = null!;
     #endregion
 }

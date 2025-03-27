@@ -28,8 +28,8 @@ internal class NoteProfile : Profile
         CreateMap<RequestNoteDb, NoteDetails>()
             .ForMember(m => m.ParentId, 
                 opt => opt.MapFrom(n => n.RequestId));
-        CreateMap<SaleNoteDb, NoteDetails>()
+        CreateMap<TicketNoteDb, NoteDetails>()
             .ForMember(m => m.ParentId, 
-                opt => opt.MapFrom(n => n.SaleId));
+                opt => opt.MapFrom(n => n.TicketId));
     }
 }

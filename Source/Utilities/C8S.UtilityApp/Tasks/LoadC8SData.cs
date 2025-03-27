@@ -206,7 +206,7 @@ internal class LoadC8SData(
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         var allOrders = dbContext.Orders.ToList();
-        var allSkus = dbContext.Skus.ToList();
+        var allSkus = dbContext.Offers.ToList();
 
         var sqlOrderSkusCount = sqlOrderSkus.Count;
         ConsoleEx.StartProgress("Joining orders & skus with order skus: ");
@@ -222,7 +222,7 @@ internal class LoadC8SData(
             var sku = allSkus.FirstOrDefault(o => o.OldSystemSkuId == sqlOrderSku.OldSystemSkuId);
             if (sku == null) { skippedOrderSkus++; continue; }
 
-            var orderSku = new OrderSkuDb()
+            var orderSku = new OrderClubDb()
             {
                 OldSystemOrderSkuId = sqlOrderSku.OldSystemOrderSkuId,
                 OldSystemOrderId = sqlOrderSku.OldSystemOrderId,
@@ -230,7 +230,7 @@ internal class LoadC8SData(
                 Ordinal = sqlOrderSku.Ordinal,
                 Quantity = sqlOrderSku.Quantity,
                 Order = order,
-                Sku = sku
+                Offer = sku
             };
             dbContext.OrderSkus.Add(orderSku);
             addedOrderSkus++;
@@ -352,19 +352,19 @@ internal class LoadC8SData(
         {
             var sqlSku = sqlSkus[index];
 
-            var sku = new SkuDb()
+            var sku = new OfferDb()
             {
                 OldSystemSkuId = sqlSku.OldSystemSkuId,
                 FulcoId = sqlSku.Key,
-                Name = sqlSku.Name,
-                Status = sqlSku.Status ?? SkuStatus.Inactive,
+                Title = sqlSku.Name,
+                Status = sqlSku.Status ?? OfferStatus.Inactive,
                 Year = GetYearFromSqlSku(sqlSku),
                 Season = sqlSku.Season!.Value,
                 AgeLevel = sqlSku.AgeLevel!.Value,
                 Version = GetVersionFromSqlSku(sqlSku),
-                Comments = sqlSku.Notes
+                Description = sqlSku.Notes
             };
-            dbContext.Skus.Add(sku);
+            dbContext.Offers.Add(sku);
 
             skusAdded++;
 
@@ -381,7 +381,7 @@ internal class LoadC8SData(
     private async Task RemoveExistingSkus(List<SkuSql> sqlSkus)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var existingSkuIds = await dbContext.Skus.Select(o => o.OldSystemSkuId).ToListAsync();
+        var existingSkuIds = await dbContext.Offers.Select(o => o.OldSystemSkuId).ToListAsync();
         sqlSkus.RemoveAll(m => existingSkuIds.Contains(m.OldSystemSkuId));
     }
 
@@ -633,7 +633,7 @@ internal class LoadC8SData(
                 WorkshopCode = sqlApplication.WorkshopCode,
                 ReferenceSource = null,
                 ReferenceSourceOther = null,
-                FullSlateAppointmentId = sqlApplication.AppointmentId,
+                AppointmentId = sqlApplication.AppointmentId,
                 Comments = sqlApplication.Comments,
                 SubmittedOn = sqlApplication.SubmittedOn ?? throw new Exception("Missing Submitted On"),
                 CreatedOn = sqlApplication.CreatedOn

@@ -11,6 +11,6 @@ public record WPSkuDetails
 
     public string Title { get; init; } = null!;
 
-    public SkuStatus Status { get; init; }
+    public OfferStatus Status { get; init; }
     public WPSkuProperties Properties { get; init; } = null!;
 }

@@ -16,24 +16,6 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
         entity.HasKey(m => m.PersonId);
         #endregion
 
-        #region Database Properties (Old System)
-        //public Guid? OldSystemCoachId { get; set; } = null;
-        entity.Property(m => m.OldSystemCoachId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemOrganizationId { get; set; } = null;
-        entity.Property(m => m.OldSystemOrganizationId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemUserId { get; set; } = null;
-        entity.Property(m => m.OldSystemUserId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemCompanyId { get; set; } = null;
-        entity.Property(m => m.OldSystemCompanyId)
-            .IsRequired(false);
-        #endregion
-
         #region Database Properties
         //[MaxLength(SharedConstants.MaxLengths.Name)]
         //public string? FirstName { get; set; }
@@ -104,12 +86,6 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
             .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
 
-        //public ICollection<RequestDb> Requests { get; set; } = default!;
-        entity.HasMany(m => m.Requests)
-            .WithOne(m => m.Person)
-            .HasForeignKey(m => m.PersonId)
-            .IsRequired(false);
-
         //public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
         entity.HasMany(m => m.ClubPersons)
             .WithOne(m => m.Person)
@@ -117,7 +93,7 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
             .IsRequired(false);
 
         //public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
-        entity.HasMany(m => m.SalePersons)
+        entity.HasMany(m => m.TicketPersons)
             .WithOne(m => m.Person)
             .HasForeignKey(m => m.PersonId)
             .IsRequired(false);
@@ -137,8 +113,6 @@ public class PersonConfig : BaseCoreConfig<PersonDb>
 
         #region Indices
         entity.HasIndex(m => m.Email)
-            .IsUnique(true);
-        entity.HasIndex(m => m.OldSystemCoachId)
             .IsUnique(true);
         #endregion
     }

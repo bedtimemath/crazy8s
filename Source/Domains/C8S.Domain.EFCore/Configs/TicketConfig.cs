@@ -6,14 +6,14 @@ using SC.Common;
 
 namespace C8S.Domain.EFCore.Configs;
 
-public class SaleConfig : BaseCoreConfig<SaleDb>
+public class TicketConfig : BaseCoreConfig<TicketDb>
 {
-    public override void Configure(EntityTypeBuilder<SaleDb> entity)
+    public override void Configure(EntityTypeBuilder<TicketDb> entity)
     {
         #region Id Property
         // [Required]
         // public int CoachId { get; set; }
-        entity.HasKey(m => m.SaleId);
+        entity.HasKey(m => m.TicketId);
         #endregion
 
         #region Database Properties
@@ -32,11 +32,6 @@ public class SaleConfig : BaseCoreConfig<SaleDb>
         entity.Property(m => m.PlaceId)
             .IsRequired(true);
 
-        //[ForeignKey(nameof(Request))]
-        //public int? RequestId { get; set; } = default!;
-        entity.Property(m => m.RequestId)
-            .IsRequired(false);
-
         //[ForeignKey(nameof(Invoice))]
         //public int? InvoiceId { get; set; } = default!;
         entity.Property(m => m.InvoiceId)
@@ -46,36 +41,36 @@ public class SaleConfig : BaseCoreConfig<SaleDb>
         #region Navigation Configuration
         //public PlaceDb? Place { get; set; } = default!;
         entity.HasOne(m => m.Place)
-            .WithMany(m => m.Sales)
+            .WithMany(m => m.Tickets)
             .HasForeignKey(m => m.PlaceId)
             .IsRequired(false);
-
+        
         //public RequestDb? Request { get; set; } = default!;
         entity.HasOne(m => m.Request)
-            .WithOne(m => m.Sale)
-            .HasForeignKey<SaleDb>(m => m.RequestId)
+            .WithOne(m => m.Ticket)
+            .HasForeignKey<TicketDb>(m => m.RequestId)
             .IsRequired(false);
 
         //public InvoiceDb? Invoice { get; set; } = default!;
         entity.HasOne(m => m.Invoice)
-            .WithOne(m => m.Sale)
-            .HasForeignKey<SaleDb>(m => m.InvoiceId)
+            .WithOne(m => m.Ticket)
+            .HasForeignKey<TicketDb>(m => m.InvoiceId)
             .IsRequired(false);
 
         //public ICollection<ClubDb> Clubs { get; set; } = default!;
         entity.HasMany(m => m.Clubs)
-            .WithOne(m => m.Sale)
+            .WithOne(m => m.Ticket)
             .IsRequired(false);
 
         //public ICollection<SalePersonDb> SalePersons { get; set; } = default!;
-        entity.HasMany(m => m.SalePersons)
-            .WithOne(m => m.Sale)
+        entity.HasMany(m => m.TicketPersons)
+            .WithOne(m => m.Ticket)
             .IsRequired(false);
 
         //public ICollection<SaleNoteDb> Notes { get; set; } = default!;
         entity.HasMany(m => m.Notes)
-            .WithOne(m => m.Sale)
-            .HasForeignKey(m => m.SaleId)
+            .WithOne(m => m.Ticket)
+            .HasForeignKey(m => m.TicketId)
             .OnDelete(DeleteBehavior.Cascade);
         #endregion
     }

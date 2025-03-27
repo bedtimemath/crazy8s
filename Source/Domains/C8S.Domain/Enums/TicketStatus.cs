@@ -2,7 +2,7 @@
 
 namespace C8S.Domain.Enums;
 
-public enum SaleStatus
+public enum TicketStatus
 {
     [Label("Potential")]
     Potential,

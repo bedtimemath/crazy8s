@@ -8,7 +8,7 @@ internal class OrderSkuProfile: Profile
 {
     public OrderSkuProfile()
     {
-        CreateMap<OrderSkuDb, OrderSkuDTO>()
+        CreateMap<OrderClubDb, OrderSkuDTO>()
             .ReverseMap();
     }
 }

@@ -16,24 +16,6 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
         entity.HasKey(m => m.ClubId);
         #endregion
 
-        #region Database Properties (Old System)
-        //public Guid? OldSystemClubId { get; set; }
-        entity.Property(m => m.OldSystemClubId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemOrganizationId { get; set; }
-        entity.Property(m => m.OldSystemOrganizationId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemCoachId { get; set; }
-        entity.Property(m => m.OldSystemCoachId)
-            .IsRequired(false);
-
-        //public Guid? OldSystemMeetingAddressId { get; set; }
-        entity.Property(m => m.OldSystemMeetingAddressId)
-            .IsRequired(false);
-        #endregion
-
         #region Database Properties
         //[Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -43,57 +25,45 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
             .HasConversion<string>()
             .IsRequired(true);
 
-        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
-        //public string? Year { get; set; }
-        entity.Property(m => m.Year)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .IsRequired(true);
-
-        //public int Season { get; set; } = default!;
-        entity.Property(m => m.Season)
-            .IsRequired(true);
-
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
-        //[JsonConverter(typeof(JsonStringEnumConverter))]
-        //public AgeLevel? AgeLevel { get; set; } = default!;
-        entity.Property(m => m.AgeLevel)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
-            .HasConversion<string>()
-            .IsRequired(true);
-
-        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
-        //public string? Version { get; set; } = null!;
-        entity.Property(m => m.Version)
-            .IsRequired(false);
-
         //public DateOnly? StartsOn { get; set; }
         entity.Property(m => m.StartsOn)
             .IsRequired(false);
         #endregion
 
         #region Reference Properties
+        //[Required, ForeignKey(nameof(Kit))]
+        //public int KitId { get; set; } = default!;
+        entity.Property(m => m.KitId)
+            .IsRequired(true);
+        
         //[Required, ForeignKey(nameof(Place))]
         //public int PlaceId { get; set; } = default!;
         entity.Property(m => m.PlaceId)
             .IsRequired(true);
 
-        //[ForeignKey(nameof(Sale))]
-        //public int? SaleId { get; set; } = default!;
-        entity.Property(m => m.SaleId)
+        //[ForeignKey(nameof(Ticket))]
+        //public int? TicketId { get; set; } = default!;
+        entity.Property(m => m.TicketId)
             .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
+        //public KitDb Kit { get; set; } = default!;
+        entity.HasOne(m => m.Kit)
+            .WithMany(m => m.Clubs)
+            .HasForeignKey(m => m.KitId)
+            .IsRequired(true);
+        
         //public PlaceDb Place { get; set; } = default!;
         entity.HasOne(m => m.Place)
             .WithMany(m => m.Clubs)
             .HasForeignKey(m => m.PlaceId)
             .IsRequired(true);
 
-        //public SaleDb? Sale { get; set; }
-        entity.HasOne(m => m.Sale)
+        //public TicketDb? Ticket { get; set; }
+        entity.HasOne(m => m.Ticket)
             .WithMany(m => m.Clubs)
-            .HasForeignKey(m => m.SaleId)
+            .HasForeignKey(m => m.TicketId)
             .IsRequired(false);
 
         //public ICollection<ClubPersonDb> ClubPersons { get; set; } = default!;
@@ -104,22 +74,21 @@ public class ClubConfig : BaseCoreConfig<ClubDb>
 
         //public ICollection<OrderDb> Orders { get; set; } = null!;
         entity.HasMany(m => m.Orders)
-            .WithOne(m => m.Club)
-            .HasForeignKey(m => m.ClubId)
-            .IsRequired(false);
+            .WithMany(m => m.Clubs)
+            .UsingEntity("OrderClubs",
+                l => l.HasOne(typeof(OrderDb)).WithMany()
+                    .HasForeignKey(nameof(OrderDb.OrderId))
+                    .HasPrincipalKey(nameof(OrderDb.OrderId)),
+                r => r.HasOne(typeof(ClubDb)).WithMany()
+                    .HasForeignKey(nameof(ClubDb.ClubId))
+                    .HasPrincipalKey(nameof(ClubDb.ClubId)),
+                j => j.HasKey(nameof(OrderDb.OrderId), nameof(ClubDb.ClubId)));
 
         //public ICollection<ClubNoteDb> Notes { get; set; } = default!;
         entity.HasMany(m => m.Notes)
             .WithOne(m => m.Club)
             .HasForeignKey(m => m.ClubId)
             .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-
-        #region Indices
-        entity.HasIndex(m => m.OldSystemClubId)
-            .IsUnique(true);
-        entity.HasIndex(m => new { m.Year, m.Season, m.AgeLevel, m.Version })
-            .IsUnique(false);
         #endregion
     }
 }

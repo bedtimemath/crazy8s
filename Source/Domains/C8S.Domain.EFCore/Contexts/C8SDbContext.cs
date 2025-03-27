@@ -24,23 +24,22 @@ public class C8SDbContext(
     public DbSet<InvoiceDb> Invoices { get; set; }
     public DbSet<InvoiceNoteDb> InvoiceNotes { get; set; }
     public DbSet<InvoicePersonDb> InvoicePersons { get; set; }
+    public DbSet<KitDb> Kits { get; set; }
+    public DbSet<KitPageDb> KitPages { get; set; }
     public DbSet<NoteDb> Notes { get; set; }
+    public DbSet<OfferDb> Offers { get; set; }
     public DbSet<OrderDb> Orders { get; set; }
     public DbSet<OrderNoteDb> OrderNotes { get; set; }
-    public DbSet<OrderSkuDb> OrderSkus { get; set; }
     public DbSet<PermissionDb> Permissions { get; set; }
     public DbSet<PersonDb> Persons { get; set; }
     public DbSet<PersonNoteDb> PersonNotes { get; set; }
     public DbSet<PlaceDb> Places { get; set; }
     public DbSet<PlaceNoteDb> PlaceNotes { get; set; }
-    public DbSet<RequestedClubDb> RequestedClubs { get; set; }
     public DbSet<RequestDb> Requests { get; set; }
-    public DbSet<RequestNoteDb> RequestNotes { get; set; }
-    public DbSet<SaleDb> Sales { get; set; }
-    public DbSet<SaleNoteDb> SaleNotes { get; set; }
-    public DbSet<SalePersonDb> SalePersons { get; set; }
+    public DbSet<TicketDb> Tickets { get; set; }
+    public DbSet<TicketNoteDb> TicketNotes { get; set; }
+    public DbSet<TicketPersonDb> TicketPersons { get; set; }
     public DbSet<ShipmentDb> Shipments { get; set; }
-    public DbSet<SkuDb> Skus { get; set; }
     public DbSet<UnfinishedDb> Unfinisheds { get; set; }
     public DbSet<WorkshopCodeDb> WorkshopCodes { get; set; }
     #endregion
@@ -65,23 +64,22 @@ public class C8SDbContext(
         modelBuilder.ApplyConfiguration(new InvoiceConfig());
         modelBuilder.ApplyConfiguration(new InvoiceNoteConfig());
         modelBuilder.ApplyConfiguration(new InvoicePersonConfig());
+        modelBuilder.ApplyConfiguration(new KitConfig());
+        modelBuilder.ApplyConfiguration(new KitPageConfig());
         modelBuilder.ApplyConfiguration(new NoteConfig());
+        modelBuilder.ApplyConfiguration(new OfferConfig());
         modelBuilder.ApplyConfiguration(new OrderConfig());
         modelBuilder.ApplyConfiguration(new OrderNoteConfig());
-        modelBuilder.ApplyConfiguration(new OrderSkuConfig());
         modelBuilder.ApplyConfiguration(new PermissionConfig());
         modelBuilder.ApplyConfiguration(new PersonConfig());
         modelBuilder.ApplyConfiguration(new PersonNoteConfig());
         modelBuilder.ApplyConfiguration(new PlaceConfig());
         modelBuilder.ApplyConfiguration(new PlaceNoteConfig());
-        modelBuilder.ApplyConfiguration(new RequestedClubConfig());
         modelBuilder.ApplyConfiguration(new RequestConfig());
-        modelBuilder.ApplyConfiguration(new RequestNoteConfig());
-        modelBuilder.ApplyConfiguration(new SaleConfig());
-        modelBuilder.ApplyConfiguration(new SaleNoteConfig());
-        modelBuilder.ApplyConfiguration(new SalePersonConfig());
+        modelBuilder.ApplyConfiguration(new TicketConfig());
+        modelBuilder.ApplyConfiguration(new TicketNoteConfig());
+        modelBuilder.ApplyConfiguration(new TicketPersonConfig());
         modelBuilder.ApplyConfiguration(new ShipmentConfig());
-        modelBuilder.ApplyConfiguration(new SkuConfig());
         modelBuilder.ApplyConfiguration(new UnfinishedConfig());
         modelBuilder.ApplyConfiguration(new WorkshopCodeConfig());
     }

@@ -8,6 +8,6 @@ internal class SkuProfile: Profile
 {
     public SkuProfile()
     {
-        CreateMap<SkuDb, Sku>();
+        CreateMap<OfferDb, Sku>();
     }
 }

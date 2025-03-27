@@ -41,11 +41,11 @@ public class SkuSql
 
     #region Derived Properties
 
-    public SkuStatus? Status => StatusString switch
+    public OfferStatus? Status => StatusString switch
     {
-        "Draft" => SkuStatus.Draft,
-        "Active" => SkuStatus.Active,
-        "Inactive" => SkuStatus.Inactive,
+        "Draft" => OfferStatus.Draft,
+        "Active" => OfferStatus.Active,
+        "Inactive" => OfferStatus.Inactive,
         _ => throw new Exception($"Unrecognized: {StatusString}")
     };
 
