@@ -1,5 +1,6 @@
 ﻿using C8S.Domain.EFCore.Base;
 using C8S.Domain.EFCore.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SC.Common;
 
@@ -15,6 +16,17 @@ public class KitConfig : BaseCoreConfig<KitDb>
         entity.HasKey(m => m.KitId);
         #endregion
 
+        #region Computed Properties
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string Key { get; set; } = null!;
+        entity.Property(e => e.Key)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasComputedColumnSql("CASE WHEN [Version] IS NOT NULL THEN 'C8.S' " +
+              "+ CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + [AgeLevel] " +
+              "ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [AgeLevel] END")
+            .IsRequired(true);
+        #endregion
+
         #region Database Properties
         //[Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
@@ -24,27 +36,28 @@ public class KitConfig : BaseCoreConfig<KitDb>
             .HasConversion<string>()
             .IsRequired(true);
 
-        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //[MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
         //public string Year { get; set; }
         entity.Property(m => m.Year)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
             .IsRequired(true);
 
         //public int Season { get; set; }
         entity.Property(m => m.Season)
             .IsRequired(true);
 
-        //[MaxLength(SharedConstants.MaxLengths.Short)]
+        //[MaxLength(SharedConstants.MaxLengths.Tiny)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public AgeLevel AgeLevel { get; set; }
         entity.Property(m => m.AgeLevel)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
             .HasConversion<string>()
             .IsRequired(true);
 
-        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
-        //public string? Version { get; set; } = null!;
+        //[MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+        //public string? Version { get; set; } = null;
         entity.Property(m => m.Version)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
             .IsRequired(false);
 
         //[MaxLength(SharedConstants.MaxLengths.Comments)]

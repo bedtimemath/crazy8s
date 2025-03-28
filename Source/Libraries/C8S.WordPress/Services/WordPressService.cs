@@ -159,7 +159,7 @@ public class WordPressService
         {
             // Would be nice if the WordPressPCL library threw a more specific exception
             if (ex.Message == "Sorry, that username already exists!")
-                return await CreateWordPressUser(IncrementUserName(userName),
+                return await CreateWordPressUser(userName.IncrementFinalDigits(),
                     name, firstName, lastName, userName, password, roleSlugs);
 
             _logger.LogError(ex, "Error creating WordPress user: {@UserName}", userName);
@@ -243,13 +243,6 @@ public class WordPressService
         !String.IsNullOrWhiteSpace(firstName) && !String.IsNullOrWhiteSpace(lastName)
             ? $"{firstName} {lastName}"
             : firstName ?? lastName ?? SoftCrowConstants.Display.AnonymousWord;
-
-    private static string IncrementUserName(string userName)
-    {
-        var endingMatch = SoftCrowRegex.GetMatchForEndingDigits(userName);
-        return (!endingMatch.Success) ? userName + "1" :
-                endingMatch.Groups["start"].Value + (Int32.Parse(endingMatch.Groups["digits"].Value) + 1);
-    }
     #endregion
 
 }

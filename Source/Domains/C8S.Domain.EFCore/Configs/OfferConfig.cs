@@ -36,6 +36,22 @@ public class OfferConfig : BaseCoreConfig<OfferDb>
             .HasConversion<string>()
             .IsRequired(true);
 
+        //[MaxLength(SoftCrowConstants.MaxLengths.Short)]
+        //public string Year { get; set; }
+        entity.Property(m => m.Year)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
+            .IsRequired(true);
+
+        //public int Season { get; set; }
+        entity.Property(m => m.Season)
+            .IsRequired(true);
+
+        //[MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+        //public string? Version { get; set; } = null!;
+        entity.Property(m => m.Version)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
+            .IsRequired(false);
+
         //[MaxLength(SharedConstants.MaxLengths.Description)]
         //public string? Description { get; set; }
         entity.Property(m => m.Description)
@@ -48,6 +64,13 @@ public class OfferConfig : BaseCoreConfig<OfferDb>
             .WithOne(m => m.Offer)
             .HasForeignKey<KitDb>(m => m.OfferId)
             .IsRequired(true);
+        #endregion
+
+        #region Indices
+        entity.HasIndex(m => m.FulcoId)
+            .IsUnique(true);
+        entity.HasIndex(m => new { m.Year, m.Season, m.Version })
+            .IsUnique(true);
         #endregion
     }
 }

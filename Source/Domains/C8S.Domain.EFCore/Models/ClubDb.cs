@@ -14,7 +14,7 @@ public class ClubDb : BaseCoreDb
     [NotMapped] 
     public override int Id => ClubId;
     [NotMapped] 
-    public override string Display => Kit?.KitKey ?? SoftCrowConstants.Display.NotSet;
+    public override string Display => Kit?.Key ?? SoftCrowConstants.Display.NotSet;
     #endregion
 
     #region Id Property

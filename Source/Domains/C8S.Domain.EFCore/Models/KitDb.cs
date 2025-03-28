@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using C8S.Domain.Enums;
-using C8S.Domain.Extensions;
 using C8S.Domain.Interfaces;
 using SC.Common;
 using SC.Common.Base;
@@ -16,7 +15,7 @@ public class KitDb : BaseCoreDb, IKit
     [NotMapped] 
     public override int Id => KitId;
     [NotMapped] 
-    public override string Display => KitKey;
+    public override string Display => Key;
     #endregion
 
     #region Id Property
@@ -25,21 +24,24 @@ public class KitDb : BaseCoreDb, IKit
     #endregion
 
     #region Database Properties
+    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    public string Key { get; set; } = null!;
+
     [Required, MaxLength(SoftCrowConstants.MaxLengths.Short)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public KitStatus Status { get; set; } = default!;
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
     public string Year { get; set; } = null!;
 
     public int Season { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AgeLevel AgeLevel { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Short)]
-    public string? Version { get; set; } = null!;
+    [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+    public string? Version { get; set; } = null;
 
     [MaxLength(SoftCrowConstants.MaxLengths.Comments)]
     public string? Comments { get; set; }
@@ -57,10 +59,5 @@ public class KitDb : BaseCoreDb, IKit
 
     #region Child Properties
     public ICollection<ClubDb> Clubs { get; set; } = null!;
-    #endregion
-
-    #region Derived Properties
-    [NotMapped] 
-    public string KitKey => this.ToKitKey();
     #endregion
 }

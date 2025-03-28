@@ -4,6 +4,7 @@ using C8S.Domain.EFCore.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    partial class C8SDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250328174824_InitialSetup")]
+    partial class InitialSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,8 +162,8 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("AgeLevel")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Comments")
                         .HasMaxLength(8192)
@@ -168,6 +171,13 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<DateTimeOffset>("CreatedOn")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)")
+                        .HasComputedColumnSql("CASE WHEN [Version] IS NOT NULL THEN 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + [AgeLevel] ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [AgeLevel] END");
 
                     b.Property<int?>("KitPageId")
                         .HasColumnType("int");
@@ -187,13 +197,13 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("Version")
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.Property<string>("Year")
                         .IsRequired()
-                        .HasMaxLength(25)
-                        .HasColumnType("nvarchar(25)");
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
 
                     b.HasKey("KitId");
 
@@ -307,6 +317,9 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<int>("Season")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(25)
@@ -317,7 +330,23 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("Version")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
                     b.HasKey("OfferId");
+
+                    b.HasIndex("FulcoId")
+                        .IsUnique();
+
+                    b.HasIndex("Year", "Season", "Version")
+                        .IsUnique()
+                        .HasFilter("[Version] IS NOT NULL");
 
                     b.ToTable("Offers");
                 });

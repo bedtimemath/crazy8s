@@ -53,6 +53,9 @@ namespace C8S.Domain.EFCore.Migrations
                     FulcoId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Year = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Season = table.Column<int>(type: "int", nullable: false),
+                    Version = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
@@ -231,11 +234,12 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     KitId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Key = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false, computedColumnSql: "CASE WHEN [Version] IS NOT NULL THEN 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + [AgeLevel] ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [AgeLevel] END"),
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    Year = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Year = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     Season = table.Column<int>(type: "int", nullable: false),
-                    AgeLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    Version = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
+                    AgeLevel = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Version = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: true),
                     OfferId = table.Column<int>(type: "int", nullable: false),
                     KitPageId = table.Column<int>(type: "int", nullable: true),
@@ -647,6 +651,19 @@ namespace C8S.Domain.EFCore.Migrations
                 name: "IX_Notes_TicketId",
                 table: "Notes",
                 column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Offers_FulcoId",
+                table: "Offers",
+                column: "FulcoId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Offers_Year_Season_Version",
+                table: "Offers",
+                columns: new[] { "Year", "Season", "Version" },
+                unique: true,
+                filter: "[Version] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OldNews_NewTableName_NewId",
