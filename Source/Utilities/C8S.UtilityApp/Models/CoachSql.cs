@@ -6,9 +6,9 @@ public class CoachSql
 {
     #region Constants & ReadOnlys
     public const string SqlGet = 
-        "SELECT c.[Id] AS [OldSystemCoachId], c.[OrganizationId] AS [OldSystemOrganizationId], u.[Id] AS [OldSystemUserId], u.[CompanyId] AS [OldSystemCompanyId], c.[FirstName], c.[LastName], c.[Email], c.[TimeZoneId] AS [TimeZone], c.[Phone] AS [PhoneString], c.[PhoneExt], c.[Notes], CAST(c.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Coach] c  LEFT JOIN [Bits].[User] u ON u.[Id] = c.[UserId]  WHERE c.[DeletedBy] IS NULL";
+        "SELECT c.[Id] AS [OldSystemCoachId], c.[OrganizationId] AS [OldSystemOrganizationId], u.[Id] AS [OldSystemUserId], u.[CompanyId] AS [OldSystemCompanyId], c.[FirstName], c.[LastName], c.[Email], c.[TimeZoneId] AS [TimeZone], c.[Phone] AS [PhoneString], c.[PhoneExt], c.[Role], c.[Notes], CAST(c.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Coach] c  LEFT JOIN [Bits].[User] u ON u.[Id] = c.[UserId]  WHERE c.[DeletedBy] IS NULL";
     public const string SqlGetDeleted = 
-        "SELECT c.[Id] AS [OldSystemCoachId], c.[OrganizationId] AS [OldSystemOrganizationId], u.[Id] AS [OldSystemUserId], u.[CompanyId] AS [OldSystemCompanyId], c.[FirstName], c.[LastName], c.[Email], c.[TimeZoneId] AS [TimeZone], c.[Phone] AS [PhoneString], c.[PhoneExt], c.[Notes], CAST(c.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Coach] c  LEFT JOIN [Bits].[User] u ON u.[Id] = c.[UserId]  WHERE c.[Id] = @Id";
+        "SELECT c.[Id] AS [OldSystemCoachId], c.[OrganizationId] AS [OldSystemOrganizationId], u.[Id] AS [OldSystemUserId], u.[CompanyId] AS [OldSystemCompanyId], c.[FirstName], c.[LastName], c.[Email], c.[TimeZoneId] AS [TimeZone], c.[Phone] AS [PhoneString], c.[PhoneExt], c.[Role], c.[Notes], CAST(c.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Coach] c  LEFT JOIN [Bits].[User] u ON u.[Id] = c.[UserId]  WHERE c.[Id] = @Id";
     #endregion
 
     #region Id Property
@@ -24,18 +24,20 @@ public class CoachSql
 
     public Guid? OldSystemCompanyId { get; set; } = null;
 
-    public string FirstName { get; set; } = default!;
+    public string FirstName { get; set; } = null!;
 
-    public string LastName { get; set; } = default!;
+    public string LastName { get; set; } = null!;
 
-    public string Email { get; set; } = default!;
+    public string Email { get; set; } = null!;
 
-    public string TimeZone { get; set; } = default!;
+    public string TimeZone { get; set; } = null!;
 
     [NotMapped]
-    public string PhoneString { get; set; } = default!;
+    public string PhoneString { get; set; } = null!;
 
-    public string PhoneExt { get; set; } = default!;
+    public string? PhoneExt { get; set; } = null!;
+
+    public string? Role { get; set; } = null!;
 
     public string? Notes { get; set; } = null;
 

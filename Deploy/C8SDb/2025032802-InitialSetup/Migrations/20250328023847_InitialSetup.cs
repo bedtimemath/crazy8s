@@ -293,7 +293,7 @@ namespace C8S.Domain.EFCore.Migrations
                     TicketId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    PlaceId = table.Column<int>(type: "int", nullable: false),
+                    PlaceId = table.Column<int>(type: "int", nullable: true),
                     RequestId = table.Column<int>(type: "int", nullable: false),
                     InvoiceId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -433,7 +433,7 @@ namespace C8S.Domain.EFCore.Migrations
                 name: "TicketPersons",
                 columns: table => new
                 {
-                    SalePersonId = table.Column<int>(type: "int", nullable: false)
+                    TicketPersonId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Ordinal = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
@@ -441,7 +441,7 @@ namespace C8S.Domain.EFCore.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketPersons", x => x.SalePersonId);
+                    table.PrimaryKey("PK_TicketPersons", x => x.TicketPersonId);
                     table.ForeignKey(
                         name: "FK_TicketPersons_Persons_PersonId",
                         column: x => x.PersonId,
@@ -657,6 +657,12 @@ namespace C8S.Domain.EFCore.Migrations
                 name: "IX_OldNews_OldTableName_OldId",
                 table: "OldNews",
                 columns: new[] { "OldTableName", "OldId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OldNews_OldTableName_OldId_NewTableName_NewId",
+                table: "OldNews",
+                columns: new[] { "OldTableName", "OldId", "NewTableName", "NewId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderClubs_ClubId",

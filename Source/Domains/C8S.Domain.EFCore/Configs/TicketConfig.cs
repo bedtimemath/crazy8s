@@ -28,9 +28,9 @@ public class TicketConfig : BaseCoreConfig<TicketDb>
 
         #region Reference Properties
         //[Required, ForeignKey(nameof(Place))]
-        //public int PlaceId { get; set; } = default!;
+        //public int? PlaceId { get; set; } = default!;
         entity.Property(m => m.PlaceId)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //[ForeignKey(nameof(Invoice))]
         //public int? InvoiceId { get; set; } = default!;

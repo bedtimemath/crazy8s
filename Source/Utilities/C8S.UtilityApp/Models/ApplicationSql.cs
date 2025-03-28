@@ -9,7 +9,8 @@ public class ApplicationSql
 {
     #region Constants & ReadOnlys
     public const string SqlGet =
-        "SELECT a.[Id] AS [OldSystemApplicationId], a.[NewOrganizationAddressId] AS [OldSystemAddressId], a.[LinkedCoachId] AS [OldSystemLinkedCoachId], a.[LinkedOrganizationId] AS [OldSystemLinkedOrganizationId], aps.[Name] AS [StatusString], ct.[Name] AS [ApplicantTypeString], a.[CoachFirstName] AS [ApplicantFirstName], a.[CoachLastName] AS [ApplicantLastName], a.[CoachEmail] AS [ApplicantEmail], a.[CoachPhone] AS [ApplicantPhoneString], a.[CoachPhoneExt] AS [ApplicantPhoneExt], a.[CoachTimeZoneId] AS [ApplicantTimeZone], a.[NewOrganizationName] AS [OrganizationName], ot.[Name] AS [OrganizationTypeString], a.[NewOrganizationOrganizationTypeOther] AS [OrganizationTypeOther], a.[NewOrganizationTaxId] AS [OrganizationTaxIdentifier], a.[WorkshopCode], a.[AppointmentId], a.[Comments], a.[Submitted] AS [SubmittedOn], a.[Notes], CAST(a.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Application] a  LEFT JOIN [Crazy8s].[ApplicationStatus] aps ON aps.[Id] = a.[ApplicationStatusId] LEFT JOIN [Crazy8s].[CoachType] ct ON ct.[Id] = a.[CoachTypeId] LEFT JOIN [Crazy8s].[OrganizationType] ot ON ot.[Id] = a.[NewOrganizationOrganizationTypeId] WHERE a.[DeletedBy] IS NULL AND a.[ApplicationStatusId] IS NOT NULL";
+        "SELECT a.[Id] AS [OldSystemApplicationId], a.[NewOrganizationAddressId] AS [OldSystemAddressId], a.[LinkedCoachId] AS [OldSystemLinkedCoachId], a.[LinkedOrganizationId] AS [OldSystemLinkedOrganizationId], aps.[Name] AS [StatusString], ct.[Name] AS [ApplicantTypeString], a.[CoachFirstName] AS [ApplicantFirstName], a.[CoachLastName] AS [ApplicantLastName], a.[CoachEmail] AS [ApplicantEmail], a.[CoachPhone] AS [ApplicantPhoneString], a.[CoachPhoneExt] AS [ApplicantPhoneExt], a.[CoachRole] AS [ApplicantRole], a.[CoachTimeZoneId] AS [ApplicantTimeZone], a.[NewOrganizationName] AS [OrganizationName], ot.[Name] AS [OrganizationTypeString], a.[NewOrganizationOrganizationTypeOther] AS [OrganizationTypeOther], a.[NewOrganizationTaxId] AS [OrganizationTaxIdentifier], a.[WorkshopCode], a.[AppointmentId], a.[Comments], a.[Submitted] AS [SubmittedOn], a.[Notes], CAST(a.[Created] AS VARCHAR) AS [CreatedOnString] FROM [Crazy8s].[Application] a  LEFT JOIN [Crazy8s].[ApplicationStatus] aps ON aps.[Id] = a.[ApplicationStatusId] LEFT JOIN [Crazy8s].[CoachType] ct ON ct.[Id] = a.[CoachTypeId] LEFT JOIN [Crazy8s].[OrganizationType] ot ON ot.[Id] = a.[NewOrganizationOrganizationTypeId] WHERE a.[DeletedBy] IS NULL AND " + 
+        "a.[Submitted] IS NOT NULL AND a.[ApplicationStatusId] IS NOT NULL AND a.[CoachLastName] IS NOT NULL AND a.[CoachEmail] IS NOT NULL AND a.[CoachTimeZoneId] IS NOT NULL";
     #endregion
 
     #region Id Property
@@ -26,23 +27,25 @@ public class ApplicationSql
     public Guid? OldSystemLinkedOrganizationId { get; set; } = null;
 
     [NotMapped]
-    public string? StatusString { get; set; } = null;
+    public string StatusString { get; set; } = null!;
 
     [NotMapped]
     public string? ApplicantTypeString { get; set; } = null;
 
     public string? ApplicantFirstName { get; set; } = null;
 
-    public string? ApplicantLastName { get; set; } = null;
+    public string ApplicantLastName { get; set; } = null!;
 
-    public string? ApplicantEmail { get; set; } = null;
+    public string ApplicantEmail { get; set; } = null!;
 
     [NotMapped]
     public string? ApplicantPhoneString { get; set; } = null;
 
     public string? ApplicantPhoneExt { get; set; } = null;
 
-    public string? ApplicantTimeZone { get; set; } = null;
+    public string? ApplicantRole { get; set; } = null;
+
+    public string ApplicantTimeZone { get; set; } = null!;
 
     public string? OrganizationName { get; set; } = null;
 
@@ -75,7 +78,7 @@ public class ApplicationSql
             _ => $"({ApplicantPhoneString.Substring(0,3)}) {ApplicantPhoneString.Substring(3,3)}-{ApplicantPhoneString.Substring(6,4)}"
         };
 
-    public RequestStatus? Status => StatusString switch
+    public RequestStatus Status => StatusString switch
     {
         "Approved" => RequestStatus.Approved,
         "Deleted" => RequestStatus.Deleted,
@@ -83,7 +86,6 @@ public class ApplicationSql
         "Future" => RequestStatus.Future,
         "Pending" => RequestStatus.Pending,
         "Received" => RequestStatus.Received,
-        null => null,
         _ => throw new Exception($"Unrecognized: {StatusString}")
     };
 

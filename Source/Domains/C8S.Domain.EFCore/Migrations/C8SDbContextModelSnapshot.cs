@@ -352,6 +352,9 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasIndex("OldTableName", "OldId");
 
+                    b.HasIndex("OldTableName", "OldId", "NewTableName", "NewId")
+                        .IsUnique();
+
                     b.ToTable("OldNews");
                 });
 
@@ -698,7 +701,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset?>("ModifiedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("PlaceId")
+                    b.Property<int?>("PlaceId")
                         .HasColumnType("int");
 
                     b.Property<int>("RequestId")
@@ -725,11 +728,11 @@ namespace C8S.Domain.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.TicketPersonDb", b =>
                 {
-                    b.Property<int>("SalePersonId")
+                    b.Property<int>("TicketPersonId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SalePersonId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketPersonId"));
 
                     b.Property<int>("Ordinal")
                         .HasColumnType("int");
@@ -740,7 +743,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<int>("TicketId")
                         .HasColumnType("int");
 
-                    b.HasKey("SalePersonId");
+                    b.HasKey("TicketPersonId");
 
                     b.HasIndex("PersonId");
 

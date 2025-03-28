@@ -4,6 +4,10 @@ namespace C8S.Domain.Enums;
 
 public enum TicketStatus
 {
+    [Label("Requested")]
+    Requested,
+    [Label("Denied")]
+    Denied,
     [Label("Potential")]
     Potential,
     [Label("Pending")]

@@ -11,7 +11,7 @@ GO
 BEGIN TRANSACTION;
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Invoices] (
@@ -26,7 +26,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [KitPages] (
@@ -42,7 +42,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Offers] (
@@ -59,7 +59,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [OldNews] (
@@ -74,7 +74,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Places] (
@@ -99,7 +99,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Requests] (
@@ -119,7 +119,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Unfinisheds] (
@@ -161,7 +161,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [WorkshopCodes] (
@@ -175,7 +175,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Orders] (
@@ -207,7 +207,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Kits] (
@@ -230,7 +230,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Persons] (
@@ -253,13 +253,13 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Tickets] (
         [TicketId] int NOT NULL IDENTITY,
         [Status] nvarchar(25) NOT NULL,
-        [PlaceId] int NOT NULL,
+        [PlaceId] int NULL,
         [RequestId] int NOT NULL,
         [InvoiceId] int NULL,
         [CreatedOn] datetimeoffset NOT NULL,
@@ -273,7 +273,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Shipments] (
@@ -289,7 +289,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [InvoicePersons] (
@@ -305,7 +305,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Permissions] (
@@ -321,7 +321,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Clubs] (
@@ -342,15 +342,15 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [TicketPersons] (
-        [SalePersonId] int NOT NULL IDENTITY,
+        [TicketPersonId] int NOT NULL IDENTITY,
         [Ordinal] int NOT NULL,
         [PersonId] int NOT NULL,
         [TicketId] int NOT NULL,
-        CONSTRAINT [PK_TicketPersons] PRIMARY KEY ([SalePersonId]),
+        CONSTRAINT [PK_TicketPersons] PRIMARY KEY ([TicketPersonId]),
         CONSTRAINT [FK_TicketPersons_Persons_PersonId] FOREIGN KEY ([PersonId]) REFERENCES [Persons] ([PersonId]) ON DELETE CASCADE,
         CONSTRAINT [FK_TicketPersons_Tickets_TicketId] FOREIGN KEY ([TicketId]) REFERENCES [Tickets] ([TicketId]) ON DELETE CASCADE
     );
@@ -358,7 +358,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [ClubPersons] (
@@ -374,7 +374,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [Notes] (
@@ -402,7 +402,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE TABLE [OrderClubs] (
@@ -416,7 +416,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_ClubPersons_ClubId] ON [ClubPersons] ([ClubId]);
@@ -424,7 +424,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_ClubPersons_PersonId] ON [ClubPersons] ([PersonId]);
@@ -432,7 +432,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Clubs_KitId] ON [Clubs] ([KitId]);
@@ -440,7 +440,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Clubs_PlaceId] ON [Clubs] ([PlaceId]);
@@ -448,7 +448,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Clubs_TicketId] ON [Clubs] ([TicketId]);
@@ -456,7 +456,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_InvoicePersons_InvoiceId] ON [InvoicePersons] ([InvoiceId]);
@@ -464,7 +464,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_InvoicePersons_PersonId] ON [InvoicePersons] ([PersonId]);
@@ -472,7 +472,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE UNIQUE INDEX [IX_KitPages_Url] ON [KitPages] ([Url]);
@@ -480,7 +480,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Kits_KitPageId] ON [Kits] ([KitPageId]);
@@ -488,7 +488,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE UNIQUE INDEX [IX_Kits_OfferId] ON [Kits] ([OfferId]);
@@ -496,7 +496,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_Kits_Year_Season_AgeLevel_Version] ON [Kits] ([Year], [Season], [AgeLevel], [Version]) WHERE [Version] IS NOT NULL');
@@ -504,7 +504,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Notes_ClubId] ON [Notes] ([ClubId]);
@@ -512,7 +512,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Notes_InvoiceId] ON [Notes] ([InvoiceId]);
@@ -520,7 +520,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Notes_OrderId] ON [Notes] ([OrderId]);
@@ -528,7 +528,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Notes_PersonId] ON [Notes] ([PersonId]);
@@ -536,7 +536,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Notes_PlaceId] ON [Notes] ([PlaceId]);
@@ -544,7 +544,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Notes_TicketId] ON [Notes] ([TicketId]);
@@ -552,7 +552,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_OldNews_NewTableName_NewId] ON [OldNews] ([NewTableName], [NewId]);
@@ -560,7 +560,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_OldNews_OldTableName_OldId] ON [OldNews] ([OldTableName], [OldId]);
@@ -568,7 +568,15 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
+)
+BEGIN
+    CREATE UNIQUE INDEX [IX_OldNews_OldTableName_OldId_NewTableName_NewId] ON [OldNews] ([OldTableName], [OldId], [NewTableName], [NewId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_OrderClubs_ClubId] ON [OrderClubs] ([ClubId]);
@@ -576,7 +584,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Orders_InvoiceId] ON [Orders] ([InvoiceId]);
@@ -584,7 +592,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Permissions_KitPageId] ON [Permissions] ([KitPageId]);
@@ -592,7 +600,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Permissions_PersonId] ON [Permissions] ([PersonId]);
@@ -600,7 +608,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_Persons_Email] ON [Persons] ([Email]) WHERE [Email] IS NOT NULL');
@@ -608,7 +616,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Persons_PlaceId] ON [Persons] ([PlaceId]);
@@ -616,7 +624,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Places_ParentId] ON [Places] ([ParentId]);
@@ -624,7 +632,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Shipments_OrderId] ON [Shipments] ([OrderId]);
@@ -632,7 +640,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_TicketPersons_PersonId] ON [TicketPersons] ([PersonId]);
@@ -640,7 +648,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_TicketPersons_TicketId] ON [TicketPersons] ([TicketId]);
@@ -648,7 +656,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     EXEC(N'CREATE UNIQUE INDEX [IX_Tickets_InvoiceId] ON [Tickets] ([InvoiceId]) WHERE [InvoiceId] IS NOT NULL');
@@ -656,7 +664,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE INDEX [IX_Tickets_PlaceId] ON [Tickets] ([PlaceId]);
@@ -664,7 +672,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE UNIQUE INDEX [IX_Tickets_RequestId] ON [Tickets] ([RequestId]);
@@ -672,7 +680,7 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     CREATE UNIQUE INDEX [IX_Unfinisheds_Code] ON [Unfinisheds] ([Code]);
@@ -680,11 +688,11 @@ END;
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250327175245_InitialSetup'
+    WHERE [MigrationId] = N'20250328023847_InitialSetup'
 )
 BEGIN
     INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-    VALUES (N'20250327175245_InitialSetup', N'9.0.2');
+    VALUES (N'20250328023847_InitialSetup', N'9.0.2');
 END;
 
 COMMIT;

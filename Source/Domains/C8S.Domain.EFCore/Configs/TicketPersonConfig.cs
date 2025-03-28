@@ -11,7 +11,7 @@ public class TicketPersonConfig : IEntityTypeConfiguration<TicketPersonDb>
         #region Id Property
         // [Required]
         // public int SalePersonId { get; set; }
-        entity.HasKey(m => m.SalePersonId);
+        entity.HasKey(m => m.TicketPersonId);
         #endregion
 
         #region Database Properties

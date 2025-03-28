@@ -9,14 +9,14 @@ public class TicketPersonDb: BaseDb
 {
     #region Override Properties
     [NotMapped] 
-    public override int Id => SalePersonId;
+    public override int Id => TicketPersonId;
     [NotMapped] 
     public override string Display => $"{Ticket}<=>{Person}";
     #endregion
 
     #region Id Property
     [Required] 
-    public int SalePersonId { get; set; }
+    public int TicketPersonId { get; set; }
     #endregion
 
     #region Database Properties

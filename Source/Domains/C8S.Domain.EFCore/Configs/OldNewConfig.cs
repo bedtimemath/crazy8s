@@ -42,6 +42,7 @@ public class OldNewConfig : IEntityTypeConfiguration<OldNewDb>
         #region Indices
         entity.HasIndex(m => new { m.OldTableName, m.OldId }).IsUnique(false);
         entity.HasIndex(m => new { m.NewTableName, m.NewId }).IsUnique(false);
+        entity.HasIndex(m => new { m.OldTableName, m.OldId, m.NewTableName, m.NewId }).IsUnique(true);
         #endregion
     }
 }
