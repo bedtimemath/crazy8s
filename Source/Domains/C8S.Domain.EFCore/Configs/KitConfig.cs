@@ -22,8 +22,8 @@ public class KitConfig : BaseCoreConfig<KitDb>
         entity.Property(e => e.Key)
             .HasMaxLength(SoftCrowConstants.MaxLengths.Short)
             .HasComputedColumnSql("CASE WHEN [Version] IS NOT NULL THEN 'C8.S' " +
-              "+ CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + [AgeLevel] " +
-              "ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [AgeLevel] END")
+              "+ CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + RIGHT([AgeLevel],2) " +
+              "ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + RIGHT([AgeLevel],2) END")
             .IsRequired(true);
         #endregion
 
@@ -46,11 +46,11 @@ public class KitConfig : BaseCoreConfig<KitDb>
         entity.Property(m => m.Season)
             .IsRequired(true);
 
-        //[MaxLength(SharedConstants.MaxLengths.Tiny)]
+        //[MaxLength(SharedConstants.MaxLengths.Shorter)]
         //[JsonConverter(typeof(JsonStringEnumConverter))]
         //public AgeLevel AgeLevel { get; set; }
         entity.Property(m => m.AgeLevel)
-            .HasMaxLength(SoftCrowConstants.MaxLengths.Tiny)
+            .HasMaxLength(SoftCrowConstants.MaxLengths.Shorter)
             .HasConversion<string>()
             .IsRequired(true);
 
@@ -82,8 +82,9 @@ public class KitConfig : BaseCoreConfig<KitDb>
         #region Navigation Configuration
         //public OfferDb Offer { get; set; } = null!;
         entity.HasOne<OfferDb>(m => m.Offer)
-            .WithOne(m => m.Kit)
-            .HasForeignKey<KitDb>(m => m.OfferId);
+            .WithMany(m => m.Kits)
+            .HasForeignKey(m => m.OfferId)
+            .IsRequired(true);
 
         //public KitPageDb? KitPage { get; set; } = null!;
         entity.HasOne<KitPageDb>()

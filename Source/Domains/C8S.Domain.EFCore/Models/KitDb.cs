@@ -36,7 +36,7 @@ public class KitDb : BaseCoreDb, IKit
 
     public int Season { get; set; }
 
-    [MaxLength(SoftCrowConstants.MaxLengths.Tiny)]
+    [MaxLength(SoftCrowConstants.MaxLengths.Shorter)]
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public AgeLevel AgeLevel { get; set; }
 

@@ -46,6 +46,6 @@ public class OfferDb : BaseCoreDb
     #endregion
 
     #region Reference Properties
-    public KitDb Kit { get; set; } = null!;
+    public ICollection<KitDb> Kits { get; set; } = null!;
     #endregion
 }

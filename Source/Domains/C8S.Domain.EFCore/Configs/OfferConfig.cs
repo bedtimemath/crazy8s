@@ -59,11 +59,11 @@ public class OfferConfig : BaseCoreConfig<OfferDb>
         #endregion
 
         #region Navigation Configuration
-        //public KitDb Kit { get; set; } = null!;
-        entity.HasOne<KitDb>(m => m.Kit)
+        //public ICollection<KitDb> Kits { get; set; } = null!;
+        entity.HasMany<KitDb>(m => m.Kits)
             .WithOne(m => m.Offer)
-            .HasForeignKey<KitDb>(m => m.OfferId)
-            .IsRequired(true);
+            .HasForeignKey(m => m.OfferId)
+            .IsRequired(false);
         #endregion
 
         #region Indices

@@ -234,11 +234,11 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     KitId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Key = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false, computedColumnSql: "CASE WHEN [Version] IS NOT NULL THEN 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + [AgeLevel] ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [AgeLevel] END"),
+                    Key = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false, computedColumnSql: "CASE WHEN [Version] IS NOT NULL THEN 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + RIGHT([AgeLevel],2) ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + RIGHT([AgeLevel],2) END"),
                     Status = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
                     Year = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
                     Season = table.Column<int>(type: "int", nullable: false),
-                    AgeLevel = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    AgeLevel = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Version = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: true),
                     OfferId = table.Column<int>(type: "int", nullable: false),
@@ -258,8 +258,7 @@ namespace C8S.Domain.EFCore.Migrations
                         name: "FK_Kits_Offers_OfferId",
                         column: x => x.OfferId,
                         principalTable: "Offers",
-                        principalColumn: "OfferId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OfferId");
                 });
 
             migrationBuilder.CreateTable(
@@ -612,8 +611,7 @@ namespace C8S.Domain.EFCore.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Kits_OfferId",
                 table: "Kits",
-                column: "OfferId",
-                unique: true);
+                column: "OfferId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Kits_Year_Season_AgeLevel_Version",

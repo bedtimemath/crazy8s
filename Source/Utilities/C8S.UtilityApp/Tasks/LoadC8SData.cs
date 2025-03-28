@@ -5,6 +5,7 @@ using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using C8S.Domain.Features.Requests.Enums;
+using C8S.Domain.Features.Skus.Models;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
@@ -61,10 +62,8 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
-        /*** SET UP OFFERS ***/
-        var sqlSkus = (await oldSystemService.GetSkus())
-            .Where(s => s.Status != OfferStatus.Draft)
-            .ToList();
+        /*** SET UP OFFERS & KITS ***/
+        var sqlSkus = (await oldSystemService.GetSkus()).ToList();
         logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
 
         await RemoveExistingSkus(sqlSkus);
@@ -74,12 +73,12 @@ internal class LoadC8SData(
         {
             var offersAdded = await CreateOffersFromSkus(sqlSkus);
             logger.LogInformation("Added {Count:#,##0} offers.", offersAdded);
+            
+            var offerIdLookup = await CreateOffersLookup();
+
+            var kitsAdded = await CreateKitsFromSkus(sqlSkus, offerIdLookup);
+            logger.LogInformation("Added {Count:#,##0} kits.", kitsAdded);
         }
-        
-        /*** SET UP KITS ***/
-
-
-        return 0;
 
         /*** ADDRESSES ***/
         var sqlAddresses = (await oldSystemService.GetAddresses()).ToList();
@@ -295,27 +294,75 @@ internal class LoadC8SData(
         return added;
     }
             
-#if false
-            var kit = new KitDb()
-            {
-                Status = sqlSku.Status switch
+    private async Task<int> CreateKitsFromSkus(List<SkuSql> sqlSkus, Dictionary<Guid,int> offersLookup)
+    {
+        var skusCount = sqlSkus.Count;
+        var added = 0;
+        ConsoleEx.StartProgress("Adding kits: ");
+        for (int index = 0; index < skusCount; index++)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var sqlSku = sqlSkus[index];
+
+            var year = GetYearFromSqlSku(sqlSku);
+            var season = sqlSku.Season ?? throw new Exception("Missing Season");
+            var ageLevel = sqlSku.AgeLevel ?? throw new Exception("Missing AgeLevel");
+            var version = GetVersionFromSqlSku(sqlSku);
+
+            var kit = await dbContext.Kits
+                .FirstOrDefaultAsync(k => k.Year == year && k.Season == season && k.AgeLevel == ageLevel && k.Version == version);
+            if (kit == null)
+            {            
+                if (!offersLookup.TryGetValue(sqlSku.OldSystemSkuId ?? Guid.Empty, out var offerId))
+                    throw new Exception($"Could not find offer for sku ({sqlSku.OldSystemSkuId})");
+                var offer = await dbContext.Offers.FirstOrDefaultAsync(o => o.OfferId == offerId) ?? 
+                            throw new Exception($"Could not find offer ({offerId})");
+
+                kit = new KitDb()
                 {
-                    OfferStatus.Draft => KitStatus.Draft,
-                    OfferStatus.Active => KitStatus.Active,
-                    OfferStatus.Inactive => KitStatus.Inactive,
-                    null => KitStatus.Inactive,
-                    _ => throw new ArgumentOutOfRangeException(nameof(sqlSku.Status))
-                },
-                Offer = offer,
-                Year = GetYearFromSqlSku(sqlSku),
-                Season = sqlSku.Season!.Value,
-                AgeLevel = sqlSku.AgeLevel!.Value,
-                Version = GetVersionFromSqlSku(sqlSku),
-                Comments = sqlSku.Notes,
-                CreatedOn = sqlSku.CreatedOn
-            };
-            dbContext.Kits.Add(kit); 
-#endif
+                    Status = sqlSku.Status switch
+                    {
+                        OfferStatus.Draft => KitStatus.Draft,
+                        OfferStatus.Active => KitStatus.Active,
+                        OfferStatus.Inactive => KitStatus.Inactive,
+                        null => KitStatus.Inactive,
+                        _ => throw new ArgumentOutOfRangeException(nameof(sqlSku.Status))
+                    },
+                    Offer = offer,
+                    Year = year,
+                    Season = season,
+                    AgeLevel = ageLevel,
+                    Version = version,
+                    Comments = sqlSku.Notes,
+                    CreatedOn = sqlSku.CreatedOn
+                };
+                dbContext.Kits.Add(kit); 
+
+                await dbContext.SaveChangesAsync();
+                added++;
+            }
+
+            // remember that this has been handled
+            if (sqlSku.OldSystemSkuId != null)
+            {
+                var oldNewKit = new OldNewDb()
+                {
+                    OldTableName = SkuTable,
+                    OldId = sqlSku.OldSystemSkuId!.Value,
+                    NewTableName = nameof(KitDb),
+                    NewId = kit.KitId
+                };
+                dbContext.OldNews.Add(oldNewKit);
+                
+                await dbContext.SaveChangesAsync();
+            }
+
+            ConsoleEx.ShowProgress((float)index / (float)skusCount);
+        }
+        ConsoleEx.EndProgress();
+
+        return added;
+    }
 
     private async Task<(int, int)> AddPersons(List<CoachSql> sqlCoaches)
     {
@@ -974,6 +1021,30 @@ internal class LoadC8SData(
         ConsoleEx.EndProgress();
 
         return ticketIdLookup;
+    }
+    
+    private async Task<Dictionary<Guid, int>> CreateOffersLookup()
+    {
+        var offerIdLookup = new Dictionary<Guid, int>();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        // create a lookup for offers given the old system coach id
+        var allOffers = await dbContext.Offers.AsNoTracking().ToListAsync();
+        var oldNewOffers = await dbContext.OldNews.AsNoTracking()
+            .Where(o => o.NewTableName == nameof(OfferDb) && o.OldTableName == SkuTable)
+            .ToListAsync();
+
+        ConsoleEx.StartProgress("Creating offers lookup: ");
+        var index = 0;
+        foreach (var oldNewOffer in oldNewOffers)
+        {
+            var offer = allOffers.FirstOrDefault(p => p.OfferId == oldNewOffer.NewId);
+            if (offer != null) offerIdLookup.Add(oldNewOffer.OldId, offer.OfferId);
+            ConsoleEx.ShowProgress((float)index++ / (float)oldNewOffers.Count);
+        }
+        ConsoleEx.EndProgress();
+
+        return offerIdLookup;
     }
     #endregion
 

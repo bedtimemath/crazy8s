@@ -19,8 +19,4 @@
 		<ProjectReference Include="..\C8S.Domain\C8S.Domain.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Migrations\" />
-	</ItemGroup>
-
 </Project>

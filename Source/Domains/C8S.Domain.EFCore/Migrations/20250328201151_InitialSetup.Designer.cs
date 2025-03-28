@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace C8S.Domain.EFCore.Migrations
 {
     [DbContext(typeof(C8SDbContext))]
-    [Migration("20250328174824_InitialSetup")]
+    [Migration("20250328201151_InitialSetup")]
     partial class InitialSetup
     {
         /// <inheritdoc />
@@ -162,8 +162,8 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<string>("AgeLevel")
                         .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Comments")
                         .HasMaxLength(8192)
@@ -177,7 +177,7 @@ namespace C8S.Domain.EFCore.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)")
-                        .HasComputedColumnSql("CASE WHEN [Version] IS NOT NULL THEN 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + [AgeLevel] ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [AgeLevel] END");
+                        .HasComputedColumnSql("CASE WHEN [Version] IS NOT NULL THEN 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + [Version] + '.' + RIGHT([AgeLevel],2) ELSE 'C8.S' + CAST([Season] AS VARCHAR) + '.' + [Year] + '.' + RIGHT([AgeLevel],2) END");
 
                     b.Property<int?>("KitPageId")
                         .HasColumnType("int");
@@ -209,8 +209,7 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.HasIndex("KitPageId");
 
-                    b.HasIndex("OfferId")
-                        .IsUnique();
+                    b.HasIndex("OfferId");
 
                     b.HasIndex("Year", "Season", "AgeLevel", "Version")
                         .IsUnique()
@@ -1101,10 +1100,8 @@ namespace C8S.Domain.EFCore.Migrations
                         .HasForeignKey("KitPageId");
 
                     b.HasOne("C8S.Domain.EFCore.Models.OfferDb", "Offer")
-                        .WithOne("Kit")
-                        .HasForeignKey("C8S.Domain.EFCore.Models.KitDb", "OfferId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Kits")
+                        .HasForeignKey("OfferId");
 
                     b.Navigation("KitPage");
 
@@ -1314,8 +1311,7 @@ namespace C8S.Domain.EFCore.Migrations
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OfferDb", b =>
                 {
-                    b.Navigation("Kit")
-                        .IsRequired();
+                    b.Navigation("Kits");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
