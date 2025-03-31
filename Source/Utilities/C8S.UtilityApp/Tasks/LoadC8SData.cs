@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
 using C8S.Domain.Features.Requests.Enums;
-using C8S.Domain.Features.Skus.Models;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
@@ -25,6 +25,9 @@ internal class LoadC8SData(
     : IActionLauncher
 {
     private const string SkuTable = "Sku";
+    private const string ClubTable = "Club";
+    private const string OrderTable = "Order";
+    private const string OrderSkuTable = "OrderSku";
     private const string ApplicationTable = "Application";
     private const string ApplicationClubTable = "ApplicationClub";
     private const string CoachTable = "Coach";
@@ -62,6 +65,15 @@ internal class LoadC8SData(
         if (firstChar != 'y') return 0;
         Console.WriteLine();
 
+        /*** VARIABLES USED THROUGHOUT ***/
+        ClubLookup? clubIdLookup = null;
+        PersonLookup? personIdLookup = null;
+        PlaceLookup? placeIdLookup = null;
+        TicketLookup? ticketIdLookup = null;
+        OfferLookup? offerIdLookup = null;
+        OrderLookup? orderIdLookup = null;
+        KitLookup? kitIdLookup = null;
+
         /*** SET UP OFFERS & KITS ***/
         var sqlSkus = (await oldSystemService.GetSkus()).ToList();
         logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
@@ -73,8 +85,8 @@ internal class LoadC8SData(
         {
             var offersAdded = await CreateOffersFromSkus(sqlSkus);
             logger.LogInformation("Added {Count:#,##0} offers.", offersAdded);
-            
-            var offerIdLookup = await CreateOffersLookup();
+
+            offerIdLookup ??= await CreateOffersLookup();
 
             var kitsAdded = await CreateKitsFromSkus(sqlSkus, offerIdLookup);
             logger.LogInformation("Added {Count:#,##0} kits.", kitsAdded);
@@ -125,12 +137,15 @@ internal class LoadC8SData(
         /*** ADDING TICKETS ***/
         if (sqlApplications.Count > 0)
         {
-            var sqlApplicationsCount = await AddTickets(sqlApplications);
+            var sqlApplicationClubs = (await oldSystemService.GetApplicationClubs()).ToList();
+            logger.LogInformation("Found {Count:#,##0} application clubs", sqlApplicationClubs.Count);
+
+            var sqlApplicationsCount = await AddTickets(sqlApplications, sqlApplicationClubs);
             logger.LogInformation("Added {Count:#,##0} tickets + requests", sqlApplicationsCount);
 
-            var personIdLookup = await CreatePersonsLookup();
-            var placeIdLookup = await CreatePlacesLookup();
-            var ticketIdLookup = await CreateTicketsLookup();
+            personIdLookup ??= await CreatePersonsLookup();
+            placeIdLookup ??= await CreatePlacesLookup();
+            ticketIdLookup ??= await CreateTicketsLookup();
 
             /*** JOINING PERSONS TO TICKETS ***/
             var (personsAdded, personsExisting, personsMatched) = await JoinPersonsToTickets(sqlApplications, ticketIdLookup, personIdLookup);
@@ -145,59 +160,7 @@ internal class LoadC8SData(
                 placesJoined, placesAdded, placesExisting, placesSkipped);
         }
 
-        sqlApplications = (await oldSystemService.GetApplications()).ToList(); // todo: remove this line
-
-        /*** APPLICATION CLUBS ***/
-        var sqlApplicationClubs = (await oldSystemService.GetApplicationClubs()).ToList();
-        logger.LogInformation("Found {Count:#,##0} application clubs", sqlApplicationClubs.Count);
-
-        await RemoveExistingTicketClubs(sqlApplicationClubs);
-        logger.LogInformation("Removed existing, now {Count:#,##0} application clubs", sqlApplicationClubs.Count);
-
-#if false
-        /*** ADDING REQUESTED CLUBS ***/
-        if (sqlApplicationClubs.Count > 0)
-        {
-            var requestedClubsAdded = await AddTicketClubs(sqlApplicationClubs);
-            logger.LogInformation("Added {Count:#,##0} request clubs", requestedClubsAdded);
-        } 
-#endif
-
-
-#if false
-        /*** JOIN REQUESTS TO PERSONS & PLACES ***/
-        var personsLinked = await JoinRequestsToPersons(duplicateLookup);
-        logger.LogInformation("{Count:#,##0} requests updated with person.", personsLinked);
-
-        /*** JOIN REQUESTS TO PLACES ***/
-        var placesLinked = await JoinRequestsToPlaces();
-        logger.LogInformation("{Count:#,##0} requests updated with place.", placesLinked);
-
-        /*** CLUBS ***/
-        var sqlClubs = (await oldSystemService.GetClubs()).ToList();
-        logger.LogInformation("Found {Count:#,##0} clubs", sqlClubs.Count);
-
-        await RemoveExistingClubs(sqlClubs);
-        logger.LogInformation("Removed existing, now {Count:#,##0} applications", sqlClubs.Count);
-
-        var clubsAdded = await AddClubs(sqlClubs, duplicateLookup);
-        logger.LogInformation("Added {Count:#,##0} clubs", clubsAdded);
-
-        /*** SKUS ***/
-        var sqlSkus = (await oldSystemService.GetSkus()).ToList();
-        logger.LogInformation("Found {Count:#,##0} skus", sqlSkus.Count);
-
-        await RemoveExistingSkus(sqlSkus);
-        logger.LogInformation("Removed existing, now {Count:#,##0} skus", sqlSkus.Count);
-
-        /*** ADDING SKUS ***/
-        if (sqlSkus.Count > 0)
-        {
-            var skusAdded = await AddSkus(sqlSkus);
-            logger.LogInformation("Added {Count:#,##0} skus", skusAdded);
-        }
-
-        /*** ORDERS ***/
+        /*** ADDING ORDERS ***/
         var sqlOrders = (await oldSystemService.GetOrders()).ToList();
         var sqlOrderTrackers = (await oldSystemService.GetOrderTrackers()).ToList();
 
@@ -209,7 +172,7 @@ internal class LoadC8SData(
 
         if (sqlOrders.Count > 0)
         {
-            var ordersAdded = await AddOrders(sqlOrders, sqlAddresses, sqlOrderTrackers);
+            var ordersAdded = await AddOrders(sqlOrders, sqlOrderTrackers, sqlAddresses);
             logger.LogInformation("Added {Count:#,##0} orders", ordersAdded);
         }
 
@@ -220,10 +183,44 @@ internal class LoadC8SData(
         await RemoveExistingOrderSkus(sqlOrderSkus);
         logger.LogInformation("Removed existing, now {Count:#,##0} order skus", sqlOrderSkus.Count);
 
-        /*** JOIN ORDERS & SKUS TO ORDER SKUS ***/
-        var (addedOrderSkus, skippedOrderSkus) = await JoinOrderSkus(sqlOrderSkus);
-        logger.LogInformation("Added {Count:#,##0} orderSkus; skipped {Skipped:#,##0}", addedOrderSkus, skippedOrderSkus); 
-#endif
+        if (sqlOrderSkus.Count > 0)
+        {
+            orderIdLookup ??= await CreateOrdersLookup();
+            offerIdLookup ??= await CreateOffersLookup();
+
+            var offersJoined = await JoinOffersToOrders(sqlOrderSkus, orderIdLookup, offerIdLookup);
+            logger.LogInformation("Joined {Count:#,##0} offers to orders.", offersJoined);
+        }
+
+        /*** CLUBS ***/
+        var sqlClubs = (await oldSystemService.GetClubs()).ToList();
+        logger.LogInformation("Found {Count:#,##0} total clubs", sqlClubs.Count);
+
+        await RemoveExistingClubs(sqlClubs);
+        logger.LogInformation("Removed existing, now {Count:#,##0} total clubs", sqlClubs.Count);
+
+        if (sqlClubs.Count > 0)
+        {
+            orderIdLookup ??= await CreateOrdersLookup();
+            placeIdLookup ??= await CreatePlacesLookup();
+            kitIdLookup ??= await CreateKitsLookup();
+
+            var (clubsAdded, clubsMismatched) = await AddClubs(sqlClubs, orderIdLookup, placeIdLookup, kitIdLookup);
+            logger.LogInformation("Added {Added:#,##0} clubs; {Mismatched:#,##0} mismatched.", clubsAdded, clubsMismatched);
+
+        }
+
+        /*** COACHES ***/
+        sqlClubs = (await oldSystemService.GetClubs()).ToList(); // todo - remove
+
+        if (sqlClubs.Count > 0)
+        {
+            clubIdLookup ??= await CreateClubsLookup();
+            personIdLookup ??= await CreatePersonsLookup();
+
+            var (joined, skipped) = await JoinPersonsToClubs(sqlClubs, clubIdLookup, personIdLookup);
+            logger.LogInformation("Joined {Joined:#,##0} persons to clubs; {Skipped:#,##0} clubs skipped.", joined, skipped);
+        }
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
@@ -283,7 +280,7 @@ internal class LoadC8SData(
                     NewId = offer.OfferId
                 };
                 dbContext.OldNews.Add(oldNewOffer);
-                
+
                 await dbContext.SaveChangesAsync();
             }
 
@@ -293,8 +290,8 @@ internal class LoadC8SData(
 
         return added;
     }
-            
-    private async Task<int> CreateKitsFromSkus(List<SkuSql> sqlSkus, Dictionary<Guid,int> offersLookup)
+
+    private async Task<int> CreateKitsFromSkus(List<SkuSql> sqlSkus, OfferLookup offerIdLookup)
     {
         var skusCount = sqlSkus.Count;
         var added = 0;
@@ -312,10 +309,10 @@ internal class LoadC8SData(
             var kit = await dbContext.Kits
                 .FirstOrDefaultAsync(k => k.Year == year && k.Season == season && k.AgeLevel == ageLevel && k.Version == version);
             if (kit == null)
-            {            
-                if (!offersLookup.TryGetValue(sqlSku.OldSystemSkuId ?? Guid.Empty, out var offerId))
+            {
+                if (!offerIdLookup.TryGetValue(sqlSku.OldSystemSkuId ?? Guid.Empty, out var offerId))
                     throw new Exception($"Could not find offer for sku ({sqlSku.OldSystemSkuId})");
-                var offer = await dbContext.Offers.FirstOrDefaultAsync(o => o.OfferId == offerId) ?? 
+                var offer = await dbContext.Offers.FirstOrDefaultAsync(o => o.OfferId == offerId) ??
                             throw new Exception($"Could not find offer ({offerId})");
 
                 kit = new KitDb()
@@ -336,7 +333,7 @@ internal class LoadC8SData(
                     Comments = sqlSku.Notes,
                     CreatedOn = sqlSku.CreatedOn
                 };
-                dbContext.Kits.Add(kit); 
+                dbContext.Kits.Add(kit);
 
                 await dbContext.SaveChangesAsync();
                 added++;
@@ -353,7 +350,7 @@ internal class LoadC8SData(
                     NewId = kit.KitId
                 };
                 dbContext.OldNews.Add(oldNewKit);
-                
+
                 await dbContext.SaveChangesAsync();
             }
 
@@ -588,16 +585,28 @@ internal class LoadC8SData(
         return added;
     }
 
-    private async Task<int> AddTickets(List<ApplicationSql> sqlApplications)
+    private async Task<int> AddTickets(List<ApplicationSql> sqlApplications, List<ApplicationClubSql> sqlApplicationClubs)
     {
         var sqlApplicationsCount = sqlApplications.Count;
-        ConsoleEx.StartProgress("Adding tickets / requests: ");
+        ConsoleEx.StartProgress("Adding tickets + requests: ");
         var added = 0;
         for (int index = 0; index < sqlApplicationsCount; index++)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
             var sqlApplication = sqlApplications[index];
+            var sqlAppClubs = sqlApplicationClubs
+                .Where(ac => ac.OldSystemApplicationId == sqlApplication.OldSystemApplicationId).ToList();
+            var clubsRequested = String.Join(",", sqlAppClubs
+                .Select(ac => $"S{(ac.Season ?? 0):0}:" +
+                    ac.AgeLevel switch
+                    {
+                        AgeLevel.GradesK2 => "K2",
+                        AgeLevel.Grades35 => "35",
+                        null => "??",
+                        _ => throw new ArgumentOutOfRangeException()
+                    } + ":" +
+                    ac.StartsOn?.ToString("yyyy-MM-dd")));
 
             var ticketStatus = sqlApplication.Status switch
             {
@@ -616,6 +625,7 @@ internal class LoadC8SData(
                 ReferenceSource = null,
                 ReferenceSourceOther = null,
                 AppointmentId = sqlApplication.AppointmentId,
+                ClubsRequested = clubsRequested,
                 Comments = sqlApplication.Comments,
                 SubmittedOn = sqlApplication.SubmittedOn ?? throw new Exception("Missing Submitted On"),
                 CreatedOn = sqlApplication.CreatedOn
@@ -667,6 +677,18 @@ internal class LoadC8SData(
                 dbContext.OldNews.Add(oldNewAddress);
             }
 
+            foreach (var sqlAppClub in sqlAppClubs)
+            {
+                var oldNewAppClub = new OldNewDb()
+                {
+                    OldTableName = ApplicationClubTable,
+                    OldId = sqlAppClub.OldSystemApplicationClubId!.Value,
+                    NewTableName = nameof(TicketDb),
+                    NewId = ticket.TicketId
+                };
+                dbContext.OldNews.Add(oldNewAppClub);
+            }
+
             await dbContext.SaveChangesAsync();
             ConsoleEx.ShowProgress((float)index / (float)sqlApplicationsCount);
         }
@@ -675,44 +697,258 @@ internal class LoadC8SData(
         return added;
     }
 
-    private async Task<int> AddTicketClubs(List<ApplicationClubSql> sqlApplicationClubs,
-        Dictionary<Guid, int> ticketLookup)
+    private async Task<int> AddOrders(List<OrderSql> sqlOrders, List<OrderTrackerSql> sqlOrderTrackers, List<AddressSql> sqlAddresses)
     {
-        throw new NotImplementedException();
-
-#if false
-        var sqlCount = sqlApplicationClubs.Count;
-        ConsoleEx.StartProgress("Adding clubs from applications: ");
+        var sqlOrdersCount = sqlOrders.Count;
+        ConsoleEx.StartProgress("Adding orders & shipments: ");
         var added = 0;
-        for (int index = 0; index < sqlCount; index++)
+        for (int index = 0; index < sqlOrdersCount; index++)
         {
+            var sqlOrder = sqlOrders[index];
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-            var appClub = sqlApplicationClubs[index];
-            if (!ticketLookup.TryGetValue(appClub.OldSystemApplicationId!.Value, out var ticketId))
-                throw new Exception($"Could not find ticket for application: {appClub.OldSystemApplicationId}");
-            var ticket = dbContext.Tickets.FirstOrDefault(t => t.TicketId == ticketId) ??
-                         throw new Exception($"Could not find ticket for id: {ticketId}");
+            // start by finding the original address
+            var sqlAddress = sqlAddresses.FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrder.OldSystemShippingAddressId) ??
+                             throw new Exception($"Could not find address ({sqlOrder.OldSystemShippingAddressId}) for order ({sqlOrder.OldSystemOrderId})");
 
-            var requestedClub = new ClubDb()
+            // then the appropriate trackers
+            var sqlTrackers = sqlOrderTrackers
+                .Where(t => t.OldSystemOrderId == sqlOrder.OldSystemOrderId)
+                .ToList();
+
+            // then create the new order
+            var status = sqlOrder.Status ??
+                         throw new Exception($"Missing status for order ({sqlOrder.OldSystemOrderId})");
+            var recipient = sqlAddress.BusinessName ?? sqlAddress.RecipientName ??
+                throw new Exception($"Missing recipient for order ({sqlOrder.OldSystemOrderId})");
+            var line1 = sqlAddress.StreetAddress ??
+                        throw new Exception($"Missing street address for order ({sqlOrder.OldSystemOrderId})");
+            var city = sqlAddress.City ??
+                       throw new Exception($"Missing city for order ({sqlOrder.OldSystemOrderId})");
+            var state = sqlAddress.State ??
+                        throw new Exception($"Missing state for order ({sqlOrder.OldSystemOrderId})");
+            var zipCode = sqlAddress.PostalCode ??
+                          throw new Exception($"Missing ZIP for order ({sqlOrder.OldSystemOrderId})");
+            var order = new OrderDb()
             {
-                RequestId = request.RequestId,
-                OldSystemApplicationClubId = appClub.OldSystemApplicationClubId,
-                OldSystemApplicationId = appClub.OldSystemApplicationId,
-                OldSystemLinkedClubId = appClub.OldLinkedClubId,
-                AgeLevel = appClub.AgeLevel ?? throw new Exception("Missing Age Level"),
-                Season = appClub.Season ?? throw new Exception("Missing Season"),
-                StartsOn = appClub.StartsOn ?? throw new Exception("Missing Starts On")
+                Number = sqlOrder.Number,
+                Status = status,
+                ContactName = sqlAddress.RecipientName,
+                ContactEmail = sqlOrder.ContactEmail,
+                ContactPhone = sqlOrder.ContactPhone,
+                Recipient = recipient,
+                Line1 = line1,
+                City = city,
+                State = state,
+                ZIPCode = zipCode,
+                IsMilitary = sqlAddress.IsMilitary,
+                OrderedOn = sqlOrder.OrderedOn,
+                ArriveBy = sqlOrder.ArriveBy,
+                ShippedOn = sqlOrder.ShippedOn,
+                EmailedOn = sqlOrder.EmailedOn,
+                Shipments = sqlTrackers.Select(t => new ShipmentDb()
+                {
+                    ShipMethod = t.Method,
+                    TrackingNumber = t.Code
+                }).ToList(),
+                Notes = String.IsNullOrEmpty(sqlOrder.Notes) ? [] :
+                    new List<OrderNoteDb>() {
+                        new() { Author = SoftCrowConstants.Display.System, Content = sqlOrder.Notes }
+                    }
             };
-            dbContext.Clubs.Add(requestedClub);
+
+            dbContext.Orders.Add(order);
+            await dbContext.SaveChangesAsync();
             added++;
 
-            ConsoleEx.ShowProgress((float)index / (float)sqlCount);
+            //OldSystemOrderId = sqlOrder.OldSystemOrderId,
+            if (sqlOrder.OldSystemOrderId != null)
+            {
+                var oldNewOrder = new OldNewDb()
+                {
+                    OldTableName = OrderTable,
+                    OldId = sqlOrder.OldSystemOrderId!.Value,
+                    NewTableName = nameof(OrderDb),
+                    NewId = order.OrderId
+                };
+                dbContext.OldNews.Add(oldNewOrder);
+            }
+
+            //OldSystemShippingAddressId = sqlOrder.OldSystemShippingAddressId,
+            if (sqlOrder.OldSystemShippingAddressId != null)
+            {
+                var oldNewAddress = new OldNewDb()
+                {
+                    OldTableName = PostalAddressTable,
+                    OldId = sqlOrder.OldSystemShippingAddressId!.Value,
+                    NewTableName = nameof(OrderDb),
+                    NewId = order.OrderId
+                };
+                dbContext.OldNews.Add(oldNewAddress);
+            }
+
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlOrdersCount);
         }
         ConsoleEx.EndProgress();
 
-        return added; 
-#endif
+        return added;
+    }
+
+    private async Task<(int, int)> AddClubs(List<ClubSql> sqlClubs,
+        OrderLookup orderIdLookup, PlaceLookup placeIdLookup, KitLookup kitIdLookup)
+    {
+        var sqlClubsCount = sqlClubs.Count;
+        ConsoleEx.StartProgress("Adding clubs with kits & places: ");
+
+        var added = 0;
+        var mismatched = 0;
+        for (var index = 0; index < sqlClubsCount; index++)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var sqlClub = sqlClubs[index];
+
+            if (sqlClub.OldSystemOrganizationId == null)
+                throw new UnreachableException("SqlOrderClub missing OldSystemOrganizationId");
+
+            // determine the season & age-level
+            var season = sqlClub.Season ??
+                         throw new UnreachableException("Club does not have a season.");
+            var ageLevel = sqlClub.AgeLevel ??
+                           throw new UnreachableException("Club does not have an age level");
+            var mismatchNote = (String?)null;
+
+            // find the matching kit
+            KitDb? matchingKit;
+            List<OrderDb> orders = [];
+            if (sqlClub.OldSystemOrderId == null)
+            {
+                // find the closest kit using the lookup (start with getting lower years)
+                int kitId = 0;
+                for (var year = Int32.Parse(sqlClub.CreatedOn.ToString("yy")); year >= 12; year--)
+                {
+                    var key = $"S{season}-{((ageLevel == AgeLevel.GradesK2) ? "K2" : "35")}-{year}";
+                    if (kitIdLookup.TryGetValue(key, out kitId)) break;
+                }
+                // next try the higher years instead
+                if (kitId == 0)
+                {
+                    for (var year = Int32.Parse(sqlClub.CreatedOn.ToString("yy")) + 1; year <= 24; year++)
+                    {
+                        var key = $"S{season}-{((ageLevel == AgeLevel.GradesK2) ? "K2" : "35")}-{year}";
+                        if (kitIdLookup.TryGetValue(key, out kitId)) break;
+                    }
+                }
+                if (kitId == 0)
+                    throw new UnreachableException(
+                        $"'S{season}-{((ageLevel == AgeLevel.GradesK2) ? "K2" : "35")}-{sqlClub.CreatedOn:yy}' not found");
+
+                matchingKit = await dbContext.Kits.FirstOrDefaultAsync(k => k.KitId == kitId) ??
+                                  throw new UnreachableException($"Could not find kit Id#:{kitId}");
+                mismatchNote = "No matching order, so Kit year is assumed.";
+            }
+            else
+            {
+                var orderId = orderIdLookup.GetValueOrDefault(sqlClub.OldSystemOrderId!.Value);
+                var order = await dbContext.Orders
+                    .Include(o => o.OrderOffers)
+                    .ThenInclude(oo => oo.Offer)
+                    .ThenInclude(oo => oo.Kits)
+                    .AsSingleQuery()
+                    .FirstOrDefaultAsync(o => o.OrderId == orderId) ??
+                            throw new UnreachableException($"Could not find order #:{orderId}");
+                orders.Add(order);
+
+                var kits = order.OrderOffers
+                    .SelectMany(oo => oo.Offer.Kits)
+                    .ToList();
+                if (!kits.Any())
+                    throw new UnreachableException("Order did not have any kits.");
+
+                matchingKit = kits.FirstOrDefault(k => k.AgeLevel == ageLevel && k.Season == season);
+                if (matchingKit == null)
+                {
+                    mismatched++;
+                    if (kits.Any(k => k.Season == season))
+                    {
+                        var distinct = String.Join(", ", kits.Select(k => k.AgeLevel.GetLabel()).Distinct());
+                        mismatchNote = $"Order age level doesn't match club age level: {distinct} != {ageLevel.GetLabel()}";
+                        matchingKit = kits.First(k => k.Season == season);
+                    }
+                    else if (kits.Any(k => k.AgeLevel == ageLevel))
+                    {
+                        var distinct = String.Join(", ", kits.Select(k => k.Season).Distinct());
+                        mismatchNote = $"Order season doesn't match club season: {distinct} != {season}";
+                        matchingKit = kits.First(k => k.AgeLevel == ageLevel);
+                    }
+                    else
+                    {
+                        var distinct = String.Join(", ", kits.Select(k => $"S{k.Season} - {k.AgeLevel.GetLabel()}").Distinct());
+                        mismatchNote = $"Order season doesn't match club season: {distinct} != S{season} - {ageLevel.GetLabel()}";
+                        matchingKit = kits.First();
+                    }
+                }
+            }
+
+            // find the right place
+            var placeId = placeIdLookup.GetValueOrDefault(sqlClub.OldSystemOrganizationId!.Value);
+            var place = dbContext.Places.FirstOrDefault(p => p.PlaceId == placeId) ??
+                        throw new UnreachableException($"Could not find place #{placeId}"); ;
+
+            // now create the club itself
+            var clubStatus = sqlClub.StartsOnDateTime == null ? ClubStatus.Archived :
+                sqlClub.StartsOnDateTime < DateTime.Today ? ClubStatus.Complete : ClubStatus.Active;
+            var club = new ClubDb()
+            {
+                Status = clubStatus,
+                Kit = matchingKit,
+                Place = place,
+                StartsOn = sqlClub.StartsOn,
+                CreatedOn = sqlClub.CreatedOn,
+                Orders = orders
+            };
+            club.Notes ??= new List<ClubNoteDb>();
+            if (!String.IsNullOrEmpty(sqlClub.Notes))
+                club.Notes.Add(new()
+                {
+                    Author = SoftCrowConstants.Display.System,
+                    Content = sqlClub.Notes
+                });
+            if (!String.IsNullOrEmpty(mismatchNote))
+                club.Notes.Add(new()
+                {
+                    Author = SoftCrowConstants.Display.System,
+                    Content = mismatchNote
+                });
+
+            dbContext.Clubs.Add(club);
+
+            await dbContext.SaveChangesAsync();
+            added++;
+
+            //OldSystemClubId = sqlClub.OldSystemClubId,
+            if (sqlClub.OldSystemClubId != null)
+            {
+                var oldNewClub = new OldNewDb()
+                {
+                    OldTableName = ClubTable,
+                    OldId = sqlClub.OldSystemClubId!.Value,
+                    NewTableName = nameof(ClubDb),
+                    NewId = club.ClubId
+                };
+                dbContext.OldNews.Add(oldNewClub);
+            }
+
+            //OldSystemOrganizationId = sqlClub.OldSystemOrganizationId,
+            //OldSystemCoachId = sqlClub.OldSystemCoachId,
+            //OldSystemMeetingAddressId = sqlClub.OldSystemMeetingAddressId,
+
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
+        }
+        ConsoleEx.EndProgress();
+
+        return (added, mismatched);
     }
     #endregion
 
@@ -765,7 +1001,7 @@ internal class LoadC8SData(
     }
 
     private async Task<(int, int, int)> JoinPersonsToTickets(List<ApplicationSql> sqlApplications,
-        Dictionary<Guid, int> ticketIdLookup, Dictionary<Guid, int> personIdLookup)
+        TicketLookup ticketIdLookup, PersonLookup personIdLookup)
     {
         var sqlApplicationsCount = sqlApplications.Count;
         ConsoleEx.StartProgress("Adding persons to tickets: ");
@@ -830,7 +1066,7 @@ internal class LoadC8SData(
     }
 
     private async Task<(int, int, int)> JoinPlacesToTickets(List<ApplicationSql> sqlApplications, List<AddressSql> sqlAddresses,
-        Dictionary<Guid, int> ticketIdLookup, Dictionary<Guid, int> placeIdLookup)
+        TicketLookup ticketIdLookup, PlaceLookup placeIdLookup)
     {
         var sqlApplicationsCount = sqlApplications.Count;
         ConsoleEx.StartProgress("Adding places to tickets: ");
@@ -896,6 +1132,113 @@ internal class LoadC8SData(
 
         return (added, existing, skipped);
     }
+
+    private async Task<int> JoinOffersToOrders(List<OrderSkuSql> sqlOrderSkus,
+        OrderLookup orderIdLookup, OfferLookup offerIdLookup)
+    {
+        var sqlOrderSkusCount = sqlOrderSkus.Count;
+        ConsoleEx.StartProgress("Joining offers to orders: ");
+
+        var joined = 0;
+        for (int index = 0; index < sqlOrderSkusCount; index++)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var sqlOrderSku = sqlOrderSkus[index];
+
+            if (sqlOrderSku.OldSystemOrderId == null)
+                throw new UnreachableException("SqlOrderSku has no OldSystemOrderId");
+            if (sqlOrderSku.OldSystemSkuId == null)
+                throw new UnreachableException("SqlOrderSku has no OldSystemSkuId");
+
+            // find the right order
+            var orderId = orderIdLookup.GetValueOrDefault(sqlOrderSku.OldSystemOrderId!.Value);
+            var order = dbContext.Orders.FirstOrDefault(o => o.OrderId == orderId);
+            if (order == null)
+                throw new UnreachableException($"Could not find order: {orderId}");
+
+            // find the right offer
+            var offerId = offerIdLookup.GetValueOrDefault(sqlOrderSku.OldSystemSkuId!.Value);
+            var offer = dbContext.Offers.FirstOrDefault(o => o.OfferId == offerId);
+            if (offer == null)
+                throw new UnreachableException($"Could not find offer: {offerId}");
+
+            // join them together
+            var orderOffer = new OrderOfferDb()
+            {
+                Order = order,
+                Offer = offer,
+                Ordinal = sqlOrderSku.Ordinal,
+                Quantity = sqlOrderSku.Quantity
+            };
+            dbContext.OrderOffers.Add(orderOffer);
+            await dbContext.SaveChangesAsync();
+            joined++;
+
+            //public Guid? OldSystemOrderSkuId { get; set; } = null;
+            if (sqlOrderSku.OldSystemOrderSkuId != null)
+            {
+                var oldNewAddress = new OldNewDb()
+                {
+                    OldTableName = OrderSkuTable,
+                    OldId = sqlOrderSku.OldSystemOrderSkuId!.Value,
+                    NewTableName = nameof(OrderOfferDb),
+                    NewId = orderOffer.OrderOfferId
+                };
+                dbContext.OldNews.Add(oldNewAddress);
+            }
+
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlOrderSkusCount);
+        }
+        ConsoleEx.EndProgress();
+
+        return joined;
+    }
+
+    private async Task<(int, int)> JoinPersonsToClubs(List<ClubSql> sqlClubs, ClubLookup clubIdLookup, PersonLookup personIdLookup)
+    {
+        var sqlClubsCount = sqlClubs.Count;
+        ConsoleEx.StartProgress("Joining persons to clubs: ");
+
+        var joined = 0;
+        var skipped = 0;
+        for (int index = 0; index < sqlClubsCount; index++)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            var sqlClub = sqlClubs[index];
+
+            // find the right club
+            var clubId = clubIdLookup.GetValueOrDefault(sqlClub.OldSystemClubId!.Value);
+            var club = dbContext.Clubs.Include(c => c.ClubPersons).FirstOrDefault(o => o.ClubId == clubId);
+            if (club == null)
+                throw new UnreachableException($"Could not find club: {clubId}");
+
+            // if we've already got people, skip
+            if (club.ClubPersons.Any()) { skipped++; continue; }
+
+            // find the right person
+            var personId = personIdLookup.GetValueOrDefault(sqlClub.OldSystemCoachId!.Value);
+            var person = dbContext.Persons.FirstOrDefault(o => o.PersonId == personId) ??
+                         throw new UnreachableException($"Could not find person: {personId}");
+
+            // join them together
+            var clubPerson = new ClubPersonDb()
+            {
+                Club = club,
+                Person = person,
+                Ordinal = 0
+            };
+            dbContext.ClubPersons.Add(clubPerson);
+            await dbContext.SaveChangesAsync();
+            joined++;
+
+            await dbContext.SaveChangesAsync();
+            ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
+        }
+        ConsoleEx.EndProgress();
+
+        return (joined, skipped);
+    }
     #endregion
 
     #region Remove Dupes
@@ -929,16 +1272,6 @@ internal class LoadC8SData(
         sqlApplications.RemoveAll(m => existingGuids.Contains(m.OldSystemApplicationId!.Value));
     }
 
-    private async Task RemoveExistingTicketClubs(List<ApplicationClubSql> sqlApplicationClubs)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var existingGuids = await dbContext.OldNews
-            .Where(o => o.NewTableName == nameof(ClubDb) && o.OldTableName == ApplicationClubTable)
-            .Select(o => o.OldId)
-            .ToListAsync();
-        sqlApplicationClubs.RemoveAll(m => existingGuids.Contains(m.OldSystemApplicationId!.Value));
-    }
-
     private async Task RemoveExistingSkus(List<SkuSql> sqlSkus)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
@@ -948,15 +1281,87 @@ internal class LoadC8SData(
             .ToListAsync();
         sqlSkus.RemoveAll(m => existingGuids.Contains(m.OldSystemSkuId!.Value));
     }
+
+    private async Task RemoveExistingOrders(List<OrderSql> sqlOrders)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var existingGuids = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(OrderDb) && o.OldTableName == OrderTable)
+            .Select(o => o.OldId)
+            .ToListAsync();
+        sqlOrders.RemoveAll(m => existingGuids.Contains(m.OldSystemOrderId!.Value));
+    }
+
+    private async Task RemoveExistingOrderSkus(List<OrderSkuSql> sqlOrderSkus)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var existingGuids = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(OrderOfferDb) && o.OldTableName == OrderSkuTable)
+            .Select(o => o.OldId)
+            .ToListAsync();
+        sqlOrderSkus.RemoveAll(m => existingGuids.Contains(m.OldSystemOrderSkuId!.Value));
+    }
+
+    private async Task RemoveExistingOrderClubs(List<OrderClubSql> sqlClubs)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var existingGuids = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(ClubDb) && o.OldTableName == ClubTable)
+            .Select(o => o.OldId)
+            .ToListAsync();
+        sqlClubs.RemoveAll(m => existingGuids.Contains(m.OldSystemClubId!.Value));
+    }
+
+    private async Task RemoveExistingClubs(List<ClubSql> sqlClubs)
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+        var existingGuids = await dbContext.OldNews
+            .Where(o => o.NewTableName == nameof(ClubDb) && o.OldTableName == ClubTable)
+            .Select(o => o.OldId)
+            .ToListAsync();
+        sqlClubs.RemoveAll(m => existingGuids.Contains(m.OldSystemClubId!.Value));
+    }
+    #endregion
+
+    #region Other
+    private async Task<List<int>> GetClubIdsWithoutCoaches()
+    {
+        var dbContext = await dbContextFactory.CreateDbContextAsync();
+        return await dbContext.Clubs.Where(c => !c.ClubPersons.Any()).Select(c => c.ClubId).ToListAsync();
+    }
     #endregion
 
     #region Lookups
-    private async Task<Dictionary<Guid, int>> CreatePersonsLookup()
+    private async Task<ClubLookup> CreateClubsLookup()
     {
-        var personIdLookup = new Dictionary<Guid, int>();
+        var clubIdLookup = new ClubLookup();
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        // create a lookup for persons given the old system coach id
+        // create a lookup for clubs given the old system id
+        var allClubs = await dbContext.Clubs.AsNoTracking().ToListAsync();
+        var oldNewClubs = await dbContext.OldNews.AsNoTracking()
+            .Where(o => o.NewTableName == nameof(ClubDb) && o.OldTableName == ClubTable)
+            .ToListAsync();
+
+        ConsoleEx.StartProgress("Creating clubs lookup: ");
+        var index = 0;
+        foreach (var oldNewClub in oldNewClubs)
+        {
+            var club = allClubs.FirstOrDefault(p => p.ClubId == oldNewClub.NewId);
+            if (club != null) clubIdLookup.Add(oldNewClub.OldId, club.ClubId);
+            ConsoleEx.ShowProgress((float)index++ / (float)oldNewClubs.Count);
+        }
+        ConsoleEx.EndProgress();
+
+        return clubIdLookup;
+    }
+
+    private async Task<PersonLookup> CreatePersonsLookup()
+    {
+        var personIdLookup = new PersonLookup();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        // create a lookup for persons given the old system id
         var allPersons = await dbContext.Persons.AsNoTracking().ToListAsync();
         var oldNewPersons = await dbContext.OldNews.AsNoTracking()
             .Where(o => o.NewTableName == nameof(PersonDb) && o.OldTableName == CoachTable)
@@ -975,12 +1380,12 @@ internal class LoadC8SData(
         return personIdLookup;
     }
 
-    private async Task<Dictionary<Guid, int>> CreatePlacesLookup()
+    private async Task<PlaceLookup> CreatePlacesLookup()
     {
-        var placeIdLookup = new Dictionary<Guid, int>();
+        var placeIdLookup = new PlaceLookup();
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        // create a lookup for places given the old system coach id
+        // create a lookup for places given the old system id
         var allPlaces = await dbContext.Places.AsNoTracking().ToListAsync();
         var oldNewPlaces = await dbContext.OldNews.AsNoTracking()
             .Where(o => o.NewTableName == nameof(PlaceDb) && o.OldTableName == OrganizationTable)
@@ -999,9 +1404,9 @@ internal class LoadC8SData(
         return placeIdLookup;
     }
 
-    private async Task<Dictionary<Guid, int>> CreateTicketsLookup()
+    private async Task<TicketLookup> CreateTicketsLookup()
     {
-        var ticketIdLookup = new Dictionary<Guid, int>();
+        var ticketIdLookup = new TicketLookup();
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
         // create a lookup for tickets given the old system application id
@@ -1022,13 +1427,13 @@ internal class LoadC8SData(
 
         return ticketIdLookup;
     }
-    
-    private async Task<Dictionary<Guid, int>> CreateOffersLookup()
+
+    private async Task<OfferLookup> CreateOffersLookup()
     {
-        var offerIdLookup = new Dictionary<Guid, int>();
+        var offerIdLookup = new OfferLookup();
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        // create a lookup for offers given the old system coach id
+        // create a lookup for offers given the old system id
         var allOffers = await dbContext.Offers.AsNoTracking().ToListAsync();
         var oldNewOffers = await dbContext.OldNews.AsNoTracking()
             .Where(o => o.NewTableName == nameof(OfferDb) && o.OldTableName == SkuTable)
@@ -1046,336 +1451,59 @@ internal class LoadC8SData(
 
         return offerIdLookup;
     }
+
+    private async Task<OrderLookup> CreateOrdersLookup()
+    {
+        var orderIdLookup = new OrderLookup();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        // create a lookup for orders given the old system coach id
+        var allOrders = await dbContext.Orders.AsNoTracking().ToListAsync();
+        var oldNewOrders = await dbContext.OldNews.AsNoTracking()
+            .Where(o => o.NewTableName == nameof(OrderDb) && o.OldTableName == OrderTable)
+            .ToListAsync();
+
+        ConsoleEx.StartProgress("Creating orders lookup: ");
+        var index = 0;
+        foreach (var oldNewOrder in oldNewOrders)
+        {
+            var order = allOrders.FirstOrDefault(p => p.OrderId == oldNewOrder.NewId);
+            if (order != null) orderIdLookup.Add(oldNewOrder.OldId, order.OrderId);
+            ConsoleEx.ShowProgress((float)index++ / (float)oldNewOrders.Count);
+        }
+        ConsoleEx.EndProgress();
+
+        return orderIdLookup;
+    }
+
+    private async Task<KitLookup> CreateKitsLookup()
+    {
+        var kitIdLookup = new KitLookup();
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        // create a lookup for kits given the old system coach id
+        var allKits = await dbContext.Kits.AsNoTracking().ToListAsync();
+
+        ConsoleEx.StartProgress("Creating kits lookup: ");
+        var index = 0;
+        foreach (var kit in allKits.OrderByDescending(k => k.CreatedOn))
+        {
+            var parts = kit.Key.Split('.');
+            var season = parts[1];
+            var year = Int32.Parse(parts[2].Substring(1));
+            var ageLevel = parts[^1];
+            var newKey = $"{season}-{ageLevel}-{year}";
+            kitIdLookup.TryAdd(newKey, kit.KitId);
+
+            ConsoleEx.ShowProgress((float)index++ / (float)allKits.Count);
+        }
+        ConsoleEx.EndProgress();
+
+        return kitIdLookup;
+    }
     #endregion
 
-#if false
-
-    private static PersonDb? GetPersonWithLookup(List<PersonDb> allPersons, Dictionary<Guid, Guid> lookup, Guid? toMatch)
-    {
-        if (toMatch == null) return null;
-
-        var person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == toMatch);
-        if (person == null && lookup.TryGetValue(toMatch.Value, out var lookupId))
-            person = allPersons.FirstOrDefault(a => a.OldSystemCoachId == lookupId);
-
-        return person;
-    }
-
-    private async Task<(int addedOrderSkus, int skippedOrderSkus)> JoinOrderSkus(List<OrderSkuSql> sqlOrderSkus)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var allOrders = dbContext.Orders.ToList();
-        var allSkus = dbContext.Offers.ToList();
-
-        var sqlOrderSkusCount = sqlOrderSkus.Count;
-        ConsoleEx.StartProgress("Joining orders & skus with order skus: ");
-        var addedOrderSkus = 0;
-        var skippedOrderSkus = 0;
-        for (int index = 0; index < sqlOrderSkusCount; index++)
-        {
-            var sqlOrderSku = sqlOrderSkus[index];
-
-            var order = allOrders.FirstOrDefault(o => o.OldSystemOrderId == sqlOrderSku.OldSystemOrderId);
-            if (order == null) { skippedOrderSkus++; continue; }
-
-            var sku = allSkus.FirstOrDefault(o => o.OldSystemSkuId == sqlOrderSku.OldSystemSkuId);
-            if (sku == null) { skippedOrderSkus++; continue; }
-
-            var orderSku = new OrderClubDb()
-            {
-                OldSystemOrderSkuId = sqlOrderSku.OldSystemOrderSkuId,
-                OldSystemOrderId = sqlOrderSku.OldSystemOrderId,
-                OldSystemSkuId = sqlOrderSku.OldSystemSkuId,
-                Ordinal = sqlOrderSku.Ordinal,
-                Quantity = sqlOrderSku.Quantity,
-                Order = order,
-                Offer = sku
-            };
-            dbContext.OrderSkus.Add(orderSku);
-            addedOrderSkus++;
-
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)sqlOrderSkusCount);
-        }
-        await dbContext.SaveChangesAsync();
-        ConsoleEx.EndProgress();
-
-        return (addedOrderSkus, skippedOrderSkus);
-    }
-
-    private async Task RemoveExistingOrderSkus(List<OrderSkuSql> sqlOrderSkus)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var existingOrderSkuIds = await dbContext.OrderSkus.Select(o => o.OldSystemOrderSkuId).ToListAsync();
-        sqlOrderSkus.RemoveAll(m => existingOrderSkuIds.Contains(m.OldSystemOrderSkuId));
-    }
-
-    private async Task<int> AddOrders(List<OrderSql> sqlOrders, List<AddressSql> sqlAddresses, List<OrderTrackerSql> sqlOrderTrackers)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var allClubs = await dbContext.Clubs.ToListAsync();
-
-        var sqlOrdersCount = sqlOrders.Count;
-        ConsoleEx.StartProgress("Adding orders & shipments, plus persons & places to orders: ");
-        var ordersAdded = 0;
-        for (int index = 0; index < sqlOrdersCount; index++)
-        {
-            var sqlOrder = sqlOrders[index];
-
-            // start by finding the original club & address
-            var orderClub = allClubs.FirstOrDefault(c => c.OldSystemClubId == sqlOrder.OldSystemClubId);
-            var sqlAddress = sqlAddresses.FirstOrDefault(a => a.OldSystemUsaPostalId == sqlOrder.OldSystemShippingAddressId) ??
-                             throw new Exception($"Could not find address ({sqlOrder.OldSystemShippingAddressId}) for order ({sqlOrder.OldSystemOrderId})");
-
-            // then the appropriate trackers
-            var sqlTrackers = sqlOrderTrackers
-                .Where(t => t.OldSystemOrderId == sqlOrder.OldSystemOrderId)
-                .ToList();
-
-            // then create the new order
-            var status = sqlOrder.Status ??
-                         throw new Exception($"Missing status for order ({sqlOrder.OldSystemOrderId})");
-            var recipient = sqlAddress.BusinessName ?? sqlAddress.RecipientName ??
-                throw new Exception($"Missing recipient for order ({sqlOrder.OldSystemOrderId})");
-            var line1 = sqlAddress.StreetAddress ??
-                        throw new Exception($"Missing street address for order ({sqlOrder.OldSystemOrderId})");
-            var city = sqlAddress.City ??
-                       throw new Exception($"Missing city for order ({sqlOrder.OldSystemOrderId})");
-            var state = sqlAddress.State ??
-                        throw new Exception($"Missing state for order ({sqlOrder.OldSystemOrderId})");
-            var zipCode = sqlAddress.PostalCode ??
-                          throw new Exception($"Missing ZIP for order ({sqlOrder.OldSystemOrderId})");
-            var order = new OrderDb()
-            {
-                OldSystemOrderId = sqlOrder.OldSystemOrderId,
-                OldSystemClubId = sqlOrder.OldSystemClubId,
-                OldSystemShippingAddressId = sqlOrder.OldSystemShippingAddressId,
-                Number = sqlOrder.Number,
-                Status = status,
-                ContactName = sqlAddress.RecipientName,
-                ContactEmail = sqlOrder.ContactEmail,
-                ContactPhone = sqlOrder.ContactPhone,
-                Recipient = recipient,
-                Line1 = line1,
-                City = city,
-                State = state,
-                ZIPCode = zipCode,
-                IsMilitary = sqlAddress.IsMilitary,
-                OrderedOn = sqlOrder.OrderedOn,
-                ArriveBy = sqlOrder.ArriveBy,
-                ShippedOn = sqlOrder.ShippedOn,
-                EmailedOn = sqlOrder.EmailedOn,
-                Club = orderClub,
-                Shipments = sqlTrackers.Select(t => new ShipmentDb()
-                {
-                    ShipMethod = t.Method,
-                    TrackingNumber = t.Code
-                }).ToList(),
-                Notes = String.IsNullOrEmpty(sqlOrder.Notes) ? [] :
-                    new List<OrderNoteDb>() {
-                        new() { Author = SoftCrowConstants.Display.System, Content = sqlOrder.Notes }
-                    }
-            };
-            dbContext.Orders.Add(order);
-
-            ordersAdded++;
-
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)sqlOrdersCount);
-        }
-        await dbContext.SaveChangesAsync();
-        ConsoleEx.EndProgress();
-
-        return ordersAdded;
-    }
-
-    private async Task RemoveExistingOrders(List<OrderSql> sqlOrders)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var existingOrderIds = await dbContext.Orders.Select(o => o.OldSystemOrderId).ToListAsync();
-        sqlOrders.RemoveAll(m => existingOrderIds.Contains(m.OldSystemOrderId));
-    }
-
-    private async Task<int> AddClubs(List<ClubSql> sqlClubs, Dictionary<Guid, Guid> duplicateLookup)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var allPersons = await dbContext.Persons.ToListAsync();
-        var allPlaces = await dbContext.Places.ToListAsync();
-
-        ConsoleEx.StartProgress("Adding clubs, plus persons & places to clubs: ");
-
-        var sqlClubsCount = sqlClubs.Count;
-        int clubsAdded = 0;
-        for (int index = 0; index < sqlClubsCount; index++)
-        {
-            var sqlClub = sqlClubs[index];
-
-            // start by finding the original coach
-            var foundPerson = GetPersonWithLookup(allPersons, duplicateLookup, sqlClub.OldSystemCoachId);
-            if (foundPerson == null && sqlClub.OldSystemCoachId != null)
-            {
-                var deletedPerson = (await oldSystemService.GetDeletedCoach(sqlClub.OldSystemCoachId.Value));
-                if (deletedPerson != null)
-                    foundPerson = allPersons.FirstOrDefault(c => c.Email == deletedPerson.Email);
-            }
-            var person = foundPerson ??
-                         throw new Exception($"Could not find person ({sqlClub.OldSystemCoachId}) for club ({sqlClub.OldSystemClubId})");
-
-            // then by finding the original place
-            var place = allPlaces.FirstOrDefault(c => c.OldSystemOrganizationId == sqlClub.OldSystemOrganizationId) ??
-                        throw new Exception($"Could not find organization ({sqlClub.OldSystemOrganizationId}) for club ({sqlClub.OldSystemClubId})");
-
-            // now create the club itself
-            var clubStatus = sqlClub.StartsOnDateTime == null ? ClubStatus.Archived :
-                sqlClub.StartsOnDateTime < DateTime.Today ? ClubStatus.Complete : ClubStatus.Active;
-            var club = new ClubDb()
-            {
-                OldSystemClubId = sqlClub.OldSystemClubId,
-                OldSystemOrganizationId = sqlClub.OldSystemOrganizationId,
-                OldSystemCoachId = sqlClub.OldSystemCoachId,
-                OldSystemMeetingAddressId = sqlClub.OldSystemMeetingAddressId,
-                Status = clubStatus,
-                Season = sqlClub.Season!.Value,
-                AgeLevel = sqlClub.AgeLevel!.Value,
-                StartsOn = sqlClub.StartsOn,
-                ClubPersons = []
-            };
-            if (!String.IsNullOrEmpty(sqlClub.Notes))
-                club.Notes = (List<ClubNoteDb>)
-                [
-                    new()
-                    {
-                        Author = SoftCrowConstants.Display.System,
-                        Content = sqlClub.Notes
-                    }
-                ];
-            dbContext.Clubs.Add(club);
-
-            // and add the place and person
-            club.Place = place;
-            club.ClubPersons.Add(new ClubPersonDb()
-            {
-                Person = person,
-                Club = club,
-                IsPrimary = true
-            });
-
-            clubsAdded++;
-
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
-        }
-        await dbContext.SaveChangesAsync();
-        ConsoleEx.EndProgress();
-
-        return clubsAdded;
-    }
-
-    private async Task RemoveExistingClubs(List<ClubSql> sqlClubs)
-    {
-        await using (var dbContext = await dbContextFactory.CreateDbContextAsync())
-        {
-            var existingClubIds = await dbContext.Clubs.Select(o => o.OldSystemClubId).ToListAsync();
-            sqlClubs.RemoveAll(m => existingClubIds.Contains(m.OldSystemClubId));
-        }
-    }
-
-    private async Task<int> JoinRequestsToPlaces()
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var unlinkedRequestPlaces = await dbContext.Requests
-            .Where(r => r.PlaceId == null && r.OldSystemLinkedOrganizationId != null)
-            .ToListAsync();
-
-        var unlinkedRequestPlacesCount = unlinkedRequestPlaces.Count;
-        logger.LogInformation("Found {Count:#,##0} requests missing places.", unlinkedRequestPlacesCount);
-
-        ConsoleEx.StartProgress("Joining requests with places: ");
-        var placesLinked = 0;
-        for (int index = 0; index < unlinkedRequestPlacesCount; index++)
-        {
-            var request = unlinkedRequestPlaces[index];
-
-            var oldOrganizationLink = request.OldSystemLinkedOrganizationId;
-            if (oldOrganizationLink != null)
-            {
-                var place = await dbContext.Places.FirstOrDefaultAsync(
-                    a => a.OldSystemOrganizationId == oldOrganizationLink.Value);
-                if (place != null)
-                {
-                    request.PlaceId = place.PlaceId;
-                    placesLinked++;
-                }
-            }
-
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)unlinkedRequestPlacesCount);
-        }
-        await dbContext.SaveChangesAsync();
-        ConsoleEx.EndProgress();
-
-        return placesLinked;
-    }
-
-    private async Task<int> JoinRequestsToPersons(Dictionary<Guid, Guid> duplicateLookup)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var allPersons = await dbContext.Persons.ToListAsync();
-
-        var unlinkedRequestPersons = await dbContext.Requests
-            .Where(r => r.PersonId == null && r.OldSystemLinkedCoachId != null)
-            .ToListAsync();
-
-        var unlinkedRequestPersonsCount = unlinkedRequestPersons.Count;
-        logger.LogInformation("Found {Count:#,##0} requests missing persons.",
-            unlinkedRequestPersonsCount);
-
-        ConsoleEx.StartProgress("Joining requests with persons: ");
-        var personsLinked = 0;
-        for (int index = 0; index < unlinkedRequestPersonsCount; index++)
-        {
-            var request = unlinkedRequestPersons[index];
-
-            var oldCoachLink = request.OldSystemLinkedCoachId;
-            if (oldCoachLink != null)
-            {
-                var person = GetPersonWithLookup(allPersons, duplicateLookup, oldCoachLink.Value);
-                if (person != null)
-                {
-                    request.PersonId = person.PersonId;
-                    personsLinked++;
-                }
-            }
-
-            if ((index + 1) % SaveBlock == 0)
-                await dbContext.SaveChangesAsync();
-            ConsoleEx.ShowProgress((float)index / (float)unlinkedRequestPersonsCount);
-        }
-        await dbContext.SaveChangesAsync();
-        ConsoleEx.EndProgress();
-
-        return personsLinked;
-    }
-
-    private async Task RemoveExistingApplicationClubs(List<ApplicationClubSql> sqlApplicationClubs)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
-        var existingApplicationClubIds = await dbContext.RequestedClubs
-            .Select(o => o.OldSystemApplicationClubId)
-            .ToListAsync();
-        sqlApplicationClubs.RemoveAll(m => existingApplicationClubIds.Contains(m.OldSystemApplicationClubId));
-    }
-#endif
-
+    #region Private Methods
     private JobTitle? JobTitleFromRole(string? role)
     {
         if (String.IsNullOrWhiteSpace(role)) return null;
@@ -1453,4 +1581,29 @@ internal class LoadC8SData(
         return title;
     }
 
+    private static string GetKeyFromData(string year, int season, AgeLevel ageLevel, string? version) =>
+        String.Join(".", (new List<string?>() {
+                "C8",
+                $"S{season}",
+                year,
+                version,
+                ageLevel switch
+                {
+                    AgeLevel.GradesK2 => "K2",
+                    AgeLevel.Grades35 => "35",
+                    _ => throw new ArgumentOutOfRangeException(nameof(ageLevel), ageLevel, null)
+                }
+            }).
+            Where(s => !String.IsNullOrEmpty(s)));
+    #endregion
+
+    #region Private Classes
+    public class ClubLookup : Dictionary<Guid, int> { }
+    public class PersonLookup : Dictionary<Guid, int> { }
+    public class PlaceLookup : Dictionary<Guid, int> { }
+    public class TicketLookup : Dictionary<Guid, int> { }
+    public class OfferLookup : Dictionary<Guid, int> { }
+    public class OrderLookup : Dictionary<Guid, int> { }
+    public class KitLookup : Dictionary<string, int> { }
+    #endregion
 }

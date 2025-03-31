@@ -16,9 +16,8 @@ public class ClubPersonConfig : IEntityTypeConfiguration<ClubPersonDb>
 
         #region Database Properties
         //[Required]
-        //public bool IsPrimary { get; set; } = default!;
-        entity.Property(m => m.IsPrimary)
-            .HasDefaultValue(false)
+        //public int Ordinal { get; set; }
+        entity.Property(m => m.Ordinal)
             .IsRequired(true);
         #endregion
 

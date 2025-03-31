@@ -30,6 +30,7 @@ public class C8SDbContext(
     public DbSet<OfferDb> Offers { get; set; }
     public DbSet<OrderDb> Orders { get; set; }
     public DbSet<OrderNoteDb> OrderNotes { get; set; }
+    public DbSet<OrderOfferDb> OrderOffers { get; set; }
     public DbSet<PermissionDb> Permissions { get; set; }
     public DbSet<PersonDb> Persons { get; set; }
     public DbSet<PersonNoteDb> PersonNotes { get; set; }
@@ -72,6 +73,7 @@ public class C8SDbContext(
         modelBuilder.ApplyConfiguration(new OfferConfig());
         modelBuilder.ApplyConfiguration(new OrderConfig());
         modelBuilder.ApplyConfiguration(new OrderNoteConfig());
+        modelBuilder.ApplyConfiguration(new OrderOfferConfig());
         modelBuilder.ApplyConfiguration(new PermissionConfig());
         modelBuilder.ApplyConfiguration(new PersonConfig());
         modelBuilder.ApplyConfiguration(new PersonNoteConfig());

@@ -46,6 +46,7 @@ public class OfferDb : BaseCoreDb
     #endregion
 
     #region Reference Properties
+    public ICollection<OrderOfferDb> OrderOffers { get; set; } = null!;
     public ICollection<KitDb> Kits { get; set; } = null!;
     #endregion
 }

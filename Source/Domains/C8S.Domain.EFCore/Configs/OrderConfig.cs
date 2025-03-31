@@ -119,21 +119,23 @@ public class OrderConfig : BaseCoreConfig<OrderDb>
         #endregion
 
         #region Reference Properties
-
         //[Required, ForeignKey(nameof(Invoice))]
-        //public int InvoiceId { get; set; } = default!;
+        //public int? InvoiceId { get; set; } = default!;
         entity.Property(m => m.InvoiceId)
-            .IsRequired(true);
-
+            .IsRequired(false);
         #endregion
 
         #region Navigation Configuration
+        //public ICollection<OrderOfferDb> OrderOffers { get; set; } = null!;
+        entity.HasMany(m => m.OrderOffers)
+            .WithOne(m => m.Order)
+            .HasForeignKey(m => m.OrderId);
 
         //public InvoiceDb Invoice { get; set; } = default!;
         entity.HasOne(m => m.Invoice)
             .WithMany(m => m.Orders)
             .HasForeignKey(m => m.InvoiceId)
-            .IsRequired(true);
+            .IsRequired(false);
 
         //public ICollection<ShipmentDb> Shipments { get; set; } = default!;
         entity.HasMany(m => m.Shipments)

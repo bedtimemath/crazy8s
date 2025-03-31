@@ -6,6 +6,8 @@ public enum ClubStatus
 {
     [Label("Potential")]
     Potential,
+    [Label("Requested")]
+    Requested,
     [Label("Active")]
     Active,
     [Label("Running")]

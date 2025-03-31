@@ -123,35 +123,6 @@ public class OldSystemService(
 
         return applicationClubs;
     }
-    
-    public async Task<List<ClubSql>> GetClubs()
-    {
-        var clubs = new List<ClubSql>();
-
-        await using var connection = new SqlConnection(connectionString);
-        try
-        {
-            await connection.OpenAsync();
-            await using var command = new SqlCommand(ClubSql.SqlGet, connection);
-            await using var reader = await command.ExecuteReaderAsync();
-
-            while (reader.Read())
-            {
-                var club = reader.ConvertToObject<ClubSql>();
-                clubs.Add(club);
-            }
-        }
-        catch (Exception exception)
-        {
-            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
-        }
-        finally
-        {
-            await connection.CloseAsync();
-        }
-
-        return clubs;
-    }
 
     public async Task<List<CoachSql>> GetCoaches()
     {
@@ -210,7 +181,36 @@ public class OldSystemService(
 
         return orders;
     }
-    
+        
+    public async Task<List<ClubSql>> GetClubs()
+    {
+        var clubs = new List<ClubSql>();
+
+        await using var connection = new SqlConnection(connectionString);
+        try
+        {
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(ClubSql.SqlGet, connection);
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (reader.Read())
+            {
+                var club = reader.ConvertToObject<ClubSql>();
+                clubs.Add(club);
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogCritical(exception, "Could not read database: {Message}", exception.Message);
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return clubs;
+    }
+
     public async Task<List<OrderTrackerSql>> GetOrderTrackers()
     {
         var trackers = new List<OrderTrackerSql>();
@@ -242,7 +242,7 @@ public class OldSystemService(
     
     public async Task<List<OrderSkuSql>> GetOrderSkus()
     {
-        var orderskus = new List<OrderSkuSql>();
+        var orderSkus = new List<OrderSkuSql>();
 
         await using var connection = new SqlConnection(connectionString);
         try
@@ -253,8 +253,8 @@ public class OldSystemService(
 
             while (reader.Read())
             {
-                var ordersku = reader.ConvertToObject<OrderSkuSql>();
-                orderskus.Add(ordersku);
+                var orderSku = reader.ConvertToObject<OrderSkuSql>();
+                orderSkus.Add(orderSku);
             }
         }
         catch (Exception exception)
@@ -266,7 +266,7 @@ public class OldSystemService(
             await connection.CloseAsync();
         }
 
-        return orderskus;
+        return orderSkus;
     }
 
     public async Task<List<OrganizationSql>> GetOrganizations()

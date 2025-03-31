@@ -18,9 +18,9 @@ public class SkuSql
     #region Public Properties    
     public Guid? OldSystemSkuId { get; set; } = null;
 
-    public string Key { get; set; } = default!;
+    public string Key { get; set; } = null!;
 
-    public string Name { get; set; } = default!;
+    public string Name { get; set; } = null!;
 
     [NotMapped]
     public string? StatusString { get; set; } = null;

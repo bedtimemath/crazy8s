@@ -11,7 +11,7 @@ public class ClubPersonDb: BaseDb
     [NotMapped] 
     public override int Id => ClubPersonId;
     [NotMapped] 
-    public override string Display => IsPrimary.ToString();
+    public override string Display => $"{Person}<=>{Club} [{Ordinal}]";
     #endregion
 
     #region Id Property
@@ -21,16 +21,16 @@ public class ClubPersonDb: BaseDb
 
     #region Database Properties
     [Required]
-    public bool IsPrimary { get; set; }
+    public int Ordinal { get; set; }
     #endregion
 
     #region Reference Properties
     [ForeignKey(nameof(Person))]
-    public int PersonId { get; set; } = default!;
-    public PersonDb Person { get; set; } = default!;
+    public int PersonId { get; set; }
+    public PersonDb Person { get; set; } = null!;
 
     [ForeignKey(nameof(Club))]
-    public int ClubId { get; set; } = default!;
-    public ClubDb Club { get; set; } = default!;
+    public int ClubId { get; set; }
+    public ClubDb Club { get; set; } = null!;
     #endregion
 }

@@ -122,6 +122,7 @@ namespace C8S.Domain.EFCore.Migrations
                     AppointmentStartsOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     ReferenceSource = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     ReferenceSourceOther = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    ClubsRequested = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                     Comments = table.Column<string>(type: "nvarchar(max)", maxLength: 8192, nullable: true),
                     SubmittedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -213,7 +214,7 @@ namespace C8S.Domain.EFCore.Migrations
                     ArriveBy = table.Column<DateOnly>(type: "date", nullable: true),
                     ShippedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     EmailedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    InvoiceId = table.Column<int>(type: "int", nullable: false),
+                    InvoiceId = table.Column<int>(type: "int", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ModifiedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
@@ -224,8 +225,7 @@ namespace C8S.Domain.EFCore.Migrations
                         name: "FK_Orders_Invoices_InvoiceId",
                         column: x => x.InvoiceId,
                         principalTable: "Invoices",
-                        principalColumn: "InvoiceId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "InvoiceId");
                 });
 
             migrationBuilder.CreateTable(
@@ -320,6 +320,34 @@ namespace C8S.Domain.EFCore.Migrations
                         column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "RequestId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderOffers",
+                columns: table => new
+                {
+                    OrderOfferId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Ordinal = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false),
+                    OfferId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderOffers", x => x.OrderOfferId);
+                    table.ForeignKey(
+                        name: "FK_OrderOffers_Offers_OfferId",
+                        column: x => x.OfferId,
+                        principalTable: "Offers",
+                        principalColumn: "OfferId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderOffers_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -465,7 +493,7 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     ClubPersonId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IsPrimary = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    Ordinal = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
                     ClubId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -685,6 +713,16 @@ namespace C8S.Domain.EFCore.Migrations
                 column: "ClubId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrderOffers_OfferId",
+                table: "OrderOffers",
+                column: "OfferId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderOffers_OrderId",
+                table: "OrderOffers",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Orders_InvoiceId",
                 table: "Orders",
                 column: "InvoiceId");
@@ -773,6 +811,9 @@ namespace C8S.Domain.EFCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderClubs");
+
+            migrationBuilder.DropTable(
+                name: "OrderOffers");
 
             migrationBuilder.DropTable(
                 name: "Permissions");

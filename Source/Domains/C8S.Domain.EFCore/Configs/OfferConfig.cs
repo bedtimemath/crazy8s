@@ -59,8 +59,13 @@ public class OfferConfig : BaseCoreConfig<OfferDb>
         #endregion
 
         #region Navigation Configuration
+        //public ICollection<OrderOfferDb> OrderOffers { get; set; } = null!;
+        entity.HasMany(m => m.OrderOffers)
+            .WithOne(m => m.Offer)
+            .HasForeignKey(m => m.OfferId);
+
         //public ICollection<KitDb> Kits { get; set; } = null!;
-        entity.HasMany<KitDb>(m => m.Kits)
+        entity.HasMany(m => m.Kits)
             .WithOne(m => m.Offer)
             .HasForeignKey(m => m.OfferId)
             .IsRequired(false);

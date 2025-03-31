@@ -75,10 +75,8 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<int>("ClubId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPrimary")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<int>("Ordinal")
+                        .HasColumnType("int");
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
@@ -421,7 +419,7 @@ namespace C8S.Domain.EFCore.Migrations
                     b.Property<DateTimeOffset?>("EmailedOn")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("InvoiceId")
+                    b.Property<int?>("InvoiceId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsMilitary")
@@ -475,6 +473,35 @@ namespace C8S.Domain.EFCore.Migrations
                     b.HasIndex("InvoiceId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderOfferDb", b =>
+                {
+                    b.Property<int>("OrderOfferId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderOfferId"));
+
+                    b.Property<int>("OfferId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Ordinal")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderOfferId");
+
+                    b.HasIndex("OfferId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderOffers");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.PermissionDb", b =>
@@ -647,6 +674,10 @@ namespace C8S.Domain.EFCore.Migrations
 
                     b.Property<DateTimeOffset?>("AppointmentStartsOn")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("ClubsRequested")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
 
                     b.Property<string>("Comments")
                         .HasMaxLength(8192)
@@ -1109,11 +1140,28 @@ namespace C8S.Domain.EFCore.Migrations
                 {
                     b.HasOne("C8S.Domain.EFCore.Models.InvoiceDb", "Invoice")
                         .WithMany("Orders")
-                        .HasForeignKey("InvoiceId")
+                        .HasForeignKey("InvoiceId");
+
+                    b.Navigation("Invoice");
+                });
+
+            modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderOfferDb", b =>
+                {
+                    b.HasOne("C8S.Domain.EFCore.Models.OfferDb", "Offer")
+                        .WithMany("OrderOffers")
+                        .HasForeignKey("OfferId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Invoice");
+                    b.HasOne("C8S.Domain.EFCore.Models.OrderDb", "Order")
+                        .WithMany("OrderOffers")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Offer");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.PermissionDb", b =>
@@ -1309,11 +1357,15 @@ namespace C8S.Domain.EFCore.Migrations
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OfferDb", b =>
                 {
                     b.Navigation("Kits");
+
+                    b.Navigation("OrderOffers");
                 });
 
             modelBuilder.Entity("C8S.Domain.EFCore.Models.OrderDb", b =>
                 {
                     b.Navigation("Notes");
+
+                    b.Navigation("OrderOffers");
 
                     b.Navigation("Shipments");
                 });

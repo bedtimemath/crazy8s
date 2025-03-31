@@ -74,12 +74,13 @@ public class OrderDb: BaseCoreDb
     #endregion
 
     #region Reference Properties
-    [Required, ForeignKey(nameof(Invoice))]
-    public int InvoiceId { get; set; }
-    public InvoiceDb Invoice { get; set; } = null!;
+    [ForeignKey(nameof(Invoice))]
+    public int? InvoiceId { get; set; }
+    public InvoiceDb? Invoice { get; set; } = null!;
     #endregion
 
     #region Child Properties
+    public ICollection<OrderOfferDb> OrderOffers { get; set; } = null!;
     public ICollection<ClubDb> Clubs { get; set; } = null!;
     public ICollection<ShipmentDb> Shipments { get; set; } = null!;
     public ICollection<OrderNoteDb> Notes { get; set; } = null!;
