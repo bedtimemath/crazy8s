@@ -17,7 +17,6 @@ public static class ServiceCollectionEx
         services.AddSingleton<AppointmentCallbacks>();
         services.AddSingleton<NoteCallbacks>();
         services.AddSingleton<PersonCallbacks>();
-        services.AddSingleton<RequestCallbacks>();
         services.AddSingleton<WordPressCallbacks>();
     }
 }

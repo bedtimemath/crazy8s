@@ -1,7 +1,7 @@
 ﻿@inherits BaseCoordinatedComponent<WPUserCreatorCoordinator>
 @using C8S.AdminApp.Client.Services.Coordinators.WordPress
+@using C8S.Domain.Features.Offers.Enums
 @using C8S.Domain.Features.Persons.Models
-@using C8S.Domain.Features.Skus.Enums
 @using SC.Common.Models
 
 <div class="c8s-wordpress-user-creator @CssClass">
@@ -12,10 +12,10 @@
 
         <RadzenCheckBoxList Value="@Service.SkuYears"
                             ValueChanged="@(async (v) => await Service.SetSkuYears(v))"
-                            TValue="SkuYearOption"
-                            Data="@(EnumLabel<SkuYearOption>.GetAllEnumLabels())"
-                            ValueProperty="@nameof(EnumLabel<SkuYearOption>.Value)"
-                            TextProperty="@nameof(EnumLabel<SkuYearOption>.Display)"
+                            TValue="KitYearOption"
+                            Data="@(EnumLabel<KitYearOption>.GetAllEnumLabels())"
+                            ValueProperty="@nameof(EnumLabel<KitYearOption>.Value)"
+                            TextProperty="@nameof(EnumLabel<KitYearOption>.Display)"
         />
 
         <RadzenStack Orientation="Orientation.Horizontal"
@@ -52,17 +52,17 @@
                     </RadzenDropDownDataGridColumn>
                     <RadzenDropDownDataGridColumn Title="Skus">
                         <Template Context="person">
-                            @foreach(var sku in ((PersonWithOrders)person)
+                            @foreach(var offer in ((PersonWithOrders)person)
                                      .ClubPersons
                                      .SelectMany(cp => cp.Club.Orders)
-                                     .SelectMany(o => o.OrderSkus)
-                                     .Select(os => os.Sku.ClubKey)
+                                     .SelectMany(o => o.OrderOffers)
+                                     .Select(os => os.Offer)
                                      .Distinct()
                                      .OrderBy(k => k))
                             {
                                 <RadzenText TagName="TagName.Div"
                                             TextStyle="TextStyle.Body1"
-                                            Text="@sku"
+                                            Text="@offer.Title"
                                             style="white-space: normal;"
                                             class="rz-mb-0" />
                             }

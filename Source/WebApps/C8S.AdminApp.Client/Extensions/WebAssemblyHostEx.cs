@@ -11,9 +11,6 @@ using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
-using C8S.Domain.Features.Requests.Commands;
-using C8S.Domain.Features.Requests.Models;
-using C8S.Domain.Features.Requests.Queries;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
@@ -56,12 +53,6 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterQuery<MenuGroupsQuery, WrappedResponse<IEnumerable<MenuGroup>>>(sidebarMenuService.Handle);
         cqrsService.RegisterQuery<MenuSinglesQuery, WrappedResponse<IEnumerable<MenuSingle>>>(sidebarMenuService.Handle);
         cqrsService.RegisterQuery<MenuItemsQuery, WrappedResponse<IEnumerable<MenuItem>>>(sidebarMenuService.Handle);
-
-        var requestsCallbacks = serviceProvider.GetRequiredService<RequestCallbacks>();
-        cqrsService.RegisterQuery<RequestsListQuery, WrappedListResponse<RequestListItem>>(requestsCallbacks.Handle);
-        cqrsService.RegisterQuery<RequestTitleQuery, WrappedResponse<string?>>(requestsCallbacks.Handle);
-        cqrsService.RegisterQuery<RequestDetailsQuery, WrappedResponse<RequestDetails?>>(requestsCallbacks.Handle);
-        cqrsService.RegisterCommand<RequestUpdateAppointmentCommand, WrappedResponse<RequestDetails>>(requestsCallbacks.Handle);
 
         var personsCallbacks = serviceProvider.GetRequiredService<PersonCallbacks>();
         cqrsService.RegisterQuery<PersonsListQuery, WrappedListResponse<Person>>(personsCallbacks.Handle);

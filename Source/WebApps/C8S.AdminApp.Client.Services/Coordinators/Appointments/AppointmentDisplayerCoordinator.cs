@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
-using C8S.Domain.Features.Requests.Commands;
-using C8S.Domain.Features.Requests.Models;
 using Microsoft.Extensions.Logging;
 using SC.Common.Responses;
 using SC.Messaging.Abstractions.Interfaces;
@@ -75,15 +73,18 @@ public class AppointmentDisplayerCoordinator(
             // attempt to update the database so we don't have to always check
             try
             {
+                throw new NotImplementedException();
+#if false
                 var databaseResponse = await GetCommandResults<RequestUpdateAppointmentCommand, WrappedResponse<RequestDetails>>(
-                        new RequestUpdateAppointmentCommand()
-                        {
-                            RequestId = _requestId,
-                            FullSlateAppointmentStartsOn = _startsOn
-                        });
+                new RequestUpdateAppointmentCommand()
+                {
+                    RequestId = _requestId,
+                    FullSlateAppointmentStartsOn = _startsOn
+                });
 
                 if (!databaseResponse.Success)
-                    throw databaseResponse.Exception!.ToException();
+                    throw databaseResponse.Exception!.ToException(); 
+#endif
             }
             catch (Exception exception)
             {

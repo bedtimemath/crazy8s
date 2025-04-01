@@ -2,9 +2,9 @@
 using AutoMapper;
 using C8S.AdminApp.Extensions;
 using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Features.Offers.Enums;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
-using C8S.Domain.Features.Skus.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.Responses;
@@ -67,21 +67,21 @@ public class PersonsController(
             if (query.SkuYears.Any())
             {
                 List<string> skuYears = [];
-                if (query.SkuYears.Contains(SkuYearOption.PreF21))
+                if (query.SkuYears.Contains(KitYearOption.PreF21))
                 {
                     skuYears.Add("F18");
                     skuYears.Add("F19");
                     skuYears.Add("F19ALT");
                     skuYears.Add("F20");
                 }
-                if (query.SkuYears.Contains(SkuYearOption.F21ToF23))
+                if (query.SkuYears.Contains(KitYearOption.F21ToF23))
                 {
                     skuYears.Add("F21");
                     skuYears.Add("F22");
                     skuYears.Add("F23");
                     skuYears.Add("F23C");
                 }
-                if (query.SkuYears.Contains(SkuYearOption.F24Plus))
+                if (query.SkuYears.Contains(KitYearOption.F24Plus))
                 {
                     skuYears.Add("F24");
                 }

@@ -1,9 +1,7 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Appointments;
-using C8S.AdminApp.Client.Services.Coordinators.Fulco;
 using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Persons;
-using C8S.AdminApp.Client.Services.Coordinators.Requests;
 using C8S.AdminApp.Client.Services.Coordinators.WordPress;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,11 +19,6 @@ public static class ServiceCollectionEx
         services.AddScoped<SidebarItemCoordinator>();
 
         services.AddScoped<AppointmentDisplayerCoordinator>();
-        
-        services.AddScoped<FulcoCoordinator>();
-
-        services.AddScoped<RequestsListCoordinator>();
-        services.AddScoped<RequestDetailsCoordinator>();
         
         services.AddScoped<PersonsListCoordinator>();
         services.AddScoped<PersonDetailsCoordinator>();

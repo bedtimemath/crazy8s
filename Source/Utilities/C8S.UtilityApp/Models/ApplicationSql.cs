@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using C8S.Domain.Enums;
-using C8S.Domain.Features.Requests.Enums;
 using AppType = C8S.Domain.Enums.ApplicantType;
 
 namespace C8S.UtilityApp.Models;
@@ -77,17 +76,6 @@ public class ApplicationSql
             "0000000000" or null => null,
             _ => $"({ApplicantPhoneString.Substring(0,3)}) {ApplicantPhoneString.Substring(3,3)}-{ApplicantPhoneString.Substring(6,4)}"
         };
-
-    public RequestStatus Status => StatusString switch
-    {
-        "Approved" => RequestStatus.Approved,
-        "Deleted" => RequestStatus.Deleted,
-        "Denied" => RequestStatus.Denied,
-        "Future" => RequestStatus.Future,
-        "Pending" => RequestStatus.Pending,
-        "Received" => RequestStatus.Received,
-        _ => throw new Exception($"Unrecognized: {StatusString}")
-    };
 
     public ApplicantType? ApplicantType => ApplicantTypeString switch
     {

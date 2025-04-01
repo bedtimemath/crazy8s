@@ -1,5 +1,5 @@
 ﻿using C8S.Domain.Enums;
-using C8S.Domain.Features.OrderSkus.Models;
+using C8S.Domain.Features.OrderOffers.Models;
 
 namespace C8S.Domain.Features.Orders.Models;
 
@@ -9,5 +9,5 @@ public record Order
     public int Number { get; init; }
     public OrderStatus Status { get; init; }
     public DateTimeOffset OrderedOn { get; init; }
-    public List<OrderSku> OrderSkus { get; init; } = [];
+    public List<OrderOffer> OrderOffers { get; init; } = [];
 }

@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.EFCore.Models;
 using C8S.Domain.Enums;
-using C8S.Domain.Features.Requests.Enums;
 using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
@@ -601,14 +600,14 @@ internal class LoadC8SData(
                     } + ":" +
                     ac.StartsOn?.ToString("yyyy-MM-dd")));
 
-            var ticketStatus = sqlApplication.Status switch
+            var ticketStatus = sqlApplication.StatusString switch
             {
-                RequestStatus.Received => TicketStatus.Requested,
-                RequestStatus.Pending => TicketStatus.Pending,
-                RequestStatus.Approved => TicketStatus.Complete,
-                RequestStatus.Denied => TicketStatus.Denied,
-                RequestStatus.Deleted => TicketStatus.Archived,
-                RequestStatus.Future => TicketStatus.Potential,
+                "Received" => TicketStatus.Requested,
+                "Pending" => TicketStatus.Pending,
+                "Approved" => TicketStatus.Complete,
+                "Denied" => TicketStatus.Denied,
+                "Deleted" => TicketStatus.Archived,
+                "Future" => TicketStatus.Potential,
                 _ => throw new ArgumentOutOfRangeException()
             };
 

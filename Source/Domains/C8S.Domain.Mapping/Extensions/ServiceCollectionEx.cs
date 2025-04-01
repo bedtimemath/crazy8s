@@ -8,7 +8,7 @@ public static class ServiceCollectionEx
     public static void AddDomainMapping(
         this IServiceCollection services)
     {
-        // RequestProfile is used arbitrarily here
-        services.AddAutoMapper(typeof(RequestProfile).Assembly);
+        // PersonProfile is used arbitrarily here
+        services.AddAutoMapper(typeof(PersonProfile).Assembly);
     }
 }

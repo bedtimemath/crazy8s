@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
+using C8S.Domain.Features.Offers.Enums;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
-using C8S.Domain.Features.Skus.Enums;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Extensions;
 using C8S.WordPress.Abstractions.Models;
@@ -28,7 +28,7 @@ public sealed class WPUserCreatorCoordinator(
     public PersonWithOrders? SelectedPerson { get; set; }
     public int TotalPersons { get; set; }
 
-    public IEnumerable<SkuYearOption> SkuYears { get; private set; } = [];
+    public IEnumerable<KitYearOption> SkuYears { get; private set; } = [];
 
     public bool IsCreating { get; set; } = false;
     public bool IsLoading { get; set; } = false;
@@ -39,7 +39,7 @@ public sealed class WPUserCreatorCoordinator(
         LoadPersonsData(new LoadDataArgs() { Skip = 0, Top = 5 });
     }
 
-    public async Task SetSkuYears(IEnumerable<SkuYearOption> skuYears)
+    public async Task SetSkuYears(IEnumerable<KitYearOption> skuYears)
     {
         SkuYears = skuYears;
         await DataGrid.Reload();
@@ -63,10 +63,7 @@ public sealed class WPUserCreatorCoordinator(
 
             var roleSlugs = rolesResponse.Result.Select(r => r.Slug);
             var skuSlugs = SelectedPerson.ClubPersons
-                .Select(cp => cp.Club)
-                .SelectMany(c => c.Orders)
-                .SelectMany(o => o.OrderSkus)
-                .Select(os => os.Sku.ClubKey.ToSlug());
+                .Select(cp => cp.Club.Kit.Key.ToSlug());
 
             List<string> userRoles = ["coach"];
             userRoles.AddRange(roleSlugs.Intersect(skuSlugs));

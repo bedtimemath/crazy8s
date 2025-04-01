@@ -1,6 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Client.Services.Menu.Models;
-using C8S.Domain.Features.Requests.Queries;
 using Microsoft.Extensions.Logging;
 using SC.Common;
 using SC.Common.Client.Navigation.Commands;
@@ -74,10 +73,13 @@ public sealed class SidebarItemCoordinator(
 
     private async Task GetItemDisplay()
     {
+        throw new NotImplementedException();
+#if false
         var response = await GetQueryResults<RequestTitleQuery, WrappedResponse<string?>>(
             new RequestTitleQuery() { RequestId = Item.IdValue });
         Display = response.Result ?? SoftCrowConstants.Display.NotSet;
         await PerformComponentRefresh();
+#endif
     }
     private async Task CheckSelfAgainstUrl(string? url = null)
     {

@@ -1,9 +1,9 @@
 ﻿using SC.Common.Attributes;
 
-namespace C8S.Domain.Features.Skus.Enums;
+namespace C8S.Domain.Features.Offers.Enums;
 
 [Flags]
-public enum SkuYearOption
+public enum KitYearOption
 {
     [Label("Before F21")]
     PreF21 = 0x1,
