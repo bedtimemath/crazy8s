@@ -18,7 +18,7 @@ namespace C8S.WordPress.Services;
 public class WordPressService
 {
     private const int DefaultPerPage = 100;
-    private const string SkuBaseUrl = "/wp-json/wp/v2/sku";
+    private const string KitBaseUrl = "/wp-json/wp/v2/sku";
     private const string GetRolesUrl = "/wp-json/c8s/v1/get-roles";
     private const string CreateRoleUrl = "/wp-json/c8s/v1/add-role";
     private const string MagicLoginUrl = "/wp-json/magic-login/v1/token";
@@ -90,7 +90,7 @@ public class WordPressService
             {
                 var skus = (await _wordPressClient.CustomRequest
                                .GetAsync<List<CustomSku>>(
-                                   $"{SkuBaseUrl}?page={page}&per_page={DefaultPerPage}", useAuth: true));
+                                   $"{KitBaseUrl}?page={page}&per_page={DefaultPerPage}", useAuth: true));
                 allSkus.AddRange(skus);
 
                 if (skus.Count < DefaultPerPage) break;
@@ -171,7 +171,7 @@ public class WordPressService
     {
         var customSku = _mapper.Map<CustomSkuCreate>(skuCreate);
         var output = await _wordPressClient.CustomRequest
-            .CreateAsync<CustomSkuCreate, CustomSku>(SkuBaseUrl, customSku);
+            .CreateAsync<CustomSkuCreate, CustomSku>(KitBaseUrl, customSku);
         return _mapper.Map<WPSkuDetails>(output);
     }
 

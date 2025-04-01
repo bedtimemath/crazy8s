@@ -7,6 +7,7 @@ using C8S.UtilityApp.Base;
 using C8S.UtilityApp.Extensions;
 using C8S.UtilityApp.Models;
 using C8S.UtilityApp.Services;
+using C8S.WordPress.Abstractions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SC.Common;
@@ -212,9 +213,42 @@ internal class LoadC8SData(
             logger.LogInformation("Joined {Joined:#,##0} persons to clubs; {Skipped:#,##0} clubs skipped.", joined, skipped);
         }
 
+        /*** KIT PAGES ***/
+        var (kitPagesAdded, kitPagesSkipped) = await AddKitPages();
+        logger.LogInformation("Added {Added:#,##0} kit pages; {Skipped:#,##0} skipped.", kitPagesAdded, kitPagesSkipped);
+
+        /*** PERMISSIONS ***/
+        var personIds = await GetPersonIdsForPermissions();
+        logger.LogInformation("Found {Count:#,##0} persons for permissions", personIds.Count);
+
+        if (personIds.Count > 0)
+        {
+            var (permissionsAdded, permissionsSkipped) = await AddPermissions(personIds);
+            logger.LogInformation("Added {Added:#,##0} permissions; {Skipped:#,##0} skipped.", permissionsAdded, permissionsSkipped);
+        }
+
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
     }
+
+    #region Get Entities
+    private async Task<List<int>> GetPersonIdsForPermissions()
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        var persons = await dbContext.Persons
+            .AsNoTracking()
+            .AsSingleQuery()
+            .Include(p => p.ClubPersons)
+            .ThenInclude(cp => cp.Club)
+            .ThenInclude(c => c.Kit)
+            .Where(p => p.ClubPersons.Any(cp => cp.Club.Kit.KitPage != null))
+            .Select(p => p.PersonId)
+            .ToListAsync();
+
+        return persons;
+    }
+    #endregion
 
     #region Add Entities
     private async Task<int> CreateOffersFromSkus(List<SkuSql> sqlSkus)
@@ -949,6 +983,92 @@ internal class LoadC8SData(
 
         return (added, mismatched);
     }
+
+    private async Task<(int,int)> AddKitPages()
+    {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+        // determine the kit pages to add, based on the kits
+        var kits = await dbContext.Kits.Where(k => k.Year == "F23" || k.Year == "F24").ToListAsync();
+
+        var kitsCount = kits.Count;
+        ConsoleEx.StartProgress("Adding kit pages: ");
+        var added = 0;
+        var skipped = 0;
+        for (int index = 0; index < kitsCount; index++)
+        {
+            var kit = kits[index];
+
+            var kitPageUrl = $"/kit-page/{kit.Key.ToSlug()}";
+            var existing = await dbContext.KitPages
+                .FirstOrDefaultAsync(kp => kp.Url == kitPageUrl);
+            if (existing != null) { skipped++; continue; }
+
+            var kitPage = new KitPageDb()
+            {
+                Kits = [kit],
+                Url = kitPageUrl,
+                Title = GetTitleFromKit(kit),
+                CreatedOn = DateTime.Now
+            };
+            dbContext.KitPages.Add(kitPage);
+            added++;
+            await dbContext.SaveChangesAsync();
+
+            ConsoleEx.ShowProgress((float)index / (float)kitsCount);
+        }
+        ConsoleEx.EndProgress();
+        return (added, skipped);
+    }
+    
+    private async Task<(int, int)> AddPermissions(List<int> personIds)
+    {
+        var personsCount = personIds.Count;
+
+        ConsoleEx.StartProgress("Adding permissions: ");
+        var added = 0;
+        var skipped = 0;
+        for (int index = 0; index < personsCount; index++)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
+            var personId = personIds[index];
+            var person = await dbContext.Persons
+                .Include(p => p.ClubPersons)
+                .ThenInclude(cp => cp.Club)
+                .ThenInclude(c => c.Kit)
+                .Include(p => p.Permissions)
+                .ThenInclude(p => p.KitPage)
+                .AsSingleQuery()
+                .FirstOrDefaultAsync(p => p.PersonId == personId) ??
+                     throw new UnreachableException($"Could not find person: ID#{personId}");
+
+            var shouldHave = person.ClubPersons
+                .Select(cp => cp.Club.Kit.KitPageId)
+                .Where(kpi => kpi != null)
+                .Cast<int>() ?? throw new UnreachableException("Could not get kit ids for person");
+            var doesHave = person.Permissions
+                .Select(p => p.KitPageId) ?? throw new UnreachableException("Could not get permission ids for person");
+
+            var toAdd = shouldHave.Except(doesHave).ToList();
+            if (!toAdd.Any()) { skipped++;  }
+
+            else
+            {
+                var permissions = toAdd
+                    .Select(a => new PermissionDb() { Person = person, KitPageId = a });
+                dbContext.Permissions.AddRange(permissions);
+
+                added++;
+                await dbContext.SaveChangesAsync();
+            }
+
+            ConsoleEx.ShowProgress((float)index / (float)personsCount);
+        } 
+        ConsoleEx.EndProgress();
+        return (added, skipped);
+    }
+
     #endregion
 
     #region Joins
@@ -1595,6 +1715,20 @@ internal class LoadC8SData(
                 }
             }).
             Where(s => !String.IsNullOrEmpty(s)));
+
+    private static string GetTitleFromKit(KitDb kit)
+    {
+        var seasonString = $"Season {kit.Season}{kit.Version}";
+        var ageLevelString = kit.AgeLevel switch {
+            AgeLevel.GradesK2 => "K-2nd Grade",
+            AgeLevel.Grades35 => "3rd-5th Grade",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        var year = Int32.Parse(kit.Year.Substring(1));
+        var yearString = $"(20{year}-{year+1})";
+
+        return $"Crazy 8s {seasonString}, {ageLevelString} {yearString}";
+    }
     #endregion
 
     #region Private Classes
