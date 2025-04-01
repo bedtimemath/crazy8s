@@ -8,9 +8,16 @@ public record ClubDTO
     [JsonPropertyName("club_id")]
     public int ClubId { get; init; }
 
-    [JsonPropertyName("status")]
+    [JsonPropertyName("club_status")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ClubStatus Status { get; init; } = default!;
+    public ClubStatus ClubStatus { get; init; } = default!;
+
+    [JsonPropertyName("kit_status")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public KitStatus KitStatus { get; init; } = default!;
+
+    [JsonPropertyName("key")]
+    public string Key { get; init; } = null!;
 
     [JsonPropertyName("year")]
     public string Year { get; init; } = null!;

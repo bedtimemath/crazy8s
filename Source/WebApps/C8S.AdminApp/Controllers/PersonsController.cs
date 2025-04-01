@@ -4,6 +4,7 @@ using C8S.AdminApp.Extensions;
 using C8S.Domain.EFCore.Contexts;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
+using C8S.Domain.Features.Skus.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SC.Common.Responses;
@@ -52,14 +53,12 @@ public class PersonsController(
     {
         try
         {
-            throw new NotImplementedException();
-#if false
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var queryable = dbContext.Persons
                 .Include(p => p.ClubPersons)
                 .ThenInclude(cp => cp.Club)
                 .ThenInclude(c => c.Orders)
-                .ThenInclude(o => o.OrderSkus)
+                .ThenInclude(o => o.OrderOffers)
                 .ThenInclude(os => os.Offer)
                 .AsSingleQuery()
                 .AsNoTracking()
@@ -89,9 +88,8 @@ public class PersonsController(
                 queryable = queryable
                     .Where(p => p.ClubPersons
                         .Any(cp => cp.Club.Orders
-                            .Any(o => o.OrderSkus
-                                .Any(os => os.Offer.Year != null &&
-                                    skuYears.Contains(os.Offer.Year)))));
+                            .Any(o => o.OrderOffers
+                                .Any(os => skuYears.Contains(os.Offer.Year)))));
             }
 
             var total = await queryable.CountAsync();
@@ -100,7 +98,6 @@ public class PersonsController(
             var persons = await mapper.ProjectTo<PersonWithOrders>(queryable).ToListAsync();
 
             return WrappedListResponse<PersonWithOrders>.CreateSuccessResponse(persons, total);
-#endif
         }
         catch (Exception exception)
         {
@@ -140,14 +137,12 @@ public class PersonsController(
     {
         try
         {
-            throw new NotImplementedException();
-#if false
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var queryable = dbContext.Persons
                 .Include(p => p.ClubPersons)
                 .ThenInclude(cp => cp.Club)
                 .ThenInclude(c => c.Orders)
-                .ThenInclude(o => o.OrderSkus)
+                .ThenInclude(o => o.OrderOffers)
                 .ThenInclude(os => os.Offer)
                 .AsSingleQuery()
                 .AsNoTracking();
@@ -155,7 +150,6 @@ public class PersonsController(
             var person = await queryable.FirstOrDefaultAsync(r => r.PersonId == personId);
 
             return WrappedResponse<PersonWithOrders>.CreateSuccessResponse(mapper.Map<PersonWithOrders?>(person)); 
-#endif
         }
         catch (Exception exception)
         {

@@ -28,8 +28,7 @@ namespace C8S.Functions.Functions
             try
             {
                 _logger.LogInformation("GetCoachOrders triggered");
-                throw new NotImplementedException();
-#if false
+
                 // start by checking that we got a proper id value
                 var idString = req.Query["id"];
                 if (String.IsNullOrEmpty(idString))
@@ -56,7 +55,7 @@ namespace C8S.Functions.Functions
                         .Include(c => c.Orders)
                         .ThenInclude(o => o.Shipments)
                         .Include(c => c.Orders)
-                        .ThenInclude(o => o.OrderSkus)
+                        .ThenInclude(o => o.OrderOffers)
                         .ThenInclude(os => os.Offer)
                         .Where(c => c.ClubPersons.Any(cp => cp.Person.WordPressId == wordPressId))
                         .AsNoTracking()
@@ -68,7 +67,6 @@ namespace C8S.Functions.Functions
                 // send back the person with their clubs/orders
                 var personClubs = personDTO == null ? null : new PersonClubs() { Person = personDTO, Clubs = clubDTOs };
                 response = await req.CreateSuccessResponse(personClubs);
-#endif
             }
             catch (Exception ex)
             {

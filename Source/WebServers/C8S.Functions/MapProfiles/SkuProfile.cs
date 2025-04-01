@@ -8,7 +8,7 @@ internal class SkuProfile: Profile
 {
     public SkuProfile()
     {
-        CreateMap<OfferDb, SkuDTO>()
+        CreateMap<OfferDb, OfferDTO>()
             .ReverseMap();
     }
 }

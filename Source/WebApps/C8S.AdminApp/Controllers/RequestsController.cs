@@ -1,4 +1,5 @@
-﻿using System.Linq.Dynamic.Core;
+﻿#if false
+using System.Linq.Dynamic.Core;
 using System.Text.Json;
 using AutoMapper;
 using C8S.Domain.EFCore.Contexts;
@@ -28,8 +29,6 @@ public class RequestsController(
     {
         try
         {
-            throw new NotImplementedException();
-#if false
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var queryable = dbContext.Requests
                 .Include(a => a.Place)
@@ -92,7 +91,6 @@ public class RequestsController(
             var total = await queryable.CountAsync();
 
             return WrappedListResponse<RequestListItem>.CreateSuccessResponse(items, total); 
-#endif
         }
         catch (Exception exception)
         {
@@ -163,3 +161,4 @@ public class RequestsController(
     }
     #endregion
 }
+#endif

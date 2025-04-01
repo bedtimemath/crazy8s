@@ -13,8 +13,8 @@ public record ShipmentDTO
 
     [JsonPropertyName("ship_method")]
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public ShipMethod ShipMethod { get; init; } = default!;
+    public ShipMethod? ShipMethod { get; init; }
 
     [JsonPropertyName("ship_method_other")]
-    public string ShipMethodOther { get; init; } = null!;
+    public string? ShipMethodOther { get; init; }
 }

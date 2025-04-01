@@ -2,10 +2,10 @@
 
 namespace C8S.Functions.DTOs;
 
-public record OrderSkuDTO
+public record OrderOfferDTO
 {
     [JsonPropertyName("order_sku_id")]
-    public int OrderSkuId { get; init; }
+    public int OrderOfferId { get; init; }
     
     [JsonPropertyName("ordinal")]
     public int Ordinal { get; set; }
@@ -13,6 +13,6 @@ public record OrderSkuDTO
     [JsonPropertyName("quantity")]
     public short Quantity { get; set; }
 
-    [JsonPropertyName("sku")]
-    public SkuDTO Sku { get; init; } = null!;
+    [JsonPropertyName("offer")]
+    public OfferDTO Offer { get; init; } = null!;
 }
