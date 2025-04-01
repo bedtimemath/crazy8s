@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Net;
 using AutoMapper;
 using C8S.WordPress.Abstractions.MagicLogin;
 using C8S.WordPress.Abstractions.Models;
-using C8S.WordPress.Custom;
 using Microsoft.Extensions.Logging;
 using SC.Common;
 using SC.Common.Extensions;
@@ -81,14 +81,14 @@ public class WordPressService
 
     public async Task<List<WPKitPageDetails>> GetWordPressKitPages()
     {
-        var allKitPages = new List<CustomPost>();
+        var allKitPages = new List<WPKitPageDetails>();
         var page = 1;
         while (true)
         {
             try
             {
                 var kitPages = (await _wordPressClient.CustomRequest
-                               .GetAsync<List<CustomPost>>(
+                               .GetAsync<List<WPKitPageDetails>>(
                                    $"{KitBaseUrl}?page={page}&per_page={DefaultPerPage}", useAuth: true));
                 allKitPages.AddRange(kitPages);
 
@@ -168,11 +168,23 @@ public class WordPressService
 
     public async Task<WPKitPageDetails> CreateWordPressKitPage(WPKitPageCreate create)
     {
-        var customSku = _mapper.Map<CustomPostCreate>(create);
-        var output = await _wordPressClient.CustomRequest
-            .CreateAsync<CustomPostCreate, CustomPost>(KitBaseUrl, customSku);
-        return _mapper.Map<WPKitPageDetails>(output);
+        try
+        {
+            return await _wordPressClient.CustomRequest
+                .CreateAsync<WPKitPageCreate, WPKitPageDetails>(KitBaseUrl, create);
+        }
+        catch (WPException ex)
+        {
+            _logger.LogError(ex, "Error creating WordPress kit page: {@Create}", create);
+            throw;
+        }
     }
+
+    public async Task<WPKitPageDetails> UpdateWordPressKitPage(int pageId,
+        WPKitPageProperties properties) => 
+        await _wordPressClient.CustomRequest
+            .UpdateAsync<WPKitPageDetails, WPKitPageDetails>(KitBaseUrl + $"/{pageId}", 
+                new WPKitPageDetails() { Properties = properties });
 
     public async Task<WPRoleDetails> CreateWordPressRole(WPRoleDetails details)
     {

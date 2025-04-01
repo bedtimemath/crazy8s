@@ -1,16 +1,22 @@
 ﻿using C8S.Domain.Enums;
+using Newtonsoft.Json;
 
 namespace C8S.WordPress.Abstractions.Models;
 
 public record WPKitPageProperties
 {
-    public string Key { get; set; } = null!;
+    [JsonProperty(PropertyName = "key")]
+    public string? Key { get; set; }
+    
+    [JsonProperty(PropertyName = "year")]
+    public string? Year { get; set; }
 
-    public string Year { get; set; } = null!;
+    [JsonProperty(PropertyName = "season")]
+    public int? Season { get; set; }
 
-    public int Season { get; set; }
-
-    public AgeLevel AgeLevel { get; set; }
-
-    public string? Version { get; set; } = null!;
+    [JsonProperty(PropertyName = "age_level")]
+    public string? AgeLevel { get; set; }
+    
+    [JsonProperty(PropertyName = "version")]
+    public string? Version { get; set; }
 }

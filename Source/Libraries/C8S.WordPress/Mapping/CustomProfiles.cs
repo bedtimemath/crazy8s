@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using C8S.WordPress.Abstractions.Models;
-using C8S.WordPress.Custom;
 
 namespace C8S.WordPress.Mapping;
 

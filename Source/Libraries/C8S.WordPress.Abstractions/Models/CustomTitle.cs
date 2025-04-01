@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace C8S.WordPress.Custom;
+namespace C8S.WordPress.Abstractions.Models;
 
-internal class CustomTitle
+public class CustomTitle
 {
     [JsonProperty(PropertyName = "rendered")]
     public string? Rendered { get; set; }

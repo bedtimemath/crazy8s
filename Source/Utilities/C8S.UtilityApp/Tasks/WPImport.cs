@@ -50,8 +50,8 @@ internal class WPImport(
         var wpRoles = await wordPressService.GetWordPressRoles();
         _logger.LogInformation("Found {Count:#,##0} roles in WordPress.", wpRoles.Count);
 
-        var skusCreated = 0;
-        var skusSkipped = 0;
+        var pagesCreated = 0;
+        var pagesSkipped = 0;
 
         var rolesCreated = 0;
         var rolesSkipped = 0;
@@ -66,7 +66,7 @@ internal class WPImport(
 
             if (wpKitPages.Any(s => s.Properties?.Key == kit.Key))
             {
-                skusSkipped++;
+                pagesSkipped++;
             }
             else
             {
@@ -74,19 +74,23 @@ internal class WPImport(
                 {
                     Slug = slug,
                     Title = display,
-                    Status = WPPageStatus.Active,
+                    Status = "publish", 
                     Properties = new WPKitPageProperties()
                     {
                         Key = kit.Key,
                         Year = kit.Year,
                         Season = kit.Season,
-                        AgeLevel = kit.AgeLevel,
+                        AgeLevel = kit.AgeLevel switch {
+                            AgeLevel.GradesK2 => "K2",
+                            AgeLevel.Grades35 => "35",
+                            _ => throw new ArgumentOutOfRangeException()
+                        },
                         Version = kit.Version,
                     }
                 };
 
-                await wordPressService.CreateWordPressKitPage(wpKitPage);
-                skusCreated++;
+                var details = await wordPressService.CreateWordPressKitPage(wpKitPage);
+                pagesCreated++;
             }
 
             if (wpRoles.Any(r => r.Slug == slug))
@@ -108,11 +112,11 @@ internal class WPImport(
                 rolesCreated++;
             }
 
-            ConsoleEx.ShowProgress((float)(skusCreated + skusSkipped) / (float)dbKitPages.Count);
+            ConsoleEx.ShowProgress((float)(pagesCreated + pagesSkipped) / (float)dbKitPages.Count);
         }
         ConsoleEx.EndProgress();
 
-        _logger.LogInformation("{Created:#,##0} skus created, {Skipped:#,##0} skipped.", skusCreated, skusSkipped);
+        _logger.LogInformation("{Created:#,##0} skus created, {Skipped:#,##0} skipped.", pagesCreated, pagesSkipped);
         _logger.LogInformation("{Created:#,##0} roles created, {Skipped:#,##0} skipped.", rolesCreated, rolesSkipped); 
 
         _logger.LogInformation("{Name}: complete.", nameof(WPImport));
