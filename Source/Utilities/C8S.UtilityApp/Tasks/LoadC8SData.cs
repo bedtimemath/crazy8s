@@ -208,13 +208,6 @@ internal class LoadC8SData(
             var (clubsAdded, clubsMismatched) = await AddClubs(sqlClubs, orderIdLookup, placeIdLookup, kitIdLookup);
             logger.LogInformation("Added {Added:#,##0} clubs; {Mismatched:#,##0} mismatched.", clubsAdded, clubsMismatched);
 
-        }
-
-        /*** COACHES ***/
-        sqlClubs = (await oldSystemService.GetClubs()).ToList(); // todo - remove
-
-        if (sqlClubs.Count > 0)
-        {
             clubIdLookup ??= await CreateClubsLookup();
             personIdLookup ??= await CreatePersonsLookup();
 
@@ -383,19 +376,7 @@ internal class LoadC8SData(
             // create the person if new
             if (person == null)
             {
-                person = new PersonDb()
-                {
-                    FirstName = sqlCoach.FirstName,
-                    LastName = sqlCoach.LastName,
-                    Email = sqlCoach.Email,
-                    TimeZone = sqlCoach.TimeZone,
-                    Phone = sqlCoach.Phone +
-                            (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
-                    JobTitle = JobTitleFromRole(sqlCoach.Role),
-                    JobTitleOther = JobTitleOtherFromRole(sqlCoach.Role),
-                    Notes = new List<PersonNoteDb>(),
-                    CreatedOn = sqlCoach.CreatedOn
-                };
+                person = CreatePersonFromCoach(sqlCoach);
 
                 dbContext.Persons.Add(person);
                 added++;
@@ -483,6 +464,20 @@ internal class LoadC8SData(
 
         return (added, dupes);
     }
+
+    private PersonDb CreatePersonFromCoach(CoachSql sqlCoach) => new ()
+        {
+            FirstName = sqlCoach.FirstName,
+            LastName = sqlCoach.LastName,
+            Email = sqlCoach.Email,
+            TimeZone = sqlCoach.TimeZone,
+            Phone = sqlCoach.Phone +
+                    (String.IsNullOrEmpty(sqlCoach.PhoneExt) ? null : $" x{sqlCoach.PhoneExt}"),
+            JobTitle = JobTitleFromRole(sqlCoach.Role),
+            JobTitleOther = JobTitleOtherFromRole(sqlCoach.Role),
+            Notes = new List<PersonNoteDb>(),
+            CreatedOn = sqlCoach.CreatedOn
+        };
 
     private async Task<int> AddPlaces(List<OrganizationSql> sqlOrganizations, List<AddressSql> sqlAddresses)
     {
@@ -798,18 +793,21 @@ internal class LoadC8SData(
     private async Task<(int, int)> AddClubs(List<ClubSql> sqlClubs,
         OrderLookup orderIdLookup, PlaceLookup placeIdLookup, KitLookup kitIdLookup)
     {
-        var sqlClubsCount = sqlClubs.Count;
-        ConsoleEx.StartProgress("Adding clubs with kits & places: ");
+        var clubGroups = sqlClubs.GroupBy(c => c.OldSystemClubId).ToList();
+
+        var sqlClubsCount = clubGroups.Count;
+        ConsoleEx.StartProgress("Adding clubs with orders, kits & places: ");
 
         var added = 0;
         var mismatched = 0;
         for (var index = 0; index < sqlClubsCount; index++)
         {
             await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            var sqlClub = sqlClubs[index];
+            var clubGroup = clubGroups[index];
+            var sqlClub = clubGroup.First(); // only difference will be the orders
 
             if (sqlClub.OldSystemOrganizationId == null)
-                throw new UnreachableException("SqlOrderClub missing OldSystemOrganizationId");
+                throw new UnreachableException("SqlClub missing OldSystemOrganizationId");
 
             // determine the season & age-level
             var season = sqlClub.Season ??
@@ -849,17 +847,21 @@ internal class LoadC8SData(
             }
             else
             {
-                var orderId = orderIdLookup.GetValueOrDefault(sqlClub.OldSystemOrderId!.Value);
-                var order = await dbContext.Orders
-                    .Include(o => o.OrderOffers)
-                    .ThenInclude(oo => oo.Offer)
-                    .ThenInclude(oo => oo.Kits)
-                    .AsSingleQuery()
-                    .FirstOrDefaultAsync(o => o.OrderId == orderId) ??
-                            throw new UnreachableException($"Could not find order #:{orderId}");
-                orders.Add(order);
+                foreach (var oldSystemOrderId in clubGroup.Select(cg => cg.OldSystemOrderId))
+                {
+                    var orderId = orderIdLookup.GetValueOrDefault(oldSystemOrderId!.Value);
+                    var order = await dbContext.Orders
+                                    .Include(o => o.OrderOffers)
+                                    .ThenInclude(oo => oo.Offer)
+                                    .ThenInclude(oo => oo.Kits)
+                                    .AsSingleQuery()
+                                    .FirstOrDefaultAsync(o => o.OrderId == orderId) ??
+                                throw new UnreachableException($"Could not find order #:{orderId}");
+                    orders.Add(order);
+                }
 
-                var kits = order.OrderOffers
+                var kits = orders
+                    .SelectMany(o => o.OrderOffers)
                     .SelectMany(oo => oo.Offer.Kits)
                     .ToList();
                 if (!kits.Any())
@@ -1209,24 +1211,43 @@ internal class LoadC8SData(
 
             // find the right club
             var clubId = clubIdLookup.GetValueOrDefault(sqlClub.OldSystemClubId!.Value);
-            var club = dbContext.Clubs.Include(c => c.ClubPersons).FirstOrDefault(o => o.ClubId == clubId);
+            var club = dbContext.Clubs
+                .Include(c => c.ClubPersons)
+                .ThenInclude(cp => cp.Person)
+                .FirstOrDefault(o => o.ClubId == clubId);
             if (club == null)
                 throw new UnreachableException($"Could not find club: {clubId}");
 
-            // if we've already got people, skip
-            if (club.ClubPersons.Any()) { skipped++; continue; }
-
             // find the right person
             var personId = personIdLookup.GetValueOrDefault(sqlClub.OldSystemCoachId!.Value);
+            if (personId == 0)
+            {
+                var deletedCoach = await oldSystemService.GetDeletedCoach(sqlClub.OldSystemCoachId!.Value) ??
+                                   throw new UnreachableException($"Could not find deleted coach: {sqlClub.OldSystemCoachId}");
+
+                personId =
+                    (await dbContext.Persons.FirstOrDefaultAsync(p => p.Email == deletedCoach.Email))?.PersonId ??
+                    throw new UnreachableException("Deleted coach had no matching coach with same email.");
+            }
+
             var person = dbContext.Persons.FirstOrDefault(o => o.PersonId == personId) ??
                          throw new UnreachableException($"Could not find person: {personId}");
+
+            // if we've already got people, skip
+            var ordinal = 0;
+            if (club.ClubPersons.Any())
+            {
+                var newPersons = club.ClubPersons.Select(cp => cp.Person).Where(p => p.PersonId != personId).ToList();
+                if (!newPersons.Any()) { skipped++; continue; }
+                ordinal = club.ClubPersons.Count + 1;
+            }
 
             // join them together
             var clubPerson = new ClubPersonDb()
             {
                 Club = club,
                 Person = person,
-                Ordinal = 0
+                Ordinal = ordinal
             };
             dbContext.ClubPersons.Add(clubPerson);
             await dbContext.SaveChangesAsync();
@@ -1302,16 +1323,6 @@ internal class LoadC8SData(
         sqlOrderSkus.RemoveAll(m => existingGuids.Contains(m.OldSystemOrderSkuId!.Value));
     }
 
-    private async Task RemoveExistingOrderClubs(List<OrderClubSql> sqlClubs)
-    {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-        var existingGuids = await dbContext.OldNews
-            .Where(o => o.NewTableName == nameof(ClubDb) && o.OldTableName == ClubTable)
-            .Select(o => o.OldId)
-            .ToListAsync();
-        sqlClubs.RemoveAll(m => existingGuids.Contains(m.OldSystemClubId!.Value));
-    }
-
     private async Task RemoveExistingClubs(List<ClubSql> sqlClubs)
     {
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
@@ -1320,14 +1331,6 @@ internal class LoadC8SData(
             .Select(o => o.OldId)
             .ToListAsync();
         sqlClubs.RemoveAll(m => existingGuids.Contains(m.OldSystemClubId!.Value));
-    }
-    #endregion
-
-    #region Other
-    private async Task<List<int>> GetClubIdsWithoutCoaches()
-    {
-        var dbContext = await dbContextFactory.CreateDbContextAsync();
-        return await dbContext.Clubs.Where(c => !c.ClubPersons.Any()).Select(c => c.ClubId).ToListAsync();
     }
     #endregion
 
