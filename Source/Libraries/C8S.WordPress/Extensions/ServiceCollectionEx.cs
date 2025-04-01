@@ -23,7 +23,7 @@ public static class ServiceCollectionEx
         string endpoint, string username, string password)
     {
         // set up automapper (WPProfiles is used arbitrarily here)
-        services.AddAutoMapper(typeof(WPSkuProfiles));
+        services.AddAutoMapper(typeof(WPKitPageProfiles));
 
         services.AddScoped<WordPressService>(svc =>
             new WordPressService(

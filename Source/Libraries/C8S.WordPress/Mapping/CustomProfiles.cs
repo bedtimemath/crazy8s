@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using C8S.Domain.Enums;
+using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Custom;
 
 namespace C8S.WordPress.Mapping;
@@ -13,9 +13,9 @@ internal class CustomProfiles : Profile
         CreateMap<string, CustomTitle>()
             .ConvertUsing(m => new CustomTitle() { Rendered = m });
 
-        CreateMap<OfferStatus, string>()
-            .ConvertUsing<SkuStatusToStringConverter>();
-        CreateMap<string, OfferStatus>()
-            .ConvertUsing<StringToSkuStatusConverter>();
+        CreateMap<WPPageStatus, string>()
+            .ConvertUsing<WPPageStatusToStringConverter>();
+        CreateMap<string, WPPageStatus>()
+            .ConvertUsing<StringToWPPageStatusConverter>();
     }
 }

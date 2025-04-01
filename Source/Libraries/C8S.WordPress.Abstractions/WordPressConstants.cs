@@ -4,6 +4,6 @@ public static class WordPressConstants
 {
     public static class CustomPostTypes
     {
-        public const string Sku = "sku";
+        public const string KitPage = "kit-page";
     }
 }

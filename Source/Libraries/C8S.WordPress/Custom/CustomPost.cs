@@ -2,7 +2,7 @@
 
 namespace C8S.WordPress.Custom;
 
-internal class CustomSku
+internal class CustomPost
 {
     [JsonProperty(PropertyName = "id")]
     public int Id { get; set; }
@@ -20,5 +20,5 @@ internal class CustomSku
     public CustomTitle Title { get; set; } = new();
 
     [JsonProperty(PropertyName = "acf")]
-    public CustomSkuACF ACF { get; set; } = new();
+    public CustomPostACF ACF { get; set; } = new();
 }

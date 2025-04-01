@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using C8S.Domain.Enums;
+using C8S.WordPress.Abstractions.Models;
 
 namespace C8S.WordPress.Mapping;
 
@@ -25,26 +26,26 @@ internal class StringToAgeLevelConverter : ITypeConverter<string, AgeLevel>
         };
 }
 
-internal class SkuStatusToStringConverter : ITypeConverter<OfferStatus, string>
+internal class WPPageStatusToStringConverter : ITypeConverter<WPPageStatus, string>
 {
-    public string Convert(OfferStatus source, string destination, ResolutionContext context)
+    public string Convert(WPPageStatus source, string destination, ResolutionContext context)
         => source switch
         {
-            OfferStatus.Active => "publish",
-            OfferStatus.Draft => "draft",
-            OfferStatus.Inactive => "trash",
+            WPPageStatus.Active => "publish",
+            WPPageStatus.Draft => "draft",
+            WPPageStatus.Inactive => "trash",
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
         };
 }
 
-internal class StringToSkuStatusConverter : ITypeConverter<string, OfferStatus>
+internal class StringToWPPageStatusConverter : ITypeConverter<string, WPPageStatus>
 {
-    public OfferStatus Convert(string  source, OfferStatus destination, ResolutionContext context)
+    public WPPageStatus Convert(string  source, WPPageStatus destination, ResolutionContext context)
         => source switch
         {
-            "publish" => OfferStatus.Active,
-            "draft" => OfferStatus.Draft,
-            "trash" => OfferStatus.Inactive,
+            "publish" => WPPageStatus.Active,
+            "draft" => WPPageStatus.Draft,
+            "trash" => WPPageStatus.Inactive,
             _ => throw new ArgumentOutOfRangeException(nameof(source), source, null)
         };
 }

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using AutoMapper;
 using C8S.WordPress.Abstractions.MagicLogin;
 using C8S.WordPress.Abstractions.Models;
@@ -18,7 +17,7 @@ namespace C8S.WordPress.Services;
 public class WordPressService
 {
     private const int DefaultPerPage = 100;
-    private const string KitBaseUrl = "/wp-json/wp/v2/sku";
+    private const string KitBaseUrl = "/wp-json/wp/v2/kit-page";
     private const string GetRolesUrl = "/wp-json/c8s/v1/get-roles";
     private const string CreateRoleUrl = "/wp-json/c8s/v1/add-role";
     private const string MagicLoginUrl = "/wp-json/magic-login/v1/token";
@@ -80,20 +79,20 @@ public class WordPressService
         return allUsers.Select(_mapper.Map<WPUserDetails>).ToList();
     }
 
-    public async Task<List<WPSkuDetails>> GetWordPressSkus()
+    public async Task<List<WPKitPageDetails>> GetWordPressKitPages()
     {
-        var allSkus = new List<CustomSku>();
+        var allKitPages = new List<CustomPost>();
         var page = 1;
         while (true)
         {
             try
             {
-                var skus = (await _wordPressClient.CustomRequest
-                               .GetAsync<List<CustomSku>>(
+                var kitPages = (await _wordPressClient.CustomRequest
+                               .GetAsync<List<CustomPost>>(
                                    $"{KitBaseUrl}?page={page}&per_page={DefaultPerPage}", useAuth: true));
-                allSkus.AddRange(skus);
+                allKitPages.AddRange(kitPages);
 
-                if (skus.Count < DefaultPerPage) break;
+                if (kitPages.Count < DefaultPerPage) break;
                 page++;
             }
             // catches the edge case when the # of items exactly matches a multiple of per_page
@@ -105,7 +104,7 @@ public class WordPressService
             }
         }
 
-        return allSkus.Select(_mapper.Map<WPSkuDetails>).ToList();
+        return allKitPages.Select(_mapper.Map<WPKitPageDetails>).ToList();
     }
 
     public async Task<List<WPRoleDetails>> GetWordPressRoles()
@@ -167,12 +166,12 @@ public class WordPressService
         }
     }
 
-    public async Task<WPSkuDetails> CreateWordPressSku(WPSkuCreate skuCreate)
+    public async Task<WPKitPageDetails> CreateWordPressKitPage(WPKitPageCreate create)
     {
-        var customSku = _mapper.Map<CustomSkuCreate>(skuCreate);
+        var customSku = _mapper.Map<CustomPostCreate>(create);
         var output = await _wordPressClient.CustomRequest
-            .CreateAsync<CustomSkuCreate, CustomSku>(KitBaseUrl, customSku);
-        return _mapper.Map<WPSkuDetails>(output);
+            .CreateAsync<CustomPostCreate, CustomPost>(KitBaseUrl, customSku);
+        return _mapper.Map<WPKitPageDetails>(output);
     }
 
     public async Task<WPRoleDetails> CreateWordPressRole(WPRoleDetails details)

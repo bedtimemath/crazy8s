@@ -1,5 +1,10 @@
-﻿using C8S.Domain.EFCore.Contexts;
+﻿using System.Diagnostics;
+using C8S.Domain.EFCore.Contexts;
+using C8S.Domain.Enums;
 using C8S.UtilityApp.Base;
+using C8S.UtilityApp.Extensions;
+using C8S.WordPress.Abstractions.Extensions;
+using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -28,20 +33,16 @@ internal class WPImport(
 
         Console.WriteLine();
 
-#if false
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
 
-        var dbSkus = await dbContext.Offers
-            .Where(s => (s.Year == "F23" || s.Year == "F23C" || s.Year == "F24") &&
-                        (s.Title != "dont use"))
-            .ToListAsync();
-        _logger.LogInformation("Found {Count:#,##0} active skus in C8s database.", dbSkus.Count);
+        var dbKitPages = await dbContext.KitPages.Include(kp => kp.Kits).ToListAsync();
+        _logger.LogInformation("Found {Count:#,##0} kit pages in C8s database.", dbKitPages.Count);
 
         //foreach (var dbSku in dbSkus)
         //    _logger.LogInformation("{@Sku}", dbSku);
 
-        var wpSkus = await wordPressService.GetWordPressSkus();
-        _logger.LogInformation("Found {Count:#,##0} skus in WordPress.", wpSkus.Count);
+        var wpKitPages = await wordPressService.GetWordPressKitPages();
+        _logger.LogInformation("Found {Count:#,##0} kit pages in WordPress.", wpKitPages.Count);
 
         //foreach (var wpSku in wpSkus)
         //    _logger.LogInformation("{@Sku}", wpSku);
@@ -55,32 +56,36 @@ internal class WPImport(
         var rolesCreated = 0;
         var rolesSkipped = 0;
 
-        ConsoleEx.StartProgress("Adding skus to WordPress: ");
-        foreach (var dbSku in dbSkus)
+        ConsoleEx.StartProgress("Adding kit pages to WordPress: ");
+        foreach (var dbKitPage in dbKitPages)
         {
-            var slug = dbSku.ClubKey.ToSlug();
-            var display = dbSku.Title;
+            var kit = dbKitPage.Kits.FirstOrDefault() ??
+                      throw new UnreachableException("KitPage has no kits.");
+            var slug = kit.Key.ToSlug();
+            var display = dbKitPage.Title;
 
-            if (wpSkus.Any(s => s.Properties.SkuIdentifier == dbSku.ClubKey))
+            if (wpKitPages.Any(s => s.Properties?.Key == kit.Key))
             {
                 skusSkipped++;
             }
             else
             {
-                var wpSku = new WPSkuCreate()
+                var wpKitPage = new WPKitPageCreate()
                 {
                     Slug = slug,
                     Title = display,
-                    Status = OfferStatus.Active,
-                    Properties = new WPSkuProperties()
+                    Status = WPPageStatus.Active,
+                    Properties = new WPKitPageProperties()
                     {
-                        SkuIdentifier = dbSku.ClubKey,
-                        Season = dbSku.Season,
-                        AgeLevel = dbSku.AgeLevel
+                        Key = kit.Key,
+                        Year = kit.Year,
+                        Season = kit.Season,
+                        AgeLevel = kit.AgeLevel,
+                        Version = kit.Version,
                     }
                 };
 
-                await wordPressService.CreateWordPressSku(wpSku);
+                await wordPressService.CreateWordPressKitPage(wpKitPage);
                 skusCreated++;
             }
 
@@ -103,13 +108,12 @@ internal class WPImport(
                 rolesCreated++;
             }
 
-            ConsoleEx.ShowProgress((float)(skusCreated + skusSkipped) / (float)dbSkus.Count);
+            ConsoleEx.ShowProgress((float)(skusCreated + skusSkipped) / (float)dbKitPages.Count);
         }
         ConsoleEx.EndProgress();
 
         _logger.LogInformation("{Created:#,##0} skus created, {Skipped:#,##0} skipped.", skusCreated, skusSkipped);
         _logger.LogInformation("{Created:#,##0} roles created, {Skipped:#,##0} skipped.", rolesCreated, rolesSkipped); 
-#endif
 
         _logger.LogInformation("{Name}: complete.", nameof(WPImport));
         return 0;

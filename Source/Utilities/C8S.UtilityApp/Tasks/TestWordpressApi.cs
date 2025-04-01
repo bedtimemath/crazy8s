@@ -64,7 +64,7 @@ internal class TestWordPressApi(
                 await RunGetAllRolesTest();
                 break;
             case WordPressApiAction.GetAllSkus:
-                await RunGetAllSkusTest();
+                await RunGetAllKitPagesTest();
                 break;
             case WordPressApiAction.GetAllActivities:
                 await RunGetAllActivitiesTest();
@@ -99,11 +99,11 @@ internal class TestWordPressApi(
         }
     }
 
-    private async Task RunGetAllSkusTest()
+    private async Task RunGetAllKitPagesTest()
     {
         try
         {
-            var skus = await wordPressService.GetWordPressSkus();
+            var skus = await wordPressService.GetWordPressKitPages();
             foreach (var sku in skus)
             {
                 _logger.LogDebug("{@Sku}", sku);

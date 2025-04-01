@@ -3,13 +3,13 @@ using Newtonsoft.Json;
 
 namespace C8S.WordPress.Custom;
 
-internal class CustomSkuCreate
+internal class CustomPostCreate
 {
     [JsonProperty(PropertyName = "slug")]
     public string Slug { get; set; } = null!;
 
     [JsonProperty(PropertyName = "type")] 
-    public string Type { get; set; } = WordPressConstants.CustomPostTypes.Sku;
+    public string Type { get; set; } = WordPressConstants.CustomPostTypes.KitPage;
 
     [JsonProperty(PropertyName = "status")]
     public string Status { get; set; } = null!;
@@ -18,5 +18,5 @@ internal class CustomSkuCreate
     public string Title { get; set; } = null!;
 
     [JsonProperty(PropertyName = "acf")]
-    public CustomSkuACF ACF { get; set; } = null!;
+    public CustomPostACF ACF { get; set; } = null!;
 }

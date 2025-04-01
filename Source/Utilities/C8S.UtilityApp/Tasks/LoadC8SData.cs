@@ -1007,6 +1007,7 @@ internal class LoadC8SData(
             var kitPage = new KitPageDb()
             {
                 Kits = [kit],
+                Status = KitPageStatus.Active,
                 Url = kitPageUrl,
                 Title = GetTitleFromKit(kit),
                 CreatedOn = DateTime.Now
