@@ -225,7 +225,7 @@ internal class LoadC8SData(
         {
             var (permissionsAdded, permissionsSkipped) = await AddPermissions(personIds);
             logger.LogInformation("Added {Added:#,##0} permissions; {Skipped:#,##0} skipped.", permissionsAdded, permissionsSkipped);
-        }
+        } 
 
         logger.LogInformation("{Name}: complete.", nameof(LoadC8SData));
         return 0;
@@ -1317,6 +1317,8 @@ internal class LoadC8SData(
 
     private async Task<(int, int)> JoinPersonsToClubs(List<ClubSql> sqlClubs, ClubLookup clubIdLookup, PersonLookup personIdLookup)
     {
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+
         var sqlClubsCount = sqlClubs.Count;
         ConsoleEx.StartProgress("Joining persons to clubs: ");
 
@@ -1324,7 +1326,6 @@ internal class LoadC8SData(
         var skipped = 0;
         for (int index = 0; index < sqlClubsCount; index++)
         {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
             var sqlClub = sqlClubs[index];
 
             // find the right club
@@ -1356,7 +1357,12 @@ internal class LoadC8SData(
             if (club.ClubPersons.Any())
             {
                 var newPersons = club.ClubPersons.Select(cp => cp.Person).Where(p => p.PersonId != personId).ToList();
-                if (!newPersons.Any()) { skipped++; continue; }
+                if (!newPersons.Any())
+                {
+                    skipped++; 
+                    ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
+                    continue;
+                }
                 ordinal = club.ClubPersons.Count + 1;
             }
 
@@ -1368,12 +1374,13 @@ internal class LoadC8SData(
                 Ordinal = ordinal
             };
             dbContext.ClubPersons.Add(clubPerson);
-            await dbContext.SaveChangesAsync();
             joined++;
 
-            await dbContext.SaveChangesAsync();
+            if (index % SaveBlock == 0)
+                await dbContext.SaveChangesAsync();
             ConsoleEx.ShowProgress((float)index / (float)sqlClubsCount);
         }
+        await dbContext.SaveChangesAsync();
         ConsoleEx.EndProgress();
 
         return (joined, skipped);
