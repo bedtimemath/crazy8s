@@ -60,7 +60,4 @@ public record OrderDTO
 
     [JsonPropertyName("shipments")]
     public List<ShipmentDTO> Shipments { get; init; } = [];
-
-    [JsonPropertyName("order_offers")]
-    public List<OrderOfferDTO> OrderOffers { get; init; } = [];
 }

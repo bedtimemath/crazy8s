@@ -147,30 +147,6 @@ class CoachOrdersList extends Widget_Base
 			)
 		);
 
-		$this->add_control(
-			'platform',
-			array(
-				'label' => __('Platform', 'elementor-crazy8s-coaches'),
-				'type'	=> \Elementor\Controls_Manager::SELECT,
-				'default' => 'development',
-				'options' => [
-					'development' => __('Development', 'development'),
-					'staging' => __('Staging', 'staging'),
-					'production' => __('Production', 'production'),
-				]
-			)
-		);
-
-		$this->add_control(
-			'api-key',
-			array(
-				'label' => __('API Key', 'elementor-crazy8s-coaches'),
-				'label_block' => true,
-				'type'	=> \Elementor\Controls_Manager::TEXT,
-				'placeholder' => 'Enter the Azure functions key here'
-			)
-		);
-
 		$this->end_controls_section();
 	}
 
@@ -185,53 +161,48 @@ class CoachOrdersList extends Widget_Base
 	 */
 	protected function render()
 	{
-		/***** 
-		 * 
+		$settings = $this->get_settings_for_display();
 
-?>
-		<div class="c8s-coach-orders-list">
-			<?php
-			$settings = $this->get_settings_for_display();
+		echo '<div class="c8s-coach-orders-list">';
 
-			$orders = [];
-			if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-				$orders[] = self::FAKE_ORDER;
-			} else {
-				$result = $this->helper->fetch_order_data($settings);
 
-				// Check the result and handle accordingly
-				if (is_object($result) && isset($result->error_type) && isset($result->error_message)) {
-					// Handle error
-					echo '<div class="c8s-text-danger">';
-					echo '<strong>' . $result->error_type . '</strong>: ' . $result->error_message;
-					echo '</div>';
-				} else if (is_array($result)) {
-					$data = $result['Result'];
-					if (isset($data['clubs'])) {
-						foreach ($data['clubs'] as $club) {
-							if (isset($club['orders'])) {
-								foreach ($club['orders'] as $order) {
-									$orders[] = $order;
-								}
+		$orders = [];
+		if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+			$orders[] = self::FAKE_ORDER;
+		} else {
+			$result = $this->helper->fetch_order_data($settings);
+
+			// Check the result and handle accordingly
+			if (is_object($result) && isset($result->error_type) && isset($result->error_message)) {
+				// Handle error
+				echo '<div class="c8s-text-danger">';
+				echo '<strong>' . $result->error_type . '</strong>: ' . $result->error_message;
+				echo '</div>';
+			} else if (is_array($result)) {
+
+				$data = $result['Result'];
+				if (isset($data['clubs'])) {
+					foreach ($data['clubs'] as $club) {
+						if (isset($club['orders'])) {
+							foreach ($club['orders'] as $order) {
+								$orders[] = $order;
 							}
 						}
 					}
-					
-					// Sort the orders array in reverse-chronological order
-					usort($orders, function($a, $b) {
-						return strtotime($b['ordered_on']) - strtotime($a['ordered_on']);
-					});
-	
-					foreach ($orders as $order) {
-						$this->render_order($order);
-					}
+				}
+
+				// Sort the orders array in reverse-chronological order
+				usort($orders, function ($a, $b) {
+					return strtotime($b['ordered_on']) - strtotime($a['ordered_on']);
+				});
+
+				foreach ($orders as $order) {
+					$this->render_order($order);
 				}
 			}
-			?>
-		</div>
-	<?php
-*/
+		}
 
+		echo '</div>';
 	}
 
 	/**
@@ -245,6 +216,9 @@ class CoachOrdersList extends Widget_Base
 	 */
 	protected function _content_template()
 	{
+		echo '<div><strong>Platform:</strong> ' . get_option('crazy8s_platform') . '</div>';
+		echo '<div><strong>API Key:</strong> ' . get_option('crazy8s_api_key') . '</div>';
+
 		// Enqueue the plugin stylesheet
 		wp_enqueue_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES) . '?v=' . time(), array(), null);
 
@@ -278,7 +252,7 @@ class CoachOrdersList extends Widget_Base
 		$shipped_on->setTimezone($eastern_time_zone);
 		$shipped_on_formatted = $shipped_on->format('m/d/Y');
 
-	?>
+?>
 		<div class="c8s-coach-order-container">
 			<div class="c8s-coach-order-subcontainer">
 				<div class="c8s-coach-order-row">
@@ -321,6 +295,46 @@ class CoachOrdersList extends Widget_Base
 					<span class="c8s-coach-order-caption">Shipped:</span>
 					<?php echo $shipped_on_formatted ?>
 				</div>
+				<?php
+				if (isset($order['shipments'])) {
+				?>
+					<div class="c8s-coach-order-row">
+						<div class="c8s-coach-order-caption">Tracking:</div>
+						<?php
+						$tracking_numbers = [];
+						foreach ($order['shipments'] as $shipment) {
+
+							$tracking_number = $shipment['tracking_number'];
+							$ship_method = ($shipment['ship_method'] !== 'Other') ? $shipment['ship_method'] : $shipment['ship_method_other'];
+
+							if (in_array($tracking_number, $tracking_numbers)) { continue; }
+
+							echo '<div class="c8s-coach-order-tracking">';
+							echo $ship_method;
+							echo ': ';
+
+							if (isset($tracking_number)) {
+								if ($ship_method == 'FedEx') {
+									echo '<a href="https://www.fedex.com/fedextrack/?trknbr=' . $tracking_number . '" target="_fedex">';
+									echo $tracking_number;
+									echo '</a>';
+								}
+								else {
+									echo $tracking_number;
+								}
+							} else {
+								echo '(not set)';
+							}
+							echo '</div>';
+
+							$tracking_numbers[] = $tracking_number;
+						}
+						?>
+
+					</div>
+				<?php
+				}
+				?>
 			</div>
 		</div>
 <?php

@@ -116,7 +116,7 @@ class Widgets
 	 *
 	 * Register the settings page
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.2
 	 * @access public
 	 */
 	public function add_crazy8s_settings_page()
@@ -126,7 +126,7 @@ class Widgets
 			'Crazy 8s Widgets',
 			'manage_options',
 			'crazy8s-widgets-settings',
-			'create_crazy8s_settings_page_html'
+			array($this, 'create_crazy8s_settings_page_html')
 		);
 	}
 
@@ -135,10 +135,10 @@ class Widgets
 	 *
 	 * Output HTML for the settings page
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.2
 	 * @access public
 	 */
-	function crazy8s_settings_page_html()
+	public function create_crazy8s_settings_page_html()
 	{
 		if (!current_user_can('manage_options')) {
 			return;
@@ -162,10 +162,10 @@ class Widgets
 	 *
 	 * Register the Crazy 8s settings
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.2
 	 * @access public
 	 */
-	function crazy8s_register_settings()
+	public function crazy8s_register_settings()
 	{
 		register_setting('crazy8s_settings', 'crazy8s_platform');
 		register_setting('crazy8s_settings', 'crazy8s_api_key');
@@ -180,7 +180,7 @@ class Widgets
 		add_settings_field(
 			'crazy8s_platform',
 			__('Platform', 'elementor-crazy8s-coaches'),
-			'crazy8s_platform_callback',
+			array($this, 'crazy8s_platform_callback'),
 			'crazy8s_settings',
 			'crazy8s_settings_section'
 		);
@@ -188,13 +188,13 @@ class Widgets
 		add_settings_field(
 			'crazy8s_api_key',
 			__('API Key', 'elementor-crazy8s-coaches'),
-			'crazy8s_api_key_callback',
+			array($this, 'crazy8s_api_key_callback'),
 			'crazy8s_settings',
 			'crazy8s_settings_section'
 		);
 	}
 
-	function crazy8s_platform_callback()
+	public function crazy8s_platform_callback()
 	{
 		$platform = get_option('crazy8s_platform');
 	?>
@@ -206,7 +206,7 @@ class Widgets
 	<?php
 	}
 
-	function crazy8s_api_key_callback()
+	public function crazy8s_api_key_callback()
 	{
 		$api_key = get_option('crazy8s_api_key');
 	?>
@@ -219,7 +219,7 @@ class Widgets
 	 *
 	 * Register plugin action hooks and filters
 	 *
-	 * @since 1.0.0
+	 * @since 1.0.2
 	 * @access public
 	 */
 	public function __construct()
@@ -228,8 +228,8 @@ class Widgets
 		add_action('elementor/widgets/widgets_registered', array($this, 'register_widgets'));
 		add_action('elementor/elements/categories_registered', array($this, 'add_elementor_widget_categories'));
 		// Add the settings and settings page
-		//add_action('admin_init', 'crazy8s_register_settings');
-		add_action('admin_menu', 'add_crazy8s_settings_page');
+		add_action('admin_init', array($this, 'crazy8s_register_settings'));
+		add_action('admin_menu', array($this, 'add_crazy8s_settings_page'));
 	}
 }
 

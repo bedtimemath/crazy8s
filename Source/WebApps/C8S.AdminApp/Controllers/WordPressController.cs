@@ -34,6 +34,8 @@ namespace C8S.AdminApp.Controllers
             try
             {
                 var users = await wordPressService.GetWordPressUsers(query.IncludeRoles);
+                await CheckAndUpdateWordPressIds(users);
+
                 return WrappedListResponse<WPUserDetails>.CreateSuccessResponse(users, users.Count);
             }
             catch (Exception exception)
@@ -197,6 +199,25 @@ namespace C8S.AdminApp.Controllers
             {
                 _logger.LogError(exception, "Error creating WordPress user ID#: {@Id}", id);
                 return WrappedResponse.CreateFailureResponse(exception);
+            }
+        }
+        #endregion
+
+        #region Private Methods
+
+        private async Task CheckAndUpdateWordPressIds(List<WPUserDetails> users)
+        {
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            foreach (var user in users)
+            {
+                var person = await dbContext.Persons.FirstOrDefaultAsync(p => p.WordPressId == user.Id);
+                if (person != null) continue;
+                
+                person = await dbContext.Persons.FirstOrDefaultAsync(p => p.Email == user.Email);
+                if (person == null) continue;
+
+                person.WordPressId = user.Id;
+                await dbContext.SaveChangesAsync();
             }
         }
         #endregion

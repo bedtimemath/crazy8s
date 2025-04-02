@@ -52,11 +52,10 @@ namespace C8S.Functions.Functions
                 {
                     personDTO = mapper.Map<PersonDTO>(personDb);
                     var clubDbs = await dbContext.Clubs
+                        .Include(c => c.ClubPersons)
+                        .Include(c => c.Kit)
                         .Include(c => c.Orders)
                         .ThenInclude(o => o.Shipments)
-                        .Include(c => c.Orders)
-                        .ThenInclude(o => o.OrderOffers)
-                        .ThenInclude(os => os.Offer)
                         .Where(c => c.ClubPersons.Any(cp => cp.Person.WordPressId == wordPressId))
                         .AsNoTracking()
                         .AsSingleQuery()

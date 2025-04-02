@@ -128,30 +128,6 @@ class CoachKitPagesDropdown extends Widget_Base
 			)
 		);
 
-		$this->add_control(
-			'platform',
-			array(
-				'label' => __('Platform', 'elementor-crazy8s-coaches'),
-				'type'	=> \Elementor\Controls_Manager::SELECT,
-				'default' => 'development',
-				'options' => [
-					'development' => __('Development', 'development'),
-					'staging' => __('Staging', 'staging'),
-					'production' => __('Production', 'production'),
-				]
-			)
-		);
-
-		$this->add_control(
-			'api-key',
-			array(
-				'label' => __('API Key', 'elementor-crazy8s-coaches'),
-				'label_block' => true,
-				'type'	=> \Elementor\Controls_Manager::TEXT,
-				'placeholder' => 'Enter the Azure functions key here'
-			)
-		);
-
 		$this->end_controls_section();
 	}
 
@@ -166,18 +142,27 @@ class CoachKitPagesDropdown extends Widget_Base
 	 */
 	protected function render()
 	{
+		global $post;
+		$current_slug = get_post_field('post_name', $post->ID);
+
 		$is_admin = current_user_can('administrator');
 		$kit_pages = $this->get_kit_pages($is_admin);
 ?>
 		<div class="c8s-coach-kitpages-dropdown">
 			<?php
+
 			if (empty($kit_pages)) {
 				echo '<div>No kit pages allowed.</div>';
 			} else {
 				echo '<select id="kit-page-dropdown" onchange="redirectToKitPage(this.value)">';
-				echo '<option value="">' . __('Select Kit Page', 'elementor-crazy8s-coaches') . '</option>';
 				foreach ($kit_pages as $kit_page) {
-					echo '<option value="' . esc_url(get_permalink($kit_page->ID)) . '">' . esc_html($kit_page->post_title) . '</option>';
+					$kit_slug = get_post_field('post_name', $kit_page->ID);
+					echo '<option value="' . esc_url(get_permalink($kit_page->ID)) . '"';
+					if ($kit_slug === $current_slug) {
+						echo ' selected';
+					}
+					echo '>' . esc_html($kit_page->post_title);
+					echo '</option>';
 				}
 				echo '</select>';
 				echo '<script>
@@ -205,14 +190,13 @@ class CoachKitPagesDropdown extends Widget_Base
 	protected function _content_template()
 	{
 		$kit_pages = $this->get_kit_pages(true);
-?>
+	?>
 		<div class="c8s-coach-kitpages-dropdown">
 			<?php
 			if (empty($kit_pages)) {
 				echo '<div>No kit pages allowed.</div>';
 			} else {
 				echo '<select id="kit-page-dropdown">';
-				echo '<option value="">' . __('Select Kit Page', 'elementor-crazy8s-coaches') . '</option>';
 				foreach ($kit_pages as $kit_page) {
 					echo '<option>' . esc_html($kit_page->post_title) . '</option>';
 				}
@@ -220,7 +204,7 @@ class CoachKitPagesDropdown extends Widget_Base
 			}
 			?>
 		</div>
-	<?php
+<?php
 	}
 
 	/**
@@ -240,6 +224,21 @@ class CoachKitPagesDropdown extends Widget_Base
 		$args = [
 			'post_type' => 'kit-page',
 			'posts_per_page' => -1,
+			'meta_query' => [
+				'relation' => 'AND',
+				'year_clause' => [
+					'key' => 'year',
+					'compare' => 'EXISTS',
+				],
+				'season_clause' => [
+					'key' => 'season',
+					'compare' => 'EXISTS',
+				],
+			],
+			'orderby' => [
+				'year_clause' => 'DESC',
+				'season_clause' => 'ASC',
+			],
 		];
 		$query = new \WP_Query($args);
 

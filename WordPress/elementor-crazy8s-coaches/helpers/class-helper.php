@@ -36,8 +36,11 @@ class Helper {
      */
 	
     public function fetch_order_data($settings) {
+        $platform = get_option('crazy8s_platform');
+        $api_key = get_option('crazy8s_api_key');
+
         // Set the base URL based on the platform
-        switch ($settings['platform']) {
+        switch ($platform) {
             case 'development':
                 $base_url = "https://localhost:7071/api/";
                 break;
@@ -55,8 +58,9 @@ class Helper {
 
         $args = [
             'headers' => [
-                'x-functions-key' => $settings['api-key']
-            ]
+                'x-functions-key' => $api_key
+            ],
+            'timeout' => 15
         ];
         $response = wp_remote_get($api_url, $args);
         $status_code = wp_remote_retrieve_response_code($response);

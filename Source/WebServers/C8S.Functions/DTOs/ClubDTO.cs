@@ -37,9 +37,4 @@ public record ClubDTO
 
     [JsonPropertyName("orders")]
     public List<OrderDTO> Orders { get; init; } = [];
-
-    #region Derived Properties
-    [JsonPropertyName("club_key")]
-    public string ClubKey => String.Join('-', [Year, Season, AgeLevel, Version]);
-    #endregion
 }
