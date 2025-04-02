@@ -2,8 +2,11 @@
 using C8S.AdminApp.Client.Services.Coordinators.Menus;
 using C8S.AdminApp.Client.Services.Coordinators.Notes;
 using C8S.AdminApp.Client.Services.Coordinators.Persons;
+using C8S.AdminApp.Client.Services.Coordinators.Tickets;
 using C8S.AdminApp.Client.Services.Coordinators.WordPress;
 using Microsoft.Extensions.DependencyInjection;
+using SC.Common.Razor.Interfaces;
+using System.Reflection;
 
 namespace C8S.AdminApp.Client.Services.Extensions;
 
@@ -12,22 +15,13 @@ public static class ServiceCollectionEx
     public static IServiceCollection AddClientCoordinators(
         this IServiceCollection services)
     {
-        services.AddScoped<SidebarMenuCoordinator>();
-        services.AddScoped<SidebarGroupCoordinator>();
-        services.AddScoped<SidebarSingleCoordinator>();
-        services.AddScoped<SidebarItemListCoordinator>();
-        services.AddScoped<SidebarItemCoordinator>();
+        var assembly = Assembly.GetExecutingAssembly();
+        var coordinatorTypes = assembly.GetTypes()
+            .Where(t => typeof(ICoordinator).IsAssignableFrom(t))
+            .ToList();
 
-        services.AddScoped<AppointmentDisplayerCoordinator>();
-        
-        services.AddScoped<PersonsListCoordinator>();
-        services.AddScoped<PersonDetailsCoordinator>();
-
-        services.AddScoped<NotesListEditorCoordinator>();
-
-        services.AddScoped<WPUserCreatorCoordinator>();
-        services.AddScoped<WPCoachEditorCoordinator>();
-        services.AddScoped<WPCoachListerCoordinator>();
+        foreach (var type in coordinatorTypes)
+            services.AddScoped(type);
 
         return services;
     }
