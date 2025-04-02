@@ -185,6 +185,9 @@ class CoachOrdersList extends Widget_Base
 	 */
 	protected function render()
 	{
+		/***** 
+		 * 
+
 ?>
 		<div class="c8s-coach-orders-list">
 			<?php
@@ -227,6 +230,8 @@ class CoachOrdersList extends Widget_Base
 			?>
 		</div>
 	<?php
+*/
+
 	}
 
 	/**

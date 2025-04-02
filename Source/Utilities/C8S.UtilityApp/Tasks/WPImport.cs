@@ -61,8 +61,8 @@ internal class WPImport(
         {
             var kit = dbKitPage.Kits.FirstOrDefault() ??
                       throw new UnreachableException("KitPage has no kits.");
-            var slug = kit.Key.ToSlug();
-            var display = dbKitPage.Title;
+            var kitSlug = kit.Key.ToSlug();
+            var kitDisplay = dbKitPage.Title;
 
             if (wpKitPages.Any(s => s.Properties?.Key == kit.Key))
             {
@@ -72,8 +72,8 @@ internal class WPImport(
             {
                 var wpKitPage = new WPKitPageCreate()
                 {
-                    Slug = slug,
-                    Title = display,
+                    Slug = kitSlug,
+                    Title = kitDisplay,
                     Status = "publish", 
                     Properties = new WPKitPageProperties()
                     {
@@ -93,7 +93,10 @@ internal class WPImport(
                 pagesCreated++;
             }
 
-            if (wpRoles.Any(r => r.Slug == slug))
+            var roleSlug = kitSlug;
+            var roleDisplay = $"Can View {kit.Key}";
+
+            if (wpRoles.Any(r => r.Slug == roleSlug))
             {
                 rolesSkipped++;
             }
@@ -101,13 +104,13 @@ internal class WPImport(
             {
                 var wpRole = new WPRoleDetails()
                 {
-                    Slug = slug,
-                    Display = display,
-                    Capabilities = [$"can_view_{slug}"]
+                    Slug = roleSlug,
+                    Display = roleDisplay,
+                    Capabilities = [$"can_view_{roleSlug}"]
                 };
 
                 var created = await wordPressService.CreateWordPressRole(wpRole);
-                if (created.Slug != slug)
+                if (created.Slug != roleSlug)
                     throw new UnreachableException($"Created role doesn't match request: {created.Slug}");
                 rolesCreated++;
             }

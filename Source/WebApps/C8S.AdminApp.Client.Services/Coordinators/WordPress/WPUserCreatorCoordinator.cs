@@ -28,7 +28,7 @@ public sealed class WPUserCreatorCoordinator(
     public PersonWithOrders? SelectedPerson { get; set; }
     public int TotalPersons { get; set; }
 
-    public IEnumerable<KitYearOption> SkuYears { get; private set; } = [];
+    public IEnumerable<KitYearOption> KitYears { get; private set; } = [];
 
     public bool IsCreating { get; set; } = false;
     public bool IsLoading { get; set; } = false;
@@ -41,7 +41,7 @@ public sealed class WPUserCreatorCoordinator(
 
     public async Task SetSkuYears(IEnumerable<KitYearOption> skuYears)
     {
-        SkuYears = skuYears;
+        KitYears = skuYears;
         await DataGrid.Reload();
     }
 
@@ -62,11 +62,11 @@ public sealed class WPUserCreatorCoordinator(
                       new Exception("Error getting WordPress roles");
 
             var roleSlugs = rolesResponse.Result.Select(r => r.Slug);
-            var skuSlugs = SelectedPerson.ClubPersons
+            var kitSlugs = SelectedPerson.ClubPersons
                 .Select(cp => cp.Club.Kit.Key.ToSlug());
 
             List<string> userRoles = ["coach"];
-            userRoles.AddRange(roleSlugs.Intersect(skuSlugs));
+            userRoles.AddRange(roleSlugs.Intersect(kitSlugs));
 
             var addResponse = await GetCommandResults<WPUserAddCommand, WrappedResponse<WPUserDetails>>(
                                new WPUserAddCommand()
@@ -101,8 +101,6 @@ public sealed class WPUserCreatorCoordinator(
 
     private async Task LoadPersonsList(LoadDataArgs args)
     {
-        _logger.LogDebug("Args: {@Args}", args);
-
         if (!string.IsNullOrWhiteSpace(args.Filter) && args.Filter.Length < 3) return;
         try
         {
@@ -115,7 +113,7 @@ public sealed class WPUserCreatorCoordinator(
                     StartIndex = args.Skip ?? 0,
                     Count = args.Top ?? 0,
                     Query = string.IsNullOrWhiteSpace(args.Filter) ? null : args.Filter,
-                    SkuYears = SkuYears.ToList(),
+                    SkuYears = KitYears.ToList(),
                     SortDescription = "Email ASC"
                 });
             if (response is { Success: false } or { Result: null } ) 

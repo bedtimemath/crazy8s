@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Coach Skus Dropdown class.
+ * Coach KitPages Dropdown class.
  *
  * @category   Class
  * @package    ElementorCrazy8sCoaches
@@ -22,11 +22,11 @@ use Elementor\Controls_Manager;
 defined('ABSPATH') || die();
 
 /**
- * CoachSkusDropdown widget class.
+ * CoachKitPagesDropdown widget class.
  *
  * @since 1.0.0
  */
-class CoachSkusDropdown extends Widget_Base
+class CoachKitPagesDropdown extends Widget_Base
 {
 	/**
 	 * Class constructor.
@@ -52,7 +52,7 @@ class CoachSkusDropdown extends Widget_Base
 	 */
 	public function get_name()
 	{
-		return 'coach-skus-dropdown';
+		return 'coach-kitpages-dropdown';
 	}
 
 	/**
@@ -66,7 +66,7 @@ class CoachSkusDropdown extends Widget_Base
 	 */
 	public function get_title()
 	{
-		return __('Coach Skus Dropdown', 'elementor-crazy8s-coaches');
+		return __('Coach Kit Pages Dropdown', 'elementor-crazy8s-coaches');
 	}
 
 	/**
@@ -166,99 +166,29 @@ class CoachSkusDropdown extends Widget_Base
 	 */
 	protected function render()
 	{
+		$is_admin = current_user_can('administrator');
+		$kit_pages = $this->get_kit_pages($is_admin);
 ?>
-		<div class="c8s-coach-skus-dropdown">
+		<div class="c8s-coach-kitpages-dropdown">
 			<?php
-			$settings = $this->get_settings_for_display();
-
-			// Set the base URL based on the platform
-			switch ($settings['platform']) {
-				case 'development':
-					$base_url = "https://localhost:7071/api/";
-					break;
-				case 'staging':
-					$base_url = "https://c8s-functions-staging.azurewebsites.net/api/";
-					break;
-				case 'production':
-				default:
-					$base_url = "https://api.crazy8sclub.org/api/";
-					break;
-			}
-
-			$user_id = get_current_user_id();
-			$api_url = $base_url . "coach/?id=" . $user_id;
-
-			$args = [
-				'headers' => [
-					'x-functions-key' => $settings['api-key']
-				]
-			];
-			$response = wp_remote_get($api_url, $args);
-			$status_code = wp_remote_retrieve_response_code($response);
-
-			if (is_wp_error($response)) {
-				$error_code = $response->get_error_code();
-				$error_message = $response->get_error_message();
-			?>
-				<div class="c8s-text-danger">
-					<strong>NETWORK ERROR</strong>:
-					<div>Code = <?php echo $error_code; ?></div>
-					<div><?php echo $error_message; ?></div>
-				</div>
-			<?php
-				return;
-			} else if ($status_code != 200) {
-			?>
-				<div class="c8s-text-danger">
-					<strong>API ERROR</strong>:
-					[<?php echo $status_code; ?>] Bad status code returned.
-				</div>
-			<?php
-			}
-
-			$body = wp_remote_retrieve_body($response);
-			$data = json_decode($body, true);
-			if (isset($data['Exception'])) {
-			?>
-				<div class="c8s-text-danger">
-					<strong>RESPONSE ERROR</strong>:
-					[<?php echo $data['Exception']['source']; ?>] <?php echo $data['Exception']['message'] ?>
-				</div>
-			<?php
-				return;
-			} else if (!isset($data['Result'])) {
-			?>
-				<div class="c8s-text-danger">
-					The current user has no associated Orders or SKUs.
-				</div>
-			<?php
-				return;
-			}
-
-
-			$skus = [];
-
-			if (isset($data['Result']['clubs'])) {
-				foreach ($data['Result']['clubs'] as $club) {
-					if (isset($club['orders'])) {
-						foreach ($club['orders'] as $order) {
-							if (isset($order['order_skus'])) {
-								foreach ($order['order_skus'] as $order_sku) {
-									if (isset($order_sku['sku'])) {
-										$skus[] = $order_sku['sku'];
-									}
-								}
-							}
+			if (empty($kit_pages)) {
+				echo '<div>No kit pages allowed.</div>';
+			} else {
+				echo '<select id="kit-page-dropdown" onchange="redirectToKitPage(this.value)">';
+				echo '<option value="">' . __('Select Kit Page', 'elementor-crazy8s-coaches') . '</option>';
+				foreach ($kit_pages as $kit_page) {
+					echo '<option value="' . esc_url(get_permalink($kit_page->ID)) . '">' . esc_html($kit_page->post_title) . '</option>';
+				}
+				echo '</select>';
+				echo '<script>
+					function redirectToKitPage(url) {
+						if (url) {
+							window.location.href = url;
 						}
 					}
-				}
+				</script>';
 			}
 			?>
-				<select name="skus_dropdown">
-					<?php foreach ($skus as $sku) { ?>
-						<option value="<?php echo $sku['key']; ?>"><?php echo $sku['name']; ?></option>
-					<?php } ?>
-				</select>
 		</div>
 	<?php
 	}
@@ -274,9 +204,54 @@ class CoachSkusDropdown extends Widget_Base
 	 */
 	protected function _content_template()
 	{
-	?>
-		<div>Skus Dropdown Goes Here</div>
-		<div>Platform: {{{ settings.platform }}}</div>
-<?php
+		$kit_pages = $this->get_kit_pages(true);
+?>
+		<div class="c8s-coach-kitpages-dropdown">
+			<?php
+			if (empty($kit_pages)) {
+				echo '<div>No kit pages allowed.</div>';
+			} else {
+				echo '<select id="kit-page-dropdown">';
+				echo '<option value="">' . __('Select Kit Page', 'elementor-crazy8s-coaches') . '</option>';
+				foreach ($kit_pages as $kit_page) {
+					echo '<option>' . esc_html($kit_page->post_title) . '</option>';
+				}
+				echo '</select>';
+			}
+			?>
+		</div>
+	<?php
+	}
+
+	/**
+	 * Read the available kit pages.
+	 * 
+	 * @since 1.0.0
+	 *
+	 * @access private
+	 */
+
+	private function get_kit_pages($is_admin)
+	{
+		$user = wp_get_current_user();
+		$roles = $user->roles;
+		$kit_pages = [];
+
+		$args = [
+			'post_type' => 'kit-page',
+			'posts_per_page' => -1,
+		];
+		$query = new \WP_Query($args);
+
+		while ($query->have_posts()) {
+			$query->the_post();
+			$kit_page_slug = get_post_field('post_name', get_the_ID());
+			if ($is_admin || in_array($kit_page_slug, $roles)) {
+				$kit_pages[] = get_post(get_the_ID());
+			}
+		}
+
+		wp_reset_postdata();
+		return $kit_pages;
 	}
 }

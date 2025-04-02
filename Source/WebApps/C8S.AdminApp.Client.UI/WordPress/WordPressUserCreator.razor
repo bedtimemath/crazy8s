@@ -10,7 +10,7 @@
                  JustifyContent="JustifyContent.Normal"
                  Gap="0.5rem">
 
-        <RadzenCheckBoxList Value="@Service.SkuYears"
+        <RadzenCheckBoxList Value="@Service.KitYears"
                             ValueChanged="@(async (v) => await Service.SetSkuYears(v))"
                             TValue="KitYearOption"
                             Data="@(EnumLabel<KitYearOption>.GetAllEnumLabels())"
@@ -31,6 +31,8 @@
                                     LoadData="@Service.LoadPersonsData"
                                     IsLoading="@Service.IsLoading"
                                     TextProperty="@nameof(Person.FullName)"
+                                    Density="Density.Compact"
+                                    PageSize="10"
                                     class="flex-grow-1">
                 <Columns>
                     <RadzenDropDownDataGridColumn Title="Name & Email">
@@ -50,22 +52,19 @@
                             </RadzenStack>
                         </Template>
                     </RadzenDropDownDataGridColumn>
-                    <RadzenDropDownDataGridColumn Title="Skus">
+                    <RadzenDropDownDataGridColumn Title="Kits">
                         <Template Context="person">
-                            @foreach(var offer in ((PersonWithOrders)person)
-                                     .ClubPersons
-                                     .SelectMany(cp => cp.Club.Orders)
-                                     .SelectMany(o => o.OrderOffers)
-                                     .Select(os => os.Offer)
-                                     .Distinct()
-                                     .OrderBy(k => k))
-                            {
-                                <RadzenText TagName="TagName.Div"
-                                            TextStyle="TextStyle.Body1"
-                                            Text="@offer.Title"
-                                            style="white-space: normal;"
-                                            class="rz-mb-0" />
-                            }
+                            
+                            <RadzenText TagName="TagName.Div"
+                                        TextStyle="TextStyle.Body1"
+                                        style="white-space: normal;"
+                                        class="rz-mb-0">
+                                @(String.Join(", ", ((PersonWithOrders)person)
+                                    .ClubPersons
+                                    .Select(cp => cp.Club.Kit.Key)
+                                    .Distinct()
+                                    .OrderBy(k => k)))
+                            </RadzenText>
                         </Template>
                     </RadzenDropDownDataGridColumn>
                 </Columns>
