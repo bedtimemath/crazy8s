@@ -18,9 +18,7 @@ public static class DomainUrlEx
             "contacts" => DomainEntity.Contact,
             "orders" => DomainEntity.Order,
             "organizations" => DomainEntity.Organization,
-            "requests" => DomainEntity.Request,
             "sites" => DomainEntity.Site,
-            "skus" => DomainEntity.Sku,
             "tickets" => DomainEntity.Ticket,
             _ => null
         };
@@ -43,13 +41,11 @@ public static class DomainUrlEx
     public static string CreateUrlFromEntityIdValue(DomainEntity entity, int idValue) =>
         entity switch
         {
-            DomainEntity.Contact => $"contacts/{idValue}",
-            DomainEntity.Order => $"orders/{idValue}",
-            DomainEntity.Organization => $"organizations/{idValue}",
-            DomainEntity.Request => $"requests/{idValue}",
-            DomainEntity.Site => $"sites/{idValue}",
-            DomainEntity.Sku => $"skus/{idValue}",
             DomainEntity.Ticket => $"tickets/{idValue}",
+            DomainEntity.Contact => $"contacts/{idValue}",
+            DomainEntity.Organization => $"organizations/{idValue}",
+            DomainEntity.Site => $"sites/{idValue}",
+            DomainEntity.Order => $"orders/{idValue}",
             _ => throw new ArgumentOutOfRangeException(nameof(entity), entity, null)
         };
 

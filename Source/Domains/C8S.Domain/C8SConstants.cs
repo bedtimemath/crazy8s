@@ -41,8 +41,9 @@ public static class C8SConstants
         public const string Request = "clipboard-list";
         public const string Save = "floppy-disk";
         public const string Site = "school";
-        public const string Sku = "barcode";
+        public const string Offer = "barcode";
         public const string Settings = "gear";
+        public const string Ticket = "ticket";
         public const string Unlink = "link-slash";
         public const string WordPress = "wordpress";
     }

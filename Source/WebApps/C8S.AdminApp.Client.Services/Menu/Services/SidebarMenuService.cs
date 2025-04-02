@@ -18,7 +18,7 @@ public sealed class SidebarMenuService(
     IPubSubService pubSubService) : ISidebarMenuService
 {
     #region ReadOnly Constructor Variables
-    private readonly ILogger<SidebarMenuService> _logger = loggerFactory.CreateLogger<SidebarMenuService>();
+    //private readonly ILogger<SidebarMenuService> _logger = loggerFactory.CreateLogger<SidebarMenuService>();
     #endregion
 
     #region Constants & ReadOnlys
@@ -29,15 +29,15 @@ public sealed class SidebarMenuService(
     ];
     private static readonly IEnumerable<MenuGroup> MenuGroups = 
     [
-        new() { Entity = DomainEntity.Request, Display = "Requests", IconString = C8SConstants.Icons.Request, Url = "requests" },
+        new() { Entity = DomainEntity.Ticket, Display = "Tickets", IconString = C8SConstants.Icons.Ticket, Url = "tickets" },
         new() { Entity = DomainEntity.Contact, Display = "Contacts", IconString = C8SConstants.Icons.Contact, Url = "persons" },
         new() { Entity = DomainEntity.Organization, Display = "Organizations", IconString = C8SConstants.Icons.Organization, Url = "organizations" },
         new() { Entity = DomainEntity.Site, Display = "Sites", IconString = C8SConstants.Icons.Site, Url = "sites" },
-        new() { Entity = DomainEntity.Order, Display = "Orders", IconString = C8SConstants.Icons.Order, Url = "orders" },
-        new() { Entity = DomainEntity.Sku, Display = "Skus", IconString = C8SConstants.Icons.Sku, Url = "skus" }
+        new() { Entity = DomainEntity.Order, Display = "Orders", IconString = C8SConstants.Icons.Order, Url = "orders" }
     ];
     private static readonly IEnumerable<MenuSingle> PostSingles =
     [
+        new() { Display = "Setup", IconString = C8SConstants.Icons.Settings, Url = "setup" },
         new() { Display = "WordPress", IconString = C8SConstants.Icons.WordPress, IconGroup = SoftCrowConstants.IconGroups.Brands, Url = "wordpress" },
     ];
 

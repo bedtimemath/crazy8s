@@ -3,10 +3,10 @@
 public enum DomainEntity
 {
     Contact,
+    Kit,
+    Offer,
     Order,
     Organization,
-    Request,
     Site,
-    Sku,
-    Ticket
+    Ticket,
 }
