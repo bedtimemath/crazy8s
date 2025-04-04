@@ -38,7 +38,7 @@ class CoachKitPagesDropdown extends Widget_Base
 	{
 		parent::__construct($data, $args);
 
-		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.0');
+		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.2');
 	}
 
 	/**
@@ -190,6 +190,8 @@ class CoachKitPagesDropdown extends Widget_Base
 	protected function _content_template()
 	{
 		$kit_pages = $this->get_kit_pages(true);
+		
+		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.2');
 	?>
 		<div class="c8s-coach-kitpages-dropdown">
 			<?php

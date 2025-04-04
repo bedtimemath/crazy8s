@@ -11,6 +11,8 @@ using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
+using C8S.Domain.Features.Tickets.Models;
+using C8S.Domain.Features.Tickets.Queries;
 using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
@@ -60,6 +62,9 @@ public static class WebAssemblyHostEx
         cqrsService.RegisterQuery<PersonQuery, WrappedResponse<Person?>>(personsCallbacks.Handle);
         cqrsService.RegisterQuery<PersonWithOrdersQuery, WrappedResponse<PersonWithOrders?>>(personsCallbacks.Handle);
         cqrsService.RegisterQuery<PersonTitleQuery, WrappedResponse<string?>>(personsCallbacks.Handle);
+
+        var ticketsCallbacks = serviceProvider.GetRequiredService<TicketCallbacks>();
+        cqrsService.RegisterQuery<TicketsListQuery, WrappedListResponse<TicketListItem>>(ticketsCallbacks.Handle);
 
         var appointmentCallbacks = serviceProvider.GetRequiredService<AppointmentCallbacks>();
         cqrsService.RegisterQuery<AppointmentDetailsQuery, WrappedResponse<Appointment?>>(appointmentCallbacks.Handle);

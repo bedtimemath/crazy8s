@@ -2,4 +2,19 @@
 @inherits BaseCoordinatedPage<TicketsListCoordinator>
 @using C8S.AdminApp.Client.Services.Coordinators.Tickets
 
-<h3>Tickets List Page</h3>
+<RadzenStack Orientation="Orientation.Vertical"
+             AlignItems="AlignItems.Stretch"
+             JustifyContent="JustifyContent.Stretch"
+             Gap="1.0rem"
+             class="w-100 h-100">
+             
+    <TicketsListFilter Coordinator="@Service"
+                       CssClass="flex-shrink-0" />
+
+    <TicketsListContainer Coordinator="@Service"
+                 CssClass="flex-grow-1" />
+
+    <TicketsListFooter Coordinator="@Service"
+                       CssClass="flex-shrink-0"  />
+
+</RadzenStack>

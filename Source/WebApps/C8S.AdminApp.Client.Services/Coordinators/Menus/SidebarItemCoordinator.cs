@@ -1,7 +1,6 @@
 ﻿using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Client.Services.Menu.Models;
 using Microsoft.Extensions.Logging;
-using SC.Common;
 using SC.Common.Client.Navigation.Commands;
 using SC.Common.Client.Navigation.Enums;
 using SC.Common.Client.Navigation.Models;

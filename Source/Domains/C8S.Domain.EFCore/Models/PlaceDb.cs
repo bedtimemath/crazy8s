@@ -69,4 +69,14 @@ public class PlaceDb: BaseCoreDb
     public ICollection<TicketDb> Tickets { get; set; } = null!;
     public ICollection<PlaceNoteDb> Notes { get; set; } = null!;
     #endregion
+
+    #region Derived Properties
+    [NotMapped]
+    public string? TypeString => (Type == PlaceType.Other) ? TypeOther : Type.ToString();
+
+    [NotMapped]
+    public string? FullAddress => String.Join("\r\n",
+        (new List<string?>() { Line1, Line2, $"{City}, {State} {ZIPCode}" })
+        .Where(s => !String.IsNullOrEmpty(s)));
+    #endregion
 }

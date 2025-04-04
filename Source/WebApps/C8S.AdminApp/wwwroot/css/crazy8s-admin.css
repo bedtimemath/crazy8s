@@ -218,10 +218,17 @@ ul.rz-profile-menu {
 }
 
 .c8s-listpage-list {
+    position: relative; /* required */
     background-color: var(--c8s-light);
     padding: 0.5rem;
     flex-grow: 1;
     overflow-y: scroll;
+}
+
+.c8s-listpage-footer {
+    background-color: var(--c8s-primary-mid);
+    padding: 0.5rem;
+    flex-shrink: 0;
 }
 
 .c8s-listitem-displayer {
@@ -229,12 +236,6 @@ ul.rz-profile-menu {
 
 .c8s-listitem-displayer-column {
     width: 25%;
-    flex-shrink: 0;
-}
-
-.c8s-listpage-footer {
-    background-color: var(--c8s-primary-mid);
-    padding: 0.5rem;
     flex-shrink: 0;
 }
 
@@ -260,3 +261,9 @@ ul.rz-profile-menu {
 .c8s-dialog .rz-html-editor {
     min-height: 250px;
 }
+
+/** TICKETS **/
+.c8s-tickets-listpage-filter {}
+.c8s-tickets-listpage-list {}
+.c8s-tickets-listpage-footer {}
+.c8s-tickets-listitem-displayer {}

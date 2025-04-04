@@ -1,0 +1,6 @@
+﻿@using System.Text.Json
+@inherits BaseRazorListItemDisplayer
+
+<div class="c8s-listitem-displayer c8s-tickets-listitem-displayer @CssClass">
+    @(JsonSerializer.Serialize(Ticket))
+</div>

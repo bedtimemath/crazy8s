@@ -1,5 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Extensions;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Radzen;
 using SC.Messaging.Abstractions.Interfaces;
 using SC.Messaging.Abstractions.Models;

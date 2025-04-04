@@ -62,4 +62,10 @@ public class PersonDb : BaseCoreDb
     public ICollection<InvoicePersonDb> InvoicePersons { get; set; } = null!;
     public ICollection<PersonNoteDb> Notes { get; set; } = null!;
     #endregion
+
+    #region Derived Properties
+    [NotMapped]
+    public string? FullName => String.IsNullOrEmpty(FirstName) ?
+        LastName : $"{FirstName} {LastName}";
+    #endregion
 }

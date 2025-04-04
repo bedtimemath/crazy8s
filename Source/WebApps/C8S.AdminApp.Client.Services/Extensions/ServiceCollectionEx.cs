@@ -1,9 +1,4 @@
-﻿using C8S.AdminApp.Client.Services.Coordinators.Appointments;
-using C8S.AdminApp.Client.Services.Coordinators.Menus;
-using C8S.AdminApp.Client.Services.Coordinators.Notes;
-using C8S.AdminApp.Client.Services.Coordinators.Persons;
-using C8S.AdminApp.Client.Services.Coordinators.Tickets;
-using C8S.AdminApp.Client.Services.Coordinators.WordPress;
+﻿using C8S.AdminApp.Client.Services.Callbacks;
 using Microsoft.Extensions.DependencyInjection;
 using SC.Common.Razor.Interfaces;
 using System.Reflection;
@@ -16,12 +11,22 @@ public static class ServiceCollectionEx
         this IServiceCollection services)
     {
         var assembly = Assembly.GetExecutingAssembly();
-        var coordinatorTypes = assembly.GetTypes()
-            .Where(t => typeof(ICoordinator).IsAssignableFrom(t))
-            .ToList();
 
+        // Scoped Coordinators
+        var coordinatorTypes = assembly.GetTypes()
+            .Where(t => typeof(ICoordinator).IsAssignableFrom(t) &&
+                        !t.IsAbstract)
+            .ToList();
         foreach (var type in coordinatorTypes)
             services.AddScoped(type);
+
+        // Callback Singletons
+        var callbackTypes = assembly.GetTypes()
+            .Where(t => typeof(ICallbacks).IsAssignableFrom(t) &&
+                        !t.IsAbstract)
+            .ToList();
+        foreach (var type in callbackTypes)
+            services.AddSingleton(type);
 
         return services;
     }

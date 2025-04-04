@@ -47,4 +47,12 @@ public class TicketDb : BaseCoreDb
     public ICollection<TicketPersonDb> TicketPersons { get; set; } = null!;
     public ICollection<TicketNoteDb> Notes { get; set; } = null!;
     #endregion
+
+    #region Derived Properties
+    [NotMapped]
+    public PersonDb? Primary => TicketPersons
+        .OrderBy(tp => tp.Ordinal)
+        .Select(tp => tp.Person)
+        .FirstOrDefault();
+    #endregion
 }

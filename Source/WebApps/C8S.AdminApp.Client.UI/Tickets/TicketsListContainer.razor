@@ -1,0 +1,20 @@
+﻿@inherits BaseRazorListContainer<TicketsListCoordinator, TicketListItem>
+@using C8S.Domain.Features.Tickets.Models
+@using C8S.AdminApp.Client.Services.Coordinators.Tickets
+
+<div id="@Coordinator.ListContainerId" 
+     class="c8s-listpage-list c8s-tickets-listpage-list @CssClass">
+
+    <BusyCover IsBusy="@_isBusy" />
+
+    <Virtualize @ref="@_listerComponent"
+                ItemsProvider="@Coordinator.GetRows"
+                Context="ticket">
+        <ItemContent>
+            <RadzenCard class="rz-mb-2">
+                <TicketListItemDisplayer Ticket="ticket" />
+            </RadzenCard>
+        </ItemContent>
+    </Virtualize>
+
+</div>

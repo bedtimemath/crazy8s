@@ -5,7 +5,7 @@ using SC.Common.Responses;
 namespace C8S.AdminApp.Client.Services.Callbacks;
 
 public abstract class BaseCallbacks(
-    IHttpClientFactory httpClientFactory)
+    IHttpClientFactory httpClientFactory) : ICallbacks
 {
     private readonly JsonSerializerOptions _options = new() { PropertyNameCaseInsensitive = true };
 

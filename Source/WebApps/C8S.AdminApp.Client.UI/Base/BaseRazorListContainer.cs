@@ -1,28 +1,24 @@
-﻿using C8S.AdminApp.Client.Services.Coordinators.Tickets;
-using Microsoft.AspNetCore.Components;
+﻿using C8S.AdminApp.Client.Services.Coordinators.Base;
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 using SC.Common.Razor.Base;
 
-namespace C8S.AdminApp.Client.UI.Tickets;
+namespace C8S.AdminApp.Client.UI.Base;
 
-public sealed partial class TicketsList : BaseRazorComponent, IDisposable
+public abstract class BaseRazorListContainer<TCoordinator, TListItem> : BaseRazorComponent
+    where TCoordinator: BaseListCoordinator<TListItem> 
+    where TListItem: class, new()
+
 {
-    #region Injected Properties
-    //[Inject]
-    //public ILogger<TicketsList> Logger { get; set; } = null!;
-    #endregion
-
     #region Component Parameters
-    [Parameter]
-    public TicketsListCoordinator Coordinator { get; set; } = null!;
+    public abstract TCoordinator Coordinator { get; set; }
     #endregion
 
     #region Component References
-    private Virtualize<TicketListItem> _listerComponent = null!;
+    protected Virtualize<TListItem> _listerComponent = null!;
     #endregion
 
     #region Private Variables
-    private bool _isBusy = true;
+    protected bool _isBusy = true;
     #endregion
 
     #region Component LifeCycle

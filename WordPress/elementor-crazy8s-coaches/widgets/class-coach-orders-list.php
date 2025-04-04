@@ -29,6 +29,17 @@ defined('ABSPATH') || die();
  */
 class CoachOrdersList extends Widget_Base
 {
+	const FAKE_CLUB = array(
+		"club_id" => 17836,
+		"club_status" => "Complete",
+		"kit_status" => "Active",
+		"key" => "C8.S1.F24.K2",
+		"year" => "F24",
+		"season" => 1,
+		"age_level" => "GradesK2",
+		"version" => null,
+		"starts_on" => "2025-02-05",
+	);
 	const FAKE_ORDER = array(
 		'number' => '12345',
 		'status' => 'Processing',
@@ -56,8 +67,7 @@ class CoachOrdersList extends Widget_Base
 
 		$this->helper = new Helper();
 
-		//		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.1');
-		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES) . '?v=' . time(), array(), null);
+		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.2');
 	}
 
 	/**
@@ -165,10 +175,12 @@ class CoachOrdersList extends Widget_Base
 
 		echo '<div class="c8s-coach-orders-list">';
 
-
-		$orders = [];
+		$orderSets = [];
 		if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-			$orders[] = self::FAKE_ORDER;
+			$orderSets[] = array(
+				'club' => self::FAKE_CLUB,
+				'order' => self::FAKE_ORDER
+			);
 		} else {
 			$result = $this->helper->fetch_order_data($settings);
 
@@ -185,19 +197,22 @@ class CoachOrdersList extends Widget_Base
 					foreach ($data['clubs'] as $club) {
 						if (isset($club['orders'])) {
 							foreach ($club['orders'] as $order) {
-								$orders[] = $order;
+								$orderSets[] = array(
+									'club' => $club,
+									'order' => $order
+								);
 							}
 						}
 					}
 				}
 
 				// Sort the orders array in reverse-chronological order
-				usort($orders, function ($a, $b) {
-					return strtotime($b['ordered_on']) - strtotime($a['ordered_on']);
+				usort($orderSets, function ($a, $b) {
+					return strtotime($b['order']['ordered_on']) - strtotime($a['order']['ordered_on']);
 				});
 
-				foreach ($orders as $order) {
-					$this->render_order($order);
+				foreach ($orderSets as $orderSet) {
+					$this->render_order($orderSet);
 				}
 			}
 		}
@@ -216,13 +231,15 @@ class CoachOrdersList extends Widget_Base
 	 */
 	protected function _content_template()
 	{
-		echo '<div><strong>Platform:</strong> ' . get_option('crazy8s_platform') . '</div>';
-		echo '<div><strong>API Key:</strong> ' . get_option('crazy8s_api_key') . '</div>';
-
 		// Enqueue the plugin stylesheet
-		wp_enqueue_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES) . '?v=' . time(), array(), null);
+		wp_register_style('crazy8s-elementor', plugins_url('/assets/css/crazy8s-elementor.css', ELEMENTOR_CRAZY8S_COACHES), array(), '1.0.2');
 
-		$this->render_order(self::FAKE_ORDER);
+		$orderSets = [];
+		$orderSets[] = array(
+			'club' => self::FAKE_CLUB,
+			'order' => self::FAKE_ORDER
+		);
+		$this->render_order($orderSets);
 	}
 
 	/**
@@ -232,15 +249,21 @@ class CoachOrdersList extends Widget_Base
 	 *
 	 * @access private
 	 */
-	private function render_order($order)
+	private function render_order($orderSet)
 	{
+		$order = $orderSet['order'];
+		$club = $orderSet['club'];
+
 		$order_number = $order['number'];
 		$order_status = $order['status'];
 		$order_name = $order['contact_name'];
 		$order_recipient = $order['recipient'];
 		$order_address1 = $order['shipping_address_1'];
 		$order_address2 = $order['shipping_address_2'];
-		$order_city_state_zip = $order['city'] . ", " . $order['state'] . " " . $order['zip_code'];
+		$order_city_state_zip = $order['city'] . ', ' . $order['state'] . ' ' . $order['zip_code'];
+
+		$season_display = 'Season ' . $club['season'];
+		$grade_display = $club['age_level'] == 'GradesK2' ? 'K-2nd Grades' : ($club['age_level'] == 'Grades35' ? '3rd-5th Grades' : '(not set)');
 
 		// Convert ordered_on and shipped_on to Eastern Time Zone and format as month/day/year
 		$eastern_time_zone = new \DateTimeZone('America/New_York');
@@ -254,87 +277,93 @@ class CoachOrdersList extends Widget_Base
 
 ?>
 		<div class="c8s-coach-order-container">
-			<div class="c8s-coach-order-subcontainer">
-				<div class="c8s-coach-order-row">
-					<span class="c8s-coach-order-caption">Order #:</span>
-					<?php echo $order_number ?>
-				</div>
-				<div class="c8s-coach-order-row">
-					<span class="c8s-coach-order-caption">Status:</span>
-					<?php echo $order_status ?>
-				</div>
+			<div class="c8s-coach-order-header">
+				<?php echo $season_display ?> | <?php echo $grade_display ?>
 			</div>
-			<div class="c8s-coach-order-subcontainer">
-				<div class="c8s-coach-order-caption">
-					Sent To:
-				</div>
-				<div class="c8s-coach-order-row">
-					<?php echo $order_name ?>
-				</div>
-				<div class="c8s-coach-order-row">
-					<?php echo $order_recipient ?>
-				</div>
-				<div class="c8s-coach-order-row">
-					<?php echo $order_address1 ?>
-				</div>
-				<?php if (isset($order_address2)) { ?>
+			<div class="c8s-coach-order-body">
+				<div class="c8s-coach-order-column">
 					<div class="c8s-coach-order-row">
-						<?php echo $order_address2 ?>
+						<span class="c8s-coach-order-caption">Order #:</span>
+						<?php echo $order_number ?>
 					</div>
-				<?php } ?>
-				<div class="c8s-coach-order-row">
-					<?php echo $order_city_state_zip ?>
-				</div>
-			</div>
-			<div class="c8s-coach-order-subcontainer">
-				<div class="c8s-coach-order-row">
-					<span class="c8s-coach-order-caption">Ordered:</span>
-					<?php echo $ordered_on_formatted ?>
-				</div>
-				<div class="c8s-coach-order-row">
-					<span class="c8s-coach-order-caption">Shipped:</span>
-					<?php echo $shipped_on_formatted ?>
-				</div>
-				<?php
-				if (isset($order['shipments'])) {
-				?>
 					<div class="c8s-coach-order-row">
-						<div class="c8s-coach-order-caption">Tracking:</div>
-						<?php
-						$tracking_numbers = [];
-						foreach ($order['shipments'] as $shipment) {
+						<span class="c8s-coach-order-caption">Status:</span>
+						<?php echo $order_status ?>
+					</div>
+				</div>
+				<div class="c8s-coach-order-column">
+					<div class="c8s-coach-order-caption">
+						Sent To:
+					</div>
+					<div class="c8s-coach-order-row">
+						<?php echo $order_name ?>
+					</div>
+					<div class="c8s-coach-order-row">
+						<?php echo $order_recipient ?>
+					</div>
+					<div class="c8s-coach-order-row">
+						<?php echo $order_address1 ?>
+					</div>
+					<?php if (isset($order_address2)) { ?>
+						<div class="c8s-coach-order-row">
+							<?php echo $order_address2 ?>
+						</div>
+					<?php } ?>
+					<div class="c8s-coach-order-row">
+						<?php echo $order_city_state_zip ?>
+					</div>
+				</div>
+				<div class="c8s-coach-order-column">
+					<div class="c8s-coach-order-row">
+						<span class="c8s-coach-order-caption">Ordered:</span>
+						<?php echo $ordered_on_formatted ?>
+					</div>
+					<div class="c8s-coach-order-row">
+						<span class="c8s-coach-order-caption">Shipped:</span>
+						<?php echo $shipped_on_formatted ?>
+					</div>
+					<?php
+					if (isset($order['shipments'])) {
+					?>
+						<div class="c8s-coach-order-row">
+							<div class="c8s-coach-order-caption">Tracking:</div>
+							<?php
+							$tracking_numbers = [];
+							foreach ($order['shipments'] as $shipment) {
 
-							$tracking_number = $shipment['tracking_number'];
-							$ship_method = ($shipment['ship_method'] !== 'Other') ? $shipment['ship_method'] : $shipment['ship_method_other'];
+								$tracking_number = $shipment['tracking_number'];
+								$ship_method = ($shipment['ship_method'] !== 'Other') ? $shipment['ship_method'] : $shipment['ship_method_other'];
 
-							if (in_array($tracking_number, $tracking_numbers)) { continue; }
-
-							echo '<div class="c8s-coach-order-tracking">';
-							echo $ship_method;
-							echo ': ';
-
-							if (isset($tracking_number)) {
-								if ($ship_method == 'FedEx') {
-									echo '<a href="https://www.fedex.com/fedextrack/?trknbr=' . $tracking_number . '" target="_fedex">';
-									echo $tracking_number;
-									echo '</a>';
+								if (in_array($tracking_number, $tracking_numbers)) {
+									continue;
 								}
-								else {
-									echo $tracking_number;
+
+								echo '<div class="c8s-coach-order-tracking">';
+								echo $ship_method;
+								echo ': ';
+
+								if (isset($tracking_number)) {
+									if ($ship_method == 'FedEx') {
+										echo '<a href="https://www.fedex.com/fedextrack/?trknbr=' . $tracking_number . '" target="_fedex">';
+										echo $tracking_number;
+										echo '</a>';
+									} else {
+										echo $tracking_number;
+									}
+								} else {
+									echo '(not set)';
 								}
-							} else {
-								echo '(not set)';
+								echo '</div>';
+
+								$tracking_numbers[] = $tracking_number;
 							}
-							echo '</div>';
+							?>
 
-							$tracking_numbers[] = $tracking_number;
-						}
-						?>
-
-					</div>
-				<?php
-				}
-				?>
+						</div>
+					<?php
+					}
+					?>
+				</div>
 			</div>
 		</div>
 <?php
