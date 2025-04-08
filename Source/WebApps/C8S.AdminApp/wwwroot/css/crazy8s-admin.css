@@ -231,12 +231,22 @@ ul.rz-profile-menu {
     flex-shrink: 0;
 }
 
+
+/** LIST ITEM CLASSES **/
 .c8s-listitem-displayer {
+}
+.c8s-listitem-displayer-header {
+}
+.c8s-listitem-displayer-body {
+    flex-grow: 1;
+}
+.c8s-listitem-displayer-caption {
+    font-weight: bold;
 }
 
 .c8s-listitem-displayer-column {
-    width: 25%;
     flex-shrink: 0;
+    flex-shrink: 1;
 }
 
     .c8s-listpage-footer .rz-text-body1 {

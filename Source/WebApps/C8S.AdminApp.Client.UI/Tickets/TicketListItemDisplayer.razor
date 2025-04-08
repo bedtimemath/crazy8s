@@ -1,6 +1,101 @@
-﻿@using System.Text.Json
+﻿@using SC.Common.Extensions
 @inherits BaseRazorListItemDisplayer
 
 <div class="c8s-listitem-displayer c8s-tickets-listitem-displayer @CssClass">
-    @(JsonSerializer.Serialize(Ticket))
+    <RadzenStack Orientation="Orientation.Vertical"
+                 AlignItems="AlignItems.Start"
+                 JustifyContent="JustifyContent.Normal">
+                 
+        @* HEADER - FULL NAME *@
+        <RadzenText TagName="TagName.Div"
+                    TextAlign="TextAlign.Left"
+                    TextStyle="TextStyle.DisplayH6"
+                    class="c8s-listitem-displayer-header">
+            @Ticket.PrimaryFullName
+        </RadzenText>
+        
+        @* BODY *@
+        <RadzenStack Orientation="Orientation.Horizontal"
+                     AlignItems="AlignItems.Start"
+                     JustifyContent="JustifyContent.Start"
+                     Gap="1.5rem"
+                     class="c8s-listitem-displayer-body">
+        
+            @* COLUMN - EMAIL, ADDRESS *@
+            <RadzenStack Orientation="Orientation.Vertical"
+                         AlignItems="AlignItems.Start"
+                         JustifyContent="JustifyContent.Normal"
+                         Gap="0"
+                         class="c8s-listitem-displayer-column">
+
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.Body1">
+                    @Ticket.PrimaryEmail
+                </RadzenText>
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.Body1">
+                    @((MarkupString)(Ticket.PlaceFullAddress?.ReplaceLineEndings("<br/>") ?? String.Empty))
+                </RadzenText>
+
+            </RadzenStack>
+
+            @* COLUMN - STATUS, SUBMITTED, SCHEDULED CALL *@
+            <RadzenStack Orientation="Orientation.Vertical"
+                         AlignItems="AlignItems.Start"
+                         JustifyContent="JustifyContent.Normal"
+                         Gap="0"
+                         class="c8s-listitem-displayer-column">
+
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.Body1">
+                    <span class="c8s-listitem-displayer-caption">
+                        Status:
+                    </span>
+                    @Ticket.Status.GetLabel()
+                </RadzenText>
+
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.Body1">
+                    <span class="c8s-listitem-displayer-caption">
+                        Submitted:
+                    </span>
+                    @Ticket.RequestSubmittedOn?.ToString("g")
+                </RadzenText>
+
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.Body1">
+                    <span class="c8s-listitem-displayer-caption">
+                        Scheduled Call:
+                    </span>
+                    @Ticket.RequestAppointmentStartsOn?.ToString("g")
+                </RadzenText>
+
+            </RadzenStack>
+
+            @* COLUMN - START DATES *@
+            <RadzenStack Orientation="Orientation.Vertical"
+                         AlignItems="AlignItems.Start"
+                         JustifyContent="JustifyContent.Normal"
+                         Gap="0"
+                         class="c8s-listitem-displayer-column">
+
+                <RadzenText TagName="TagName.Div"
+                            TextAlign="TextAlign.Left"
+                            TextStyle="TextStyle.Body1">
+                    <span class="c8s-listitem-displayer-caption">
+                        Clubs Requested:
+                    </span>
+                    @Ticket.RequestClubsRequested
+                </RadzenText>
+
+            </RadzenStack>
+
+        </RadzenStack>
+
+    </RadzenStack>
 </div>

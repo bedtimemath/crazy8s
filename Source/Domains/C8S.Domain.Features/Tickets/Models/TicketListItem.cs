@@ -10,4 +10,8 @@ public record TicketListItem: Ticket
 
     public string? PrimaryFullName { get; init; }
     public string? PrimaryEmail { get; init; }
+
+    public DateTimeOffset? RequestAppointmentStartsOn { get; init; }
+    public string? RequestClubsRequested { get; init; }
+    public DateTimeOffset? RequestSubmittedOn { get; init; }
 }

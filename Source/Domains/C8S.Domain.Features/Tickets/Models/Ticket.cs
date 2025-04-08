@@ -9,4 +9,7 @@ public record Ticket
     public int? PlaceId { get; init; }
     public int? RequestId { get; init; }
     public int? InvoiceId { get; init; }
+    
+    public DateTimeOffset CreatedOn { get; init; }
+    public DateTimeOffset? ModifiedOn { get; init; }
 }

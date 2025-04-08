@@ -19,6 +19,18 @@
       "commandName": "Project",
       "commandLineArgs": "load-crazy8s-data -p Staging"
     },
+    "Fix C8s Data": {
+      "commandName": "Project",
+      "commandLineArgs": "fix-crazy8s-data"
+    },
+    "Fix C8s Data (PROD)": {
+      "commandName": "Project",
+      "commandLineArgs": "fix-crazy8s-data -p Production"
+    },
+    "Fix C8s Data (STAGE)": {
+      "commandName": "Project",
+      "commandLineArgs": "fix-crazy8s-data -p Staging"
+    },
     "Show Config": {
       "commandName": "Project",
       "commandLineArgs": "show-config"

@@ -27,15 +27,33 @@ public abstract class BaseListCoordinator<TListItem>(
     public abstract string ListContainerId { get; }
     #endregion
 
+    #region Public Properties
+    public string? Query { get; set; } 
+    public int? TotalCount { get; set; } 
+    #endregion
+
     #region Abstract Methods
     public abstract ValueTask<ItemsProviderResult<TListItem>>
         GetRows(ItemsProviderRequest request);
+    #endregion
+
+    #region Event Handlers
+    public virtual void HandleQueryValueChange() => RaiseFilterChanged();
+    public virtual void HandleSortDropdownChange() => RaiseFilterChanged();
     #endregion
 
     #region Public Methods
     public async Task ScrollListToTop()
     {
         await jsRuntime.ScrollToTop(ListContainerId);
+    }
+    
+    public virtual void ClearFilter()
+    {
+        Query = null;
+        TotalCount = null;
+        
+        RaiseFilterChanged();
     }
     #endregion
 }

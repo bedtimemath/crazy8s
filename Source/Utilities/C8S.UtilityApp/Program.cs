@@ -41,6 +41,7 @@ try
     var parserResult = Parser.Default
         .ParseArguments<
             WPImportOptions,
+            FixC8SDataOptions,
             LoadC8SDataOptions,
             LoadSampleDataOptions,
             ShowConfigOptions,
@@ -118,6 +119,11 @@ try
             {
                 services.AddSingleton(options);
                 services.AddSingleton<IActionLauncher, LoadC8SData>();
+            })
+            .WithParsed<FixC8SDataOptions>(options =>
+            {
+                services.AddSingleton(options);
+                services.AddSingleton<IActionLauncher, FixC8SData>();
             })
             .WithParsed<ShowConfigOptions>(options =>
             {
