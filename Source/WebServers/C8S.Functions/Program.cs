@@ -20,6 +20,7 @@ using C8S.Domain;
 using C8S.Domain.Mapping.Extensions;
 using C8S.Functions.MapProfiles;
 using C8S.WordPress.Extensions;
+using SC.Common.Helpers.Extensions;
 using Serilog.Core;
 using Serilog.Sinks.MSSqlServer;
 

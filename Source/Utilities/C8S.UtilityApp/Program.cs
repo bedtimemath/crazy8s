@@ -18,6 +18,7 @@ using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
 using System.Net.Http.Headers;
 using C8S.WordPress.Extensions;
+using SC.Common.Helpers.Extensions;
 
 /*****************************************
  * INITIAL LOGGING
