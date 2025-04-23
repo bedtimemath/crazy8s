@@ -5,9 +5,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using SC.Common.Razor.Extensions;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Base;
 using System.Diagnostics;
+using SC.Common.Helpers.Base;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.PubSub.Services;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Persons;
 

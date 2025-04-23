@@ -1,5 +1,5 @@
 ﻿using C8S.WordPress.Abstractions.Models;
-using SC.Messaging.Abstractions.Base;
+using SC.Common.Helpers.CQRS.Base;
 
 namespace C8S.WordPress.Abstractions.Queries;
 

@@ -2,8 +2,8 @@
 using C8S.Domain.Features.Notes.Models;
 using C8S.Domain.Features.Notes.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Helpers.CQRS.Interfaces;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 

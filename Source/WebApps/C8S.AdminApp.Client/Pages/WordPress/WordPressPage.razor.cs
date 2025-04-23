@@ -1,5 +1,5 @@
 ﻿using C8S.WordPress.Abstractions.Models;
-using SC.Common.Client.Base;
+using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Pages.WordPress;
 

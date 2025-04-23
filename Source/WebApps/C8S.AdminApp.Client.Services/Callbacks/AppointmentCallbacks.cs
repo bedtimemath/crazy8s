@@ -1,8 +1,8 @@
 ﻿using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Helpers.CQRS.Interfaces;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 

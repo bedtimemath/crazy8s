@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net;
 using AutoMapper;
 using C8S.WordPress.Abstractions.MagicLogin;
 using C8S.WordPress.Abstractions.Models;

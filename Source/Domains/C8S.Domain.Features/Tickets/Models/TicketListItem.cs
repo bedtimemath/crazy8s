@@ -1,6 +1,4 @@
-﻿using C8S.Domain.Enums;
-
-namespace C8S.Domain.Features.Tickets.Models;
+﻿namespace C8S.Domain.Features.Tickets.Models;
 
 public record TicketListItem: Ticket
 {

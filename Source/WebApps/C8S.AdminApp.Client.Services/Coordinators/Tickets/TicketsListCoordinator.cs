@@ -7,8 +7,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using SC.Common.Models;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 using System.Diagnostics;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.PubSub.Services;
 using static C8S.AdminApp.Client.Services.Coordinators.Persons.PersonsListCoordinator;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Tickets;

@@ -2,9 +2,9 @@
 using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Helpers.CQRS.Interfaces;
 using SC.Common.Models;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 

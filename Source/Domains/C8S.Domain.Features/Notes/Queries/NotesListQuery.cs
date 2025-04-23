@@ -1,6 +1,6 @@
 ﻿using C8S.Domain.Enums;
 using C8S.Domain.Features.Notes.Models;
-using SC.Messaging.Abstractions.Base;
+using SC.Common.Helpers.CQRS.Base;
 
 namespace C8S.Domain.Features.Notes.Queries;
 

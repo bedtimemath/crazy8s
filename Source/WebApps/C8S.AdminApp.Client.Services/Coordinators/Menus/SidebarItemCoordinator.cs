@@ -1,13 +1,14 @@
 ﻿using C8S.AdminApp.Client.Services.Extensions;
 using C8S.AdminApp.Client.Services.Menu.Models;
 using Microsoft.Extensions.Logging;
-using SC.Common.Client.Navigation.Commands;
-using SC.Common.Client.Navigation.Enums;
-using SC.Common.Client.Navigation.Models;
-using SC.Common.Client.Navigation.Queries;
+using SC.Common.Helpers.Base;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.PubSub.Services;
+using SC.Common.Razor.Navigation.Commands;
+using SC.Common.Razor.Navigation.Enums;
+using SC.Common.Razor.Navigation.Models;
+using SC.Common.Razor.Navigation.Queries;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Menus;
 

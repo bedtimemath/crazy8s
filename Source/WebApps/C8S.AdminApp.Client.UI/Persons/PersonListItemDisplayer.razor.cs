@@ -1,7 +1,7 @@
 ﻿using C8S.Domain.Features.Persons.Models;
 using Microsoft.AspNetCore.Components;
+using SC.Common.Helpers.CQRS.Services;
 using SC.Common.Razor.Base;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.UI.Persons;
 

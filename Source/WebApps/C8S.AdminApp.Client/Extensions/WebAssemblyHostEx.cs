@@ -17,11 +17,11 @@ using C8S.WordPress.Abstractions.Commands;
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using SC.Common.Client.Navigation.Commands;
-using SC.Common.Client.Navigation.Queries;
-using SC.Common.Client.Navigation.Services;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Razor.Navigation.Commands;
+using SC.Common.Razor.Navigation.Queries;
+using SC.Common.Razor.Navigation.Services;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Extensions;
 

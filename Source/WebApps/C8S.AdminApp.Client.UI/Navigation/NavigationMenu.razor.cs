@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using SC.Common.Client.Navigation.Services;
 using SC.Common.Razor.Base;
+using SC.Common.Razor.Navigation.Services;
 
 namespace C8S.AdminApp.Client.UI.Navigation;
 

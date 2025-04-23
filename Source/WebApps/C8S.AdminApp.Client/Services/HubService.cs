@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using SC.Common.PubSub;
 using SC.Common;
-using SC.Messaging.Abstractions.Interfaces;
+using SC.Common.Helpers.PubSub.Services;
 
 namespace C8S.AdminApp.Client.Services;
 

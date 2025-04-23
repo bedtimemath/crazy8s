@@ -1,5 +1,5 @@
-﻿using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
+﻿using SC.Common.Helpers.CQRS.Interfaces;
+using SC.Common.Responses;
 
 namespace C8S.Domain.Features.Notes.Commands;
 

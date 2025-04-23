@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using SC.Audit.EFCore.Extensions;
 using SC.Common;
-using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;

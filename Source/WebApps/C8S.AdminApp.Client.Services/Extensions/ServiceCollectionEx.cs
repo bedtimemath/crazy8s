@@ -1,7 +1,7 @@
 ﻿using C8S.AdminApp.Client.Services.Callbacks;
 using Microsoft.Extensions.DependencyInjection;
-using SC.Common.Razor.Interfaces;
 using System.Reflection;
+using SC.Common.Helpers.Base;
 
 namespace C8S.AdminApp.Client.Services.Extensions;
 

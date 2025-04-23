@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Messaging.Abstractions\SC.Messaging.Abstractions.csproj" />
     <ProjectReference Include="..\C8S.Domain\C8S.Domain.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Dynamic.Core;
 using C8S.Domain.EFCore.Models;
-using SC.Messaging.Abstractions.Interfaces;
+using SC.Common.Helpers.CQRS.Interfaces;
 
 namespace C8S.AdminApp.Extensions;
 

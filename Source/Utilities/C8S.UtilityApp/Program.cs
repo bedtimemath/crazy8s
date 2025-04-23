@@ -12,7 +12,6 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SC.Common;
-using SC.Common.Helpers.Extensions;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;

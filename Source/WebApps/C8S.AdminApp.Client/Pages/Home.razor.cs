@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using SC.Common.Client.Base;
+using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Pages;
 

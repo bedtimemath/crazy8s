@@ -6,10 +6,10 @@ using C8S.Domain;
 using C8S.Domain.Features;
 using Microsoft.Extensions.Logging;
 using SC.Common;
-using SC.Common.Client.Navigation.Enums;
-using SC.Common.Client.Navigation.Models;
+using SC.Common.Helpers.PubSub.Services;
+using SC.Common.Razor.Navigation.Enums;
+using SC.Common.Razor.Navigation.Models;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Menu.Services;
 

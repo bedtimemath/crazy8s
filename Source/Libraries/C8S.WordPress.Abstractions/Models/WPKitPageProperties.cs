@@ -1,5 +1,4 @@
-﻿using C8S.Domain.Enums;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace C8S.WordPress.Abstractions.Models;
 

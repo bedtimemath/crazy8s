@@ -3,13 +3,15 @@ using C8S.Domain.Features.Persons.Models;
 using C8S.Domain.Features.Persons.Queries;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
-using SC.Common.Client.Navigation.Commands;
-using SC.Common.Client.Navigation.Enums;
-using SC.Common.Client.Navigation.Queries;
+using SC.Common.Helpers.Base;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.Notifier.Enums;
+using SC.Common.Helpers.Notifier.Models;
+using SC.Common.Helpers.PubSub.Services;
+using SC.Common.Razor.Navigation.Commands;
+using SC.Common.Razor.Navigation.Enums;
+using SC.Common.Razor.Navigation.Queries;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Abstractions.Models;
-using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Persons;
 
@@ -72,9 +74,9 @@ public sealed class PersonDetailsCoordinator(
 
     public async Task LinkPlace()
     {
-        PubSubService.Publish(new Notification()
+        PubSubService.Publish(new NotifierMessage()
         {
-            Level = NotificationLevel.Success,
+            Level = NotifierSeverity.Success,
             Detail = "You clicked the link button! Good job."
         });
     }
@@ -86,9 +88,9 @@ public sealed class PersonDetailsCoordinator(
 
     public async Task LinkPerson()
     {
-        PubSubService.Publish(new Notification()
+        PubSubService.Publish(new NotifierMessage()
             {
-                Level = NotificationLevel.Error,
+                Level = NotifierSeverity.Error,
                 Summary = "Oops! You did that wrong.",
                 Detail = "Never click the link person button!!!!"
             });

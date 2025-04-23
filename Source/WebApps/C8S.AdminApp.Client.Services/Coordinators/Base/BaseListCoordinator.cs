@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
+using SC.Common.Helpers.Base;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.PubSub.Services;
 using SC.Common.Razor.Extensions;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Base;
 

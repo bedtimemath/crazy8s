@@ -2,8 +2,8 @@
 using C8S.WordPress.Abstractions.Models;
 using C8S.WordPress.Abstractions.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Helpers.CQRS.Interfaces;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
 
 namespace C8S.AdminApp.Client.Services.Callbacks;
 

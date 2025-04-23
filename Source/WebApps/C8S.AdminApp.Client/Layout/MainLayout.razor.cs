@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Radzen;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Abstractions.Models;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.Notifier.Enums;
+using SC.Common.Helpers.Notifier.Services;
 
 namespace C8S.AdminApp.Client.Layout;
 
@@ -52,23 +53,23 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
     #endregion
 
     #region Event Handlers
-    private void HandleNotificationReceived(object? sender, NotificationEventArgs args)
+    private void HandleNotificationReceived(object? sender, NotifierEventArgs args)
     {
-        var severity = args.Notification.Level switch
+        var severity = args.NotifierMessage.Level switch
         {
-            NotificationLevel.Error => NotificationSeverity.Error,
-            NotificationLevel.Info => NotificationSeverity.Info,
-            NotificationLevel.Success => NotificationSeverity.Success,
-            NotificationLevel.Warning => NotificationSeverity.Warning,
-            _ => throw new ArgumentOutOfRangeException(nameof(args.Notification.Level))
+            NotifierSeverity.Error => NotificationSeverity.Error,
+            NotifierSeverity.Info => NotificationSeverity.Info,
+            NotifierSeverity.Success => NotificationSeverity.Success,
+            NotifierSeverity.Warning => NotificationSeverity.Warning,
+            _ => throw new ArgumentOutOfRangeException(nameof(args.NotifierMessage.Level))
         };
-        var summary = args.Notification.Summary ?? args.Notification.Level switch
+        var summary = args.NotifierMessage.Summary ?? args.NotifierMessage.Level switch
         {
-            NotificationLevel.Error => "Error Message",
-            NotificationLevel.Info => "Information",
-            NotificationLevel.Success => "Success",
-            NotificationLevel.Warning => "Warning",
-            _ => throw new ArgumentOutOfRangeException(nameof(args.Notification.Level))
+            NotifierSeverity.Error => "Error Message",
+            NotifierSeverity.Info => "Information",
+            NotifierSeverity.Success => "Success",
+            NotifierSeverity.Warning => "Warning",
+            _ => throw new ArgumentOutOfRangeException(nameof(args.NotifierMessage.Level))
         };
 
         var notificationMessage = new NotificationMessage()
@@ -76,7 +77,7 @@ public partial class MainLayout : LayoutComponentBase, IDisposable
             Style = "position: absolute;",
             Severity = severity,
             Summary = summary,
-            Detail = args.Notification.Detail,
+            Detail = args.NotifierMessage.Detail,
             CloseOnClick = true
         };
         NotificationService.Notify(notificationMessage);

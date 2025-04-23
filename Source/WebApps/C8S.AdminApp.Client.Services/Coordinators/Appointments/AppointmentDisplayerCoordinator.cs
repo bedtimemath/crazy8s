@@ -2,9 +2,10 @@
 using C8S.Domain.Features.Appointments.Models;
 using C8S.Domain.Features.Appointments.Queries;
 using Microsoft.Extensions.Logging;
+using SC.Common.Helpers.Base;
+using SC.Common.Helpers.CQRS.Services;
+using SC.Common.Helpers.PubSub.Services;
 using SC.Common.Responses;
-using SC.Messaging.Abstractions.Interfaces;
-using SC.Messaging.Base;
 
 namespace C8S.AdminApp.Client.Services.Coordinators.Appointments;
 

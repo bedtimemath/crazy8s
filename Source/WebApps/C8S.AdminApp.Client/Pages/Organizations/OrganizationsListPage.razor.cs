@@ -1,5 +1,5 @@
 ﻿using C8S.AdminApp.Client.Services.Coordinators.Organizations;
-using SC.Common.Client.Base;
+using SC.Common.Razor.Base;
 
 namespace C8S.AdminApp.Client.Pages.Organizations;
 
