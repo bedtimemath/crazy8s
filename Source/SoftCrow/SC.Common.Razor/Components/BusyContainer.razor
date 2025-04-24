@@ -1,0 +1,12 @@
+﻿@inherits SC.Common.Razor.Base.BaseRazorComponent
+
+@if (IsBusy)
+{
+    <div class="sc-loading-container">
+        <div class="sc-loading-spinner"></div>
+    </div>
+}
+else
+{
+    @ChildContent
+}

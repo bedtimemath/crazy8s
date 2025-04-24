@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -21,10 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain.Features\C8S.Domain.Features.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
+    <ProjectReference Include="..\..\SoftCrow\SC.Common.Helpers\SC.Common.Helpers.csproj" />
+    <ProjectReference Include="..\..\SoftCrow\SC.Common.Razor\SC.Common.Razor.csproj" />
+    <ProjectReference Include="..\..\SoftCrow\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\C8S.AdminApp.Client.Services\C8S.AdminApp.Client.Services.csproj" />
   </ItemGroup>
 

@@ -31,10 +31,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\RazorLibs\SC.Common.Razor\SC.Common.Razor.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain.Features\C8S.Domain.Features.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.WordPress.Abstractions\C8S.WordPress.Abstractions.csproj" />
+    <ProjectReference Include="..\..\SoftCrow\SC.Common.Helpers\SC.Common.Helpers.csproj" />
+    <ProjectReference Include="..\..\SoftCrow\SC.Common.Razor\SC.Common.Razor.csproj" />
   </ItemGroup>
 
 </Project>
