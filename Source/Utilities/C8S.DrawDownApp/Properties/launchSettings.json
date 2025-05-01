@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "C8S.DawDownApp": {
+      "commandName": "Project"
+    },
+    "Remove C8S Data": {
+      "commandName": "Project",
+      "commandLineArgs": "remove-crazy8s-data"
+    }
+  }
+}
