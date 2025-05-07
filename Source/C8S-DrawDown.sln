@@ -5,6 +5,18 @@ VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.DrawDownApp", "Utilities\C8S.DrawDownApp\C8S.DrawDownApp.csproj", "{5A703EB1-5058-4486-8A8F-C85E08B6E8EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.Common", "..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj", "{37BBC263-D4D8-5EBE-4E03-44398FDF94FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.Common.Helpers", "..\..\SoftCrow\Source\Libraries\SC.Common.Helpers\SC.Common.Helpers.csproj", "{8B14FB54-B5F7-D5B8-CEE9-884844A9E16D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SoftCrow", "SoftCrow", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.SendGrid", "..\..\SoftCrow\Source\Libraries\SC.SendGrid\SC.SendGrid.csproj", "{F43A2EC3-FD9D-C0B9-F166-201628EF6B14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SC.SendGrid.Abstractions", "..\..\SoftCrow\Source\Libraries\SC.SendGrid.Abstractions\SC.SendGrid.Abstractions.csproj", "{F168E307-5923-BCBA-D8E7-12C6A31F4B44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C8S.Cleanup", "WebServers\C8S.Cleanup\C8S.Cleanup.csproj", "{0F570D6A-D0D5-434E-9130-EC6065A3D0FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +27,35 @@ Global
 		{5A703EB1-5058-4486-8A8F-C85E08B6E8EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A703EB1-5058-4486-8A8F-C85E08B6E8EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A703EB1-5058-4486-8A8F-C85E08B6E8EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37BBC263-D4D8-5EBE-4E03-44398FDF94FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37BBC263-D4D8-5EBE-4E03-44398FDF94FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37BBC263-D4D8-5EBE-4E03-44398FDF94FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37BBC263-D4D8-5EBE-4E03-44398FDF94FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B14FB54-B5F7-D5B8-CEE9-884844A9E16D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B14FB54-B5F7-D5B8-CEE9-884844A9E16D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B14FB54-B5F7-D5B8-CEE9-884844A9E16D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B14FB54-B5F7-D5B8-CEE9-884844A9E16D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F43A2EC3-FD9D-C0B9-F166-201628EF6B14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F43A2EC3-FD9D-C0B9-F166-201628EF6B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F43A2EC3-FD9D-C0B9-F166-201628EF6B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F43A2EC3-FD9D-C0B9-F166-201628EF6B14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F168E307-5923-BCBA-D8E7-12C6A31F4B44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F168E307-5923-BCBA-D8E7-12C6A31F4B44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F168E307-5923-BCBA-D8E7-12C6A31F4B44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F168E307-5923-BCBA-D8E7-12C6A31F4B44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F570D6A-D0D5-434E-9130-EC6065A3D0FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F570D6A-D0D5-434E-9130-EC6065A3D0FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F570D6A-D0D5-434E-9130-EC6065A3D0FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F570D6A-D0D5-434E-9130-EC6065A3D0FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{37BBC263-D4D8-5EBE-4E03-44398FDF94FD} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{8B14FB54-B5F7-D5B8-CEE9-884844A9E16D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F43A2EC3-FD9D-C0B9-F166-201628EF6B14} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{F168E307-5923-BCBA-D8E7-12C6A31F4B44} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A06924AF-D62D-4E9D-9989-A43F187A98AD}
