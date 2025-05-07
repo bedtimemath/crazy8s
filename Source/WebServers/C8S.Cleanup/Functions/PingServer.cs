@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using C8S.Cleanup.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +11,7 @@ using SC.Common.Extensions;
 using SC.SendGrid.Abstractions.Models;
 using Serilog.Core;
 
-namespace C8S.Functions.Functions;
+namespace C8S.Cleanup.Functions;
 
 public class PingServer(
     ILoggerFactory loggerFactory,
@@ -37,6 +39,19 @@ public class PingServer(
             sbOutput.AppendFormat("AppConfig: {0}\r\n", configuration.GetConnectionString("AppConfig")?.Obscure());
             sbOutput.AppendFormat("Environment: {0}\r\n", configuration["ENVIRONMENT"]);
             sbOutput.AppendFormat("LogLevel: {0}\r\n", levelSwitch.MinimumLevel);
+
+            // API KEYS
+            var apiKeys = configuration.GetSection(ApiKeys.SectionName).Get<ApiKeys>() ??
+                          throw new Exception($"Missing configuration section: {ApiKeys.SectionName}");
+            sbOutput.Append("== ApiKeys ==\r\n");
+            sbOutput.AppendFormat("SendGrid: {0}\r\n", apiKeys.SendGrid?.Obscure());
+
+            // CONNECTIONS
+            var connections = configuration.GetSection(Connections.SectionName).Get<Connections>() ??
+                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
+            sbOutput.Append("== Connections ==\r\n");
+            sbOutput.AppendFormat("AzureStorage: {0}\r\n", connections.AzureStorage?.Obscure());
+            sbOutput.AppendFormat("OldSystem: {0}\r\n", connections.OldSystem?.Obscure());
 
             // EMAIL SETTINGS
             var emailSettings = new EmailSettings();

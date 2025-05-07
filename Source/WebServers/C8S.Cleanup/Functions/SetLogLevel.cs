@@ -7,7 +7,7 @@ using SC.Common.Extensions;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace C8S.Functions.Functions;
+namespace C8S.Cleanup.Functions;
 
 public class SetLogLevel(
     ILoggerFactory loggerFactory,

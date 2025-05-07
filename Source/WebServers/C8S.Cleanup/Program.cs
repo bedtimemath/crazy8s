@@ -9,14 +9,6 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Debugging;
 using Serilog.Events;
-#if false // !DEBUG
-using Microsoft.Azure.Functions.Worker;
-using Serilog.Sinks.ApplicationInsights.TelemetryConverters;
-using Serilog.Sinks.MSSqlServer;
-using Serilog.Sinks.SystemConsole.Themes;
-using TGPL.Common;
-using TGPL.Common.Configs;
-#endif
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -52,19 +44,11 @@ try
                 // configure with a file (much faster)
                 builder
                     .SetBasePath(configFolderPath)
-                    .AddJsonFile($"tgpl.appsettings.{environmentName}.json", optional: false);
+                    .AddJsonFile($"c8s.appsettings.{environmentName}.json", optional: false);
             }
         })
         .ConfigureServices((context, services) =>
         {
-#if false // !DEBUG
-            /*****************************************
-             * APPLICATION INSIGHTS
-             */
-            services.AddApplicationInsightsTelemetryWorkerService();
-            services.ConfigureFunctionsApplicationInsights();
-#endif
-
             /*****************************************
              * COMMUNICATION SERVICES
              */
@@ -78,11 +62,6 @@ try
             var levelSwitch = new LoggingLevelSwitch(environmentName == SoftCrowConstants.Platforms.Development ?
                 LogEventLevel.Verbose : LogEventLevel.Warning);
             builder.Services.AddSingleton(levelSwitch);
-            
-#if false // !DEBUG
-            var connections = context.Configuration.GetSection(Connections.SectionName).Get<Connections>() ??
-                              throw new Exception($"Missing configuration section: {Connections.SectionName}");
-#endif    
 
             builder.AddSerilog(new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(levelSwitch)
@@ -91,22 +70,6 @@ try
                 .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.AspNetCore.Authentication", LogEventLevel.Information)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information)
-#if false // !DEBUG
-                .WriteTo.MSSqlServer(
-                    connectionString: connections.AuditDatabase,
-                    sinkOptions: new MSSqlServerSinkOptions()
-                    {
-                        AutoCreateSqlTable = true, 
-                        TableName = TGPLConstants.LogTables.FunctionsLog, 
-                        LevelSwitch = levelSwitch
-                    })
-                .WriteTo.ApplicationInsights(context.Configuration
-                        .GetConnectionString("APPLICATIONINSIGHTS_CONNECTION_STRING"), 
-                    telemetryConverter: new TraceTelemetryConverter())
-                .WriteTo.Console(
-                    outputTemplate: SoftCrowConstants.Templates.DefaultConsoleLog,
-                    theme: AnsiConsoleTheme.Code)
-#endif    
                 .CreateLogger());
             SelfLog.Enable(m => Console.Error.WriteLine(m));
 

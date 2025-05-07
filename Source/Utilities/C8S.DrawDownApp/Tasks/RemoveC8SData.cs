@@ -1,5 +1,4 @@
-﻿using System.Data.SqlClient;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using C8S.DrawDownApp.Base;
 using C8S.DrawDownApp.Extensions;
 using C8S.DrawDownApp.Models;
