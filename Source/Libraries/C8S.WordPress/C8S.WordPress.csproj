@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\C8S.WordPress.Abstractions\C8S.WordPress.Abstractions.csproj" />
   </ItemGroup>
 

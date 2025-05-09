@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\C8S.Fulco.Abstractions\C8S.Fulco.Abstractions.csproj" />
   </ItemGroup>
 

@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain.Features\C8S.Domain.Features.csproj" />
     <ProjectReference Include="..\..\Domains\C8S.Domain\C8S.Domain.csproj" />
@@ -35,6 +34,7 @@
     <ProjectReference Include="..\..\Libraries\C8S.FullSlate\C8S.FullSlate.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.WordPress.Abstractions\C8S.WordPress.Abstractions.csproj" />
     <ProjectReference Include="..\..\Libraries\C8S.WordPress\C8S.WordPress.csproj" />
+    <ProjectReference Include="..\..\SoftCrow\SC.Common\SC.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

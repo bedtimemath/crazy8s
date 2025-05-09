@@ -12,8 +12,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Audit.EFCore\SC.Audit.EFCore.csproj" />
-		<ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
+		<ProjectReference Include="..\..\SoftCrow\SC.Audit.Abstractions\SC.Audit.Abstractions.csproj" />
+		<ProjectReference Include="..\..\SoftCrow\SC.Audit.EFCore\SC.Audit.EFCore.csproj" />
+		<ProjectReference Include="..\..\SoftCrow\SC.Common\SC.Common.csproj" />
 		<ProjectReference Include="..\C8S.Domain.Features\C8S.Domain.Features.csproj" />
 		<ProjectReference Include="..\C8S.Domain\C8S.Domain.csproj" />
 	</ItemGroup>

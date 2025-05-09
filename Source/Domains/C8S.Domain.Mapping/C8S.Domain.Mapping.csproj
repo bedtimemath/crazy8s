@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\C8S.Domain.EFCore\C8S.Domain.EFCore.csproj" />
     <ProjectReference Include="..\C8S.Domain.Features\C8S.Domain.Features.csproj" />
   </ItemGroup>

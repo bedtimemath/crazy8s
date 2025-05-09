@@ -14,7 +14,7 @@ namespace C8S.Cleanup.Functions
         IConfiguration configuration,
         EmailService emailService)
     {
-        const int TotalMinutes = 10;
+        const int TotalMinutes = 60;
         const string ReadBitsTables =
             "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Bits' AND TABLE_TYPE = 'BASE TABLE' AND EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'Bits' AND TABLE_NAME = INFORMATION_SCHEMA.TABLES.TABLE_NAME AND COLUMN_NAME = 'CreatedBy' );";
         const string ReadCrazy8STables =
@@ -66,7 +66,8 @@ namespace C8S.Cleanup.Functions
                 reader.Close();
 
                 var activeIds = new HashSet<Guid>();
-
+                
+                htmlMessage.Append("<div>Checking [Bits].[AccessAttempt]...");
                 cmd = new SqlCommand("SELECT DISTINCT [AppSessionId] FROM [Bits].[AccessAttempt] WHERE [AppSessionId] IS NOT NULL;", cnn);
                 reader = await cmd.ExecuteReaderAsync();
                 while (reader.Read())
@@ -75,9 +76,11 @@ namespace C8S.Cleanup.Functions
                     activeIds.Add(appSessionId);
                 }
                 reader.Close();
+                htmlMessage.AppendLine("complete.</div>");
 
                 foreach (var table in tables)
                 {
+                    htmlMessage.AppendLine($"<div>Checking {table}...");
                     cmd = new SqlCommand($"SELECT DISTINCT [CreatedBy] FROM {table} WHERE [CreatedBy] IS NOT NULL;", cnn);
                     reader = await cmd.ExecuteReaderAsync();
                     while (reader.Read())
@@ -86,6 +89,7 @@ namespace C8S.Cleanup.Functions
                         activeIds.Add(appSessionId);
                     }
                     reader.Close();
+                    htmlMessage.AppendLine("complete.</div>");
                 }
 
                 htmlMessage.AppendLine($"<div>Legitimate AppSession Ids: {activeIds.Count:#,##0}</div>");
@@ -108,11 +112,9 @@ namespace C8S.Cleanup.Functions
                 var index = 0;
                 for (; index < removeIds.Count; index++)
                 {
-                    //cmd = new SqlCommand($"DELETE FROM [Bits].[AppSession] WHERE [Id] = @Id;", cnn);
-                    //cmd.Parameters.Add(new SqlParameter("@Id", removeIds.ElementAt(index)));
-                    //await cmd.ExecuteNonQueryAsync();
-
-                    await Task.Delay(500); // Simulate work
+                    cmd = new SqlCommand($"DELETE FROM [Bits].[AppSession] WHERE [Id] = @Id;", cnn);
+                    cmd.Parameters.Add(new SqlParameter("@Id", removeIds.ElementAt(index)));
+                    await cmd.ExecuteNonQueryAsync();
 
                     var elapsed = DateTime.Now - startTime;
                     if (elapsed.TotalMinutes > TotalMinutes) break;

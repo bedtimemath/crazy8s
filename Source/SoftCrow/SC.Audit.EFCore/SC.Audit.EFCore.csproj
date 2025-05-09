@@ -14,7 +14,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\SC.Audit.Abstractions\SC.Audit.Abstractions.csproj" />
-	  <ProjectReference Include="..\SC.Common\SC.Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
