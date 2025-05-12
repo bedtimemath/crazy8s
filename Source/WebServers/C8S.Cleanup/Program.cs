@@ -1,4 +1,5 @@
 using Azure.Identity;
+using C8S.DrawDown.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,6 +55,10 @@ try
              */
             services.AddSendGridServices();
 
+            /*****************************************
+             * LOCAL SERVICES
+             */
+            services.AddDrawDownServices();
         })
         .ConfigureLogging((context, builder) =>
         {

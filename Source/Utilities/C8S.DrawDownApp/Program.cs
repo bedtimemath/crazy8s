@@ -1,11 +1,11 @@
-﻿using System.Net.Http.Headers;
+﻿using C8S.DrawDown.Extensions;
 using C8S.DrawDownApp.Base;
-using C8S.DrawDownApp.Models;
 using C8S.DrawDownApp.Tasks;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SC.SendGrid.Extensions;
 using Serilog;
 using Serilog.Debugging;
 using Serilog.Events;
@@ -46,18 +46,15 @@ try
         .AddEnvironmentVariables();
 
     // check for the two variables we need immediately
-    var appConfig = builder.Configuration["C8S_AppConfig"];
     var configFolder = builder.Configuration["C8S_ConfigFolder"];
 
     if (String.IsNullOrEmpty(configFolder))
         throw new Exception("Missing configuration folder.");
-    else
-    {
-        // configure with a file (much faster)
-        configBuilder = configBuilder
-            .SetBasePath(configFolder)
-            .AddJsonFile($"c8s.appsettings.{platform.ToLowerInvariant()}.json", optional: false);
-    }
+    
+    // configure with a file (much faster)
+    configBuilder = configBuilder
+        .SetBasePath(configFolder)
+        .AddJsonFile($"c8s.appsettings.{platform.ToLowerInvariant()}.json", optional: false);
 
     var configuration = configBuilder.Build(); 
 
@@ -80,6 +77,9 @@ try
             });
 
         services.AddSingleton<IConfiguration>(configuration);
+
+        services.AddDrawDownServices();
+        services.AddSendGridServices();
     });
 
     /*****************************************

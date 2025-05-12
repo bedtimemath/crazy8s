@@ -1,4 +1,4 @@
-﻿namespace C8S.Cleanup.Models;
+﻿namespace C8S.DrawDown.Models;
 
 public class Connections
 {

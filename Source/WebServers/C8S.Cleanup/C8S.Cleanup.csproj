@@ -30,6 +30,7 @@
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.Common\SC.Common.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.SendGrid.Abstractions\SC.SendGrid.Abstractions.csproj" />
     <ProjectReference Include="..\..\..\..\SoftCrow\Source\Libraries\SC.SendGrid\SC.SendGrid.csproj" />
+    <ProjectReference Include="..\..\Libraries\C8S.DrawDown\C8S.DrawDown.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
