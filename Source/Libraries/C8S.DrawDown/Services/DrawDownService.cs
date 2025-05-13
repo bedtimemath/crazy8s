@@ -10,7 +10,7 @@ public class DrawDownService(
     ILoggerFactory loggerFactory,
     IConfiguration configuration)
 {
-    const int TotalMinutes = 10;
+    const int TotalMinutes = 360;
     const string ReadBitsTables =
         "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'Bits' AND TABLE_TYPE = 'BASE TABLE' AND EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'Bits' AND TABLE_NAME = INFORMATION_SCHEMA.TABLES.TABLE_NAME AND COLUMN_NAME = 'CreatedBy' );";
     const string ReadCrazy8STables =
